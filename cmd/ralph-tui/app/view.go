@@ -69,76 +69,43 @@ func (m Model) renderProgressBar() string {
 		total = 1 // Avoid division by zero
 	}
 
-	// Progress bar
-	barWidth := m.Width - 50 // Adjusted for prism
+	stats := fmt.Sprintf("%d/%d (%d%%)", completed, m.TotalStories, int(m.ProgressPercent()*100))
+
+	// Render framebuffer prism animation to the left
+	if m.Prism != nil {
+		prismStr := m.Prism.String()
+		prismWidth := m.Prism.Width()
+
+		// Progress bar fills remaining width
+		infoWidth := m.Width - prismWidth - 8
+		barWidth := infoWidth - 16 // Space for stats text
+		if barWidth < 20 {
+			barWidth = 20
+		}
+		m.Progress.Width = barWidth
+		progressStr := m.Progress.ViewAs(m.Anim.ProgressPos)
+
+		// Stack plan name, progress bar, and stats vertically
+		planLine := fmt.Sprintf("Plan: %s", planName)
+		barLine := fmt.Sprintf("%s  %s", progressStr, stats)
+		infoPanel := lipgloss.JoinVertical(lipgloss.Left, "", planLine, barLine)
+		infoPanel = lipgloss.NewStyle().Width(infoWidth).Render(infoPanel)
+
+		content := lipgloss.JoinHorizontal(lipgloss.Center, prismStr, "  ", infoPanel)
+		return styles.PanelStyle.Width(m.Width - 2).Render(content)
+	}
+
+	// Fallback: no framebuffer prism, use text-based prism
+	barWidth := m.Width - 50
 	if barWidth < 20 {
 		barWidth = 20
 	}
 	m.Progress.Width = barWidth
-
-	// Use animated position for smooth spring fill
 	progressStr := m.Progress.ViewAs(m.Anim.ProgressPos)
-	stats := fmt.Sprintf("%d/%d (%d%%)", completed, m.TotalStories, int(m.ProgressPercent()*100))
 
-	// Select prism renderer based on style
-	switch m.PrismStyle {
-	case "gradient":
-		prism := styles.RenderPrismGradientSpring(m.Anim.PrismFrame, m.Anim.RayLengths, m.Anim.ShimmerPhase)
-		line := fmt.Sprintf("%s  Plan: %s  %s  %s", prism, planName, progressStr, stats)
-		return styles.PanelStyle.Width(m.Width - 2).Render(line)
-
-	case "simple":
-		// ASCII-only fallback for terminals without Unicode support
-		prism := styles.RenderPrismSimple(m.Anim.PrismFrame)
-		line := fmt.Sprintf("%s  Plan: %s  %s  %s", prism, planName, progressStr, stats)
-		return styles.PanelStyle.Width(m.Width - 2).Render(line)
-
-	case "braille":
-		// Multi-line braille prism (3 lines)
-		prism := styles.RenderPrismBraille(m.Anim.PrismFrame)
-		prismLines := strings.Split(prism, "\n")
-
-		// Build 3-line layout with progress info on middle line
-		var lines []string
-		if len(prismLines) >= 1 {
-			lines = append(lines, prismLines[0])
-		}
-		if len(prismLines) >= 2 {
-			infoLine := fmt.Sprintf("%s  Plan: %s  %s  %s", prismLines[1], planName, progressStr, stats)
-			lines = append(lines, infoLine)
-		}
-		if len(prismLines) >= 3 {
-			lines = append(lines, prismLines[2])
-		}
-
-		content := lipgloss.JoinVertical(lipgloss.Left, lines...)
-		return styles.PanelStyle.Width(m.Width - 2).Render(content)
-
-	case "ascii":
-		// Multi-line ASCII prism (5 lines)
-		prism := styles.RenderPrismASCII(m.Anim.PrismFrame)
-		prismLines := strings.Split(prism, "\n")
-
-		// Build 5-line layout with progress info on line 3
-		var lines []string
-		for i, pl := range prismLines {
-			if i == 2 { // Line 3 (middle-ish) gets the progress info
-				infoLine := fmt.Sprintf("%s  Plan: %s  %s  %s", pl, planName, progressStr, stats)
-				lines = append(lines, infoLine)
-			} else {
-				lines = append(lines, pl)
-			}
-		}
-
-		content := lipgloss.JoinVertical(lipgloss.Left, lines...)
-		return styles.PanelStyle.Width(m.Width - 2).Render(content)
-
-	default:
-		// Fallback to fancy prism
-		prism := styles.RenderPrismFancy(m.Anim.PrismFrame)
-		line := fmt.Sprintf("%s  Plan: %s  %s  %s", prism, planName, progressStr, stats)
-		return styles.PanelStyle.Width(m.Width - 2).Render(line)
-	}
+	prism := styles.RenderPrismGradientSpring(m.Anim.PrismFrame, m.Anim.RayLengths, m.Anim.ShimmerPhase)
+	line := fmt.Sprintf("%s  Plan: %s  %s  %s", prism, planName, progressStr, stats)
+	return styles.PanelStyle.Width(m.Width - 2).Render(line)
 }
 
 func (m Model) renderMainPanels() string {

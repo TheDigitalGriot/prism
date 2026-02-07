@@ -10,6 +10,7 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/harmonica"
+	"github.com/prism-plugin/ralph-tui/prism"
 )
 
 // AppState represents the running state of the TUI
@@ -160,6 +161,9 @@ type Model struct {
 	// Animation state
 	Anim AnimState
 
+	// Prism framebuffer animation
+	Prism *prism.Renderer
+
 	// Demo mode
 	DemoMode       bool
 	DemoStoryIndex int // Next story to auto-complete in demo
@@ -220,6 +224,7 @@ func NewModel(storiesPath, projectDir string, maxIter, pause int, prismStyle str
 		LogLines:           make([]LogEntry, 0, 1000),
 		RecentOutput:       make([]string, 0, 10),
 		Stories:            []StoryView{},
+		Prism:              prism.New(30, 3),
 		Anim: AnimState{
 			// Progress: snappy with slight overshoot
 			ProgressSpring: harmonica.NewSpring(harmonica.FPS(60), 6.0, 0.7),

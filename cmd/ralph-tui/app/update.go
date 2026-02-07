@@ -62,6 +62,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Width = msg.Width
 		m.Height = msg.Height
 		m.Ready = true
+		// Resize prism animation panel (scales with terminal width, capped)
+		if m.Prism != nil {
+			prismCols := msg.Width / 4
+			if prismCols < 20 {
+				prismCols = 20
+			}
+			if prismCols > 40 {
+				prismCols = 40
+			}
+			m.Prism.Resize(prismCols, 3)
+		}
 		return m, nil
 
 	case TickMsg:
@@ -69,6 +80,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		var cmd tea.Cmd
 		m.Spinner, cmd = m.Spinner.Update(spinner.TickMsg{})
 		cmds = append(cmds, cmd, tickCmd())
+
+		// Advance prism framebuffer animation
+		if m.Prism != nil {
+			m.Prism.Tick()
+		}
 
 		// Advance progress bar animation
 		m.Anim.ProgressPos, m.Anim.ProgressVel = m.Anim.ProgressSpring.Update(
