@@ -57,6 +57,35 @@ func (m Model) renderHeader() string {
 	return styles.HeaderStyle.Width(m.Width).Render(header)
 }
 
+// renderSpectrumProgressBar renders a progress bar using the same 4-stop spectrum
+// gradient as the logo text: Blue → Teal → Green → Amber
+func renderSpectrumProgressBar(percent float64, width int) string {
+	spectrumColors := []string{"#3B82F6", "#14B8A6", "#22C55E", "#F59E0B"}
+
+	if width < 2 {
+		width = 2
+	}
+
+	filled := int(math.Round(percent * float64(width)))
+	if filled > width {
+		filled = width
+	}
+
+	empty := width - filled
+
+	var bar string
+	if filled > 0 {
+		filledStr := strings.Repeat("█", filled)
+		bar = styles.GradientString(filledStr, spectrumColors)
+	}
+	if empty > 0 {
+		emptyStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#374151"))
+		bar += emptyStyle.Render(strings.Repeat("░", empty))
+	}
+
+	return bar
+}
+
 func (m Model) renderProgressBar() string {
 	planName := m.PlanName
 	if planName == "" {
@@ -94,13 +123,12 @@ func (m Model) renderProgressBar() string {
 		// Join prism animation (left) with ASCII logo (right)
 		topSection := lipgloss.JoinHorizontal(lipgloss.Center, prismStr, "  ", logo)
 
-		// Progress info line below
+		// Progress info line below - use spectrum gradient matching logo
 		barWidth := m.Width - 20
 		if barWidth < 20 {
 			barWidth = 20
 		}
-		m.Progress.Width = barWidth
-		progressStr := m.Progress.ViewAs(m.Anim.ProgressPos)
+		progressStr := renderSpectrumProgressBar(m.Anim.ProgressPos, barWidth)
 		infoLine := fmt.Sprintf("  Plan: %s  %s  %s", planName, progressStr, stats)
 
 		content := lipgloss.JoinVertical(lipgloss.Left, topSection, infoLine)
@@ -112,8 +140,7 @@ func (m Model) renderProgressBar() string {
 	if barWidth < 20 {
 		barWidth = 20
 	}
-	m.Progress.Width = barWidth
-	progressStr := m.Progress.ViewAs(m.Anim.ProgressPos)
+	progressStr := renderSpectrumProgressBar(m.Anim.ProgressPos, barWidth)
 
 	prism := styles.RenderPrismGradientSpring(m.Anim.PrismFrame, m.Anim.RayLengths, m.Anim.ShimmerPhase)
 	line := fmt.Sprintf("%s  Plan: %s  %s  %s", prism, planName, progressStr, stats)
