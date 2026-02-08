@@ -71,7 +71,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if prismCols > 40 {
 				prismCols = 40
 			}
-			m.Prism.Resize(prismCols, 3)
+			m.Prism.Resize(prismCols, 5)
 		}
 		return m, nil
 

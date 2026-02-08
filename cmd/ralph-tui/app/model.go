@@ -184,7 +184,7 @@ func NewModel(storiesPath, projectDir string, maxIter, pause int, prismStyle str
 	s.Spinner = spinner.Dot
 
 	p := progress.New(
-		progress.WithDefaultGradient(),
+		progress.WithGradient("#3B82F6", "#F59E0B"),
 		progress.WithoutPercentage(),
 	)
 
@@ -224,7 +224,7 @@ func NewModel(storiesPath, projectDir string, maxIter, pause int, prismStyle str
 		LogLines:           make([]LogEntry, 0, 1000),
 		RecentOutput:       make([]string, 0, 10),
 		Stories:            []StoryView{},
-		Prism:              prism.New(30, 3),
+		Prism:              prism.New(24, 5),
 		Anim: AnimState{
 			// Progress: snappy with slight overshoot
 			ProgressSpring: harmonica.NewSpring(harmonica.FPS(60), 6.0, 0.7),

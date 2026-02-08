@@ -71,27 +71,39 @@ func (m Model) renderProgressBar() string {
 
 	stats := fmt.Sprintf("%d/%d (%d%%)", completed, m.TotalStories, int(m.ProgressPercent()*100))
 
-	// Render framebuffer prism animation to the left
+	// Render framebuffer prism animation with ASCII art PRISM logotype
 	if m.Prism != nil {
 		prismStr := m.Prism.String()
-		prismWidth := m.Prism.Width()
+		_ = m.Prism.Width()
 
-		// Progress bar fills remaining width
-		infoWidth := m.Width - prismWidth - 8
-		barWidth := infoWidth - 16 // Space for stats text
+		// ASCII art PRISM logotype - each line gets spectrum gradient
+		spectrumColors := []string{"#3B82F6", "#14B8A6", "#22C55E", "#F59E0B"}
+		logoLines := []string{
+			"'||''|.  '||''|.   '||'  .|'''.|  '||    ||'",
+			" ||   ||  ||   ||   ||   ||..  '   |||  |||",
+			" ||...|'  ||''|'    ||    ''|||.   |'|..'||",
+			" ||       ||   |.   ||  .     '||  | '|' ||",
+			".||.     .||.  '|' .||. |'....|'  .|. | .||.",
+		}
+		var styledLines []string
+		for _, line := range logoLines {
+			styledLines = append(styledLines, styles.GradientString(line, spectrumColors))
+		}
+		logo := lipgloss.JoinVertical(lipgloss.Left, styledLines...)
+
+		// Join prism animation (left) with ASCII logo (right)
+		topSection := lipgloss.JoinHorizontal(lipgloss.Center, prismStr, "  ", logo)
+
+		// Progress info line below
+		barWidth := m.Width - 20
 		if barWidth < 20 {
 			barWidth = 20
 		}
 		m.Progress.Width = barWidth
 		progressStr := m.Progress.ViewAs(m.Anim.ProgressPos)
+		infoLine := fmt.Sprintf("  Plan: %s  %s  %s", planName, progressStr, stats)
 
-		// Stack plan name, progress bar, and stats vertically
-		planLine := fmt.Sprintf("Plan: %s", planName)
-		barLine := fmt.Sprintf("%s  %s", progressStr, stats)
-		infoPanel := lipgloss.JoinVertical(lipgloss.Left, "", planLine, barLine)
-		infoPanel = lipgloss.NewStyle().Width(infoWidth).Render(infoPanel)
-
-		content := lipgloss.JoinHorizontal(lipgloss.Center, prismStr, "  ", infoPanel)
+		content := lipgloss.JoinVertical(lipgloss.Left, topSection, infoLine)
 		return styles.PanelStyle.Width(m.Width - 2).Render(content)
 	}
 
@@ -126,7 +138,7 @@ func (m Model) renderMainPanels() string {
 func (m Model) renderStoryList(width int) string {
 	var lines []string
 
-	title := styles.PanelTitleStyle.Render("STORIES")
+	title := styles.StoriesTitleStyle.Render("STORIES")
 	lines = append(lines, title)
 	lines = append(lines, styles.HorizontalLine(width-4))
 
@@ -208,7 +220,7 @@ func (m Model) getStoryStyle(s StoryView) lipgloss.Style {
 func (m Model) renderActivityPanel(width int) string {
 	var lines []string
 
-	title := styles.PanelTitleStyle.Render("CURRENT ACTIVITY")
+	title := styles.ActivityTitleStyle.Render("CURRENT ACTIVITY")
 	lines = append(lines, title)
 	lines = append(lines, styles.HorizontalLine(width-4))
 
@@ -295,7 +307,7 @@ func (m Model) renderActivityPanel(width int) string {
 func (m Model) renderLogPanel() string {
 	var lines []string
 
-	title := styles.PanelTitleStyle.Render("LOG OUTPUT")
+	title := styles.LogTitleStyle.Render("LOG OUTPUT")
 	scrollHint := styles.DimStyle.Render("[z/x scroll]")
 	header := lipgloss.JoinHorizontal(lipgloss.Center, title, strings.Repeat(" ", m.Width-40), scrollHint)
 	lines = append(lines, header)

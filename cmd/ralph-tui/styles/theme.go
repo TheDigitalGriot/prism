@@ -54,6 +54,11 @@ var (
 			Bold(true).
 			Foreground(Info)
 
+	// Per-section title styles using prism brand colors
+	StoriesTitleStyle  = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#3B82F6")) // Blue
+	ActivityTitleStyle = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#14B8A6")) // Teal
+	LogTitleStyle      = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#22C55E")) // Green
+
 	CompleteStyle = lipgloss.NewStyle().
 			Foreground(Success)
 
