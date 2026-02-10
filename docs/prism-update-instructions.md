@@ -1,0 +1,847 @@
+# Prism Plugin Update Instructions
+
+## Phase 1: Namespace Brainstorming & Renaming
+
+### 1.1 Decide on New Namespace
+**Task**: Choose between "warpspeed" or "refract" (or brainstorm alternatives)
+
+**Considerations**:
+- **warpspeed**: Emphasizes speed of iteration, moving through stories rapidly
+  - Pros: Dynamic, conveys rapid iteration, sci-fi aesthetic matches "Prism"
+  - Cons: Might imply rushed work
+  
+- **refract**: Aligns with "Prism" theme, breaking features into component stories
+  - Pros: Perfect thematic match (light through prism → refraction), implies decomposition
+  - Cons: Less immediately clear meaning
+
+**Alternative suggestions**:
+- **spectrum**: Light through prism creates spectrum (multi-story execution)
+- **cascade**: Stories cascading through in sequence
+- **iterate**: Direct and clear about what it does
+- **velocity**: Agile term for iteration speed
+
+**Decision Required**: Select one namespace for all "ralph" references
+
+### 1.2 Global Rename: ralph → [chosen_name]
+**Files to update**:
+
+1. **README.md**
+   - Section headers (line 52, 169)
+   - All command references (`/prism:prism-ralph`)
+   - Script references (`ralph.sh`)
+   - Directory references (`thoughts/shared/ralph/`)
+   - Text descriptions
+
+2. **Plugin structure**
+   ```
+   skills/prism/
+   ├── commands/
+   │   └── prism-ralph.md → prism-[new_name].md
+   ├── skills/
+   │   └── prism-ralph.md → prism-[new_name].md
+   └── agents/
+       └── (check for ralph references)
+   ```
+
+3. **Scripts**
+   ```
+   scripts/
+   └── ralph.sh → [new_name].sh
+   ```
+
+4. **Internal references**
+   - All skill/command YAML frontmatter
+   - All cross-references in documentation
+   - Variable names in scripts
+   - Function names
+
+**Search commands to run**:
+```bash
+# Find all files containing "ralph"
+grep -r "ralph" skills/prism/ --include="*.md" --include="*.py" --include="*.sh"
+grep -r "Ralph" skills/prism/ --include="*.md" --include="*.py" --include="*.sh"
+grep -r "RALPH" skills/prism/ --include="*.md" --include="*.py" --include="*.sh"
+```
+
+### 1.3 Rename ralph-tui → prism-tui
+**Rationale**: Better branding alignment, clearer that it's part of Prism ecosystem
+
+**Files to update**:
+- Tool name references
+- Installation instructions
+- Command invocations
+- Documentation
+
+---
+
+## Phase 2: Directory Structure Migration
+
+### 2.1 Create `/prism-dir-update` Command
+
+**Purpose**: Migrate existing Prism projects from old structure to new
+
+**Command specification**:
+```yaml
+---
+name: prism-dir-update
+description: Migrate existing Prism project to new directory structure
+triggers:
+  - patterns:
+    - "migrate prism structure"
+    - "update prism directories"
+---
+```
+
+**Migration logic**:
+1. Check if `thoughts/` directory exists
+2. If exists:
+   - Create `.prism/` directory
+   - Move `thoughts/shared/*` → `.prism/shared/`
+   - Move `thoughts/local/*` → `.prism/local/`
+   - Create `.prism/shared/ref/` and `.prism/shared/docs/`
+   - Create `.prism/local/ref/` and `.prism/local/docs/`
+3. If `ref/` exists at project root → move to `.prism/shared/ref/`
+4. If `docs/` exists at project root → move to `.prism/shared/docs/`
+5. Update `.gitignore` file
+6. Generate migration report
+
+**Error handling**:
+- Backup `thoughts/` to `thoughts.backup/` before migration
+- Verify all files copied successfully
+- Option to rollback if issues detected
+
+### 2.2 New Directory Structure
+
+**Target structure**:
+```
+project/
+├── .prism/
+│   ├── shared/                # Committed to repo
+│   │   ├── research/          # YYYY-MM-DD-topic.md
+│   │   ├── plans/             # YYYY-MM-DD-feature.md
+│   │   ├── validation/        # YYYY-MM-DD-report.md
+│   │   ├── handoffs/          # Session handoff docs
+│   │   ├── prs/               # PR descriptions
+│   │   ├── [new_name]/        # Story execution state
+│   │   │   ├── stories.json   # Task definitions
+│   │   │   └── progress.md    # Accumulated learnings
+│   │   ├── ref/               # 🆕 Reference materials
+│   │   └── docs/              # 🆕 Project documentation
+│   └── local/                 # Gitignored
+│       ├── ref/               # 🆕 Personal reference materials
+│       └── docs/              # 🆕 Personal notes
+└── .gitignore                 # Updated to ignore .prism/local/
+```
+
+### 2.3 Update init_thoughts.py → init_prism.py
+
+**Rename and update**:
+```python
+# skills/prism/scripts/init_prism.py
+
+STRUCTURE = {
+    '.prism': {
+        'shared': {
+            'research': {},
+            'plans': {},
+            'validation': {},
+            'handoffs': {},
+            'prs': {},
+            '[new_name]': {},  # Will contain stories.json, progress.md
+            'ref': {},         # NEW
+            'docs': {}         # NEW
+        },
+        'local': {
+            'ref': {},         # NEW
+            'docs': {}         # NEW
+        }
+    }
+}
+```
+
+**README template for each folder**:
+- `.prism/shared/ref/README.md`: "Shared reference materials for the team"
+- `.prism/shared/docs/README.md`: "Project-wide documentation"
+- `.prism/local/ref/README.md`: "Personal reference materials (not committed)"
+- `.prism/local/docs/README.md`: "Personal notes and scratch work (not committed)"
+
+### 2.4 Update .gitignore Recommendations
+
+**Document in README**:
+```gitignore
+# Prism - ignore local artifacts
+.prism/local/
+
+# Optional: if ref/ and docs/ contain sensitive info
+.prism/shared/ref/
+.prism/shared/docs/
+```
+
+**Note**: Provide clear guidance on when to gitignore shared vs local ref/docs
+
+---
+
+## Phase 3: TUI Dashboard Implementation
+
+### 3.1 Research Charm Libraries
+
+**Tasks**:
+1. Review [Charm's Gum](https://github.com/charmbracelet/gum) for inspiration
+2. Review [Charm's Bubble Tea](https://github.com/charmbracelet/bubbletea) for TUI framework
+3. Review [Charm's Lip Gloss](https://github.com/charmbracelet/lipgloss) for styling
+4. Document patterns from similar projects:
+   - [lazygit](https://github.com/jesseduffield/lazygit)
+   - [k9s](https://github.com/derailed/k9s)
+   - [lazydocker](https://github.com/jesseduffield/lazydocker)
+
+**Deliverable**: `docs/tui-design-research.md`
+
+### 3.2 Create Charm TUI Design Skill
+
+**Create**: `skills/prism/skills/charm-tui-design.md`
+
+**Skill contents should cover**:
+```markdown
+# Charm TUI Design Skill
+
+## Core Principles
+- Use Bubble Tea for state management
+- Use Lip Gloss for consistent styling
+- Implement keyboard navigation
+- Support mouse clicks
+- Responsive layouts
+
+## Standard Components
+1. List views with filtering
+2. Detail panels
+3. Status indicators
+4. Progress bars
+5. Interactive forms
+6. Help overlays
+
+## Color Scheme
+- Inherit from Prism branding
+- Support light/dark themes
+- Accessible contrast ratios
+
+## Layout Patterns
+- Multi-pane layouts
+- Tab navigation
+- Modal dialogs
+- Sidebar navigation
+
+## Example Implementations
+[Include code examples]
+```
+
+### 3.3 Design prism-tui Dashboard
+
+**Dashboard screens**:
+
+1. **Home Screen**
+   ```
+   ╭─────────────────── PRISM ────────────────────╮
+   │                                               │
+   │  [New Name] Workflow                         │
+   │  ────────────────────────────                 │
+   │  ▶ Start new iteration                        │
+   │  📊 View progress (3/10 stories)              │
+   │  📝 View current story                        │
+   │  🔍 Debug logs                                │
+   │  ⚙️  Configuration                             │
+   │                                               │
+   │  Recent Activity:                             │
+   │  ✓ Story 1: Auth foundation (2h ago)         │
+   │  ✓ Story 2: Login UI (1h ago)                │
+   │  ⏳ Story 3: Password reset (in progress)     │
+   │                                               │
+   ╰───────────────────────────────────────────────╯
+   ```
+
+2. **Story List View**
+   ```
+   ╭──────────────── Stories (3/10 complete) ─────╮
+   │                                               │
+   │  ✓ 1. Set up auth models         [complete]  │
+   │  ✓ 2. Create login UI            [complete]  │
+   │  ⏳ 3. Password reset flow        [current]   │
+   │  ⏸  4. Email verification        [pending]   │
+   │  ⏸  5. OAuth integration         [pending]   │
+   │  ⏸  6. Session management        [pending]   │
+   │  ⏸  7. Rate limiting             [pending]   │
+   │  ⏸  8. Audit logging             [pending]   │
+   │  ⏸  9. 2FA support               [pending]   │
+   │  ⏸  10. Admin dashboard          [pending]   │
+   │                                               │
+   │  [Enter] View details  [Space] Toggle        │
+   ╰───────────────────────────────────────────────╯
+   ```
+
+3. **Story Detail View**
+   ```
+   ╭───────────── Story 3: Password Reset ─────────╮
+   │                                               │
+   │  Status: In Progress                          │
+   │  Started: 2026-02-10 14:30                    │
+   │  Attempts: 2/3                                │
+   │                                               │
+   │  Description:                                 │
+   │  Implement password reset flow with email     │
+   │  verification and secure token generation.    │
+   │                                               │
+   │  Quality Gates:                               │
+   │  ✓ Type check passed                          │
+   │  ✓ Linting passed                             │
+   │  ⏳ Tests running...                           │
+   │                                               │
+   │  Files Changed: 4                             │
+   │  • src/auth/reset.ts                          │
+   │  • src/email/templates.ts                     │
+   │  • tests/auth/reset.test.ts                   │
+   │  • docs/api/auth.md                           │
+   │                                               │
+   ╰───────────────────────────────────────────────╯
+   ```
+
+4. **Live Progress View**
+   ```
+   ╭──────────── Iteration 3 in Progress ──────────╮
+   │                                               │
+   │  Current Story: Password Reset Flow           │
+   │                                               │
+   │  [████████████████░░░░░░░░] 67%               │
+   │                                               │
+   │  Phase: Implementation                        │
+   │  ├─ ✓ Research completed (2m 15s)             │
+   │  ├─ ✓ Plan approved (45s)                     │
+   │  ├─ ⏳ Implementing changes...                 │
+   │  │   ├─ ✓ Created reset.ts                    │
+   │  │   ├─ ✓ Updated email templates             │
+   │  │   ├─ ⏳ Writing tests (45%)                 │
+   │  │   └─ ⏸  Update documentation               │
+   │  ├─ ⏸  Quality gates                          │
+   │  └─ ⏸  Commit & continue                      │
+   │                                               │
+   │  Elapsed: 4m 23s                              │
+   │  ETA: ~2m remaining                           │
+   │                                               │
+   ╰───────────────────────────────────────────────╯
+   ```
+
+5. **Debug View**
+   ```
+   ╭────────────────── Debug Logs ─────────────────╮
+   │                                               │
+   │  [Filter: errors only ▼] [Clear] [Export]    │
+   │                                               │
+   │  14:32:15 ERROR  Type error in reset.ts:42    │
+   │  14:32:16 INFO   Running debug agents...      │
+   │  14:32:18 WARN   Dependency version mismatch  │
+   │  14:32:20 INFO   Fix applied, retrying...     │
+   │  14:32:25 SUCCESS Tests passed!               │
+   │                                               │
+   │  [↑/↓] Navigate [Enter] Details [/] Filter   │
+   ╰───────────────────────────────────────────────╯
+   ```
+
+**Implementation approach**:
+- Use Go with Bubble Tea framework
+- Support both `prism-tui` standalone and integrated into workflow
+- Real-time updates by monitoring `.prism/[new_name]/` files
+- Keyboard shortcuts for all actions
+- Mouse support optional but recommended
+
+### 3.4 Integrate TUI into Workflow
+
+**Update workflow skill to include**:
+```markdown
+## Using the TUI Dashboard
+
+Launch the interactive dashboard:
+```bash
+prism-tui
+```
+
+Or monitor a specific workflow:
+```bash
+prism-tui --follow
+```
+
+Key commands:
+- `?` - Show help
+- `q` - Quit
+- `↑/↓` - Navigate
+- `Enter` - Select/View details
+- `Space` - Toggle selection
+- `r` - Refresh
+- `f` - Filter
+```
+
+---
+
+## Phase 4: Visualization & Documentation
+
+### 4.1 Check Better-Mermaid Skill Implementation
+
+**Audit**:
+1. Check if `skills/better-mermaid/` exists
+2. If yes, verify it includes:
+   - Enhanced Mermaid diagram generation
+   - Prism-specific diagram templates
+   - Color schemes matching Prism brand
+3. If no, create it:
+
+**Create**: `skills/prism/commands/generate-diagram.md`
+
+**Should support**:
+- Workflow diagrams (Research → Plan → Implement → Validate)
+- Story dependency graphs
+- Agent interaction diagrams
+- State machine diagrams for [new_name] execution
+
+**Example templates**:
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#6366f1'}}}%%
+graph LR
+    A[Research] --> B[Plan]
+    B --> C[Implement]
+    C --> D[Validate]
+    D -->|Issues| B
+    D -->|Success| E[Complete]
+```
+
+### 4.2 Terminal Recording with VHS/Asciinema
+
+**Setup**:
+1. Install VHS (Charm's terminal recorder):
+   ```bash
+   brew install vhs
+   # or
+   go install github.com/charmbracelet/vhs@latest
+   ```
+
+2. Create recording scripts in `demos/`:
+   ```
+   demos/
+   ├── 01-quick-start.tape
+   ├── 02-story-execution.tape
+   ├── 03-tui-demo.tape
+   ├── 04-debug-workflow.tape
+   └── 05-full-workflow.tape
+   ```
+
+**VHS tape example** (`demos/01-quick-start.tape`):
+```tape
+# Quick Start Demo
+Output demos/01-quick-start.gif
+
+Set Shell "bash"
+Set FontSize 16
+Set Width 1200
+Set Height 800
+Set Theme "Catppuccin Mocha"
+
+Type "# Initialize Prism project"
+Sleep 500ms
+Enter
+Sleep 500ms
+
+Type "python skills/prism/scripts/init_prism.py"
+Sleep 500ms
+Enter
+Sleep 2s
+
+Type "# View generated structure"
+Sleep 500ms
+Enter
+Sleep 500ms
+
+Type "tree .prism"
+Sleep 500ms
+Enter
+Sleep 3s
+
+Type "# Start TUI dashboard"
+Sleep 500ms
+Enter
+Sleep 500ms
+
+Type "prism-tui"
+Sleep 500ms
+Enter
+Sleep 5s
+```
+
+**Record demos for**:
+- Project initialization
+- Creating and decomposing a plan
+- Running [new_name] execution
+- Using the TUI dashboard
+- Debug workflow
+- Full feature implementation
+
+### 4.3 Update README to Professional Standard
+
+**Sections to enhance**:
+
+1. **Hero section** (top of README)
+   ```markdown
+   <div align="center">
+   
+   # 🌈 Prism
+   
+   **Structured AI-driven development workflow for Claude Code**
+   
+   Transform complex features into focused, quality iterations through systematic research, planning, and validation.
+   
+   [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+   [![Version](https://img.shields.io/badge/version-1.0.0-green.svg)]()
+   ![Claude Code](https://img.shields.io/badge/Claude_Code-Compatible-purple.svg)
+   
+   [Quick Start](#quick-start) • [Documentation](#documentation) • [Examples](#examples)
+   
+   ![Prism Demo](demos/header-demo.gif)
+   
+   </div>
+   ```
+
+2. **Features showcase with GIFs**
+   ```markdown
+   ## ✨ Features
+   
+   ### 🚀 [New Name] Autonomous Execution
+   ![Story Execution Demo](demos/story-execution.gif)
+   
+   Execute complex features through atomic stories with automatic quality gates...
+   
+   ### 📊 Interactive TUI Dashboard
+   ![TUI Demo](demos/tui-demo.gif)
+   
+   Monitor progress, debug issues, and manage workflows through an intuitive terminal interface...
+   ```
+
+3. **Quick Start with clear steps**
+   ```markdown
+   ## 🚀 Quick Start
+   
+   ```bash
+   # 1. Install from marketplace
+   /plugin marketplace add TheDigitalGriot/prism-plugin
+   /plugin install prism@prism-marketplace
+   
+   # 2. Initialize your project
+   python skills/prism/scripts/init_prism.py
+   
+   # 3. Launch the dashboard
+   prism-tui
+   ```
+   
+   Or jump right in:
+   ```bash
+   # Tell Claude what you want to build
+   "Help me implement user authentication with OAuth"
+   ```
+   ```
+
+4. **Architecture diagrams**
+   - Add enhanced Mermaid diagrams with Prism color scheme
+   - Include agent interaction diagram
+   - Add state machine for [new_name] execution
+
+5. **Troubleshooting section**
+   ```markdown
+   ## 🔧 Troubleshooting
+   
+   ### Quality gates failing?
+   Use the debug workflow:
+   ```bash
+   /prism:prism-debug
+   ```
+   
+   ### Stories not executing?
+   Check configuration:
+   ```bash
+   prism-tui config
+   ```
+   ```
+
+6. **Contributing guidelines**
+   ```markdown
+   ## 🤝 Contributing
+   
+   We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+   
+   ### Development Setup
+   ```bash
+   git clone https://github.com/TheDigitalGriot/prism-plugin
+   cd prism-plugin
+   claude --plugin-dir .
+   ```
+   ```
+
+7. **FAQ section**
+   ```markdown
+   ## ❓ FAQ
+   
+   <details>
+   <summary>What's the difference between manual and [new_name] execution?</summary>
+   
+   Manual execution gives you control over each step, while [new_name] autonomously executes multiple stories with quality gates between each.
+   </details>
+   
+   <details>
+   <summary>How do I customize the TUI theme?</summary>
+   
+   Edit `~/.prism/config.toml` to set your preferred color scheme.
+   </details>
+   ```
+
+---
+
+## Phase 5: Advanced Features
+
+### 5.1 Claude Teams SDK Integration
+
+**Research tasks**:
+1. Review Claude Teams SDK documentation
+2. Identify integration points for Prism
+3. Design shared workspace features
+
+**Potential features**:
+- Shared story execution state across team
+- Collaborative plan reviews
+- Centralized quality gate metrics
+- Team dashboard view
+- Shared learning repository
+
+**Implementation plan**:
+1. Create `skills/prism/integrations/teams-sdk.md`
+2. Add team-specific commands:
+   - `/prism:team-sync` - Sync state with team
+   - `/prism:team-review` - Request plan review
+   - `/prism:team-metrics` - View team metrics
+3. Update `.prism/shared/` to support team collaboration
+4. Add team-specific sections to TUI dashboard
+
+**Document in README**:
+```markdown
+## 👥 Team Collaboration (Teams SDK)
+
+Prism integrates with Claude Teams for collaborative development:
+
+```bash
+# Sync your progress with the team
+/prism:team-sync
+
+# Request plan review from team
+/prism:team-review thoughts/shared/plans/2026-02-10-auth.md
+
+# View team metrics
+/prism:team-metrics
+```
+```
+
+### 5.2 Enhanced Header Design for Animated Logo
+
+**Current issue**: Logo might not display at proper resolution
+
+**Tasks**:
+1. Create high-resolution Prism logo (SVG preferred)
+2. Generate animated version (GIF or APNG)
+3. Ensure dimensions support README rendering:
+   - Recommended: 1200x400px minimum
+   - Format: PNG or GIF
+   - File size: <500KB for fast loading
+
+4. Create variants:
+   ```
+   assets/
+   ├── logo/
+   │   ├── prism-logo.svg          # Vector source
+   │   ├── prism-logo-1200.png     # High-res static
+   │   ├── prism-logo-animated.gif # Animated version
+   │   ├── prism-logo-dark.png     # Dark mode variant
+   │   └── prism-logo-light.png    # Light mode variant
+   ```
+
+5. Update README header to use proper size:
+   ```markdown
+   <div align="center">
+   
+   <picture>
+     <source media="(prefers-color-scheme: dark)" srcset="assets/logo/prism-logo-dark.png">
+     <source media="(prefers-color-scheme: light)" srcset="assets/logo/prism-logo-light.png">
+     <img alt="Prism Logo" src="assets/logo/prism-logo-1200.png" width="600">
+   </picture>
+   
+   </div>
+   ```
+
+**Animation ideas**:
+- Rainbow light dispersing through prism
+- Story cards flowing through pipeline
+- Phase transitions (Research → Plan → Implement → Validate)
+- Create with VHS or dedicated animation tool
+
+---
+
+## Phase 6: Implementation Checklist
+
+### Pre-Implementation
+- [ ] Decide on final namespace name (warpspeed/refract/other)
+- [ ] Review and approve all design decisions
+- [ ] Back up current plugin state
+- [ ] Create feature branch: `feat/prism-rebrand`
+
+### Namespace Migration
+- [ ] Global find/replace "ralph" → "[new_name]"
+- [ ] Rename `ralph.sh` → `[new_name].sh`
+- [ ] Update all command files
+- [ ] Update all skill files
+- [ ] Update README references
+- [ ] Test all commands still work
+
+### Directory Structure
+- [ ] Create `init_prism.py` script
+- [ ] Create `/prism-dir-update` command
+- [ ] Test migration on sample project
+- [ ] Update `.gitignore` templates
+- [ ] Document new structure in README
+
+### TUI Dashboard
+- [ ] Research Charm libraries (Bubble Tea, Lip Gloss)
+- [ ] Create Charm TUI design skill
+- [ ] Implement dashboard screens:
+  - [ ] Home screen
+  - [ ] Story list view
+  - [ ] Story detail view
+  - [ ] Live progress view
+  - [ ] Debug log view
+- [ ] Add keyboard navigation
+- [ ] Add mouse support
+- [ ] Integrate with workflow
+- [ ] Test on Mac/Linux/Windows
+
+### Visualization
+- [ ] Audit/create better-mermaid skill
+- [ ] Create diagram templates
+- [ ] Install VHS/recording tool
+- [ ] Create 5 demo recordings
+- [ ] Generate all demo GIFs
+- [ ] Test GIF rendering in GitHub
+
+### Documentation
+- [ ] Polish README with new structure
+- [ ] Add badges and shields
+- [ ] Add GIF demos to README
+- [ ] Create CONTRIBUTING.md
+- [ ] Add FAQ section
+- [ ] Add troubleshooting guide
+- [ ] Create high-res logo variants
+- [ ] Add animated header
+
+### Advanced Features
+- [ ] Research Claude Teams SDK
+- [ ] Design team collaboration features
+- [ ] Create teams integration plan
+- [ ] Document teams features
+
+### Testing & Validation
+- [ ] Test fresh install
+- [ ] Test migration from old structure
+- [ ] Test all commands
+- [ ] Test TUI dashboard
+- [ ] Test on different terminals
+- [ ] Review all documentation
+- [ ] Get team feedback
+
+### Release
+- [ ] Update version number
+- [ ] Create changelog
+- [ ] Tag release
+- [ ] Update marketplace listing
+- [ ] Announce update
+
+---
+
+## Appendix: File Reference
+
+### Files to Create
+```
+skills/prism/
+├── commands/
+│   ├── prism-[new_name].md (renamed from prism-ralph.md)
+│   ├── prism-dir-update.md (NEW)
+│   └── generate-diagram.md (NEW or verify exists)
+├── skills/
+│   ├── prism-[new_name].md (renamed from prism-ralph.md)
+│   └── charm-tui-design.md (NEW)
+├── scripts/
+│   ├── init_prism.py (renamed from init_thoughts.py)
+│   └── [new_name].sh (renamed from ralph.sh)
+├── integrations/
+│   └── teams-sdk.md (NEW)
+└── docs/
+    └── tui-design-research.md (NEW)
+
+demos/
+├── 01-quick-start.tape
+├── 02-story-execution.tape
+├── 03-tui-demo.tape
+├── 04-debug-workflow.tape
+├── 05-full-workflow.tape
+└── *.gif (generated outputs)
+
+assets/
+└── logo/
+    ├── prism-logo.svg
+    ├── prism-logo-1200.png
+    ├── prism-logo-animated.gif
+    ├── prism-logo-dark.png
+    └── prism-logo-light.png
+
+CONTRIBUTING.md (NEW)
+```
+
+### Search & Replace Patterns
+
+```bash
+# Case-sensitive ralph → [new_name]
+ralph → [new_name]
+Ralph → [New_name]
+RALPH → [NEW_NAME]
+
+# File renames
+ralph.sh → [new_name].sh
+prism-ralph.md → prism-[new_name].md
+ralph/ → [new_name]/
+
+# Directory renames
+thoughts/ → .prism/
+thoughts/shared/ → .prism/shared/
+thoughts/local/ → .prism/local/
+```
+
+---
+
+## Timeline Estimate
+
+| Phase | Estimated Time | Priority |
+|-------|---------------|----------|
+| 1. Namespace decision & rename | 2-4 hours | HIGH |
+| 2. Directory structure migration | 4-6 hours | HIGH |
+| 3. TUI dashboard implementation | 16-24 hours | MEDIUM |
+| 4. Visualization & demos | 6-8 hours | MEDIUM |
+| 5. Documentation polish | 4-6 hours | HIGH |
+| 6. Teams SDK research | 4-6 hours | LOW |
+| 7. Testing & validation | 6-8 hours | HIGH |
+
+**Total: 42-62 hours** (roughly 1-2 weeks for one developer)
+
+**Suggested order**:
+1. Namespace decision (required for everything else)
+2. Global rename (get it over with)
+3. Directory migration (foundation work)
+4. Documentation polish (can iterate)
+5. TUI dashboard (big feature, can be separate release)
+6. Teams SDK (future enhancement)
