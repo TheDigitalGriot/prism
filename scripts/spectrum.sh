@@ -34,7 +34,33 @@ NC='\033[0m' # No Color
 # Use CURRENT WORKING DIRECTORY (where you run the command from)
 PROJECT_DIR="$(pwd)"
 STORIES_FILE="${1:-$PROJECT_DIR/.prism/stories/stories.json}"
-PROGRESS_FILE="$PROJECT_DIR/.prism/shared/spectrum/progress.md"
+
+# Derive progress path from stories path:
+#   .prism/stories/stories.json           -> .prism/shared/spectrum/progress.md
+#   .prism/stories/<epic>/stories.json    -> .prism/shared/spectrum/<epic>/progress.md
+derive_progress_path() {
+    local stories_path="$1"
+    local stories_dir
+    stories_dir="$(dirname "$stories_path")"
+    local dir_name
+    dir_name="$(basename "$stories_dir")"
+    local parent_dir
+    parent_dir="$(dirname "$stories_dir")"
+    local parent_name
+    parent_name="$(basename "$parent_dir")"
+
+    if [[ "$parent_name" == "stories" ]]; then
+        # Epic-scoped: .prism/stories/<epic>/stories.json
+        local prism_dir
+        prism_dir="$(dirname "$parent_dir")"
+        echo "$prism_dir/shared/spectrum/$dir_name/progress.md"
+    else
+        # Legacy flat: .prism/stories/stories.json
+        echo "$parent_dir/shared/spectrum/progress.md"
+    fi
+}
+
+PROGRESS_FILE="$(derive_progress_path "$STORIES_FILE")"
 MAX_ITERATIONS="${SPECTRUM_MAX_ITERATIONS:-50}"
 VERBOSE="${SPECTRUM_VERBOSE:-false}"
 PAUSE="${SPECTRUM_PAUSE:-2}"
@@ -131,7 +157,7 @@ run_iteration() {
     local exit_code=0
 
     # Build the prompt for Claude
-    local prompt="Execute the next story from $STORIES_FILE using the /prism-spectrum workflow."
+    local prompt="Execute the next story from $STORIES_FILE using the /prism-spectrum workflow. Progress file: $PROGRESS_FILE"
 
     # Run Claude with prism-spectrum skill from the project directory
     # Using --print to capture output, --dangerously-skip-permissions for autonomous operation

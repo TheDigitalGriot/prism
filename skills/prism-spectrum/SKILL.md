@@ -18,11 +18,17 @@ Execute a single story from the backlog with quality verification and atomic com
 
 ## State Files
 
+The stories path and progress path are provided in the prompt. Use the exact paths given.
+
 | File | Purpose |
 |------|---------|
-| `.prism/stories/stories.json` | Story definitions and status |
-| `.prism/shared/spectrum/progress.md` | Accumulated learnings |
+| `<stories-path>` | Story definitions and status (from prompt: "Execute the next story from PATH") |
+| `<progress-path>` | Accumulated learnings (from prompt: "Progress file: PATH") |
 | `CLAUDE.md` | Project patterns and context (if exists) |
+
+**Path structure:** Stories and progress support both flat and epic-scoped layouts:
+- Flat: `.prism/stories/stories.json` + `.prism/shared/spectrum/progress.md`
+- Epic: `.prism/stories/<epic>/stories.json` + `.prism/shared/spectrum/<epic>/progress.md`
 
 ## Workflow
 
@@ -31,8 +37,8 @@ Execute a single story from the backlog with quality verification and atomic com
 Read ALL state files completely before doing anything:
 
 ```
-1. Read .prism/stories/stories.json
-2. Read .prism/shared/spectrum/progress.md
+1. Read the stories file at the path from the prompt
+2. Read the progress file at the path from the prompt (create if it doesn't exist)
 3. Read CLAUDE.md (if exists in project root)
 ```
 
@@ -171,11 +177,11 @@ If new general patterns were discovered, add them to the "Codebase Patterns" sec
 
 ### 9. Signal Continuation
 
-**CRITICAL**: Re-read stories.json and explicitly count remaining stories before signaling.
+**CRITICAL**: Re-read the stories file and explicitly count remaining stories before signaling.
 
 ```javascript
-// Re-parse stories.json to get accurate count
-const stories = JSON.parse(readFile('.prism/stories/stories.json')).stories;
+// Re-parse the stories file (use the same path from the prompt) to get accurate count
+const stories = JSON.parse(readFile('<stories-path>')).stories;
 const remaining = stories.filter(s => s.status !== 'complete').length;
 const total = stories.length;
 const completed = total - remaining;
