@@ -160,3 +160,24 @@ type DemoCompleteStoryMsg struct {
 type DemoActivityMsg struct {
 	ActivityIndex int
 }
+
+// === Permission / Dialog Messages ===
+
+// OpenDialogMsg requests opening a dialog (sent by plugins)
+type OpenDialogMsg struct {
+	Dialog interface{} // dialog.Dialog interface (imported in app package)
+}
+
+// PermissionRequestMsg requests user permission to execute a tool
+type PermissionRequestMsg struct {
+	ToolName    string
+	Description string
+	Preview     string // Command text, file diff, etc.
+}
+
+// PermissionResponseMsg carries the user's permission decision
+type PermissionResponseMsg struct {
+	Action       string // "allow", "allow_session", "deny"
+	ToolName     string
+	AllowSession bool // If true, remember this permission for the session
+}

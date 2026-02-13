@@ -14,6 +14,7 @@ import (
 	"github.com/charmbracelet/harmonica"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/prism-plugin/prism-tui/claude"
+	"github.com/prism-plugin/prism-tui/dialog"
 	"github.com/prism-plugin/prism-tui/domain"
 	"github.com/prism-plugin/prism-tui/plugin"
 	"github.com/prism-plugin/prism-tui/prism"
@@ -573,14 +574,14 @@ func (p *SpectrumPlugin) KeyHints() []plugin.KeyHint {
 		}
 	case StateRunning:
 		return []plugin.KeyHint{
-			{Key: "p", Description: "pause"},
+			{Key: "space", Description: "pause"},
 			{Key: "/", Description: "skip"},
 			{Key: "a/s", Description: "page stories"},
 			{Key: "z/x", Description: "page logs"},
 		}
 	case StatePaused:
 		return []plugin.KeyHint{
-			{Key: "p", Description: "resume"},
+			{Key: "space", Description: "resume"},
 		}
 	case StateComplete, StateMaxIterations, StateError:
 		return []plugin.KeyHint{
@@ -751,13 +752,26 @@ func (p *SpectrumPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd)
 	switch p.state {
 	case StateIdle:
 		switch key {
-		case "enter", " ":
+		case "enter":
 			return p, func() tea.Msg { return StartExecutionMsg{} }
+		case "p":
+			// Demo: Open permission dialog
+			// TODO: In production, this would be triggered by parsing Claude output
+			// when a tool execution is requested
+			demoDialog := dialog.NewPermission(
+				"demo-permission",
+				"Bash",
+				"Claude wants to run a shell command",
+				"git commit -m \"$(cat <<'EOF'\nImplement user authentication\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n)\"",
+			).WithPreviewLabel("Command")
+			return p, func() tea.Msg {
+				return OpenDialogMsg{Dialog: demoDialog}
+			}
 		}
 
 	case StateRunning:
 		switch key {
-		case "p":
+		case " ":
 			return p, func() tea.Msg { return PauseToggleMsg{} }
 		case "/":
 			p.addLog(LogWarning, "Skip requested - will skip after current story")
@@ -766,7 +780,7 @@ func (p *SpectrumPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd)
 
 	case StatePaused:
 		switch key {
-		case "p", "enter", " ":
+		case "enter", " ":
 			return p, func() tea.Msg { return PauseToggleMsg{} }
 		}
 

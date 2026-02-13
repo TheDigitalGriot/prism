@@ -3,6 +3,7 @@ package app
 import (
 	"time"
 
+	"github.com/prism-plugin/prism-tui/dialog"
 	"github.com/prism-plugin/prism-tui/modal"
 	"github.com/prism-plugin/prism-tui/plugin"
 	"github.com/prism-plugin/prism-tui/prism"
@@ -97,9 +98,10 @@ type Model struct {
 	Width       int
 	Height      int
 	ShowHelp    bool
-	ActiveModal *modal.Modal // Currently active modal dialog (nil if none)
-	Ready       bool         // True once initial setup is complete
-	SplashDone  bool         // True once splash screen has completed
+	ActiveModal *modal.Modal   // Currently active modal dialog (nil if none)
+	Dialogs     *dialog.Overlay // Stack of permission/confirmation dialogs
+	Ready       bool            // True once initial setup is complete
+	SplashDone  bool            // True once splash screen has completed
 
 	// Prism framebuffer animation (shared across all views)
 	Prism *prism.Renderer
@@ -171,6 +173,7 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 		MaxIterations: maxIter,
 		Pause:         pause,
 		Prism:         prismRenderer,
+		Dialogs:       dialog.NewOverlay(),
 		Anim: AnimState{
 			RayLengths: [4]float64{6, 5, 4, 3},
 			RayTargets: [4]float64{6, 7, 5, 8},

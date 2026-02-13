@@ -275,7 +275,7 @@ cd cmd/prism-tui && go run . --demo  # Press ? to open help modal
 | `cmd/prism-tui/app/messages.go` | Add `PermissionRequestMsg`, `PermissionResponseMsg` |
 
 **Steps**:
-1. [ ] Create `dialog/dialog.go`:
+1. [x] Create `dialog/dialog.go`:
    ```go
    type Dialog interface {
        ID() string
@@ -287,13 +287,13 @@ cd cmd/prism-tui && go run . --demo  # Press ? to open help modal
    func (o *Overlay) CloseFront()
    func (o *Overlay) HasDialogs() bool
    ```
-2. [ ] Create `dialog/confirm.go`: simple confirmation with title, message, two buttons
-3. [ ] Create `dialog/permissions.go`: tool name, preview content (bash command / file diff), 3 buttons (Allow / Allow Session / Deny), viewport for scrollable content
-4. [ ] Add `PermissionRequestMsg` and `PermissionResponseMsg` to `messages.go`
-5. [ ] Add `Dialogs *dialog.Overlay` to Model, init in `NewModel()`
-6. [ ] Update input routing in `update.go`: dialogs → modal → active plugin
-7. [ ] Render dialog overlay on top of everything in `view.go`
-8. [ ] Wire permission dialog into Spectrum plugin: when Claude requests tool execution, open permission dialog (future: integrate with Claude runner output parsing)
+2. [x] Create `dialog/confirm.go`: simple confirmation with title, message, two buttons
+3. [x] Create `dialog/permissions.go`: tool name, preview content (bash command / file diff), 3 buttons (Allow / Allow Session / Deny), viewport for scrollable content
+4. [x] Add `PermissionRequestMsg` and `PermissionResponseMsg` to `messages.go`
+5. [x] Add `Dialogs *dialog.Overlay` to Model, init in `NewModel()`
+6. [x] Update input routing in `update.go`: dialogs → modal → active plugin
+7. [x] Render dialog overlay on top of everything in `view.go`
+8. [x] Wire permission dialog into Spectrum plugin: when Claude requests tool execution, open permission dialog (future: integrate with Claude runner output parsing)
 
 **Verification**:
 ```bash
@@ -302,7 +302,7 @@ cd cmd/prism-tui && go test ./...
 # Manual: demo mode shows confirm dialog on destructive actions
 ```
 
-**Checkpoint**: ⬜ Phase 5 complete — Dialog overlay and permission workflow functional
+**Checkpoint**: ✅ Phase 5 complete — Dialog overlay and permission workflow functional
 
 ---
 
@@ -596,7 +596,7 @@ Phase 1 (Shell) ──┬──▶ Phase 2 (Splash)
 | Phase 2: Splash Screen | ✅ Complete | 2026-02-12 | 2026-02-12 | Splash screen with animated prism, auto-transition after 2s or keypress |
 | Phase 3: Plugin Architecture | ✅ Complete | 2026-02-12 | 2026-02-12 | Plugin interface, Registry, 4 plugins (Home, Research, Plans, Spectrum), Model slimmed from ~60 to ~15 fields |
 | Phase 4: Modal System | ✅ Complete | 2026-02-12 | 2026-02-12 | Modal system with Section interface, Input/Textarea/List sections, layout engine, builder API, help modal converted |
-| Phase 5: Dialog & Permissions | ⬜ Not started | | | |
+| Phase 5: Dialog & Permissions | ✅ Complete | 2026-02-12 | 2026-02-12 | Dialog overlay with stack, ConfirmDialog, PermissionDialog (3-button approval), input routing precedence, demo key binding (P) in Spectrum |
 | Phase 6: Files & Git | ⬜ Not started | | | |
 | Phase 7: Agent & Chat | ⬜ Not started | | | |
 | Phase 8: Monitor & Workspaces | ⬜ Not started | | | |

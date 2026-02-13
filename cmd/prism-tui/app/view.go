@@ -37,7 +37,13 @@ func (m Model) View() string {
 	// If modal is active, composite it on top of dimmed background
 	if m.ActiveModal != nil {
 		modalContent := m.ActiveModal.Render(m.Width, m.Height)
-		return overlayModal(base, modalContent, m.Width, m.Height)
+		base = overlayModal(base, modalContent, m.Width, m.Height)
+	}
+
+	// If dialog is active, composite it on top of everything (highest z-order)
+	if m.Dialogs.HasDialogs() {
+		dialogContent := m.Dialogs.View(m.Width, m.Height)
+		base = overlayModal(base, dialogContent, m.Width, m.Height)
 	}
 
 	return base

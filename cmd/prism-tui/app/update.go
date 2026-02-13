@@ -6,6 +6,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/prism-plugin/prism-tui/dialog"
 	"github.com/prism-plugin/prism-tui/modal"
 	"github.com/prism-plugin/prism-tui/plugin"
 )
@@ -132,6 +133,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.ActiveView = msg.View
 		return m, nil
 
+	case OpenDialogMsg:
+		// Plugin requested opening a dialog
+		if d, ok := msg.Dialog.(dialog.Dialog); ok {
+			m.Dialogs.Open(d)
+		}
+		return m, nil
+
 	default:
 		// Broadcast all other messages to plugins (they handle their own state)
 		broadcastCmds := m.Registry.Broadcast(msg)
@@ -150,12 +158,35 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
-	// Allow q/ctrl+c even when modal is active
+	// Allow q/ctrl+c even when dialog or modal is active
 	if msg.String() == "q" || msg.String() == "ctrl+c" {
 		return m, tea.Quit
 	}
 
-	// If modal is active, route all input to modal first
+	// If dialog is active, route all input to dialog first (highest precedence)
+	if m.Dialogs.HasDialogs() {
+		action, cmd := m.Dialogs.Update(msg)
+
+		// Handle dialog actions
+		switch action {
+		case dialog.ActionCancel, dialog.ActionDeny:
+			// Close dialog and deny permission
+			m.Dialogs.CloseFront()
+			return m, cmd
+
+		case dialog.ActionConfirm, dialog.ActionAllow, dialog.ActionAllowSession:
+			// Close dialog and process action
+			m.Dialogs.CloseFront()
+			// TODO: In future, broadcast PermissionResponseMsg to plugins
+			return m, cmd
+
+		default:
+			// Dialog is still processing input (no action yet)
+			return m, cmd
+		}
+	}
+
+	// If modal is active, route all input to modal next
 	if m.ActiveModal != nil {
 		action, cmd := m.ActiveModal.HandleKey(msg)
 
