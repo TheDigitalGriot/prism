@@ -38,24 +38,19 @@ func (m Model) renderSpectrumView() string {
 }
 
 func (m Model) renderHeader() string {
-	title := styles.TitleStyle.Render("PRISM TUI")
-
+	// Spectrum-specific header info (PRISM TUI title now in app shell)
 	iterInfo := fmt.Sprintf("Iteration: %d/%d", m.Iteration, m.MaxIterations)
-	helpHint := styles.DimStyle.Render("[?] help")
 
 	// Calculate spacing
-	rightContent := iterInfo + "  " + helpHint
-	leftWidth := lipgloss.Width(title)
-	rightWidth := lipgloss.Width(rightContent)
-	spacerWidth := m.Width - leftWidth - rightWidth - 4
+	spacerWidth := m.Width - lipgloss.Width(iterInfo) - 4
 	if spacerWidth < 1 {
 		spacerWidth = 1
 	}
 	spacer := strings.Repeat(" ", spacerWidth)
 
-	header := lipgloss.JoinHorizontal(lipgloss.Center, title, spacer, rightContent)
+	header := lipgloss.JoinHorizontal(lipgloss.Center, iterInfo, spacer)
 
-	return styles.HeaderStyle.Width(m.Width).Render(header)
+	return styles.PanelStyle.Width(m.Width - 2).Render(header)
 }
 
 func (m Model) renderProgressBar() string {

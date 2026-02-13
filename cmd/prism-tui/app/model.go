@@ -102,7 +102,8 @@ type AnimState struct {
 type Model struct {
 	// View system
 	ActiveView ActiveView
-	PrismDir   string // absolute path to .prism/ directory
+	TabOrder   []ActiveView // Ordered list of tabs to display
+	PrismDir   string       // absolute path to .prism/ directory
 
 	// Per-view state
 	Home     HomeState
@@ -153,10 +154,11 @@ type Model struct {
 	LogsPerPage    int
 
 	// UI state
-	Width    int
-	Height   int
-	ShowHelp bool
-	Ready    bool // True once initial setup is complete
+	Width      int
+	Height     int
+	ShowHelp   bool
+	Ready      bool // True once initial setup is complete
+	SplashDone bool // True once splash screen has completed
 
 	// Timing
 	StartTime      time.Time
@@ -217,14 +219,12 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 	logPag.ActiveDot = "●"
 	logPag.InactiveDot = "○"
 
-	// Determine initial view
-	initialView := ViewSpectrum
-	if storiesPath == "" && prismDir != "" {
-		initialView = ViewHome
-	}
+	// Start with splash screen on first launch
+	initialView := ViewSplash
 
 	return Model{
 		ActiveView:         initialView,
+		TabOrder:           []ActiveView{ViewHome, ViewResearch, ViewPlans, ViewSpectrum},
 		PrismDir:           prismDir,
 		Home:               HomeState{MenuItems: []string{"Research", "Plans", "Spectrum"}},
 		StoriesPath:        storiesPath,
@@ -266,6 +266,8 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 // NewDemoModel creates a model with fake stories for demo/testing
 func NewDemoModel(prismStyle string) Model {
 	m := NewModel("demo", "", "", 50, 2, prismStyle)
+	// Demo model already has TabOrder initialized via NewModel
+	m.ActiveView = ViewSplash // Start with splash screen in demo mode
 	m.PlanName = "Prism Animation Demo"
 	m.Stories = []StoryView{
 		// Page 1 (completed stories)

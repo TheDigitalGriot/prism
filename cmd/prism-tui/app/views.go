@@ -10,14 +10,24 @@ import (
 type ActiveView int
 
 const (
-	ViewHome     ActiveView = iota
+	ViewSplash     ActiveView = iota
+	ViewHome
 	ViewResearch
 	ViewPlans
 	ViewSpectrum
+	ViewFiles
+	ViewGit
+	ViewAgent
+	ViewChat
+	ViewMonitor
+	ViewWorkspaces
+	ViewOnboarding
 )
 
 func (v ActiveView) String() string {
 	switch v {
+	case ViewSplash:
+		return "SPLASH"
 	case ViewHome:
 		return "HOME"
 	case ViewResearch:
@@ -26,6 +36,20 @@ func (v ActiveView) String() string {
 		return "PLANS"
 	case ViewSpectrum:
 		return "SPECTRUM"
+	case ViewFiles:
+		return "FILES"
+	case ViewGit:
+		return "GIT"
+	case ViewAgent:
+		return "AGENT"
+	case ViewChat:
+		return "CHAT"
+	case ViewMonitor:
+		return "MONITOR"
+	case ViewWorkspaces:
+		return "WORKSPACES"
+	case ViewOnboarding:
+		return "ONBOARDING"
 	default:
 		return "UNKNOWN"
 	}

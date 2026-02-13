@@ -16,18 +16,28 @@ func (m Model) View() string {
 		return "\n  Initializing..."
 	}
 
+	// Splash screen renders fullscreen without app shell
+	if m.ActiveView == ViewSplash {
+		return m.renderSplashView()
+	}
+
+	// Get content from active view
+	var content string
 	switch m.ActiveView {
 	case ViewHome:
-		return m.renderHomeView()
+		content = m.renderHomeView()
 	case ViewResearch:
-		return m.renderResearchView()
+		content = m.renderResearchView()
 	case ViewPlans:
-		return m.renderPlansView()
+		content = m.renderPlansView()
 	case ViewSpectrum:
-		return m.renderSpectrumView()
+		content = m.renderSpectrumView()
 	default:
-		return m.renderHomeView()
+		content = m.renderHomeView()
 	}
+
+	// Wrap content in app shell (header + tab bar + content + footer)
+	return m.renderAppShell(content)
 }
 
 // === Shared Helpers ===

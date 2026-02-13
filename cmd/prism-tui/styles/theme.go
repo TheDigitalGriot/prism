@@ -91,6 +91,29 @@ var (
 
 	ProgressBarStyle = lipgloss.NewStyle().
 				Foreground(Primary)
+
+	// Tab bar styles
+	TabActiveStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(Primary).
+			Underline(true).
+			Padding(0, 1)
+
+	TabInactiveStyle = lipgloss.NewStyle().
+				Foreground(Dim).
+				Padding(0, 1)
+
+	// App shell styles
+	AppHeaderStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(White).
+			Background(Primary).
+			Padding(0, 1).
+			Width(0) // Will be set dynamically
+
+	FooterStyle = lipgloss.NewStyle().
+			Foreground(Dim).
+			Padding(0, 1)
 )
 
 // Separator renders a vertical separator

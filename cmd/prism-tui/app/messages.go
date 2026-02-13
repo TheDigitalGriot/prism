@@ -103,6 +103,9 @@ type NavigateToViewMsg struct {
 	View ActiveView
 }
 
+// SplashDoneMsg signals that splash screen auto-timer completed
+type SplashDoneMsg struct{}
+
 // === Epic Messages ===
 
 // EpicsDiscoveredMsg carries the list of discovered epic directories

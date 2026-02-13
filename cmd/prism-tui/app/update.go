@@ -40,6 +40,7 @@ func (m Model) Init() tea.Cmd {
 	cmds := []tea.Cmd{
 		m.Spinner.Tick,
 		tickCmd(),
+		splashTimerCmd(), // Start 2-second splash auto-transition timer
 	}
 
 	// Load stories if in Spectrum view with a path set
@@ -558,6 +559,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.ActiveView = msg.View
 		return m, nil
 
+	case SplashDoneMsg:
+		// Splash auto-timer completed - transition to Home
+		m.ActiveView = ViewHome
+		m.SplashDone = true
+		return m, nil
+
 	case PauseToggleMsg:
 		if m.State == StateRunning {
 			m.State = StatePaused
@@ -573,6 +580,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	// If splash screen is active, any key skips to Home
+	if !m.SplashDone {
+		m.ActiveView = ViewHome
+		m.SplashDone = true
+		return m, nil
+	}
+
 	// Global keys (always active regardless of view)
 	switch msg.String() {
 	case "q", "ctrl+c":
@@ -585,6 +599,36 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "?":
 		m.ShowHelp = !m.ShowHelp
 		return m, nil
+
+	// Tab/Shift+Tab to cycle through tabs (doesn't conflict with view-specific keys)
+	case "tab":
+		// Special handling for Spectrum view with multiple epics
+		if m.ActiveView == ViewSpectrum && len(m.Epic.Epics) > 1 {
+			// Let Spectrum view handle this for epic switching
+			break
+		}
+		// Find current tab index and move to next
+		for i, view := range m.TabOrder {
+			if view == m.ActiveView {
+				nextIdx := (i + 1) % len(m.TabOrder)
+				m.ActiveView = m.TabOrder[nextIdx]
+				return m, nil
+			}
+		}
+	case "shift+tab":
+		// Special handling for Spectrum view with multiple epics
+		if m.ActiveView == ViewSpectrum && len(m.Epic.Epics) > 1 {
+			// Let Spectrum view handle this for epic switching
+			break
+		}
+		// Find current tab index and move to previous
+		for i, view := range m.TabOrder {
+			if view == m.ActiveView {
+				prevIdx := (i - 1 + len(m.TabOrder)) % len(m.TabOrder)
+				m.ActiveView = m.TabOrder[prevIdx]
+				return m, nil
+			}
+		}
 	}
 
 	// Escape/backspace returns to Home (from any non-Home view)
@@ -679,6 +723,13 @@ func (m Model) handleSignal(msg SignalDetectedMsg) (tea.Model, tea.Cmd) {
 func tickCmd() tea.Cmd {
 	return tea.Tick(100*time.Millisecond, func(t time.Time) tea.Msg {
 		return TickMsg(t)
+	})
+}
+
+// splashTimerCmd returns a command that sends SplashDoneMsg after 2 seconds
+func splashTimerCmd() tea.Cmd {
+	return tea.Tick(2*time.Second, func(t time.Time) tea.Msg {
+		return SplashDoneMsg{}
 	})
 }
 

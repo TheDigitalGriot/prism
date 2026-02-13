@@ -13,29 +13,21 @@ import (
 func (m Model) renderHomeView() string {
 	var sections []string
 
-	// 3D prism + ASCII logo
-	if m.Prism != nil {
-		prismStr := m.Prism.String()
-		logo := m.renderPrismLogo()
-		topSection := lipgloss.JoinHorizontal(lipgloss.Center, prismStr, "  ", logo)
-		sections = append(sections, styles.PanelStyle.Width(m.Width-2).Render(topSection))
-	} else {
-		logo := m.renderPrismLogo()
-		sections = append(sections, styles.PanelStyle.Width(m.Width-2).Render(logo))
-	}
-
+	// ASCII logo (prism is now in app shell header)
+	logo := m.renderPrismLogo()
+	sections = append(sections, styles.PanelStyle.Width(m.Width-2).Render(logo))
 	sections = append(sections, "")
 
-	// Menu items
+	// Menu items (numbers now switch tabs, so we use icons instead)
 	type menuItem struct {
 		label string
 		desc  string
 		icon  string
 	}
 	items := []menuItem{
-		{"Research", "Browse and create research documents", "1"},
-		{"Plans", "View and decompose implementation plans", "2"},
-		{"Spectrum", "Execute stories autonomously", "3"},
+		{"Research", "Browse and create research documents", "📝"},
+		{"Plans", "View and decompose implementation plans", "📋"},
+		{"Spectrum", "Execute stories autonomously", "▶"},
 	}
 
 	menuWidth := m.Width - 8
@@ -45,7 +37,7 @@ func (m Model) renderHomeView() string {
 
 	for i, item := range items {
 		selected := i == m.Home.SelectedIndex
-		line := fmt.Sprintf("  [%s]  %-12s %s", item.icon, item.label, item.desc)
+		line := fmt.Sprintf("  %s  %-12s %s", item.icon, item.label, item.desc)
 
 		if selected {
 			// Highlight selected item
@@ -78,18 +70,6 @@ func (m Model) handleHomeKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.Home.SelectedIndex = (m.Home.SelectedIndex - 1 + len(m.Home.MenuItems)) % len(m.Home.MenuItems)
 		return m, nil
 	case "enter", " ":
-		cmd := m.navigateToMenuItem()
-		return m, cmd
-	case "1":
-		m.Home.SelectedIndex = 0
-		cmd := m.navigateToMenuItem()
-		return m, cmd
-	case "2":
-		m.Home.SelectedIndex = 1
-		cmd := m.navigateToMenuItem()
-		return m, cmd
-	case "3":
-		m.Home.SelectedIndex = 2
 		cmd := m.navigateToMenuItem()
 		return m, cmd
 	}
