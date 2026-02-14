@@ -163,6 +163,14 @@ type Model struct {
 	// the actual terminal background instead of the hardcoded dark.
 	BgR, BgG, BgB uint8
 
+	// Theme accent color (from button.background or similar).
+	AccentR, AccentG, AccentB uint8
+
+	// Atmosphere target color (from theme system).
+	// The ambient section lerps from terminal background toward this
+	// color based on density. Set by styles.ComputeAtmosphere().
+	AtmoR, AtmoG, AtmoB uint8
+
 	// Reusable buffers
 	projX    []float64
 	projY    []float64
@@ -487,22 +495,32 @@ func (m *Model) View() string {
 			if beamMix > 0 {
 				bVal := m.beamGrid[row*cols+col]
 				if bVal > 0.01 {
+					// Active beam particle glow — kept as-is (this is beam, not atmosphere)
 					beamDensity = math.Min(1.0, bVal)
-					grey := greyMin + beamDensity*(cGreyMax-greyMin)
+					grey := greyMin + beamDensity*(greyMax-greyMin)
 					bR = aBgR + grey*255 + (175-128)*beamDensity*cBeamTint
 					bG = aBgG + grey*255 + (172-128)*beamDensity*cBeamTint
 					bB = aBgB + grey*255 + (195-128)*beamDensity*cBeamTint
 				} else {
+					// Ambient atmosphere (no beam particles here)
+					// Density drives character selection; color is lerped
+					// independently at a smaller fraction so chars are
+					// visible but their color barely differs from bg.
 					adx := nx - entryX
 					ady := (ny - icoY) * ySquash
 					aDist := math.Sqrt(adx*adx + ady*ady)
 					ambientWave := math.Sin(aDist*20-phase*0.4)*0.5 + 0.5
 					ambientDensity := ambientWave * 0.25 * math.Max(0.1, 1.0-aDist*0.8)
 					beamDensity = ambientDensity
-					grey := greyMin + ambientDensity*(cGreyMax-greyMin)*0.5
-					bR = aBgR + grey*160
-					bG = aBgG + grey*160
-					bB = aBgB + grey*170
+
+					atmoR := float64(m.AtmoR)
+					atmoG := float64(m.AtmoG)
+					atmoB := float64(m.AtmoB)
+					// Color fraction — independent of character density
+					t := ambientDensity * 0.3
+					bR = aBgR + (atmoR-aBgR)*t
+					bG = aBgG + (atmoG-aBgG)*t
+					bB = aBgB + (atmoB-aBgB)*t
 				}
 			}
 
@@ -540,7 +558,7 @@ func (m *Model) View() string {
 				}
 			}
 
-		charIdx := int(density * float64(numChars))
+			charIdx := int(density * float64(numChars))
 			if charIdx < 0 {
 				charIdx = 0
 			} else if charIdx >= numChars {

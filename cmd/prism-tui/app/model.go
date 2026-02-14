@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"github.com/prism-plugin/prism-tui/plugin"
 	"github.com/prism-plugin/prism-tui/prism"
 	"github.com/prism-plugin/prism-tui/splash"
+	"github.com/prism-plugin/prism-tui/styles"
 	"github.com/prism-plugin/prism-tui/terminal"
 )
 
@@ -209,12 +211,39 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 
 	// Create splash screen animation
 	termInfo := terminal.Detect()
+	themeColors := terminal.DetectThemeColors(termInfo)
+
+	// Apply theme accent to global styles (tabs, headers, titles)
+	if themeColors.AccentSource != "default" {
+		styles.ApplyTheme(fmt.Sprintf("#%02x%02x%02x", themeColors.AccentR, themeColors.AccentG, themeColors.AccentB))
+	}
+
+	// Compute atmosphere color from detected terminal background
+	if termInfo.BgR+termInfo.BgG+termInfo.BgB > 0 {
+		styles.ComputeAtmosphere(termInfo.BgR, termInfo.BgG, termInfo.BgB)
+	}
+
 	splashModel := splash.New()
-	splashModel.EnvLines = termInfo.EnvLines()
+	envLines := termInfo.EnvLines()
+	// Append accent source to the runtime context line
+	if len(envLines) >= 3 && themeColors.AccentSource != "" {
+		envLines[2] += " | accent via " + themeColors.AccentSource
+	}
+	// Debug: show atmosphere values so we can verify what splash receives
+	envLines = append(envLines, fmt.Sprintf("bg(%d,%d,%d) atmo(%d,%d,%d)",
+		termInfo.BgR, termInfo.BgG, termInfo.BgB,
+		styles.AtmosphereR, styles.AtmosphereG, styles.AtmosphereB))
+	splashModel.EnvLines = envLines
 	splashModel.BoostColors = termInfo.IsIDETerminal()
 	splashModel.BgR = termInfo.BgR
 	splashModel.BgG = termInfo.BgG
 	splashModel.BgB = termInfo.BgB
+	splashModel.AccentR = themeColors.AccentR
+	splashModel.AccentG = themeColors.AccentG
+	splashModel.AccentB = themeColors.AccentB
+	splashModel.AtmoR = styles.AtmosphereR
+	splashModel.AtmoG = styles.AtmosphereG
+	splashModel.AtmoB = styles.AtmosphereB
 
 	// Always start with splash. Onboarding is a full-screen interstitial
 	// between splash and Home — never a tab in the tab bar.

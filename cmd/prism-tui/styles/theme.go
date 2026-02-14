@@ -153,6 +153,60 @@ var (
 			Padding(0, 1)
 )
 
+// Atmosphere target color (raw RGB) for splash ambient rendering.
+// The splash lerps from the terminal background toward this color
+// based on ambient density, so these values represent the fully-saturated
+// atmosphere — actual rendered colors will be much closer to the background.
+//
+// Defaults are calibrated for the hardcoded splash bg (10, 9, 16).
+var (
+	AtmosphereR uint8 = 60
+	AtmosphereG uint8 = 59
+	AtmosphereB uint8 = 76
+)
+
+// ComputeAtmosphere derives the atmosphere target from the terminal background.
+func ComputeAtmosphere(bgR, bgG, bgB uint8) {
+	AtmosphereR = clampU8(int(bgR) + 50)
+	AtmosphereG = clampU8(int(bgG) + 50)
+	AtmosphereB = clampU8(int(bgB) + 60)
+}
+
+func clampU8(v int) uint8 {
+	if v > 255 {
+		return 255
+	}
+	if v < 0 {
+		return 0
+	}
+	return uint8(v)
+}
+
+// ApplyTheme overrides the default palette with detected IDE theme colors.
+// Call once at startup after terminal detection. When accentHex is empty,
+// the hardcoded defaults remain unchanged.
+func ApplyTheme(accentHex string) {
+	if accentHex == "" {
+		return
+	}
+	accent := lipgloss.Color(accentHex)
+	Primary = accent
+	TabBorderColor = accent
+
+	// Rebuild styles that cache Primary
+	TitleStyle = TitleStyle.Foreground(Primary)
+	HeaderStyle = HeaderStyle.Background(Primary)
+	AppHeaderStyle = AppHeaderStyle.Background(Primary)
+	CurrentStyle = CurrentStyle.Foreground(Primary)
+	ProgressBarStyle = ProgressBarStyle.Foreground(Primary)
+	TabActiveStyle = TabActiveStyle.BorderForeground(TabBorderColor).Foreground(Primary)
+	TabInactiveStyle = TabInactiveStyle.BorderForeground(TabBorderColor)
+	TabGapStyle = TabGapStyle.BorderForeground(TabBorderColor)
+
+	// Rebuild icons that reference Primary
+	PlayIcon = lipgloss.NewStyle().Foreground(Primary).Render("▸")
+}
+
 // Separator renders a vertical separator
 func Separator() string {
 	return lipgloss.NewStyle().Foreground(Dim).Render(" │ ")
