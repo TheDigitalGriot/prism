@@ -134,9 +134,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.ActiveView = ViewHome
 			m.Registry.SetActive("home")
 		}
-		// Force full screen repaint — splash used raw ANSI codes that
-		// desync Bubble Tea's internal screen buffer.
-		return m, tea.ClearScreen
+		// Cycle alt screen to fully reset terminal state — splash used raw
+		// ANSI codes that corrupt charset/SGR state beyond what ClearScreen fixes.
+		return m, tea.Sequence(tea.ExitAltScreen, tea.EnterAltScreen, tea.ClearScreen)
 
 	case OnboardingCompleteMsg:
 		// Onboarding completed — transition to Home dashboard
@@ -194,9 +194,9 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.ActiveView = ViewHome
 			m.Registry.SetActive("home")
 		}
-		// Force full screen repaint — splash used raw ANSI codes that
-		// desync Bubble Tea's internal screen buffer.
-		return m, tea.ClearScreen
+		// Cycle alt screen to fully reset terminal state — splash used raw
+		// ANSI codes that corrupt charset/SGR state beyond what ClearScreen fixes.
+		return m, tea.Sequence(tea.ExitAltScreen, tea.EnterAltScreen, tea.ClearScreen)
 	}
 
 	// If onboarding is active, delegate keys to the onboarding plugin
@@ -483,9 +483,9 @@ func tickCmd() tea.Cmd {
 	})
 }
 
-// splashTimerCmd returns a command that sends SplashDoneMsg after 15 seconds
+// splashTimerCmd returns a command that sends SplashDoneMsg after 5 seconds
 func splashTimerCmd() tea.Cmd {
-	return tea.Tick(15*time.Second, func(t time.Time) tea.Msg {
+	return tea.Tick(5*time.Second, func(t time.Time) tea.Msg {
 		return SplashDoneMsg{}
 	})
 }

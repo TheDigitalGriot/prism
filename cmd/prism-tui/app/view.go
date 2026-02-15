@@ -54,7 +54,10 @@ func (m Model) View() string {
 		base = overlayModal(base, dialogContent, m.Width, m.Height)
 	}
 
-	return base
+	// Reset G0 charset to ASCII — the splash screen's raw ANSI output
+	// can leave the terminal in DEC Special Graphics mode, which maps
+	// ASCII letters to box-drawing characters (e.g. 't' → '├').
+	return "\x1b(B" + base
 }
 
 // === Shared Helpers ===

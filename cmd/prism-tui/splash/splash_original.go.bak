@@ -9,7 +9,7 @@ import (
 )
 
 // ASCII density ramp
-var densityChars = []rune{' ', '.', ',', ':', '-', '=', '+', '*', '#', '%', '@'}
+var densityChars = []rune{' ', '.', '\u00B7', ':', '-', '=', '+', '*', '#', '%', '@'}
 
 // 4-stop spectral gradient: Blue -> Teal -> Green -> Amber
 var spectralStops = [][3]float64{
@@ -616,42 +616,42 @@ func (m *Model) View() string {
 	}
 
 	// Phase 9: Stamp environment info lines (top-left, progressively dimmer)
-	// for li, line := range m.EnvLines {
-	// 	lineRunes := []rune(line)
-	// 	lineRow := 1 + li
-	// 	colStart := 2
-	// 	// Each successive line gets slightly dimmer
-	// 	dim := uint8(51 - li*6)
-	// 	dimB := uint8(80 - li*8)
-	// 	for i, ch := range lineRunes {
-	// 		col := colStart + i
-	// 		if col >= 0 && col < cols && lineRow >= 0 && lineRow < rows {
-	// 			m.grid[lineRow*cols+col] = cell{ch: ch, r: dim, g: dim, b: dimB}
-	// 		}
-	// 	}
-	// }
+	for li, line := range m.EnvLines {
+		lineRunes := []rune(line)
+		lineRow := 1 + li
+		colStart := 2
+		// Each successive line gets slightly dimmer
+		dim := uint8(51 - li*6)
+		dimB := uint8(80 - li*8)
+		for i, ch := range lineRunes {
+			col := colStart + i
+			if col >= 0 && col < cols && lineRow >= 0 && lineRow < rows {
+				m.grid[lineRow*cols+col] = cell{ch: ch, r: dim, g: dim, b: dimB}
+			}
+		}
+	}
 
 	// Phase 10: Color ramp strip — vertical column of squares on far left,
 	// starting at terminal background and increasing brightness by +1 RGB per row.
 	// Each row shows: █ #RRGGBB
-	// {
-	// 	startR, startG, startB := aBgR, aBgG, aBgB
-	// 	for row := 0; row < rows; row++ {
-	// 		r := clampByte(startR + float64(row))
-	// 		g := clampByte(startG + float64(row))
-	// 		b := clampByte(startB + float64(row))
-	// 		m.grid[row*cols+0] = cell{ch: '█', r: r, g: g, b: b}
-	//
-	// 		// Stamp hex code beside the block: " #RRGGBB"
-	// 		hex := fmt.Sprintf(" #%02X%02X%02X", r, g, b)
-	// 		for i, ch := range hex {
-	// 			col := 1 + i
-	// 			if col < cols {
-	// 				m.grid[row*cols+col] = cell{ch: ch, r: r, g: g, b: b}
-	// 			}
-	// 		}
-	// 	}
-	// }
+	{
+		startR, startG, startB := aBgR, aBgG, aBgB
+		for row := 0; row < rows; row++ {
+			r := clampByte(startR + float64(row))
+			g := clampByte(startG + float64(row))
+			b := clampByte(startB + float64(row))
+			m.grid[row*cols+0] = cell{ch: '█', r: r, g: g, b: b}
+
+			// Stamp hex code beside the block: " #RRGGBB"
+			hex := fmt.Sprintf(" #%02X%02X%02X", r, g, b)
+			for i, ch := range hex {
+				col := 1 + i
+				if col < cols {
+					m.grid[row*cols+col] = cell{ch: ch, r: r, g: g, b: b}
+				}
+			}
+		}
+	}
 
 	// Phase 11: Render grid to ANSI string
 	return m.renderGrid()
@@ -669,25 +669,21 @@ func (m *Model) renderGrid() string {
 	}
 
 	var lastR, lastG, lastB uint8
+	firstCell := true
 
 	for y := 0; y < renderHeight; y++ {
-		if y > 0 {
-			b.WriteByte('\n')
-		}
-		// Reset SGR at line start — each line is self-contained so
-		// truncation of one line can't cascade corruption to the next.
-		b.WriteString("\x1b[0m")
-
 		rowOff := y * m.Width
-		firstInLine := true
 		for x := 0; x < m.Width; x++ {
 			c := m.grid[rowOff+x]
-			if firstInLine || c.r != lastR || c.g != lastG || c.b != lastB {
+			if firstCell || c.r != lastR || c.g != lastG || c.b != lastB {
 				fmt.Fprintf(&b, "\x1b[38;2;%d;%d;%dm", c.r, c.g, c.b)
 				lastR, lastG, lastB = c.r, c.g, c.b
-				firstInLine = false
+				firstCell = false
 			}
 			b.WriteRune(c.ch)
+		}
+		if y < renderHeight-1 {
+			b.WriteByte('\n')
 		}
 	}
 
@@ -696,7 +692,7 @@ func (m *Model) renderGrid() string {
 
 	// Status hint on last line
 	b.WriteByte('\n')
-	b.WriteString("\x1b[38;2;51;51;80m  press any key to continue\x1b[0m\x1b(B")
+	b.WriteString("\x1b[38;2;51;51;80m  press any key to continue\x1b[0m")
 
 	return b.String()
 }

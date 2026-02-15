@@ -111,6 +111,11 @@ Keyboard controls:
 				return fmt.Errorf("failed to run TUI: %w", err)
 			}
 
+			// Reset terminal state — splash's raw ANSI can leave the
+			// G0 charset as DEC Special Graphics, which persists after
+			// alt screen exit and corrupts the parent shell.
+			fmt.Print("\x1b(B\x1b[0m")
+
 			return nil
 		},
 	}
@@ -142,6 +147,11 @@ func runDemoMode(version string, prismStyle string, onboarding bool) error {
 	if _, err := p.Run(); err != nil {
 		return fmt.Errorf("failed to run demo TUI: %w", err)
 	}
+
+	// Reset terminal state — splash's raw ANSI can leave the
+	// G0 charset as DEC Special Graphics, which persists after
+	// alt screen exit and corrupts the parent shell.
+	fmt.Print("\x1b(B\x1b[0m")
 
 	return nil
 }
