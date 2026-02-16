@@ -101,6 +101,9 @@ type Model struct {
 	MaxIterations int
 	Pause         int // seconds between iterations
 
+	// Terminal capabilities
+	HasNerdFont bool // true if terminal font contains "Nerd"
+
 	// UI state
 	Width              int
 	Height             int
@@ -253,6 +256,7 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 		ActiveView:      ViewSplash,
 		TabOrder:        []ActiveView{ViewHome, ViewResearch, ViewPlans, ViewSpectrum, ViewFiles, ViewGit, ViewAgent, ViewMonitor, ViewWorkspaces},
 		NeedsOnboarding: needsOnboarding,
+		HasNerdFont:     termInfo.HasNerdFont,
 		PrismDir:        prismDir,
 		StoriesPath:     storiesPath,
 		ProjectDir:      projectDir,

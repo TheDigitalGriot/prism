@@ -187,8 +187,18 @@ var (
 	AtmosphereB uint8 = 76
 )
 
+// Actual detected terminal background color.
+var (
+	TermBgR uint8 = 10
+	TermBgG uint8 = 9
+	TermBgB uint8 = 16
+)
+
 // ComputeAtmosphere derives the atmosphere target from the terminal background.
 func ComputeAtmosphere(bgR, bgG, bgB uint8) {
+	TermBgR = bgR
+	TermBgG = bgG
+	TermBgB = bgB
 	AtmosphereR = clampU8(int(bgR) + 50)
 	AtmosphereG = clampU8(int(bgG) + 50)
 	AtmosphereB = clampU8(int(bgB) + 60)

@@ -16,26 +16,25 @@ func (m Model) renderAppShell(content string) string {
 	if m.showSidebar() {
 		leftWidth := m.Width - SidebarWidth
 
-		// Build left column: tab bar + content + footer
-		var leftSections []string
-		leftSections = append(leftSections, m.renderTabBar(leftWidth))
-		leftSections = append(leftSections, content)
-		leftSections = append(leftSections, m.renderAppFooter(leftWidth))
-		leftColumn := lipgloss.JoinVertical(lipgloss.Left, leftSections...)
+		// Tab bar (left column width)
+		tabBar := m.renderTabBar(leftWidth)
 
-		// Build sidebar at full terminal height
-		sidebar := m.renderSidebar(m.Height)
+		// Adjust sidebar height to account for tab bar (1 line) + two-tier footer (2 lines)
+		sidebarHeight := m.Height - 3
 
-		// Join left column and sidebar horizontally
-		return lipgloss.JoinHorizontal(lipgloss.Top, leftColumn, sidebar)
+		// Content + sidebar horizontal join (NO footer here)
+		contentRow := lipgloss.JoinHorizontal(lipgloss.Top, content, m.renderSidebar(sidebarHeight))
+
+		// Two-tier footer at full terminal width
+		footer := m.renderTwoTierFooter(m.Width)
+
+		return lipgloss.JoinVertical(lipgloss.Left, tabBar, contentRow, footer)
 	}
 
 	// No sidebar — standard vertical layout
-	var sections []string
-	sections = append(sections, m.renderTabBar(m.Width))
-	sections = append(sections, content)
-	sections = append(sections, m.renderAppFooter(m.Width))
-	return lipgloss.JoinVertical(lipgloss.Left, sections...)
+	tabBar := m.renderTabBar(m.Width)
+	footer := m.renderTwoTierFooter(m.Width)
+	return lipgloss.JoinVertical(lipgloss.Left, tabBar, content, footer)
 }
 
 // renderAppHeader renders the persistent app header with 3D prism and project info
@@ -205,31 +204,6 @@ func (m Model) renderCompactTabBar(width int) string {
 	return row + "\n" + rule
 }
 
-// renderAppFooter renders context-sensitive key hints from the active plugin
-func (m Model) renderAppFooter(width int) string {
-	var hints []string
-
-	// Global hints
-	hints = append(hints, fmt.Sprintf("[1-%d] switch tabs", len(m.TabOrder)))
-	hints = append(hints, "[tab/shift+tab] cycle")
-
-	// Get view-specific hints from active plugin
-	active := m.Registry.ActivePlugin()
-	if active != nil {
-		for _, kh := range active.KeyHints() {
-			hints = append(hints, fmt.Sprintf("[%s] %s", kh.Key, kh.Description))
-		}
-	}
-
-	// Sidebar toggle hint (like Crush's ctrl+d for details)
-	if m.Width >= CompactBreakpointWidth {
-		hints = append(hints, "[ctrl+d] details")
-	}
-
-	// Always show help and quit
-	hints = append(hints, "[?] help")
-	hints = append(hints, "[q] quit")
-
-	footerText := strings.Join(hints, "  ")
-	return styles.FooterStyle.Width(width - 2).Render(footerText)
-}
+// renderAppFooter has been replaced by renderTwoTierFooter in footer.go
+// The key hints logic moved to renderKeyHintsFooter (tier 1)
+// The powerline bar logic is in renderPowerlineFooter (tier 2)
