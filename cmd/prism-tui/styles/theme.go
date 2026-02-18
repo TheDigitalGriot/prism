@@ -13,6 +13,14 @@ var (
 	Background = lipgloss.Color("#1F2937") // Dark
 	White      = lipgloss.Color("#FFFFFF")
 
+	// Panel border colors (used by RenderPanel / RenderDivider)
+	BorderNormal = lipgloss.Color("#4B5563") // Inactive border (slightly lighter than Dim)
+	BorderActive = Primary                   // Active (focused) border — matches brand
+
+	// Scrollbar colors
+	ScrollbarTrackColor = Dim
+	ScrollbarThumbColor = Primary
+
 	// Prism brand colors for animation
 	PrismColors = []lipgloss.Color{
 		lipgloss.Color("#3B82F6"), // Blue
@@ -128,6 +136,9 @@ var (
 
 	SidebarDeletionsStyle = lipgloss.NewStyle().
 				Foreground(Error)
+
+	// FileBrowserLineNumber styles the line number gutter in the file preview pane.
+	FileBrowserLineNumber = lipgloss.NewStyle().Foreground(Dim)
 )
 
 // Atmosphere target color (raw RGB) for splash ambient rendering.

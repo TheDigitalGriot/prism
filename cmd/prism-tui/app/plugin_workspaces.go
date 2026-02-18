@@ -12,6 +12,7 @@ import (
 	"github.com/prism-plugin/prism-tui/domain"
 	"github.com/prism-plugin/prism-tui/plugin"
 	"github.com/prism-plugin/prism-tui/styles"
+	"github.com/prism-plugin/prism-tui/ui"
 )
 
 // ProjectInfo represents a discovered project with .prism/ directory
@@ -31,6 +32,14 @@ type WorkspacesState struct {
 	EpicsView       bool // true = showing epics within selected project, false = project list
 	SelectedEpic    int
 	Loading         bool
+
+	// Two-pane layout state
+	activePane    ui.FocusPane
+	sidebarWidth  int
+	previewWidth  int
+	scrollOff     int // project/epic list scroll offset
+	previewTab    int // 0=Info, 1=Stories, 2=Progress
+	previewScroll int // vertical scroll offset within preview pane
 }
 
 // WorkspacesPlugin implements the multi-project workspace switcher
@@ -38,6 +47,8 @@ type WorkspacesPlugin struct {
 	ctx     *plugin.Context
 	state   WorkspacesState
 	focused bool
+	width   int
+	height  int
 }
 
 // NewWorkspacesPlugin creates a new Workspaces plugin instance
@@ -49,6 +60,7 @@ func NewWorkspacesPlugin() *WorkspacesPlugin {
 			EpicsView:       false,
 			SelectedEpic:    0,
 			Loading:         false,
+			activePane:      ui.PaneLeft,
 		},
 	}
 }
@@ -71,6 +83,9 @@ func (p *WorkspacesPlugin) Icon() string {
 // Init initializes the plugin with context
 func (p *WorkspacesPlugin) Init(ctx *plugin.Context) error {
 	p.ctx = ctx
+	p.width = ctx.Width
+	p.height = ctx.Height
+	p.state.activePane = ui.PaneLeft
 	return nil
 }
 
@@ -91,6 +106,11 @@ func (p *WorkspacesPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 	case tea.KeyMsg:
 		return p.handleKeyPress(msg)
 
+	case plugin.PluginResizeMsg:
+		p.width = msg.Width
+		p.height = msg.Height
+		return p, nil
+
 	case ProjectsScanCompleteMsg:
 		p.state.Projects = msg.Projects
 		p.state.Loading = false
@@ -100,29 +120,11 @@ func (p *WorkspacesPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 	return p, nil
 }
 
-// View renders the workspaces browser
+// View renders the workspaces browser as a two-pane layout
 func (p *WorkspacesPlugin) View(width, height int) string {
-	var sections []string
-
-	// Powerline breadcrumb header
-	sections = append(sections, renderBreadcrumb("Workspaces", width, p.ctx.HasNerdFont))
-	sections = append(sections, "")
-
-	// Main content
-	if p.state.Loading {
-		sections = append(sections, "")
-		sections = append(sections, "  "+styles.InfoStyle.Render("🔍 Scanning for .prism/ directories..."))
-	} else if p.state.EpicsView {
-		// Show epics within selected project
-		content := p.renderEpicsView(width, height-6)
-		sections = append(sections, content)
-	} else {
-		// Show project list
-		content := p.renderProjectsView(width, height-6)
-		sections = append(sections, content)
-	}
-
-	return lipgloss.JoinVertical(lipgloss.Left, sections...)
+	p.width = width
+	p.height = height
+	return p.renderTwoPane(width, height)
 }
 
 // IsFocused returns whether the plugin is active
@@ -137,89 +139,647 @@ func (p *WorkspacesPlugin) SetFocused(focused bool) {
 
 // KeyHints returns footer key hints
 func (p *WorkspacesPlugin) KeyHints() []plugin.KeyHint {
+	if p.state.activePane == ui.PaneRight {
+		tabs := []string{"Info", "Stories", "Progress"}
+		tabHint := fmt.Sprintf("tab %d/%d", p.state.previewTab+1, len(tabs))
+		return []plugin.KeyHint{
+			{Key: "[/]", Description: "switch tab"},
+			{Key: "j/k", Description: "scroll"},
+			{Key: tabHint, Description: tabs[p.state.previewTab]},
+			{Key: "tab/esc", Description: "project list"},
+		}
+	}
 	if p.state.EpicsView {
 		return []plugin.KeyHint{
 			{Key: "j/k", Description: "navigate"},
 			{Key: "enter", Description: "switch epic"},
+			{Key: "tab", Description: "preview"},
 			{Key: "esc", Description: "back to projects"},
 		}
 	}
 	return []plugin.KeyHint{
 		{Key: "j/k", Description: "navigate"},
-		{Key: "enter", Description: "view epics / switch project"},
+		{Key: "enter", Description: "select / view epics"},
+		{Key: "tab", Description: "preview"},
 		{Key: "r", Description: "rescan"},
 		{Key: "esc", Description: "home"},
 	}
 }
 
-// handleKeyPress handles keyboard input
+// ── Rendering ─────────────────────────────────────────────────────────────────
+
+// renderTwoPane assembles the full two-pane layout.
+func (p *WorkspacesPlugin) renderTwoPane(width, height int) string {
+	paneWidths := ui.CalculatePaneWidths(width, 40, 25, 40)
+	p.state.sidebarWidth = paneWidths.Left
+	p.state.previewWidth = paneWidths.Right
+
+	paneHeight := height
+	if paneHeight < 4 {
+		paneHeight = 4
+	}
+	innerHeight := paneHeight - 2
+	if innerHeight < 1 {
+		innerHeight = 1
+	}
+
+	sidebarActive := p.state.activePane == ui.PaneLeft
+	previewActive := p.state.activePane == ui.PaneRight
+
+	sidebarContent := p.renderProjectList(innerHeight)
+	previewContent := p.renderPreviewPane(innerHeight)
+
+	leftPane := styles.RenderPanel(sidebarContent, p.state.sidebarWidth, paneHeight, sidebarActive)
+	divider := ui.RenderDivider(paneHeight)
+	rightPane := styles.RenderPanel(previewContent, p.state.previewWidth, paneHeight, previewActive)
+
+	return lipgloss.JoinHorizontal(lipgloss.Top, leftPane, divider, rightPane)
+}
+
+// renderProjectList renders the left pane — the project or epic list.
+func (p *WorkspacesPlugin) renderProjectList(innerHeight int) string {
+	var sb strings.Builder
+
+	maxWidth := p.state.sidebarWidth - 4 // subtract panel border (2) + padding (2)
+	if maxWidth < 8 {
+		maxWidth = 8
+	}
+
+	// Header
+	if p.state.EpicsView && p.state.SelectedProject < len(p.state.Projects) {
+		proj := p.state.Projects[p.state.SelectedProject]
+		header := fmt.Sprintf("Epics: %s", proj.Name)
+		if len(header) > maxWidth {
+			header = "…" + header[len(header)-(maxWidth-1):]
+		}
+		sb.WriteString(styles.TitleStyle.Render(header))
+	} else {
+		sb.WriteString(styles.TitleStyle.Render("Workspaces"))
+	}
+	sb.WriteString("\n\n")
+
+	if p.state.Loading {
+		sb.WriteString(styles.DimStyle.Render("Scanning for .prism/ directories..."))
+		return sb.String()
+	}
+
+	// itemHeight: each item is 2 lines
+	const itemHeight = 2
+	headerLines := 2 // header + blank
+	listAreaHeight := innerHeight - headerLines
+	visibleCount := listAreaHeight / itemHeight
+	if visibleCount < 1 {
+		visibleCount = 1
+	}
+
+	if p.state.EpicsView {
+		if p.state.SelectedProject >= len(p.state.Projects) {
+			sb.WriteString(styles.DimStyle.Render("No project selected"))
+			return sb.String()
+		}
+		epics := p.state.Projects[p.state.SelectedProject].Epics
+		if len(epics) == 0 {
+			sb.WriteString(styles.DimStyle.Render("No epics in this project"))
+			sb.WriteString("\n")
+			sb.WriteString(styles.DimStyle.Render("esc to go back"))
+			return sb.String()
+		}
+
+		// Clamp scroll offset
+		if p.state.scrollOff < 0 {
+			p.state.scrollOff = 0
+		}
+		maxScroll := len(epics) - visibleCount
+		if maxScroll < 0 {
+			maxScroll = 0
+		}
+		if p.state.scrollOff > maxScroll {
+			p.state.scrollOff = maxScroll
+		}
+
+		var itemsSB strings.Builder
+		linesRendered := 0
+		end := p.state.scrollOff + visibleCount
+		if end > len(epics) {
+			end = len(epics)
+		}
+		for i := p.state.scrollOff; i < end; i++ {
+			epic := epics[i]
+			selected := i == p.state.SelectedEpic
+			itemsSB.WriteString(p.renderEpicItem(epic, selected, maxWidth-1))
+			linesRendered += itemHeight
+			if i < end-1 {
+				itemsSB.WriteString("\n")
+			}
+		}
+
+		itemsContent := itemsSB.String()
+		scrollbar := ui.RenderScrollbar(ui.ScrollbarParams{
+			TotalItems:   len(epics),
+			ScrollOffset: p.state.scrollOff,
+			VisibleItems: visibleCount,
+			TrackHeight:  visibleCount * itemHeight,
+		})
+		sb.WriteString(lipgloss.JoinHorizontal(lipgloss.Top, itemsContent, scrollbar))
+	} else {
+		if len(p.state.Projects) == 0 {
+			sb.WriteString(styles.DimStyle.Render("No projects found"))
+			sb.WriteString("\n\n")
+			sb.WriteString(styles.DimStyle.Render("Press 'r' to scan"))
+			return sb.String()
+		}
+
+		// Clamp scroll offset
+		if p.state.scrollOff < 0 {
+			p.state.scrollOff = 0
+		}
+		maxScroll := len(p.state.Projects) - visibleCount
+		if maxScroll < 0 {
+			maxScroll = 0
+		}
+		if p.state.scrollOff > maxScroll {
+			p.state.scrollOff = maxScroll
+		}
+
+		var itemsSB strings.Builder
+		end := p.state.scrollOff + visibleCount
+		if end > len(p.state.Projects) {
+			end = len(p.state.Projects)
+		}
+		for i := p.state.scrollOff; i < end; i++ {
+			proj := p.state.Projects[i]
+			selected := i == p.state.SelectedProject
+			isCurrent := proj.Path == p.ctx.ProjectDir
+			itemsSB.WriteString(p.renderProjectItem(proj, selected, isCurrent, maxWidth-1))
+			if i < end-1 {
+				itemsSB.WriteString("\n")
+			}
+		}
+
+		itemsContent := itemsSB.String()
+		scrollbar := ui.RenderScrollbar(ui.ScrollbarParams{
+			TotalItems:   len(p.state.Projects),
+			ScrollOffset: p.state.scrollOff,
+			VisibleItems: visibleCount,
+			TrackHeight:  visibleCount * itemHeight,
+		})
+		sb.WriteString(lipgloss.JoinHorizontal(lipgloss.Top, itemsContent, scrollbar))
+	}
+
+	return sb.String()
+}
+
+// renderProjectItem renders a single project list entry (2 lines).
+func (p *WorkspacesPlugin) renderProjectItem(proj ProjectInfo, selected, isCurrent bool, width int) string {
+	// Status icon
+	var icon string
+	if isCurrent {
+		icon = styles.CurrentStyle.Render("●")
+	} else if selected {
+		icon = styles.InfoStyle.Render("▸")
+	} else {
+		icon = styles.DimStyle.Render("○")
+	}
+
+	// Name, truncated
+	name := proj.Name
+	maxNameWidth := width - 4 // icon + space + margin
+	if maxNameWidth < 4 {
+		maxNameWidth = 4
+	}
+	if len([]rune(name)) > maxNameWidth {
+		name = string([]rune(name)[:maxNameWidth-1]) + "…"
+	}
+
+	// Progress bar (8 chars wide)
+	progress := renderProgressBar(proj.StoriesComplete, proj.StoriesTotal, 8)
+
+	// Line 1: icon + name + progress
+	line1 := fmt.Sprintf(" %s %s  %s", icon, name, progress)
+
+	// Line 2: branch + story counts
+	branch := proj.Branch
+	maxBranchLen := width - 16
+	if maxBranchLen < 4 {
+		maxBranchLen = 4
+	}
+	if len(branch) > maxBranchLen {
+		branch = "…" + branch[len(branch)-(maxBranchLen-1):]
+	}
+	storyInfo := fmt.Sprintf("%d/%d stories", proj.StoriesComplete, proj.StoriesTotal)
+	line2 := fmt.Sprintf("    %s  %s", branch, storyInfo)
+	// Truncate line2
+	if len([]rune(line2)) > width {
+		line2 = string([]rune(line2)[:width-1]) + "…"
+	}
+
+	content := line1 + "\n" + line2
+
+	if selected {
+		return styles.CurrentStyle.Width(width).Render(content)
+	}
+	return styles.DimStyle.Width(width).Render(content)
+}
+
+// renderEpicItem renders a single epic list entry (2 lines).
+func (p *WorkspacesPlugin) renderEpicItem(epic EpicInfo, selected bool, width int) string {
+	var icon string
+	if selected {
+		icon = styles.InfoStyle.Render("▸")
+	} else {
+		icon = styles.DimStyle.Render("○")
+	}
+
+	// Name, truncated
+	name := epic.Name
+	maxNameWidth := width - 4
+	if maxNameWidth < 4 {
+		maxNameWidth = 4
+	}
+	if len([]rune(name)) > maxNameWidth {
+		name = string([]rune(name)[:maxNameWidth-1]) + "…"
+	}
+
+	progress := renderProgressBar(epic.CompletedCount, epic.StoryCount, 8)
+	line1 := fmt.Sprintf(" %s %s  %s", icon, name, progress)
+
+	storyInfo := fmt.Sprintf("    %d/%d stories", epic.CompletedCount, epic.StoryCount)
+	if len([]rune(storyInfo)) > width {
+		storyInfo = string([]rune(storyInfo)[:width-1]) + "…"
+	}
+	line2 := storyInfo
+
+	content := line1 + "\n" + line2
+
+	if selected {
+		return styles.CurrentStyle.Width(width).Render(content)
+	}
+	return styles.DimStyle.Width(width).Render(content)
+}
+
+// renderProgressBar returns an ASCII progress bar: [████░░░░]
+func renderProgressBar(done, total, width int) string {
+	if total <= 0 {
+		bar := strings.Repeat("░", width)
+		return styles.DimStyle.Render("[" + bar + "]")
+	}
+	filled := (done * width) / total
+	if filled > width {
+		filled = width
+	}
+	empty := width - filled
+	bar := strings.Repeat("█", filled) + strings.Repeat("░", empty)
+	pct := (done * 100) / total
+	barStr := fmt.Sprintf("[%s] %d%%", bar, pct)
+	if done >= total {
+		return styles.SuccessStyle.Render(barStr)
+	}
+	if done > 0 {
+		return styles.InfoStyle.Render(barStr)
+	}
+	return styles.DimStyle.Render(barStr)
+}
+
+// renderPreviewPane renders the right pane with tabbed project details.
+func (p *WorkspacesPlugin) renderPreviewPane(innerHeight int) string {
+	var sb strings.Builder
+
+	contentWidth := p.state.previewWidth - 4 // panel border + padding
+	if contentWidth < 20 {
+		contentWidth = 20
+	}
+
+	// Determine what we're previewing
+	var proj *ProjectInfo
+	var epic *EpicInfo
+	if p.state.EpicsView && p.state.SelectedProject < len(p.state.Projects) {
+		p2 := p.state.Projects[p.state.SelectedProject]
+		proj = &p2
+		if p.state.SelectedEpic < len(proj.Epics) {
+			e := proj.Epics[p.state.SelectedEpic]
+			epic = &e
+		}
+	} else if !p.state.EpicsView && p.state.SelectedProject < len(p.state.Projects) {
+		p2 := p.state.Projects[p.state.SelectedProject]
+		proj = &p2
+	}
+
+	// Tab bar: [Info] [Stories] [Progress]
+	tabNames := []string{"Info", "Stories", "Progress"}
+	var tabBar strings.Builder
+	for i, name := range tabNames {
+		label := fmt.Sprintf(" %s ", name)
+		if i == p.state.previewTab {
+			tabBar.WriteString(styles.CurrentStyle.Render(label))
+		} else {
+			tabBar.WriteString(styles.DimStyle.Render(label))
+		}
+		if i < len(tabNames)-1 {
+			tabBar.WriteString(styles.DimStyle.Render("│"))
+		}
+	}
+	sb.WriteString(tabBar.String())
+	sb.WriteString("\n\n")
+
+	// Content area height (subtract tab bar + blank line)
+	contentHeight := innerHeight - 2
+	if contentHeight < 1 {
+		contentHeight = 1
+	}
+
+	if proj == nil {
+		sb.WriteString(styles.DimStyle.Render("No project selected"))
+		return sb.String()
+	}
+
+	switch p.state.previewTab {
+	case 0:
+		sb.WriteString(p.renderInfoTab(proj, epic, contentWidth, contentHeight))
+	case 1:
+		sb.WriteString(p.renderStoriesTab(proj, epic, contentWidth, contentHeight))
+	case 2:
+		sb.WriteString(p.renderProgressTab(proj, epic, contentWidth, contentHeight))
+	}
+
+	return sb.String()
+}
+
+// renderInfoTab renders the Info tab showing project/epic metadata.
+func (p *WorkspacesPlugin) renderInfoTab(proj *ProjectInfo, epic *EpicInfo, width, height int) string {
+	var lines []string
+
+	isCurrent := proj.Path == p.ctx.ProjectDir
+
+	if epic != nil {
+		// Epic info
+		lines = append(lines, styles.TitleStyle.Render("Epic"))
+		lines = append(lines, styles.DimStyle.Render("Name:    ")+epic.Name)
+		lines = append(lines, styles.DimStyle.Render("Project: ")+proj.Name)
+		lines = append(lines, styles.DimStyle.Render("Stories: ")+
+			styles.SuccessStyle.Render(fmt.Sprintf("%d/%d complete", epic.CompletedCount, epic.StoryCount)))
+		lines = append(lines, styles.DimStyle.Render("Path:    ")+p.truncatePath(epic.StoriesPath, width-10))
+		lines = append(lines, "")
+		lines = append(lines, renderProgressBar(epic.CompletedCount, epic.StoryCount, width-4))
+	} else {
+		// Project info
+		title := "Project"
+		if isCurrent {
+			title = "Project (current)"
+		}
+		lines = append(lines, styles.TitleStyle.Render(title))
+		lines = append(lines, "")
+		lines = append(lines, styles.DimStyle.Render("Name:   ")+proj.Name)
+		lines = append(lines, styles.DimStyle.Render("Path:   ")+p.truncatePath(proj.Path, width-9))
+		lines = append(lines, styles.DimStyle.Render("Branch: ")+
+			styles.InfoStyle.Render(proj.Branch))
+		lines = append(lines, "")
+		lines = append(lines, styles.DimStyle.Render("Stories:")+
+			styles.SuccessStyle.Render(fmt.Sprintf(" %d/%d complete", proj.StoriesComplete, proj.StoriesTotal)))
+		lines = append(lines, "")
+		lines = append(lines, renderProgressBar(proj.StoriesComplete, proj.StoriesTotal, width-4))
+		lines = append(lines, "")
+		if len(proj.Epics) > 0 {
+			lines = append(lines, styles.DimStyle.Render(fmt.Sprintf("Epics:  %d discovered", len(proj.Epics))))
+		} else {
+			lines = append(lines, styles.DimStyle.Render("Epics:  flat structure (no epics)"))
+		}
+	}
+
+	// Clamp to visible height with scroll
+	start := p.state.previewScroll
+	if start < 0 {
+		start = 0
+	}
+	if start >= len(lines) && len(lines) > 0 {
+		start = len(lines) - 1
+	}
+	end := start + height
+	if end > len(lines) {
+		end = len(lines)
+	}
+	visible := lines[start:end]
+
+	return strings.Join(visible, "\n")
+}
+
+// renderStoriesTab renders the Stories tab listing stories for the selected project/epic.
+func (p *WorkspacesPlugin) renderStoriesTab(proj *ProjectInfo, epic *EpicInfo, width, height int) string {
+	var lines []string
+
+	// Determine which stories file to load
+	var storiesPath string
+	if epic != nil {
+		storiesPath = epic.StoriesPath
+	} else if len(proj.Epics) > 0 {
+		// Show stories from first epic
+		storiesPath = proj.Epics[0].StoriesPath
+	} else {
+		// Flat structure
+		storiesPath = filepath.Join(proj.Path, ".prism", "stories", "stories.json")
+	}
+
+	storiesFile, err := domain.LoadStoriesFile(storiesPath)
+	if err != nil {
+		lines = append(lines, styles.DimStyle.Render("No stories file found"))
+		lines = append(lines, "")
+		lines = append(lines, styles.DimStyle.Render("Expected: "+p.truncatePath(storiesPath, width-3)))
+	} else {
+		if epic != nil {
+			lines = append(lines, styles.TitleStyle.Render(fmt.Sprintf("Stories: %s", epic.Name)))
+		} else {
+			lines = append(lines, styles.TitleStyle.Render("Stories"))
+		}
+		lines = append(lines, "")
+
+		for _, story := range storiesFile.Stories {
+			var icon string
+			switch story.Status {
+			case "complete":
+				icon = styles.SuccessStyle.Render("✓")
+			case "in_progress":
+				icon = styles.InfoStyle.Render("▸")
+			case "blocked":
+				icon = styles.WarningStyle.Render("⊘")
+			default:
+				icon = styles.DimStyle.Render("○")
+			}
+
+			id := story.ID
+			title := story.Title
+			maxTitleWidth := width - len(id) - 5
+			if maxTitleWidth < 8 {
+				maxTitleWidth = 8
+			}
+			if len([]rune(title)) > maxTitleWidth {
+				title = string([]rune(title)[:maxTitleWidth-1]) + "…"
+			}
+			lines = append(lines, fmt.Sprintf(" %s %s %s", icon, styles.DimStyle.Render(id), title))
+		}
+	}
+
+	// Clamp with scroll
+	start := p.state.previewScroll
+	if start < 0 {
+		start = 0
+	}
+	if start >= len(lines) && len(lines) > 0 {
+		start = len(lines) - 1
+	}
+	end := start + height
+	if end > len(lines) {
+		end = len(lines)
+	}
+	visible := lines[start:end]
+
+	return strings.Join(visible, "\n")
+}
+
+// renderProgressTab renders the Progress tab with phase/epic summary.
+func (p *WorkspacesPlugin) renderProgressTab(proj *ProjectInfo, epic *EpicInfo, width, height int) string {
+	var lines []string
+
+	if epic != nil {
+		lines = append(lines, styles.TitleStyle.Render("Epic Progress"))
+		lines = append(lines, "")
+		pct := 0
+		if epic.StoryCount > 0 {
+			pct = (epic.CompletedCount * 100) / epic.StoryCount
+		}
+		lines = append(lines, fmt.Sprintf(" Complete: %d%% (%d/%d stories)", pct, epic.CompletedCount, epic.StoryCount))
+		lines = append(lines, "")
+		lines = append(lines, " "+renderProgressBar(epic.CompletedCount, epic.StoryCount, width-6))
+	} else {
+		lines = append(lines, styles.TitleStyle.Render("Project Progress"))
+		lines = append(lines, "")
+		pct := 0
+		if proj.StoriesTotal > 0 {
+			pct = (proj.StoriesComplete * 100) / proj.StoriesTotal
+		}
+		lines = append(lines, fmt.Sprintf(" Total:    %d%% (%d/%d stories)", pct, proj.StoriesComplete, proj.StoriesTotal))
+		lines = append(lines, "")
+		lines = append(lines, " "+renderProgressBar(proj.StoriesComplete, proj.StoriesTotal, width-6))
+		lines = append(lines, "")
+
+		if len(proj.Epics) > 0 {
+			lines = append(lines, styles.DimStyle.Render("Epics:"))
+			for _, e := range proj.Epics {
+				ePct := 0
+				if e.StoryCount > 0 {
+					ePct = (e.CompletedCount * 100) / e.StoryCount
+				}
+				bar := renderProgressBar(e.CompletedCount, e.StoryCount, 8)
+				epicName := e.Name
+				maxENameWidth := width - 20
+				if maxENameWidth < 6 {
+					maxENameWidth = 6
+				}
+				if len([]rune(epicName)) > maxENameWidth {
+					epicName = string([]rune(epicName)[:maxENameWidth-1]) + "…"
+				}
+				lines = append(lines, fmt.Sprintf("  %-*s %s %d%%", maxENameWidth, epicName, bar, ePct))
+			}
+		}
+	}
+
+	// Clamp with scroll
+	start := p.state.previewScroll
+	if start < 0 {
+		start = 0
+	}
+	if start >= len(lines) && len(lines) > 0 {
+		start = len(lines) - 1
+	}
+	end := start + height
+	if end > len(lines) {
+		end = len(lines)
+	}
+	visible := lines[start:end]
+
+	return strings.Join(visible, "\n")
+}
+
+// truncatePath shortens a path to fit within maxLen, keeping the tail.
+func (p *WorkspacesPlugin) truncatePath(path string, maxLen int) string {
+	if len(path) <= maxLen {
+		return path
+	}
+	if maxLen < 4 {
+		return path[:maxLen]
+	}
+	return "…" + path[len(path)-(maxLen-1):]
+}
+
+// ── Input handling ─────────────────────────────────────────────────────────────
+
+// handleKeyPress handles keyboard input with pane-aware routing.
 func (p *WorkspacesPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 	key := msg.String()
 
-	// Epics view navigation
-	if p.state.EpicsView {
-		switch key {
-		case "j", "down":
-			if p.state.SelectedProject < len(p.state.Projects) && len(p.state.Projects[p.state.SelectedProject].Epics) > 0 {
-				p.state.SelectedEpic = (p.state.SelectedEpic + 1) % len(p.state.Projects[p.state.SelectedProject].Epics)
-			}
-			return p, nil
-
-		case "k", "up":
-			if p.state.SelectedProject < len(p.state.Projects) && len(p.state.Projects[p.state.SelectedProject].Epics) > 0 {
-				epicsCount := len(p.state.Projects[p.state.SelectedProject].Epics)
-				p.state.SelectedEpic = (p.state.SelectedEpic - 1 + epicsCount) % epicsCount
-			}
-			return p, nil
-
-		case "enter":
-			// Switch to selected epic
-			return p, p.switchToEpic()
-
-		case "esc", "backspace":
-			// Return to projects view
-			p.state.EpicsView = false
-			p.state.SelectedEpic = 0
-			return p, nil
+	// Tab always toggles the active pane
+	if key == "tab" {
+		if p.state.activePane == ui.PaneLeft {
+			p.state.activePane = ui.PaneRight
+		} else {
+			p.state.activePane = ui.PaneLeft
 		}
 		return p, nil
 	}
 
-	// Projects view navigation
+	// Global keys
+	switch key {
+	case "r":
+		if p.state.activePane == ui.PaneLeft {
+			p.state.Loading = true
+			return p, p.scanProjects()
+		}
+	}
+
+	if p.state.activePane == ui.PaneRight {
+		return p.handlePreviewKey(key)
+	}
+	return p.handleSidebarKey(key)
+}
+
+// handleSidebarKey handles keys when the left (project list) pane is focused.
+func (p *WorkspacesPlugin) handleSidebarKey(key string) (plugin.Plugin, tea.Cmd) {
+	if p.state.EpicsView {
+		return p.handleEpicsViewKey(key)
+	}
+	return p.handleProjectsViewKey(key)
+}
+
+// handleProjectsViewKey handles navigation within the project list.
+func (p *WorkspacesPlugin) handleProjectsViewKey(key string) (plugin.Plugin, tea.Cmd) {
 	switch key {
 	case "j", "down":
-		if len(p.state.Projects) > 0 {
-			p.state.SelectedProject = (p.state.SelectedProject + 1) % len(p.state.Projects)
+		if len(p.state.Projects) > 0 && p.state.SelectedProject < len(p.state.Projects)-1 {
+			p.state.SelectedProject++
+			p.clampProjectScroll()
 		}
 		return p, nil
 
 	case "k", "up":
-		if len(p.state.Projects) > 0 {
-			p.state.SelectedProject = (p.state.SelectedProject - 1 + len(p.state.Projects)) % len(p.state.Projects)
+		if p.state.SelectedProject > 0 {
+			p.state.SelectedProject--
+			p.clampProjectScroll()
 		}
 		return p, nil
 
 	case "enter":
-		// If selected project has epics, show epics view
-		// Otherwise, switch directly to project
 		if p.state.SelectedProject < len(p.state.Projects) {
 			project := p.state.Projects[p.state.SelectedProject]
 			if len(project.Epics) > 0 {
 				p.state.EpicsView = true
 				p.state.SelectedEpic = 0
+				p.state.scrollOff = 0
+				p.state.previewScroll = 0
 			} else {
 				return p, p.switchToProject()
 			}
 		}
 		return p, nil
 
-	case "r":
-		// Rescan projects
-		p.state.Loading = true
-		return p, p.scanProjects()
-
 	case "esc", "backspace":
-		// Return to home
 		return p, func() tea.Msg {
 			return plugin.FocusPluginMsg{ID: "home"}
 		}
@@ -228,167 +788,121 @@ func (p *WorkspacesPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cm
 	return p, nil
 }
 
-// renderProjectsView renders the list of discovered projects
-func (p *WorkspacesPlugin) renderProjectsView(width, height int) string {
-	var lines []string
+// handleEpicsViewKey handles navigation within the epics list.
+func (p *WorkspacesPlugin) handleEpicsViewKey(key string) (plugin.Plugin, tea.Cmd) {
+	var epics []EpicInfo
+	if p.state.SelectedProject < len(p.state.Projects) {
+		epics = p.state.Projects[p.state.SelectedProject].Epics
+	}
 
-	// Section title
-	title := styles.PanelTitleStyle.Render("📂 Discovered Projects")
-	lines = append(lines, "  "+title)
-	lines = append(lines, "")
-
-	if len(p.state.Projects) == 0 {
-		lines = append(lines, "  "+styles.DimStyle.Render("No projects found"))
-		lines = append(lines, "")
-		lines = append(lines, "  "+styles.DimStyle.Render("Press 'r' to scan for .prism/ directories"))
-	} else {
-		// Current project indicator
-		currentPath := p.ctx.ProjectDir
-		lines = append(lines, "  "+styles.DimStyle.Render(fmt.Sprintf("Current: %s", currentPath)))
-		lines = append(lines, "")
-
-		// Project list
-		for i, proj := range p.state.Projects {
-			selected := i == p.state.SelectedProject
-
-			// Project name and path
-			var projectLine string
-			if proj.Path == currentPath {
-				projectLine = fmt.Sprintf("● %s", proj.Name)
-				projectLine = styles.CurrentStyle.Bold(true).Render(projectLine)
-			} else if selected {
-				projectLine = fmt.Sprintf("▸ %s", proj.Name)
-				projectLine = styles.InfoStyle.Bold(true).Render(projectLine)
-			} else {
-				projectLine = fmt.Sprintf("  %s", proj.Name)
-				projectLine = styles.DimStyle.Render(projectLine)
-			}
-
-			lines = append(lines, "  "+projectLine)
-
-			// Branch and progress (indented)
-			branchInfo := fmt.Sprintf("    Branch: %s", proj.Branch)
-			if selected || proj.Path == currentPath {
-				lines = append(lines, styles.InfoStyle.Render(branchInfo))
-			} else {
-				lines = append(lines, styles.DimStyle.Render(branchInfo))
-			}
-
-			// Story progress
-			progressInfo := fmt.Sprintf("    Stories: %d/%d complete", proj.StoriesComplete, proj.StoriesTotal)
-			if selected || proj.Path == currentPath {
-				lines = append(lines, styles.SuccessStyle.Render(progressInfo))
-			} else {
-				lines = append(lines, styles.DimStyle.Render(progressInfo))
-			}
-
-			// Epics count
-			if len(proj.Epics) > 0 {
-				epicsInfo := fmt.Sprintf("    Epics: %d", len(proj.Epics))
-				if selected || proj.Path == currentPath {
-					lines = append(lines, styles.WarningStyle.Render(epicsInfo))
-				} else {
-					lines = append(lines, styles.DimStyle.Render(epicsInfo))
-				}
-			}
-
-			lines = append(lines, "")
+	switch key {
+	case "j", "down":
+		if len(epics) > 0 && p.state.SelectedEpic < len(epics)-1 {
+			p.state.SelectedEpic++
+			p.clampEpicScroll(len(epics))
 		}
+		return p, nil
+
+	case "k", "up":
+		if p.state.SelectedEpic > 0 {
+			p.state.SelectedEpic--
+			p.clampEpicScroll(len(epics))
+		}
+		return p, nil
+
+	case "enter":
+		return p, p.switchToEpic()
+
+	case "esc", "backspace":
+		p.state.EpicsView = false
+		p.state.SelectedEpic = 0
+		p.state.scrollOff = 0
+		p.state.previewScroll = 0
+		return p, nil
 	}
 
-	// Hints
-	lines = append(lines, "")
-	lines = append(lines, "  "+styles.DimStyle.Render("j/k navigate  enter select/view epics  r rescan  esc home"))
-
-	content := strings.Join(lines, "\n")
-	panelHeight := height
-	if panelHeight < 10 {
-		panelHeight = 10
-	}
-
-	return lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(styles.Info).
-		Width(width - 4).
-		Height(panelHeight).
-		Padding(1, 2).
-		Render(content)
+	return p, nil
 }
 
-// renderEpicsView renders the epic selector for the selected project
-func (p *WorkspacesPlugin) renderEpicsView(width, height int) string {
-	var lines []string
+// handlePreviewKey handles keys when the right (preview) pane is focused.
+func (p *WorkspacesPlugin) handlePreviewKey(key string) (plugin.Plugin, tea.Cmd) {
+	const numTabs = 3
+	switch key {
+	case "[", "shift+tab":
+		p.state.previewTab = (p.state.previewTab - 1 + numTabs) % numTabs
+		p.state.previewScroll = 0
+		return p, nil
 
-	if p.state.SelectedProject >= len(p.state.Projects) {
-		return "No project selected"
-	}
+	case "]":
+		p.state.previewTab = (p.state.previewTab + 1) % numTabs
+		p.state.previewScroll = 0
+		return p, nil
 
-	project := p.state.Projects[p.state.SelectedProject]
+	case "j", "down":
+		p.state.previewScroll++
+		return p, nil
 
-	// Section title
-	title := styles.PanelTitleStyle.Render(fmt.Sprintf("📚 Epics in %s", project.Name))
-	lines = append(lines, "  "+title)
-	lines = append(lines, "")
-
-	if len(project.Epics) == 0 {
-		lines = append(lines, "  "+styles.DimStyle.Render("No epics found in this project"))
-		lines = append(lines, "")
-		lines = append(lines, "  "+styles.DimStyle.Render("Using flat story structure: .prism/stories/stories.json"))
-	} else {
-		// Epic list
-		for i, epic := range project.Epics {
-			selected := i == p.state.SelectedEpic
-
-			// Epic name
-			var epicLine string
-			if selected {
-				epicLine = fmt.Sprintf("▸ %s", epic.Name)
-				epicLine = styles.InfoStyle.Bold(true).Render(epicLine)
-			} else {
-				epicLine = fmt.Sprintf("  %s", epic.Name)
-				epicLine = styles.DimStyle.Render(epicLine)
-			}
-
-			lines = append(lines, "  "+epicLine)
-
-			// Story progress
-			progressInfo := fmt.Sprintf("    %d/%d stories complete", epic.CompletedCount, epic.StoryCount)
-			if selected {
-				lines = append(lines, styles.SuccessStyle.Render(progressInfo))
-			} else {
-				lines = append(lines, styles.DimStyle.Render(progressInfo))
-			}
-
-			// Stories path
-			pathInfo := fmt.Sprintf("    %s", epic.StoriesPath)
-			if selected {
-				lines = append(lines, styles.DimStyle.Render(pathInfo))
-			} else {
-				lines = append(lines, styles.DimStyle.Render(pathInfo))
-			}
-
-			lines = append(lines, "")
+	case "k", "up":
+		if p.state.previewScroll > 0 {
+			p.state.previewScroll--
 		}
+		return p, nil
+
+	case "esc":
+		p.state.activePane = ui.PaneLeft
+		return p, nil
 	}
 
-	// Hints
-	lines = append(lines, "")
-	lines = append(lines, "  "+styles.DimStyle.Render("j/k navigate  enter switch epic  esc back to projects"))
-
-	content := strings.Join(lines, "\n")
-	panelHeight := height
-	if panelHeight < 10 {
-		panelHeight = 10
-	}
-
-	return lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(styles.Warning).
-		Width(width - 4).
-		Height(panelHeight).
-		Padding(1, 2).
-		Render(content)
+	return p, nil
 }
+
+// clampProjectScroll keeps the selected project within the visible window.
+func (p *WorkspacesPlugin) clampProjectScroll() {
+	const itemHeight = 2
+	const headerLines = 2
+	paneHeight := p.height
+	if paneHeight < 4 {
+		paneHeight = 4
+	}
+	innerHeight := paneHeight - 2
+	listAreaHeight := innerHeight - headerLines
+	visibleCount := listAreaHeight / itemHeight
+	if visibleCount < 1 {
+		visibleCount = 1
+	}
+
+	sel := p.state.SelectedProject
+	if sel < p.state.scrollOff {
+		p.state.scrollOff = sel
+	} else if sel >= p.state.scrollOff+visibleCount {
+		p.state.scrollOff = sel - visibleCount + 1
+	}
+}
+
+// clampEpicScroll keeps the selected epic within the visible window.
+func (p *WorkspacesPlugin) clampEpicScroll(totalEpics int) {
+	const itemHeight = 2
+	const headerLines = 2
+	paneHeight := p.height
+	if paneHeight < 4 {
+		paneHeight = 4
+	}
+	innerHeight := paneHeight - 2
+	listAreaHeight := innerHeight - headerLines
+	visibleCount := listAreaHeight / itemHeight
+	if visibleCount < 1 {
+		visibleCount = 1
+	}
+
+	sel := p.state.SelectedEpic
+	if sel < p.state.scrollOff {
+		p.state.scrollOff = sel
+	} else if sel >= p.state.scrollOff+visibleCount {
+		p.state.scrollOff = sel - visibleCount + 1
+	}
+}
+
+// ── Data loading ───────────────────────────────────────────────────────────────
 
 // scanProjects scans for .prism/ directories in parent and sibling directories
 func (p *WorkspacesPlugin) scanProjects() tea.Cmd {
@@ -426,7 +940,6 @@ func (p *WorkspacesPlugin) scanProjects() tea.Cmd {
 		}
 
 		// Sort projects by name
-		// (Simple sort implementation to avoid importing sort package)
 		for i := 0; i < len(projects); i++ {
 			for j := i + 1; j < len(projects); j++ {
 				if projects[i].Name > projects[j].Name {
@@ -495,7 +1008,6 @@ func (p *WorkspacesPlugin) scanProject(projectPath string) ProjectInfo {
 
 // countStories parses stories.json and counts total/completed stories
 func (p *WorkspacesPlugin) countStories(storiesPath string) (total int, completed int) {
-	// Parse stories using domain package
 	storiesFile, err := domain.LoadStoriesFile(storiesPath)
 	if err != nil {
 		return 0, 0
@@ -511,7 +1023,7 @@ func (p *WorkspacesPlugin) countStories(storiesPath string) (total int, complete
 	return total, completed
 }
 
-// switchToProject switches the active project by triggering Registry.Reinit
+// switchToProject switches the active project
 func (p *WorkspacesPlugin) switchToProject() tea.Cmd {
 	if p.state.SelectedProject >= len(p.state.Projects) {
 		return nil
@@ -520,20 +1032,16 @@ func (p *WorkspacesPlugin) switchToProject() tea.Cmd {
 	project := p.state.Projects[p.state.SelectedProject]
 
 	return func() tea.Msg {
-		// Create new context with updated paths
 		ctx := p.ctx
 		ctx.ProjectDir = project.Path
 		ctx.PrismDir = filepath.Join(project.Path, ".prism")
 
-		// Determine stories path (flat or epic structure)
 		if len(project.Epics) == 0 {
 			ctx.StoriesPath = filepath.Join(ctx.PrismDir, "stories", "stories.json")
 		} else {
-			// Use first epic by default
 			ctx.StoriesPath = project.Epics[0].StoriesPath
 		}
 
-		// Return message to trigger reinit
 		return SwitchProjectMsg{Context: ctx}
 	}
 }
@@ -553,14 +1061,13 @@ func (p *WorkspacesPlugin) switchToEpic() tea.Cmd {
 	epic := project.Epics[p.state.SelectedEpic]
 
 	return func() tea.Msg {
-		// Create new context with updated epic path
 		ctx := p.ctx
 		ctx.StoriesPath = epic.StoriesPath
-
-		// Return message to trigger reinit
 		return SwitchProjectMsg{Context: ctx}
 	}
 }
+
+// ── Message types ──────────────────────────────────────────────────────────────
 
 // ProjectsScanCompleteMsg signals that project scanning is complete
 type ProjectsScanCompleteMsg struct {

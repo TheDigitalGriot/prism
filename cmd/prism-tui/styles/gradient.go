@@ -9,6 +9,172 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// ── Gradient types (ported from Sidecar for RenderPanel support) ──────────────
+
+// RGB represents a color in RGB space for interpolation.
+type RGB struct {
+	R, G, B float64
+}
+
+// GradientStop defines a color at a position (0.0 to 1.0).
+type GradientStop struct {
+	Position float64
+	Color    RGB
+}
+
+// Gradient defines a multi-stop color gradient with angle support.
+type Gradient struct {
+	Stops []GradientStop
+	Angle float64 // degrees (0 = horizontal left-to-right, 90 = vertical top-to-bottom)
+}
+
+// DefaultGradientAngle is the default angle for gradient borders (30 degrees).
+const DefaultGradientAngle = 30.0
+
+// ANSIReset is the ANSI escape code to reset formatting.
+const ANSIReset = "\x1b[0m"
+
+// ToANSI returns the raw ANSI foreground escape code for this color.
+func (c RGB) ToANSI() string {
+	r := clampByte(c.R)
+	g := clampByte(c.G)
+	b := clampByte(c.B)
+	return fmt.Sprintf("\x1b[38;2;%d;%d;%dm", r, g, b)
+}
+
+// clampByte clamps a float64 to a uint8 range (0–255).
+// Distinct from clampU8 (which takes int) in theme.go.
+func clampByte(v float64) uint8 {
+	if v < 0 {
+		return 0
+	}
+	if v > 255 {
+		return 255
+	}
+	return uint8(v)
+}
+
+// HexToRGB converts a hex color string (#RRGGBB) to RGB.
+func HexToRGB(hex string) RGB {
+	r, g, b := parseHex(hex)
+	return RGB{float64(r), float64(g), float64(b)}
+}
+
+// RGBToHex converts RGB back to a hex color string.
+func RGBToHex(c RGB) string {
+	return fmt.Sprintf("#%02x%02x%02x", clampByte(c.R), clampByte(c.G), clampByte(c.B))
+}
+
+// LerpRGB linearly interpolates between two RGB colors.
+// t should be in [0, 1] where 0 = c1 and 1 = c2.
+func LerpRGB(c1, c2 RGB, t float64) RGB {
+	return RGB{
+		R: c1.R + (c2.R-c1.R)*t,
+		G: c1.G + (c2.G-c1.G)*t,
+		B: c1.B + (c2.B-c1.B)*t,
+	}
+}
+
+// NewGradient creates a gradient from a slice of hex color strings.
+// Colors are evenly distributed from position 0.0 to 1.0.
+func NewGradient(hexColors []string, angle float64) Gradient {
+	if len(hexColors) == 0 {
+		return Gradient{Angle: angle}
+	}
+	stops := make([]GradientStop, len(hexColors))
+	for i, hex := range hexColors {
+		var pos float64
+		if len(hexColors) == 1 {
+			pos = 0.5
+		} else {
+			pos = float64(i) / float64(len(hexColors)-1)
+		}
+		stops[i] = GradientStop{Position: pos, Color: HexToRGB(hex)}
+	}
+	return Gradient{Stops: stops, Angle: angle}
+}
+
+// ColorAt returns the interpolated color at position t (0.0 to 1.0).
+func (g *Gradient) ColorAt(t float64) RGB {
+	if len(g.Stops) == 0 {
+		return RGB{128, 128, 128}
+	}
+	if len(g.Stops) == 1 {
+		return g.Stops[0].Color
+	}
+	if t <= 0 {
+		return g.Stops[0].Color
+	}
+	if t >= 1 {
+		return g.Stops[len(g.Stops)-1].Color
+	}
+	lower := g.Stops[0]
+	upper := g.Stops[len(g.Stops)-1]
+	for i := 0; i < len(g.Stops)-1; i++ {
+		if t >= g.Stops[i].Position && t <= g.Stops[i+1].Position {
+			lower = g.Stops[i]
+			upper = g.Stops[i+1]
+			break
+		}
+	}
+	segmentLength := upper.Position - lower.Position
+	if segmentLength <= 0 {
+		return lower.Color
+	}
+	localT := (t - lower.Position) / segmentLength
+	return LerpRGB(lower.Color, upper.Color, localT)
+}
+
+// PositionAt calculates the gradient position for a coordinate given the angle.
+// Returns a value in [0, 1].
+func (g *Gradient) PositionAt(x, y, width, height int) float64 {
+	if width <= 0 && height <= 0 {
+		return 0.5
+	}
+	angleRad := g.Angle * math.Pi / 180.0
+	dx := math.Cos(angleRad)
+	dy := math.Sin(angleRad)
+	var nx, ny float64
+	if width > 1 {
+		nx = float64(x) / float64(width-1)
+	}
+	if height > 1 {
+		ny = float64(y) / float64(height-1)
+	}
+	projection := nx*dx + ny*dy
+	maxProjection := math.Abs(dx) + math.Abs(dy)
+	if maxProjection > 0 {
+		projection = projection / maxProjection
+	}
+	if projection < 0 {
+		return 0
+	}
+	if projection > 1 {
+		return 1
+	}
+	return projection
+}
+
+// IsValid returns true if the gradient has at least 2 color stops.
+func (g *Gradient) IsValid() bool {
+	return len(g.Stops) >= 2
+}
+
+// GetActiveGradient returns a gradient for focused (active) panels using Prism's brand colors.
+func GetActiveGradient() Gradient {
+	return NewGradient([]string{string(Primary), string(Info)}, DefaultGradientAngle)
+}
+
+// GetNormalGradient returns a gradient for unfocused (inactive) panels.
+func GetNormalGradient() Gradient {
+	return NewGradient([]string{"#4B5563", "#374151"}, DefaultGradientAngle)
+}
+
+// GetFlashGradient returns a warning-colored gradient for flash effects.
+func GetFlashGradient() Gradient {
+	return NewGradient([]string{string(Warning), string(Success)}, DefaultGradientAngle)
+}
+
 // parseHex parses a hex color string (#RRGGBB) into RGB components
 func parseHex(hex string) (r, g, b uint8) {
 	hex = strings.TrimPrefix(hex, "#")

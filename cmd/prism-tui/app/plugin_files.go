@@ -7,12 +7,12 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	zone "github.com/lrstanley/bubblezone"
 	"github.com/prism-plugin/prism-tui/plugin"
 	"github.com/prism-plugin/prism-tui/styles"
+	"github.com/prism-plugin/prism-tui/ui"
 )
 
 // FileNode represents a file or directory in the tree
@@ -30,11 +30,17 @@ type FilesState struct {
 	Root           *FileNode
 	FlatList       []*FileNode // Flattened tree for navigation
 	SelectedIdx    int
-	Viewport       viewport.Model
 	PreviewPath    string
-	PreviewContent string // Raw preview content (rendered directly, not via viewport)
-	FilterMode     bool
-	FilterQuery    string
+	PreviewContent string // Raw preview content rendered directly
+	FilterMode     bool   // Filename search/filter mode active
+	FilterQuery    string // Current search query
+
+	// Two-pane layout state (Phase 5)
+	activePane       ui.FocusPane
+	treeWidth        int // Calculated left pane width
+	previewWidth     int // Calculated right pane width
+	treeScrollOff    int // Index of first visible item in tree
+	previewScrollOff int // First visible line in preview
 }
 
 // FilesPlugin implements the file browser view
@@ -42,13 +48,16 @@ type FilesPlugin struct {
 	ctx     *plugin.Context
 	state   FilesState
 	focused bool
+	width   int
+	height  int
 }
 
 // NewFilesPlugin creates a new Files plugin instance
 func NewFilesPlugin() *FilesPlugin {
 	return &FilesPlugin{
 		state: FilesState{
-			FlatList: []*FileNode{},
+			FlatList:   []*FileNode{},
+			activePane: ui.PaneLeft,
 		},
 	}
 }
@@ -71,8 +80,9 @@ func (p *FilesPlugin) Icon() string {
 // Init initializes the plugin with context
 func (p *FilesPlugin) Init(ctx *plugin.Context) error {
 	p.ctx = ctx
-	// Initialize viewport for file preview
-	p.state.Viewport = viewport.New(ctx.Width/2-4, ctx.Height-6)
+	p.width = ctx.Width
+	p.height = ctx.Height
+	p.state.activePane = ui.PaneLeft
 	return nil
 }
 
@@ -92,30 +102,22 @@ func (p *FilesPlugin) Stop() {
 
 // Update handles messages
 func (p *FilesPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
-	var cmd tea.Cmd
-
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		return p.handleKeyPress(msg)
 
 	case tea.MouseMsg:
-		// Handle scroll wheel events
+		// Scroll wheel events scroll the tree list
 		if msg.Button == tea.MouseButtonWheelUp {
 			if p.state.SelectedIdx > 0 {
-				p.state.SelectedIdx -= 3
-				if p.state.SelectedIdx < 0 {
-					p.state.SelectedIdx = 0
-				}
+				p.state.SelectedIdx--
 				return p, p.loadPreview()
 			}
 			return p, nil
 		}
 		if msg.Button == tea.MouseButtonWheelDown {
 			if len(p.state.FlatList) > 0 && p.state.SelectedIdx < len(p.state.FlatList)-1 {
-				p.state.SelectedIdx += 3
-				if p.state.SelectedIdx >= len(p.state.FlatList) {
-					p.state.SelectedIdx = len(p.state.FlatList) - 1
-				}
+				p.state.SelectedIdx++
 				return p, p.loadPreview()
 			}
 			return p, nil
@@ -126,6 +128,7 @@ func (p *FilesPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 			for i := range p.state.FlatList {
 				if info := zone.Get(fmt.Sprintf("files:item-%d", i)); info != nil && info.InBounds(msg) {
 					p.state.SelectedIdx = i
+					p.state.activePane = ui.PaneLeft
 					return p, p.loadPreview()
 				}
 			}
@@ -133,13 +136,8 @@ func (p *FilesPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 		return p, nil
 
 	case plugin.PluginResizeMsg:
-		// Update viewport dimensions
-		viewportHeight := msg.Height - 6
-		if viewportHeight < 10 {
-			viewportHeight = 10
-		}
-		p.state.Viewport.Width = msg.Width/2 - 4
-		p.state.Viewport.Height = viewportHeight
+		p.width = msg.Width
+		p.height = msg.Height
 		return p, nil
 
 	case FileTreeLoadedMsg:
@@ -156,65 +154,19 @@ func (p *FilesPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 		if msg.Error == nil && msg.ForView == ViewFiles {
 			p.state.PreviewPath = msg.Path
 			p.state.PreviewContent = msg.Content
-			p.state.Viewport.SetContent(msg.Content)
+			p.state.previewScrollOff = 0
 		}
 		return p, nil
 	}
 
-	// Forward viewport updates when previewing file
-	if p.state.PreviewPath != "" {
-		p.state.Viewport, cmd = p.state.Viewport.Update(msg)
-	}
-
-	return p, cmd
+	return p, nil
 }
 
-// View renders the file browser
+// View renders the file browser as a 30/70 two-pane layout
 func (p *FilesPlugin) View(width, height int) string {
-	var sections []string
-
-	// Powerline breadcrumb header
-	sections = append(sections, renderBreadcrumb("Files", width, p.ctx.HasNerdFont))
-	sections = append(sections, "")
-
-	if p.state.FilterMode {
-		// Show filter input
-		filterPrompt := styles.CurrentStyle.Render(fmt.Sprintf("Filter: %s_", p.state.FilterQuery))
-		sections = append(sections, "  "+filterPrompt)
-		sections = append(sections, "")
-	}
-
-	// Two-pane layout: tree on left, preview on right
-	leftWidth := width/2 - 2
-	rightWidth := width - leftWidth - 4
-
-	// Build tree view
-	treeLines := p.renderTree(leftWidth, height-6)
-
-	// Build preview pane
-	previewLines := p.renderPreview(rightWidth, height-6)
-
-	// Combine left and right panes
-	maxLines := len(treeLines)
-	if len(previewLines) > maxLines {
-		maxLines = len(previewLines)
-	}
-
-	for i := 0; i < maxLines; i++ {
-		left := ""
-		right := ""
-		if i < len(treeLines) {
-			left = treeLines[i]
-		} else {
-			left = strings.Repeat(" ", leftWidth)
-		}
-		if i < len(previewLines) {
-			right = previewLines[i]
-		}
-		sections = append(sections, left+"  "+right)
-	}
-
-	return lipgloss.JoinVertical(lipgloss.Left, sections...)
+	p.width = width
+	p.height = height
+	return p.renderTwoPane(width, height)
 }
 
 // IsFocused returns whether the plugin is active
@@ -226,32 +178,249 @@ func (p *FilesPlugin) IsFocused() bool {
 func (p *FilesPlugin) SetFocused(focused bool) {
 	p.focused = focused
 	if focused && len(p.state.FlatList) > 0 {
-		// Load preview for current selection when focused
 		p.loadPreview()
 	}
 }
 
-// KeyHints returns footer key hints
+// KeyHints returns footer key hints based on current pane and mode
 func (p *FilesPlugin) KeyHints() []plugin.KeyHint {
 	if p.state.FilterMode {
 		return []plugin.KeyHint{
-			{Key: "esc", Description: "cancel filter"},
+			{Key: "esc", Description: "cancel search"},
 			{Key: "enter", Description: "apply filter"},
+		}
+	}
+	if p.state.activePane == ui.PaneRight {
+		return []plugin.KeyHint{
+			{Key: "j/k", Description: "scroll preview"},
+			{Key: "tab/esc", Description: "back to tree"},
 		}
 	}
 	return []plugin.KeyHint{
 		{Key: "j/k", Description: "navigate"},
 		{Key: "enter", Description: "expand/collapse"},
-		{Key: "/", Description: "filter"},
+		{Key: "/", Description: "search"},
+		{Key: "tab", Description: "preview pane"},
 		{Key: "esc", Description: "home"},
 	}
 }
 
-// handleKeyPress handles keyboard input
+// ── Rendering ─────────────────────────────────────────────────────────────────
+
+// renderTwoPane assembles the full 30/70 bordered two-pane layout.
+func (p *FilesPlugin) renderTwoPane(width, height int) string {
+	paneWidths := ui.CalculatePaneWidths(width, 30, 20, 40)
+	p.state.treeWidth = paneWidths.Left
+	p.state.previewWidth = paneWidths.Right
+
+	paneHeight := height
+	if paneHeight < 4 {
+		paneHeight = 4
+	}
+	innerHeight := paneHeight - 2
+	if innerHeight < 1 {
+		innerHeight = 1
+	}
+
+	treeActive := p.state.activePane == ui.PaneLeft
+	previewActive := p.state.activePane == ui.PaneRight
+
+	treeContent := p.renderTree(p.state.treeWidth, innerHeight)
+	previewContent := p.renderPreview(p.state.previewWidth, innerHeight)
+
+	leftPane := styles.RenderPanel(treeContent, p.state.treeWidth, paneHeight, treeActive)
+	divider := ui.RenderDivider(paneHeight)
+	rightPane := styles.RenderPanel(previewContent, p.state.previewWidth, paneHeight, previewActive)
+
+	return lipgloss.JoinHorizontal(lipgloss.Top, leftPane, divider, rightPane)
+}
+
+// renderTree renders the file tree in the left pane.
+// Returns the inner content string (without border/padding — RenderPanel adds those).
+func (p *FilesPlugin) renderTree(treeWidth, innerHeight int) string {
+	var sb strings.Builder
+
+	// Header line: "Files" title, or search bar when in filter mode
+	if p.state.FilterMode {
+		sb.WriteString(styles.CurrentStyle.Render(fmt.Sprintf("/ %s_", p.state.FilterQuery)))
+	} else {
+		sb.WriteString(styles.TitleStyle.Render("Files"))
+	}
+	sb.WriteString("\n\n")
+
+	const headerLines = 2
+	treeAreaHeight := innerHeight - headerLines
+	if treeAreaHeight < 1 {
+		treeAreaHeight = 1
+	}
+
+	// Content width: RenderPanel adds 2 borders + 2 padding = 4 overhead; scrollbar = 1
+	maxWidth := treeWidth - 4 - 1
+	if maxWidth < 5 {
+		maxWidth = 5
+	}
+
+	if len(p.state.FlatList) == 0 {
+		sb.WriteString(styles.DimStyle.Render("No files found."))
+		return sb.String()
+	}
+
+	// Auto-scroll: keep selected item visible
+	if p.state.SelectedIdx < p.state.treeScrollOff {
+		p.state.treeScrollOff = p.state.SelectedIdx
+	}
+	if p.state.SelectedIdx >= p.state.treeScrollOff+treeAreaHeight {
+		p.state.treeScrollOff = p.state.SelectedIdx - treeAreaHeight + 1
+	}
+	if p.state.treeScrollOff < 0 {
+		p.state.treeScrollOff = 0
+	}
+
+	start := p.state.treeScrollOff
+	end := start + treeAreaHeight
+	if end > len(p.state.FlatList) {
+		end = len(p.state.FlatList)
+	}
+
+	// Build tree items
+	var treeSB strings.Builder
+	for i := start; i < end; i++ {
+		node := p.state.FlatList[i]
+		selected := i == p.state.SelectedIdx
+
+		indent := strings.Repeat("  ", node.Depth)
+		var icon string
+		if node.IsDir {
+			if node.Expanded {
+				icon = "▼ "
+			} else {
+				icon = "▶ "
+			}
+		} else {
+			icon = "  "
+		}
+
+		plainLine := indent + icon + node.Name
+		// Truncate to maxWidth (rune-safe for emoji/Unicode in filenames)
+		if len([]rune(plainLine)) > maxWidth {
+			runes := []rune(plainLine)
+			plainLine = string(runes[:maxWidth-1]) + "…"
+		}
+		// Pad to full maxWidth for consistent background highlight
+		visWidth := lipgloss.Width(plainLine)
+		if visWidth < maxWidth {
+			plainLine += strings.Repeat(" ", maxWidth-visWidth)
+		}
+
+		var styledLine string
+		if selected {
+			styledLine = styles.CurrentStyle.Render(plainLine)
+		} else if node.IsDir {
+			styledLine = styles.TitleStyle.Render(plainLine)
+		} else {
+			styledLine = styles.DimStyle.Render(plainLine)
+		}
+
+		// Register zone for mouse click
+		styledLine = zone.Mark(fmt.Sprintf("files:item-%d", i), styledLine)
+
+		treeSB.WriteString(styledLine)
+		if i < end-1 {
+			treeSB.WriteString("\n")
+		}
+	}
+
+	// Scrollbar alongside tree content
+	scrollbar := ui.RenderScrollbar(ui.ScrollbarParams{
+		TotalItems:   len(p.state.FlatList),
+		ScrollOffset: p.state.treeScrollOff,
+		VisibleItems: treeAreaHeight,
+		TrackHeight:  treeAreaHeight,
+	})
+
+	sb.WriteString(lipgloss.JoinHorizontal(lipgloss.Top, treeSB.String(), scrollbar))
+	return sb.String()
+}
+
+// renderPreview renders the file preview in the right pane with line numbers.
+// Format: "  42 │ content here" (4-digit right-aligned line number + " │ " separator).
+func (p *FilesPlugin) renderPreview(previewWidth, innerHeight int) string {
+	var sb strings.Builder
+
+	// Header: filename with type extension hint
+	header := "Preview"
+	if p.state.PreviewPath != "" {
+		name := filepath.Base(p.state.PreviewPath)
+		ext := filepath.Ext(p.state.PreviewPath)
+		if ext != "" {
+			header = fmt.Sprintf("%s [%s]", name, strings.TrimPrefix(ext, "."))
+		} else {
+			header = name
+		}
+	}
+	sb.WriteString(styles.TitleStyle.Render(header))
+	sb.WriteString("\n\n")
+
+	if p.state.PreviewContent == "" {
+		sb.WriteString(styles.DimStyle.Render("Select a file to preview"))
+		return sb.String()
+	}
+
+	const headerLines = 2
+	contentAreaHeight := innerHeight - headerLines
+	if contentAreaHeight < 1 {
+		contentAreaHeight = 1
+	}
+
+	contentLines := strings.Split(p.state.PreviewContent, "\n")
+
+	// Clamp preview scroll offset
+	if p.state.previewScrollOff < 0 {
+		p.state.previewScrollOff = 0
+	}
+	maxScroll := len(contentLines) - contentAreaHeight
+	if maxScroll < 0 {
+		maxScroll = 0
+	}
+	if p.state.previewScrollOff > maxScroll {
+		p.state.previewScrollOff = maxScroll
+	}
+
+	start := p.state.previewScrollOff
+	end := start + contentAreaHeight
+	if end > len(contentLines) {
+		end = len(contentLines)
+	}
+
+	// Line number prefix: "%4d │ " = 7 chars ("   1 │ ")
+	const lineNumWidth = 7
+	// RenderPanel overhead: 2 borders + 2 padding = 4; minus lineNumWidth
+	maxLineWidth := previewWidth - 4 - lineNumWidth
+	if maxLineWidth < 10 {
+		maxLineWidth = 10
+	}
+
+	for i := start; i < end; i++ {
+		line := contentLines[i]
+		if len(line) > maxLineWidth {
+			line = line[:maxLineWidth-1] + "…"
+		}
+		lineNum := fmt.Sprintf("%4d │ ", i+1)
+		sb.WriteString(styles.FileBrowserLineNumber.Render(lineNum))
+		sb.WriteString(line)
+		if i < end-1 {
+			sb.WriteString("\n")
+		}
+	}
+
+	return sb.String()
+}
+
+// handleKeyPress handles keyboard input with pane-aware navigation.
 func (p *FilesPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 	key := msg.String()
 
-	// Filter mode input
+	// Filter/search mode captures all input
 	if p.state.FilterMode {
 		switch key {
 		case "esc":
@@ -269,7 +438,6 @@ func (p *FilesPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 			}
 			return p, nil
 		default:
-			// Add character to filter
 			if len(key) == 1 {
 				p.state.FilterQuery += key
 			}
@@ -277,17 +445,47 @@ func (p *FilesPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 		}
 	}
 
-	// Normal navigation
+	// Tab switches focus between tree and preview panes
+	if key == "tab" {
+		if p.state.activePane == ui.PaneLeft {
+			p.state.activePane = ui.PaneRight
+		} else {
+			p.state.activePane = ui.PaneLeft
+		}
+		return p, nil
+	}
+
+	// Preview pane: j/k scroll content, esc returns to tree
+	if p.state.activePane == ui.PaneRight {
+		switch key {
+		case "j", "down":
+			p.state.previewScrollOff++
+			return p, nil
+		case "k", "up":
+			if p.state.previewScrollOff > 0 {
+				p.state.previewScrollOff--
+			}
+			return p, nil
+		case "esc":
+			p.state.activePane = ui.PaneLeft
+			return p, nil
+		}
+		return p, nil
+	}
+
+	// Tree pane navigation
 	switch key {
 	case "j", "down":
 		if len(p.state.FlatList) > 0 && p.state.SelectedIdx < len(p.state.FlatList)-1 {
 			p.state.SelectedIdx++
+			p.state.previewScrollOff = 0
 			return p, p.loadPreview()
 		}
 		return p, nil
 	case "k", "up":
 		if p.state.SelectedIdx > 0 {
 			p.state.SelectedIdx--
+			p.state.previewScrollOff = 0
 			return p, p.loadPreview()
 		}
 		return p, nil
@@ -298,7 +496,6 @@ func (p *FilesPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 				node.Expanded = !node.Expanded
 				p.rebuildFlatList()
 			} else {
-				// Load file preview for non-directory files
 				return p, p.loadPreview()
 			}
 		}
@@ -314,91 +511,7 @@ func (p *FilesPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 		}
 	}
 
-	// Forward to viewport for scrolling preview
-	var cmd tea.Cmd
-	p.state.Viewport, cmd = p.state.Viewport.Update(msg)
-	return p, cmd
-}
-
-// renderTree renders the file tree on the left pane
-func (p *FilesPlugin) renderTree(width, height int) []string {
-	var lines []string
-
-	if len(p.state.FlatList) == 0 {
-		lines = append(lines, styles.DimStyle.Render("  No files found."))
-		return lines
-	}
-
-	// Render visible portion of flat list
-	for i, node := range p.state.FlatList {
-		if i >= height {
-			break
-		}
-
-		selected := i == p.state.SelectedIdx
-		indent := strings.Repeat("  ", node.Depth)
-		icon := "📄"
-		if node.IsDir {
-			if node.Expanded {
-				icon = "📂"
-			} else {
-				icon = "📁"
-			}
-		}
-
-		line := fmt.Sprintf("%s%s %s", indent, icon, node.Name)
-
-		// Truncate if too long
-		maxLen := width - 2
-		if len(line) > maxLen {
-			line = line[:maxLen-3] + "..."
-		}
-
-		if selected {
-			line = styles.CurrentStyle.Render("> " + line)
-		} else {
-			line = styles.DimStyle.Render("  " + line)
-		}
-
-		// Pad to full width
-		padding := width - lipgloss.Width(line)
-		if padding > 0 {
-			line = line + strings.Repeat(" ", padding)
-		}
-
-		// Mark with zone for mouse interaction
-		line = zone.Mark(fmt.Sprintf("files:item-%d", i), line)
-
-		lines = append(lines, line)
-	}
-
-	return lines
-}
-
-// renderPreview renders the file preview on the right pane
-func (p *FilesPlugin) renderPreview(width, height int) []string {
-	if p.state.PreviewContent == "" {
-		return []string{styles.DimStyle.Render("Select a file to preview")}
-	}
-
-	// Render preview content directly (bypass viewport for reliability)
-	contentLines := strings.Split(p.state.PreviewContent, "\n")
-
-	// Limit to available height
-	if len(contentLines) > height {
-		contentLines = contentLines[:height]
-	}
-
-	// Truncate long lines and style
-	var lines []string
-	for _, line := range contentLines {
-		if len(line) > width {
-			line = line[:width-3] + "..."
-		}
-		lines = append(lines, styles.DimStyle.Render(line))
-	}
-
-	return lines
+	return p, nil
 }
 
 // rebuildFlatList rebuilds the flattened list from the tree
@@ -426,9 +539,8 @@ func (p *FilesPlugin) flattenNode(node *FileNode) {
 	}
 }
 
-// applyFilter filters the tree based on the query
+// applyFilter filters the flat list to entries matching FilterQuery
 func (p *FilesPlugin) applyFilter() {
-	// Simple filter: rebuild flat list with only matching items
 	p.rebuildFlatList()
 	if p.state.FilterQuery == "" {
 		return
@@ -443,6 +555,7 @@ func (p *FilesPlugin) applyFilter() {
 	}
 	p.state.FlatList = filtered
 	p.state.SelectedIdx = 0
+	p.state.treeScrollOff = 0
 }
 
 // loadPreview loads the preview for the currently selected file
@@ -456,7 +569,7 @@ func (p *FilesPlugin) loadPreview() tea.Cmd {
 		p.state.PreviewPath = node.Path
 		content := fmt.Sprintf("Directory: %s\nItems: %d", node.Name, len(node.Children))
 		p.state.PreviewContent = content
-		p.state.Viewport.SetContent(content)
+		p.state.previewScrollOff = 0
 		return nil
 	}
 
@@ -464,7 +577,7 @@ func (p *FilesPlugin) loadPreview() tea.Cmd {
 	if p.ctx.DemoMode {
 		p.state.PreviewPath = node.Path
 		p.state.PreviewContent = demoFileContent(node.Name)
-		p.state.Viewport.SetContent(p.state.PreviewContent)
+		p.state.previewScrollOff = 0
 		return nil
 	}
 
@@ -475,11 +588,11 @@ func (p *FilesPlugin) loadPreview() tea.Cmd {
 func (p *FilesPlugin) buildFileTreeCmd() tea.Cmd {
 	return func() tea.Msg {
 		root := &FileNode{
-			Name:  filepath.Base(p.ctx.ProjectDir),
-			Path:  p.ctx.ProjectDir,
-			IsDir: true,
+			Name:     filepath.Base(p.ctx.ProjectDir),
+			Path:     p.ctx.ProjectDir,
+			IsDir:    true,
 			Expanded: true,
-			Depth: 0,
+			Depth:    0,
 		}
 
 		err := p.buildTree(root, 3) // Max depth of 3 to avoid overwhelming
