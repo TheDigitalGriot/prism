@@ -75,17 +75,16 @@ func (m Model) renderSidebar(height int) string {
 		Render(content)
 
 	// Decorative 3-row slash pattern above the panel box.
-	// Top row has a leading powerline slant; rows 2-3 are plain slashes.
+	// Each row has a stepped sepLeft+sepRight pair creating a diagonal filled edge.
 	icons := styles.GetIcons(m.HasNerdFont)
 	slashStyle := lipgloss.NewStyle().Foreground(styles.Primary)
+	cap := icons.SepLeft + icons.SepRight
 
-	// Row 1: filled slant + slashes
-	row1 := lipgloss.NewStyle().Foreground(styles.Primary).Render(icons.SepRight) +
-		slashStyle.Render(strings.Repeat("/", SidebarWidth-1))
-	// Rows 2-3: plain slashes
-	plainRow := slashStyle.Render(strings.Repeat("/", SidebarWidth))
+	row1 := slashStyle.Render("  " + cap + strings.Repeat("/", SidebarWidth-4))
+	row2 := slashStyle.Render(" " + cap + strings.Repeat("/", SidebarWidth-3))
+	row3 := slashStyle.Render(cap + strings.Repeat("/", SidebarWidth-2))
 
-	slashPattern := lipgloss.JoinVertical(lipgloss.Left, row1, plainRow, plainRow)
+	slashPattern := lipgloss.JoinVertical(lipgloss.Left, row1, row2, row3)
 
 	return lipgloss.JoinVertical(lipgloss.Left, slashPattern, panel)
 }

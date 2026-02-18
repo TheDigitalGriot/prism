@@ -5,6 +5,7 @@ import "github.com/charmbracelet/lipgloss"
 // Color palette
 var (
 	Primary    = lipgloss.Color("#7C3AED") // Purple
+	Secondary  = lipgloss.Color("#2c2d3a") // Editor background (inactive elements)
 	Success    = lipgloss.Color("#10B981") // Green
 	Warning    = lipgloss.Color("#F59E0B") // Yellow
 	Error      = lipgloss.Color("#EF4444") // Red
@@ -203,6 +204,17 @@ func ApplyTheme(accentHex string) {
 	// Rebuild sidebar styles that cache Primary
 	SidebarBrandStyle = SidebarBrandStyle.Foreground(Primary)
 	SidebarStyle = SidebarStyle.BorderForeground(Primary)
+}
+
+// ApplySecondary overrides the default secondary color (editor.background) for
+// inactive UI elements like tab backgrounds. Call once at startup after terminal detection.
+func ApplySecondary(editorBgHex string) {
+	if editorBgHex == "" {
+		return
+	}
+	c := lipgloss.Color(editorBgHex)
+	Secondary = c
+	TabBarInactiveBg = c
 }
 
 // Separator renders a vertical separator

@@ -291,12 +291,23 @@ func (m Model) renderPowerlineTabBar(width int) string {
 			parts = append(parts, sepStyle.Render(icons.SepRight))
 		}
 
-		// Trailing fill to reach full width
+		// Small diagonal accent after tabs (fixed width, not filling entire terminal)
+		const accentBase = 3
 		row := strings.Join(parts, "")
 		rowWidth := lipgloss.Width(row)
-		fillWidth := width - rowWidth
+		available := width - rowWidth
+		if available < 0 {
+			available = 0
+		}
+		fillWidth := accentBase
 		if capReserve > 0 {
-			fillWidth -= capReserve // reserve space for closing cap
+			fillWidth -= capReserve
+		}
+		if fillWidth > available-capReserve {
+			fillWidth = available - capReserve
+		}
+		if fillWidth < 0 {
+			fillWidth = 0
 		}
 		if fillWidth > 0 {
 			fillStyle := lipgloss.NewStyle().Background(styles.Primary)
@@ -311,10 +322,10 @@ func (m Model) renderPowerlineTabBar(width int) string {
 		return strings.Join(parts, "")
 	}
 
-	// Top row: spaces only, first segment 1 char wider (separator shifts RIGHT), no cap
+	// Top row: spaces only, first segment 1 char wider (separator shifts RIGHT), cap for diagonal
 	topRow := buildRow(+1, func(i int, segWidth int) string {
 		return strings.Repeat(" ", segWidth)
-	}, false, 0)
+	}, false, 1)
 
 	// Middle row: centered labels with zone marks, cap at right edge
 	midRow := buildRow(0, func(i int, segWidth int) string {
@@ -331,11 +342,9 @@ func (m Model) renderPowerlineTabBar(width int) string {
 	}, true, 1)
 
 	// Bottom row: spaces only, first segment 1 char narrower (separator shifts LEFT)
-	// Cap 1 char left of middle row's cap → diagonal end edge, trailing slash
 	botRow := buildRow(-1, func(i int, segWidth int) string {
 		return strings.Repeat(" ", segWidth)
-	}, false, 2)
-	botRow += lipgloss.NewStyle().Foreground(styles.Primary).Render("/")
+	}, false, 1)
 
 	return lipgloss.JoinVertical(lipgloss.Left, topRow, midRow, botRow)
 }

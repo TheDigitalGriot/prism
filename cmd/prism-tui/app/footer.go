@@ -86,7 +86,13 @@ func (m Model) renderKeyHintsFooter(width int) string {
 	}
 	content := hintsRendered
 	if slashWidth > 0 {
-		pattern := strings.Repeat("/", slashWidth)
+		icons := styles.GetIcons(m.HasNerdFont)
+		var pattern string
+		if slashWidth >= 2 {
+			pattern = icons.SepLeft + icons.SepRight + strings.Repeat("/", slashWidth-2)
+		} else {
+			pattern = strings.Repeat("/", slashWidth)
+		}
 		spacerWidth := remaining - slashWidth
 		spacer := lipgloss.NewStyle().Background(bg).Render(strings.Repeat(" ", spacerWidth))
 		slashes := lipgloss.NewStyle().

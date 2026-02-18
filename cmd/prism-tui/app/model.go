@@ -223,6 +223,11 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 		styles.ApplyTheme(fmt.Sprintf("#%02x%02x%02x", themeColors.AccentR, themeColors.AccentG, themeColors.AccentB))
 	}
 
+	// Apply editor.background as secondary color (inactive tabs, etc.)
+	if themeColors.EditorBgSource != "default" {
+		styles.ApplySecondary(fmt.Sprintf("#%02x%02x%02x", themeColors.EditorBgR, themeColors.EditorBgG, themeColors.EditorBgB))
+	}
+
 	// Compute atmosphere color from detected terminal background
 	if termInfo.BgR+termInfo.BgG+termInfo.BgB > 0 {
 		styles.ComputeAtmosphere(termInfo.BgR, termInfo.BgG, termInfo.BgB)
@@ -230,9 +235,12 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 
 	splashModel := splash.New()
 	envLines := termInfo.EnvLines()
-	// Append accent source to the runtime context line
+	// Append accent and editor bg sources to the runtime context line
 	if len(envLines) >= 3 && themeColors.AccentSource != "" {
 		envLines[2] += " | accent via " + themeColors.AccentSource
+	}
+	if len(envLines) >= 3 && themeColors.EditorBgSource != "" {
+		envLines[2] += " | editorBg via " + themeColors.EditorBgSource
 	}
 	// Debug: show atmosphere values so we can verify what splash receives
 	envLines = append(envLines, fmt.Sprintf("bg(%d,%d,%d) atmo(%d,%d,%d)",
