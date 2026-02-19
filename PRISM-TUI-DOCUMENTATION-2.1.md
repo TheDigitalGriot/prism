@@ -779,25 +779,41 @@ Three columns: State icon + name | Elapsed time | Control hints
 
 ### 7. Files Screen
 
-A two-pane file tree browser with preview. Left pane shows an expandable directory tree; right pane shows file content with line numbers.
+A two-pane file tree browser with preview. Left pane shows an expandable directory tree with git status badges; right pane shows file content with line numbers, syntax highlighting, multi-tab support, inline editing, and git blame annotations.
+
+#### Features
+
+- **Git status badges** (F-2): Modified (M/yellow), Added (A/green), Deleted (D/red), Untracked (?/gray) indicators on tree items
+- **Multi-tab support** (F-3): Open multiple files in tabs, switch with `h`/`l`, close with `x`, max 10 tabs
+- **Syntax highlighting** (F-1): Chroma-based highlighting for 100+ languages
+- **Inline file editing** (F-6): `e` opens a full textarea editor, `Ctrl+S` saves, `Esc` cancels
+- **Git blame view** (F-7): `b` toggles blame annotations (short hash, author, relative age) alongside code
 
 #### UI Layout
 
 ```
 ╭───────────── 30% ───────────────╮╭──────────────── 70% ──────────────────────╮
-│ FILES                            ││ PREVIEW                                   │
-│ ──────────────────────────────  ││ ──────────────────────────────────────    │
-│ ▼ prism-plugin/                 ││   1 | # PRISM TUI                         │
-│   ▼ cmd/                        ││   2 |                                      │
-│     ▼ prism-tui/                ││   3 | > A terminal application for...      │
-│       ▶ app/                    ││   4 |                                      │
-│       ▶ claude/                 ││   5 | ## Getting Started                   │
-│     > README.md                  ││   6 | ...                                  │
-│   ▶ .prism/                     ││                                            │
-│   > go.mod                      ││                                            │
+│ FILES                            ││ [main.go] [view.go] [model.go]            │
+│ ──────────────────────────────  ││ main.go [go]                              │
+│ ▼ prism-plugin/                 ││ ──────────────────────────────────────    │
+│   ▼ cmd/                        ││   1 │ package main                        │
+│     ▼ prism-tui/                ││   2 │                                      │
+│       ▶ app/                    ││   3 │ import (                             │
+│       ▶ claude/                 ││   4 │   "fmt"                              │
+│     > README.md             M   ││   5 │   "os"                               │
+│   ▶ .prism/                     ││   6 │ )                                    │
+│   > go.mod                  M   ││                                            │
 │                                  ││                                            │
 │                        ▐ (scroll)││                                            │
 ╰──────────────────────────────────╯╰──────────────────────────────────────────╯
+
+Blame mode (`b` in preview pane):
+╭──────────────── 70% ──────────────────────────────────────╮
+│ abcdef12 JohnDoe   3d │    1 │ package main               │
+│ abcdef12 JohnDoe   3d │    2 │                             │
+│ 1234abcd Alice     2mo │    3 │ import (                    │
+│ 1234abcd Alice     2mo │    4 │   "fmt"                     │
+╰───────────────────────────────────────────────────────────╯
 ```
 
 #### Key Bindings
@@ -808,7 +824,8 @@ A two-pane file tree browser with preview. Left pane shows an expandable directo
 |-----|--------|
 | `j` / `↓` | Move cursor down, load preview |
 | `k` / `↑` | Move cursor up, load preview |
-| `Enter` / `Space` | Toggle directory expand/collapse, or load preview |
+| `Enter` / `Space` | Toggle directory expand/collapse, or open in tab |
+| `x` | Close active tab |
 | `/` | Enter filter mode (filename search) |
 | `Tab` | Switch to preview pane |
 | `Esc` / `Backspace` | Focus Home |
@@ -819,7 +836,19 @@ A two-pane file tree browser with preview. Left pane shows an expandable directo
 |-----|--------|
 | `j` / `↓` | Scroll preview down |
 | `k` / `↑` | Scroll preview up |
+| `h` / `←` | Previous tab |
+| `l` / `→` | Next tab |
+| `b` | Toggle git blame annotations |
+| `e` | Enter edit mode |
+| `x` | Close active tab |
 | `Esc` | Switch back to tree pane |
+
+**Edit Mode** (`e` from preview pane):
+
+| Key | Action |
+|-----|--------|
+| `Ctrl+S` | Save file to disk |
+| `Esc` | Cancel editing, discard changes |
 
 **Filter Mode:** Captures all keystrokes for search query. `Esc` cancels, `Enter` applies, `Backspace` deletes.
 
@@ -827,7 +856,20 @@ A two-pane file tree browser with preview. Left pane shows an expandable directo
 
 ### 8. Git Screen
 
-A two-pane git integration view. Left sidebar shows branch info, staged/modified/untracked files, and recent commits. Right pane shows diffs with unified or side-by-side view modes and syntax highlighting.
+A full-featured two-pane git integration view with staging, commit, push/pull, branch management, stash, discard, conflict resolution, and commit detail inspection.
+
+#### Features
+
+| ID | Feature | Description |
+|----|---------|-------------|
+| G-1 | Push Menu | Push to remote with branch selection via modal (`P`) |
+| G-2 | Pull Menu | Pull from remote with branch selection via modal (`L`) |
+| G-3 | Branch Picker | Load and switch branches via modal (`b`) |
+| G-4 | Stash Management | Stash push/pop/list/apply/drop via modal (`S`) |
+| G-5 | Conflict Resolution | Detect UU/AA/DD/AU/UA/DU/UD conflict markers; display "Conflicts" section at top of sidebar with `!` icon; `s` stages conflict files as resolved |
+| G-6 | File Watcher | Auto-refresh on EventBus `"file.changed"` events; sets `needsRefresh` flag |
+| G-7 | Commit Detail | `Enter` on a commit in the sidebar loads its full diff in the right pane |
+| G-8 | Discard Changes | `d` on modified/untracked file opens confirmation dialog, then runs `git checkout --` or `rm` |
 
 #### UI Layout
 
@@ -837,13 +879,17 @@ A two-pane git integration view. Left sidebar shows branch info, staged/modified
 │ ──────────────────────────────  ││ ──────────────────────────────────────    │
 │  main ↑0 ↓0                    ││ diff --git a/model.go b/model.go          │
 │                                  ││ @@ -25,6 +25,8 @@                         │
-│ ── Staged ──────────────────    ││  25  type Model struct {                   │
-│   ● model.go                    ││  26    Width  int                          │
-│   ● view.go                     ││+ 27    Height int                          │
+│ ── Conflicts (2) ───────────    ││  25  type Model struct {                   │
+│   ! package.json                 ││  26    Width  int                          │
+│   ! config.go                    ││+ 27    Height int                          │
 │                                  ││+ 28    Ready  bool                         │
-│ ── Modified ────────────────    ││  29  }                                     │
-│   ● sidebar.go                  ││                                            │
-│   ● footer.go                   ││                                            │
+│ ── Staged ──────────────────    ││  29  }                                     │
+│   ● model.go                    ││                                            │
+│   ● view.go                     ││                                            │
+│                                  ││                                            │
+│ ── Modified ────────────────    ││                                            │
+│   ● sidebar.go                  ││ [CONFLICT] package.json                    │
+│   ● footer.go                   ││  (staged = mark as resolved)               │
 │                                  ││                                            │
 │ ── Untracked ───────────────    ││                                            │
 │   ● README.md                   ││                                            │
@@ -854,18 +900,36 @@ A two-pane git integration view. Left sidebar shows branch info, staged/modified
 ╰──────────────────────────────────╯╰──────────────────────────────────────────╯
 ```
 
+Sidebar sections appear in order: Conflicts (if any), Staged, Modified, Untracked, Recent Commits. The diff pane shows unified or side-by-side diffs with syntax highlighting, word-level change detection, and dual-gutter line numbers.
+
 #### Key Bindings
+
+**Sidebar (left pane):**
 
 | Key | Action |
 |-----|--------|
-| `Tab` | Toggle sidebar/diff pane focus |
-| `s` | Stage/unstage file at cursor |
+| `j` / `↓` | Move cursor down through files/commits |
+| `k` / `↑` | Move cursor up through files/commits |
+| `s` | Stage/unstage file (or mark conflict as resolved) |
 | `c` | Open commit modal |
+| `d` | Discard changes for file at cursor (G-8) |
+| `P` | Open push modal (G-1) |
+| `L` | Open pull modal (G-2) |
+| `b` | Open branch picker (G-3) |
+| `S` | Open stash menu (G-4) |
 | `r` | Refresh git status + commits |
-| `v` | Toggle unified/side-by-side diff view (diff pane) |
-| `j`/`k` | Navigate files (sidebar) or scroll diff (diff pane) |
-| `Enter` | Load diff for file at cursor |
-| `Esc` / `Backspace` | Focus Home (sidebar) or return to sidebar (diff pane) |
+| `Enter` | Load diff for file, or view commit detail (G-7) |
+| `Tab` | Switch to diff pane |
+| `Esc` / `Backspace` | Focus Home (or exit commit detail view) |
+
+**Diff Pane (right pane):**
+
+| Key | Action |
+|-----|--------|
+| `j` / `↓` | Scroll diff down |
+| `k` / `↑` | Scroll diff up |
+| `v` | Toggle unified/side-by-side diff view |
+| `Tab` / `Esc` | Switch back to sidebar |
 
 ---
 
@@ -902,7 +966,17 @@ A chat interface with message history and text input. Supports wide mode (sideba
 
 ### 10. Monitor Screen
 
-Three-panel system health dashboard showing runtime metrics, execution history, and quality gate status.
+Three-panel system health dashboard with multi-panel focus navigation, quality gate execution, output inspection, execution history detail, and agent health tracking.
+
+#### Features
+
+| ID | Feature | Description |
+|----|---------|-------------|
+| M-1 | Multi-Panel Focus | `Tab`/`Shift+Tab` cycles focus: Health → History → Gates → Health. Focused panel gets purple highlight border. `j`/`k` navigate within focused panel |
+| M-2 | Quality Gate Execution | `Enter` runs selected gate; `R` runs all gates. Gate status: pass/fail/pending/running/unknown |
+| M-3 | Gate Output Modal | `o` opens modal showing full command output for selected gate |
+| M-4 | History Detail Modal | `Enter` on a history entry opens a detail modal with story info, duration, result, and timestamp |
+| M-5 | Agent Health | Subscribes to EventBus `"agent.status"` events. Shows active agents in health panel with status icons (● active, ◉ thinking, ○ waiting, ⏸ paused), agent type, and worktree basename |
 
 #### UI Layout
 
@@ -917,29 +991,50 @@ Three-panel system health dashboard showing runtime metrics, execution history, 
 │ GC Pause: 1.2ms      ││ ✓ STORY-004  18s 12m ││                             │
 │                      ││ ⊘ STORY-005  5s  15m ││                             │
 │ Status: ● Healthy    ││                       ││                             │
+│                      ││                       ││                             │
+│ ── Agents ────────  ││                       ││                             │
+│ ● implement (feat…)  ││                       ││                             │
+│ ◉ research  (fix…)   ││                       ││                             │
 ╰──────────────────────╯╰───────────────────────╯╰─────────────────────────────╯
 
   Last refresh: 14:32:05
 ```
 
-Auto-refreshes every 5 seconds. Subscribes to `"story.completed"` events from the EventBus.
+Auto-refreshes every 5 seconds. Subscribes to `"story.completed"` and `"agent.status"` EventBus events. When terminal width is narrow, panels stack vertically instead of side-by-side.
 
 #### Key Bindings
 
-| Key | Action |
-|-----|--------|
-| `r` | Manual refresh |
-| `j` / `↓` | Navigate history (wraps) |
-| `k` / `↑` | Navigate history (wraps) |
-| `Esc` / `Backspace` | Focus Home |
+| Key | Panel | Action |
+|-----|-------|--------|
+| `Tab` | Any | Cycle focus forward: Health → History → Gates |
+| `Shift+Tab` | Any | Cycle focus backward |
+| `r` | Any | Manual refresh (system stats) |
+| `R` | Gates | Run all quality gates (M-2) |
+| `j` / `↓` | History | Navigate execution entries (wraps) |
+| `k` / `↑` | History | Navigate execution entries (wraps) |
+| `Enter` | History | Open history detail modal (M-4) |
+| `j` / `↓` | Gates | Navigate quality gates (wraps) |
+| `k` / `↑` | Gates | Navigate quality gates (wraps) |
+| `Enter` | Gates | Run selected gate (M-2) |
+| `o` | Gates | View gate output modal (M-3) |
+| `Esc` / `Backspace` | Any | Focus Home |
 
 ---
 
 ### 11. Workspaces Screen
 
-A multi-project workspace manager with two-pane layout. Left pane shows projects (or epics within a project); right pane shows tabbed preview with Info/Stories/Progress tabs.
+A multi-project workspace manager with three view modes: **Projects** (`.prism/` scanning), **Worktrees** (git worktree management), and **Kanban** (agent status board). Two-pane layout with tabbed preview (Info/Stories/Progress).
 
-#### UI Layout
+#### Features
+
+| ID | Feature | Description |
+|----|---------|-------------|
+| W-1 | Worktree List | `w` toggles to worktree view showing `git worktree list --porcelain` output with path, branch, HEAD hash, bare/main/prunable flags |
+| W-2 | Create Worktree | `n` in worktree view opens modal to create a new worktree (branch name + path input) |
+| W-3 | Delete Worktree | `d` in worktree view opens confirmation dialog; cannot delete main worktree; optional branch deletion |
+| W-4 | Kanban Board | `v` toggles to kanban view showing worktrees grouped by agent status in 5 vertical columns (Active, Thinking, Waiting, Done, Paused). Subscribes to EventBus `"agent.status"` events |
+
+#### UI Layout — Projects View
 
 ```
 ╭───────────── 40% ───────────────╮╭──────────────── 60% ──────────────────────╮
@@ -958,7 +1053,47 @@ A multi-project workspace manager with two-pane layout. Left pane shows projects
 ╰──────────────────────────────────╯╰──────────────────────────────────────────╯
 ```
 
-#### Three Sub-modes
+#### UI Layout — Worktrees View
+
+```
+╭───────────── 40% ───────────────╮╭──────────────── 60% ──────────────────────╮
+│ WORKTREES                        ││ Worktree Detail                            │
+│ ──────────────────────────────  ││ ──────────────────────────────────────    │
+│ > ~/Developer/prism-plugin       ││ Path: ~/Developer/prism-plugin             │
+│   main [main]                    ││ Branch: main                               │
+│                                  ││ HEAD: d6b2723                              │
+│   ~/Developer/prism-plugin-fix   ││ Type: Main worktree                        │
+│   fix/auth-bug                   ││                                            │
+│                                  ││                                            │
+│   ~/Developer/prism-plugin-feat  ││                                            │
+│   feat/kanban                    ││                                            │
+╰──────────────────────────────────╯╰──────────────────────────────────────────╯
+```
+
+#### UI Layout — Kanban Board View
+
+```
+╭────────────────────────────────────────────────────────────────────────────╮
+│ KANBAN                                                                      │
+│ ────────────────────────────────────────────────────────────────────────── │
+│                                                                              │
+│ ── Active ─────────  ── Thinking ──────  ── Waiting ───────               │
+│ ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐             │
+│ │ ● feat/kanban    │  │ ◉ fix/auth-bug  │  │ ○ feat/ui-theme │             │
+│ │   implement      │  │   research      │  │   (no agent)    │             │
+│ └─────────────────┘  └─────────────────┘  └─────────────────┘             │
+│                                                                              │
+│ ── Done ───────────  ── Paused ────────                                   │
+│ ┌─────────────────┐  (empty)                                               │
+│ │ ✓ fix/css-bug    │                                                        │
+│ │   validate       │                                                        │
+│ └─────────────────┘                                                        │
+╰────────────────────────────────────────────────────────────────────────────╯
+```
+
+Cards show status icon (● active, ◉ thinking, ○ waiting, ✓ done, ⏸ paused), branch name, and agent type. Columns are rendered vertically with h/l navigation between columns and j/k within.
+
+#### Key Bindings
 
 **Projects View** (left pane):
 
@@ -966,6 +1101,9 @@ A multi-project workspace manager with two-pane layout. Left pane shows projects
 |-----|--------|
 | `j`/`k` | Navigate projects |
 | `Enter` | Enter epics view (if project has epics) |
+| `w` | Switch to worktrees view (W-1) |
+| `Tab` | Switch to preview pane |
+| `r` | Rescan projects |
 | `Esc` | Focus Home |
 
 **Epics View** (left pane, within a project):
@@ -974,7 +1112,34 @@ A multi-project workspace manager with two-pane layout. Left pane shows projects
 |-----|--------|
 | `j`/`k` | Navigate epics |
 | `Enter` | Switch to selected epic |
+| `Tab` | Switch to preview pane |
 | `Esc` | Return to projects view |
+
+**Worktrees View** (left pane):
+
+| Key | Action |
+|-----|--------|
+| `j`/`k` | Navigate worktrees |
+| `n` | Create new worktree (W-2) |
+| `d` | Delete selected worktree (W-3) |
+| `Enter` | Switch to worktree directory |
+| `v` | Switch to kanban view (W-4) |
+| `w` | Switch to projects view |
+| `Tab` | Switch to preview pane |
+| `r` | Refresh worktree list |
+| `Esc` | Focus Home |
+
+**Kanban View:**
+
+| Key | Action |
+|-----|--------|
+| `h` / `←` | Move to previous column |
+| `l` / `→` | Move to next column |
+| `j` / `↓` | Move down within column |
+| `k` / `↑` | Move up within column |
+| `Enter` | Select card, show detail in preview pane |
+| `v` | Switch to list (worktrees) view |
+| `w` | Switch to projects view |
 
 **Preview Pane** (right):
 
@@ -1929,10 +2094,16 @@ When a key is pressed, it is processed in this strict order:
 | Key | Pane | Action |
 |-----|------|--------|
 | `j` / `k` | Tree | Navigate files |
-| `Enter` / `Space` | Tree | Toggle expand / load preview |
+| `Enter` / `Space` | Tree | Toggle expand / open in tab |
+| `x` | Tree/Preview | Close active tab |
 | `/` | Tree | Enter filter mode |
 | `Tab` | Any | Toggle tree/preview pane |
 | `j` / `k` | Preview | Scroll content |
+| `h` / `l` | Preview | Previous / next tab |
+| `b` | Preview | Toggle git blame annotations |
+| `e` | Preview | Enter edit mode |
+| `Ctrl+S` | Edit mode | Save file |
+| `Esc` | Edit mode | Cancel edit |
 | `Esc` | Tree | Focus Home |
 | `Esc` | Preview | Focus tree pane |
 
@@ -1941,13 +2112,18 @@ When a key is pressed, it is processed in this strict order:
 | Key | Pane | Action |
 |-----|------|--------|
 | `Tab` | Any | Toggle sidebar/diff pane |
-| `s` | Sidebar | Stage/unstage file |
+| `s` | Sidebar | Stage/unstage file (or resolve conflict) |
 | `c` | Any | Open commit modal |
+| `d` | Sidebar | Discard changes (G-8) |
+| `P` | Any | Push modal (G-1) |
+| `L` | Any | Pull modal (G-2) |
+| `b` | Any | Branch picker (G-3) |
+| `S` | Any | Stash menu (G-4) |
 | `r` | Any | Refresh status + commits |
 | `v` | Diff | Toggle unified/side-by-side |
 | `j` / `k` | Both | Navigate / scroll |
-| `Enter` | Sidebar | Load diff for selected file |
-| `Esc` | Sidebar | Focus Home |
+| `Enter` | Sidebar | Load diff for file, or commit detail (G-7) |
+| `Esc` | Sidebar | Focus Home (or exit commit detail) |
 | `Esc` | Diff | Focus sidebar |
 
 ### Agent Screen
@@ -1960,23 +2136,39 @@ When a key is pressed, it is processed in this strict order:
 
 ### Monitor Screen
 
-| Key | Action |
-|-----|--------|
-| `r` | Manual refresh |
-| `j` / `k` | Navigate execution history |
-| `Esc` | Focus Home |
+| Key | Panel | Action |
+|-----|-------|--------|
+| `Tab` | Any | Cycle focus: Health → History → Gates |
+| `Shift+Tab` | Any | Cycle focus backward |
+| `r` | Any | Manual refresh |
+| `R` | Gates | Run all quality gates (M-2) |
+| `j` / `k` | History/Gates | Navigate entries (wraps) |
+| `Enter` | History | Open detail modal (M-4) |
+| `Enter` | Gates | Run selected gate (M-2) |
+| `o` | Gates | View gate output (M-3) |
+| `Esc` | Any | Focus Home |
 
 ### Workspaces Screen
 
-| Key | Pane | Action |
+| Key | Mode | Action |
 |-----|------|--------|
-| `j` / `k` | Sidebar | Navigate projects/epics |
-| `Enter` | Sidebar | Enter epics / switch project |
-| `Esc` | Sidebar (projects) | Focus Home |
-| `Esc` | Sidebar (epics) | Return to projects |
+| `j` / `k` | Projects/Epics/Worktrees | Navigate items |
+| `Enter` | Projects | Enter epics view |
+| `Enter` | Epics | Switch to selected epic |
+| `Enter` | Worktrees | Switch to worktree directory |
+| `w` | Any sidebar | Toggle to projects view |
+| `v` | List/Kanban | Toggle worktrees list ↔ kanban board |
+| `n` | Worktrees | Create new worktree (W-2) |
+| `d` | Worktrees | Delete selected worktree (W-3) |
+| `h` / `l` | Kanban | Navigate columns |
+| `j` / `k` | Kanban | Navigate cards within column |
+| `Enter` | Kanban | Select card, show detail |
 | `[` / `]` | Preview | Switch tabs (Info/Stories/Progress) |
 | `j` / `k` | Preview | Scroll content |
 | `Tab` | Any | Toggle sidebar/preview |
+| `r` | Sidebar | Rescan / refresh |
+| `Esc` | Projects | Focus Home |
+| `Esc` | Epics | Return to projects |
 
 ---
 

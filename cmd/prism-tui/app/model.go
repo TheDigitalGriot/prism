@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/prism-plugin/prism-tui/app/chat"
@@ -14,6 +16,7 @@ import (
 	"github.com/prism-plugin/prism-tui/splash"
 	"github.com/prism-plugin/prism-tui/styles"
 	"github.com/prism-plugin/prism-tui/terminal"
+	"github.com/prism-plugin/prism-tui/watcher"
 )
 
 // AppState represents the running state of the TUI
@@ -111,6 +114,10 @@ type Model struct {
 	ForceSidebarOff    bool // User toggled sidebar off (ctrl+d)
 	ActiveModal        *modal.Modal    // Currently active modal dialog (nil if none)
 	CommandPalette     *CommandPalette // Command palette state (nil if closed)
+	FileFinder         *FileFinder     // File finder overlay state (nil if closed) (F-4)
+	ContentSearch      *ContentSearch  // Content search overlay state (nil if closed) (F-5)
+	FileCache          []string        // Project-wide file path cache (relative paths)
+	FileCacheLoaded    bool            // True once file cache has been built
 	Dialogs            *dialog.Overlay // Stack of permission/confirmation dialogs
 	Ready              bool            // True once initial setup is complete
 	SplashDone         bool            // True once splash screen has completed
@@ -119,6 +126,9 @@ type Model struct {
 
 	// Prism framebuffer animation (shared across all views)
 	Prism *prism.Renderer
+
+	// File watcher for auto-refresh (G-6)
+	Watcher *watcher.Watcher
 
 	// Full-screen splash animation
 	Splash *splash.Model
@@ -149,6 +159,11 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 	// Create 3D prism renderer (shared across all views)
 	prismRenderer := prism.New(24, 5)
 
+	// Resolve WorkDir, GitRoot, and ConfigDir for context upgrades (SI-2)
+	workDir, _ := os.Getwd()
+	gitRoot := resolveGitRoot(projectDir)
+	configDir := resolveConfigDir()
+
 	// Create plugin context
 	ctx := &plugin.Context{
 		PrismDir:      prismDir,
@@ -160,6 +175,9 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 		PrismStyle:    prismStyle,
 		MaxIterations: maxIter,
 		Pause:         pause,
+		WorkDir:       workDir,
+		GitRoot:       gitRoot,
+		ConfigDir:     configDir,
 	}
 
 	// Create plugin registry
@@ -258,6 +276,15 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 	splashModel.AtmoG = styles.AtmosphereG
 	splashModel.AtmoB = styles.AtmosphereB
 
+	// Start file watcher for auto-refresh (G-6)
+	var fileWatcher *watcher.Watcher
+	if projectDir != "" && projectDir != "demo" {
+		if w, err := watcher.New(projectDir, ctx.EventBus); err == nil {
+			w.Start()
+			fileWatcher = w
+		}
+	}
+
 	// Always start with splash. Onboarding is a full-screen interstitial
 	// between splash and Home — never a tab in the tab bar.
 	return Model{
@@ -274,6 +301,7 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 		Pause:           pause,
 		Prism:           prismRenderer,
 		Splash:          splashModel,
+		Watcher:         fileWatcher,
 		Dialogs:         dialog.NewOverlay(),
 		Anim: AnimState{
 			RayLengths: [4]float64{6, 5, 4, 3},
@@ -569,3 +597,29 @@ func (m *Model) ResetOnboarding() {
 
 // Note: Helper methods like CompletedCount(), AddLog(), ElapsedTime() are now
 // owned by individual plugins (e.g., SpectrumPlugin) since state is plugin-local.
+
+// resolveGitRoot returns the git repository root for the given directory,
+// or empty string if not inside a git repo.
+func resolveGitRoot(dir string) string {
+	if dir == "" || dir == "demo" {
+		return ""
+	}
+	out, err := exec.Command("git", "-C", dir, "rev-parse", "--show-toplevel").Output()
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(string(out))
+}
+
+// resolveConfigDir returns the global configuration directory for prism-tui.
+// Uses XDG_CONFIG_HOME if set, otherwise ~/.config/prism-tui/.
+func resolveConfigDir() string {
+	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
+		return filepath.Join(xdg, "prism-tui")
+	}
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return ""
+	}
+	return filepath.Join(home, ".config", "prism-tui")
+}

@@ -191,37 +191,37 @@ func DiscoverEpicsCmd(prismDir string) tea.Cmd {
 // === File Listing Commands ===
 
 // LoadResearchFilesCmd lists .md files in .prism/shared/research/
-func LoadResearchFilesCmd(prismDir string) tea.Cmd {
+func LoadResearchFilesCmd(prismDir string, epoch uint64) tea.Cmd {
 	return func() tea.Msg {
 		dir := filepath.Join(prismDir, "shared", "research")
 		files, err := listMarkdownFiles(dir)
 		if err != nil {
-			return ResearchFilesLoadedMsg{Error: err}
+			return ResearchFilesLoadedMsg{Error: err, Epoch: epoch}
 		}
-		return ResearchFilesLoadedMsg{Files: files}
+		return ResearchFilesLoadedMsg{Files: files, Epoch: epoch}
 	}
 }
 
 // LoadPlansFilesCmd lists .md files in .prism/shared/plans/
-func LoadPlansFilesCmd(prismDir string) tea.Cmd {
+func LoadPlansFilesCmd(prismDir string, epoch uint64) tea.Cmd {
 	return func() tea.Msg {
 		dir := filepath.Join(prismDir, "shared", "plans")
 		files, err := listMarkdownFiles(dir)
 		if err != nil {
-			return PlansFilesLoadedMsg{Error: err}
+			return PlansFilesLoadedMsg{Error: err, Epoch: epoch}
 		}
-		return PlansFilesLoadedMsg{Files: files}
+		return PlansFilesLoadedMsg{Files: files, Epoch: epoch}
 	}
 }
 
 // LoadFileContentCmd reads full content of a markdown file
-func LoadFileContentCmd(path string, forView ActiveView) tea.Cmd {
+func LoadFileContentCmd(path string, forView ActiveView, epoch uint64) tea.Cmd {
 	return func() tea.Msg {
 		data, err := os.ReadFile(path)
 		if err != nil {
-			return FileContentLoadedMsg{Error: err, Path: path, ForView: forView}
+			return FileContentLoadedMsg{Error: err, Path: path, ForView: forView, Epoch: epoch}
 		}
-		return FileContentLoadedMsg{Content: string(data), Path: path, ForView: forView}
+		return FileContentLoadedMsg{Content: string(data), Path: path, ForView: forView, Epoch: epoch}
 	}
 }
 

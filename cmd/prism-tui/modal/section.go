@@ -301,6 +301,66 @@ func (c *CheckboxSection) Update(msg tea.KeyMsg, focusID string) (string, tea.Cm
 }
 
 // =============================================================================
+// CustomSection: Plugin-specific rich modal content (SI-3)
+// =============================================================================
+
+// CustomSection allows plugins to render arbitrary content within a modal.
+// This enables rich, dynamic modal content beyond static text/buttons/lists —
+// for example, gate output viewers, search result panels, or progress displays.
+type CustomSection struct {
+	id        string
+	renderFn  func(width int, focusID string) RenderedSection
+	updateFn  func(msg tea.KeyMsg, focusID string) (string, tea.Cmd)
+	focusable bool
+}
+
+// CustomOption is a functional option for CustomSection
+type CustomOption func(*CustomSection)
+
+// CustomFocusable marks the custom section as focusable
+func CustomFocusable() CustomOption {
+	return func(c *CustomSection) {
+		c.focusable = true
+	}
+}
+
+// Custom creates a new CustomSection with render and update callbacks.
+// The render function receives the content width and current focus ID, and must
+// return a RenderedSection with content and optional focusable IDs.
+// The update function handles key input when the section (or one of its focusables) is focused.
+func Custom(id string, render func(int, string) RenderedSection, update func(tea.KeyMsg, string) (string, tea.Cmd), opts ...CustomOption) *CustomSection {
+	s := &CustomSection{
+		id:       id,
+		renderFn: render,
+		updateFn: update,
+	}
+	for _, opt := range opts {
+		opt(s)
+	}
+	return s
+}
+
+func (c *CustomSection) Render(contentWidth int, focusID string) RenderedSection {
+	if c.renderFn == nil {
+		return RenderedSection{}
+	}
+	rs := c.renderFn(contentWidth, focusID)
+	// If the section is focusable but the render function didn't add focusables,
+	// add the section's own ID as a focusable
+	if c.focusable && len(rs.Focusables) == 0 {
+		rs.Focusables = []string{c.id}
+	}
+	return rs
+}
+
+func (c *CustomSection) Update(msg tea.KeyMsg, focusID string) (string, tea.Cmd) {
+	if c.updateFn == nil {
+		return "", nil
+	}
+	return c.updateFn(msg, focusID)
+}
+
+// =============================================================================
 // WhenSection: Conditional section wrapper
 // =============================================================================
 

@@ -26,6 +26,13 @@ type CommitInfo struct {
 	Subject   string
 }
 
+// StashEntry represents a git stash entry
+type StashEntry struct {
+	Index   int
+	Message string
+	Branch  string
+}
+
 // GitState holds state for the git status view
 type GitState struct {
 	// Git data
@@ -53,6 +60,25 @@ type GitState struct {
 	diffPaneScroll  int // vertical scroll offset in diff pane
 	sidebarVisible  bool
 	highlighter     *diff.SyntaxHighlighter
+
+	// Branch picker state (G-3)
+	branches        []string // All branches (local + remote)
+	branchSelected  int      // Selected branch index in picker
+	operationResult string   // Result message from git operations (shown briefly)
+
+	// Stash management state (G-4)
+	stashes         []StashEntry // Loaded stash list
+	stashSelected   int          // Selected stash index in stash list modal
+
+	// Commit detail view state (G-7)
+	commitDetailHash string           // Hash being viewed (empty = normal mode)
+	commitDetailDiff *diff.ParsedDiff // Parsed diff for commit detail
+
+	// File watcher auto-refresh (G-6)
+	needsRefresh    bool // Set by EventBus when files change; cleared on reload
+
+	// Conflict resolution state (G-5)
+	ConflictFiles []GitFileStatus // Files with merge conflicts (UU, AA, DD, etc.)
 }
 
 // GitPlugin implements the git status viewer
@@ -99,7 +125,9 @@ func (p *GitPlugin) Init(ctx *plugin.Context) error {
 
 	if ctx.EventBus != nil {
 		ctx.EventBus.Subscribe("file.changed", func(event plugin.Event) {
-			// Trigger git status reload when files change
+			// Flag that git status needs reloading (G-6)
+			// The actual reload happens on next TickMsg to batch rapid changes
+			p.state.needsRefresh = true
 		})
 	}
 
@@ -137,6 +165,7 @@ func (p *GitPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 			p.state.StagedFiles = msg.StagedFiles
 			p.state.ModifiedFiles = msg.ModifiedFiles
 			p.state.UntrackedFiles = msg.UntrackedFiles
+			p.state.ConflictFiles = msg.ConflictFiles
 			p.state.Error = ""
 
 			// Clamp cursor to valid range after refresh
@@ -181,9 +210,55 @@ func (p *GitPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 		return p, nil
 
 	case GitOperationCompleteMsg:
+		if msg.Error != nil {
+			// Show error in an error modal (G-8 simplified)
+			return p, p.openErrorModal(msg.Error.Error())
+		}
+		if msg.Result != "" {
+			p.state.operationResult = msg.Result
+		}
 		p.state.selectedDiffFile = ""
 		p.state.diffParsedDiff = nil
 		return p, tea.Batch(p.loadGitStatusCmd(), p.loadCommitsCmd())
+
+	case ModalActionMsg:
+		return p.handleModalAction(msg.Action)
+
+	case GitBranchesLoadedMsg:
+		if msg.Error == nil {
+			p.state.branches = msg.Branches
+			p.state.branchSelected = 0
+			return p, p.openBranchPickerModal()
+		}
+		return p, nil
+
+	case StashListLoadedMsg:
+		if msg.Error == nil {
+			p.state.stashes = msg.Stashes
+			p.state.stashSelected = 0
+			if len(msg.Stashes) > 0 {
+				return p, p.openStashListModal()
+			}
+			return p, p.openErrorModal("No stashes found")
+		}
+		return p, p.openErrorModal(msg.Error.Error())
+
+	case CommitDetailLoadedMsg:
+		if msg.Error == nil && msg.Hash == p.state.commitDetailHash {
+			parsed, _ := diff.ParseUnifiedDiff(msg.Raw)
+			p.state.commitDetailDiff = parsed
+			p.state.highlighter = diff.NewSyntaxHighlighter("")
+			p.state.diffPaneScroll = 0
+		}
+		return p, nil
+
+	case TickMsg:
+		// Auto-refresh on file changes (G-6)
+		if p.state.needsRefresh && p.focused && !p.ctx.DemoMode {
+			p.state.needsRefresh = false
+			return p, tea.Batch(p.loadGitStatusCmd(), p.loadCommitsCmd())
+		}
+		return p, nil
 	}
 
 	return p, nil
@@ -222,10 +297,13 @@ func (p *GitPlugin) KeyHints() []plugin.KeyHint {
 	}
 	return []plugin.KeyHint{
 		{Key: "j/k", Description: "navigate"},
-		{Key: "enter", Description: "view diff"},
 		{Key: "s", Description: "stage/unstage"},
 		{Key: "c", Description: "commit"},
-		{Key: "tab", Description: "diff pane"},
+		{Key: "d", Description: "discard"},
+		{Key: "P", Description: "push"},
+		{Key: "L", Description: "pull"},
+		{Key: "b", Description: "branches"},
+		{Key: "S", Description: "stash"},
 		{Key: "r", Description: "refresh"},
 	}
 }
@@ -316,8 +394,27 @@ func (p *GitPlugin) renderSidebar(innerHeight int) string {
 		linesWritten := 0
 		globalIdx := 0
 
+		// Conflict files (G-5) — shown first with red highlight
+		if len(p.state.ConflictFiles) > 0 && linesWritten < filesAreaHeight {
+			filesSB.WriteString(styles.ErrorStyle.Render(fmt.Sprintf("Conflicts (%d)", len(p.state.ConflictFiles))))
+			filesSB.WriteString("\n")
+			linesWritten++
+		}
+		for _, f := range p.state.ConflictFiles {
+			if linesWritten < filesAreaHeight {
+				filesSB.WriteString(p.renderFileEntry(f.Path, "!", globalIdx == p.state.SelectedIdx, maxWidth-1))
+				filesSB.WriteString("\n")
+				linesWritten++
+			}
+			globalIdx++
+		}
+
 		// Staged files
 		if len(p.state.StagedFiles) > 0 && linesWritten < filesAreaHeight {
+			if len(p.state.ConflictFiles) > 0 && linesWritten < filesAreaHeight {
+				filesSB.WriteString("\n")
+				linesWritten++
+			}
 			filesSB.WriteString(styles.SuccessStyle.Render(fmt.Sprintf("Staged (%d)", len(p.state.StagedFiles))))
 			filesSB.WriteString("\n")
 			linesWritten++
@@ -495,7 +592,8 @@ func (p *GitPlugin) renderSidebarCommits(maxWidth int) string {
 	return sb.String()
 }
 
-// renderDiffPane renders the right pane showing the selected file's diff.
+// renderDiffPane renders the right pane showing the selected file's diff
+// or a commit detail view (G-7).
 func (p *GitPlugin) renderDiffPane(innerHeight int) string {
 	var sb strings.Builder
 
@@ -504,7 +602,34 @@ func (p *GitPlugin) renderDiffPane(innerHeight int) string {
 		diffWidth = 40
 	}
 
-	// Header: filename + view mode
+	// Commit detail view (G-7)
+	if p.state.commitDetailHash != "" {
+		header := fmt.Sprintf("Commit: %s", p.state.commitDetailHash)
+		sb.WriteString(styles.TitleStyle.Render(header))
+		sb.WriteString("  ")
+		sb.WriteString(styles.DimStyle.Render("[esc to go back]"))
+		sb.WriteString("\n\n")
+
+		if p.state.commitDetailDiff == nil {
+			sb.WriteString(styles.DimStyle.Render("Loading commit..."))
+			return sb.String()
+		}
+
+		contentHeight := innerHeight - 2
+		if contentHeight < 1 {
+			contentHeight = 1
+		}
+
+		diffContent := diff.RenderLineDiff(
+			p.state.commitDetailDiff, diffWidth,
+			p.state.diffPaneScroll, contentHeight,
+			0, p.state.highlighter, false,
+		)
+		sb.WriteString(diffContent)
+		return sb.String()
+	}
+
+	// Normal file diff view
 	viewModeStr := "unified"
 	if p.state.diffViewMode == diff.DiffViewSideBySide {
 		viewModeStr = "split"
@@ -512,12 +637,24 @@ func (p *GitPlugin) renderDiffPane(innerHeight int) string {
 	header := "Diff"
 	if p.state.selectedDiffFile != "" {
 		header = p.state.selectedDiffFile
-		maxHeaderLen := diffWidth - 12
+		maxHeaderLen := diffWidth - 20
 		if maxHeaderLen > 5 && len(header) > maxHeaderLen {
 			header = "…" + header[len(header)-maxHeaderLen+1:]
 		}
 	}
-	header = fmt.Sprintf("%s [%s]", header, viewModeStr)
+	// Check if the current file is a conflict file (G-5)
+	isConflict := false
+	for _, cf := range p.state.ConflictFiles {
+		if cf.Path == p.state.selectedDiffFile {
+			isConflict = true
+			break
+		}
+	}
+	if isConflict {
+		header = fmt.Sprintf("%s [CONFLICT]", header)
+	} else {
+		header = fmt.Sprintf("%s [%s]", header, viewModeStr)
+	}
 	sb.WriteString(styles.TitleStyle.Render(header))
 	sb.WriteString("\n\n")
 
@@ -581,6 +718,10 @@ func (p *GitPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 	case "s":
 		file := p.getFileAtCursor()
 		if file != nil {
+			// For conflict files, staging means marking as resolved (G-5)
+			if file.Status == "conflict" {
+				return p, p.toggleStageCmd(file.Path, "modified")
+			}
 			return p, p.toggleStageCmd(file.Path, file.Status)
 		}
 		return p, nil
@@ -588,6 +729,25 @@ func (p *GitPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 		return p, p.openCommitModal()
 	case "r":
 		return p, tea.Batch(p.loadGitStatusCmd(), p.loadCommitsCmd())
+	case "P":
+		// Push menu (G-1)
+		return p, p.openPushModal()
+	case "L":
+		// Pull menu (G-2)
+		return p, p.openPullModal()
+	case "b":
+		// Branch picker (G-3)
+		return p, p.loadBranchesCmd()
+	case "S":
+		// Stash menu (G-4)
+		return p, p.openStashMenuModal()
+	case "d":
+		// Discard changes confirmation (G-8)
+		file := p.getFileAtCursor()
+		if file != nil && (file.Status == "modified" || file.Status == "untracked") {
+			return p, p.openDiscardConfirmModal(file.Path, file.Status)
+		}
+		return p, nil
 	}
 
 	if p.state.activePane == ui.PaneRight {
@@ -619,12 +779,30 @@ func (p *GitPlugin) handleSidebarKey(key string) (plugin.Plugin, tea.Cmd) {
 		if file != nil {
 			p.state.selectedDiffFile = file.Path
 			p.state.diffParsedDiff = nil
+			p.state.commitDetailHash = ""
+			p.state.commitDetailDiff = nil
 			p.state.diffPaneScroll = 0
 			return p, p.loadDiffCmd(file.Path, file.Status)
+		}
+		// Check if cursor is on a commit (G-7)
+		commit := p.getCommitAtCursor()
+		if commit != nil {
+			p.state.commitDetailHash = commit.ShortHash
+			p.state.commitDetailDiff = nil
+			p.state.selectedDiffFile = ""
+			p.state.diffParsedDiff = nil
+			p.state.diffPaneScroll = 0
+			return p, p.loadCommitDetailCmd(commit.ShortHash)
 		}
 		return p, nil
 
 	case "esc", "backspace":
+		// If viewing commit detail, return to normal view first
+		if p.state.commitDetailHash != "" {
+			p.state.commitDetailHash = ""
+			p.state.commitDetailDiff = nil
+			return p, nil
+		}
 		return p, func() tea.Msg {
 			return plugin.FocusPluginMsg{ID: "home"}
 		}
@@ -655,6 +833,12 @@ func (p *GitPlugin) handleDiffPaneKey(key string) (plugin.Plugin, tea.Cmd) {
 		return p, nil
 
 	case "esc":
+		// If viewing commit detail, clear it first
+		if p.state.commitDetailHash != "" {
+			p.state.commitDetailHash = ""
+			p.state.commitDetailDiff = nil
+			return p, nil
+		}
 		p.state.activePane = ui.PaneLeft
 		return p, nil
 	}
@@ -682,6 +866,7 @@ func (p *GitPlugin) clampCommitScroll() {
 // allFiles returns all tracked files in section order.
 func (p *GitPlugin) allFiles() []GitFileStatus {
 	var files []GitFileStatus
+	files = append(files, p.state.ConflictFiles...)
 	files = append(files, p.state.StagedFiles...)
 	files = append(files, p.state.ModifiedFiles...)
 	files = append(files, p.state.UntrackedFiles...)
@@ -690,7 +875,7 @@ func (p *GitPlugin) allFiles() []GitFileStatus {
 
 // totalFiles returns the total number of tracked files.
 func (p *GitPlugin) totalFiles() int {
-	return len(p.state.StagedFiles) + len(p.state.ModifiedFiles) + len(p.state.UntrackedFiles)
+	return len(p.state.ConflictFiles) + len(p.state.StagedFiles) + len(p.state.ModifiedFiles) + len(p.state.UntrackedFiles)
 }
 
 // totalItems returns total navigable items (files + commits).
@@ -701,6 +886,10 @@ func (p *GitPlugin) totalItems() int {
 // getFileAtCursor returns the file at the current global cursor, or nil if on a commit.
 func (p *GitPlugin) getFileAtCursor() *GitFileStatus {
 	idx := p.state.SelectedIdx
+	if idx < len(p.state.ConflictFiles) {
+		return &p.state.ConflictFiles[idx]
+	}
+	idx -= len(p.state.ConflictFiles)
 	if idx < len(p.state.StagedFiles) {
 		return &p.state.StagedFiles[idx]
 	}
@@ -713,6 +902,16 @@ func (p *GitPlugin) getFileAtCursor() *GitFileStatus {
 		return &p.state.UntrackedFiles[idx]
 	}
 	return nil // cursor is on a commit
+}
+
+// getCommitAtCursor returns the commit at the current global cursor, or nil if on a file.
+func (p *GitPlugin) getCommitAtCursor() *CommitInfo {
+	totalFiles := p.totalFiles()
+	commitIdx := p.state.SelectedIdx - totalFiles
+	if commitIdx < 0 || commitIdx >= len(p.state.recentCommits) {
+		return nil
+	}
+	return &p.state.recentCommits[commitIdx]
 }
 
 // ── Commands (async operations) ───────────────────────────────────────────────
@@ -740,7 +939,7 @@ func (p *GitPlugin) loadGitStatusCmd() tea.Cmd {
 			return GitStatusLoadedMsg{Error: err}
 		}
 
-		var staged, modified, untracked []GitFileStatus
+		var staged, modified, untracked, conflicts []GitFileStatus
 		lines := strings.Split(string(statusOut), "\n")
 		for _, line := range lines {
 			if len(line) < 4 {
@@ -749,6 +948,16 @@ func (p *GitPlugin) loadGitStatusCmd() tea.Cmd {
 			x := line[0]
 			y := line[1]
 			path := strings.TrimSpace(line[3:])
+
+			// Detect merge conflicts (G-5): UU, AA, DD, AU, UA, DU, UD
+			isConflict := (x == 'U' || y == 'U') ||
+				(x == 'A' && y == 'A') ||
+				(x == 'D' && y == 'D')
+
+			if isConflict {
+				conflicts = append(conflicts, GitFileStatus{Path: path, Status: "conflict"})
+				continue // Don't double-count as staged/modified
+			}
 
 			if x == 'M' || x == 'A' || x == 'D' || x == 'R' || x == 'C' {
 				staged = append(staged, GitFileStatus{Path: path, Status: "staged"})
@@ -768,6 +977,7 @@ func (p *GitPlugin) loadGitStatusCmd() tea.Cmd {
 			StagedFiles:    staged,
 			ModifiedFiles:  modified,
 			UntrackedFiles: untracked,
+			ConflictFiles:  conflicts,
 		}
 	}
 }
@@ -776,7 +986,10 @@ func (p *GitPlugin) loadGitStatusCmd() tea.Cmd {
 func (p *GitPlugin) loadDiffCmd(path, status string) tea.Cmd {
 	return func() tea.Msg {
 		var cmd *exec.Cmd
-		if status == "staged" {
+		if status == "conflict" {
+			// For conflict files, show the raw file content with conflict markers (G-5)
+			cmd = exec.Command("git", "-C", p.ctx.ProjectDir, "diff", path)
+		} else if status == "staged" {
 			cmd = exec.Command("git", "-C", p.ctx.ProjectDir, "diff", "--cached", path)
 		} else {
 			cmd = exec.Command("git", "-C", p.ctx.ProjectDir, "diff", path)
@@ -852,6 +1065,418 @@ func (p *GitPlugin) openCommitModal() tea.Cmd {
 	}
 }
 
+// openPushModal opens the push menu modal (G-1)
+func (p *GitPlugin) openPushModal() tea.Cmd {
+	branchInfo := p.state.BranchName
+	if p.state.Ahead > 0 {
+		branchInfo += fmt.Sprintf(" (%d ahead)", p.state.Ahead)
+	}
+
+	return func() tea.Msg {
+		pushModal := modal.New("Push", modal.WithWidth(50)).
+			AddSection(modal.Text("Branch: "+branchInfo)).
+			AddSection(modal.Spacer()).
+			AddSection(modal.Buttons(
+				modal.Btn("Push", "push", modal.BtnPrimary()),
+				modal.Btn("Force Push", "push-force", modal.BtnDanger()),
+				modal.Btn("Set Upstream", "push-upstream"),
+				modal.Btn("Cancel", "cancel"),
+			))
+		return OpenModalMsg{Modal: pushModal}
+	}
+}
+
+// openPullModal opens the pull menu modal (G-2)
+func (p *GitPlugin) openPullModal() tea.Cmd {
+	branchInfo := p.state.BranchName
+	if p.state.Behind > 0 {
+		branchInfo += fmt.Sprintf(" (%d behind)", p.state.Behind)
+	}
+
+	return func() tea.Msg {
+		pullModal := modal.New("Pull / Fetch", modal.WithWidth(50)).
+			AddSection(modal.Text("Branch: "+branchInfo)).
+			AddSection(modal.Spacer()).
+			AddSection(modal.Buttons(
+				modal.Btn("Fetch", "fetch"),
+				modal.Btn("Pull", "pull", modal.BtnPrimary()),
+				modal.Btn("Pull (rebase)", "pull-rebase"),
+				modal.Btn("Cancel", "cancel"),
+			))
+		return OpenModalMsg{Modal: pullModal}
+	}
+}
+
+// openBranchPickerModal opens the branch picker modal (G-3)
+func (p *GitPlugin) openBranchPickerModal() tea.Cmd {
+	// Format branches for display: mark current branch with *
+	items := make([]string, len(p.state.branches))
+	for i, b := range p.state.branches {
+		if b == p.state.BranchName {
+			items[i] = "* " + b
+		} else {
+			items[i] = "  " + b
+		}
+	}
+
+	return func() tea.Msg {
+		branchModal := modal.New("Switch Branch", modal.WithWidth(60)).
+			AddSection(modal.Text("Select a branch to checkout:")).
+			AddSection(modal.List("branches", items, &p.state.branchSelected, modal.WithMaxVisible(10))).
+			AddSection(modal.Spacer()).
+			AddSection(modal.Buttons(
+				modal.Btn("Checkout", "branches", modal.BtnPrimary()),
+				modal.Btn("Cancel", "cancel"),
+			))
+		return OpenModalMsg{Modal: branchModal}
+	}
+}
+
+// openErrorModal opens an error display modal (G-8 simplified)
+func (p *GitPlugin) openErrorModal(errMsg string) tea.Cmd {
+	return func() tea.Msg {
+		errModal := modal.New("Git Error", modal.WithWidth(60), modal.WithVariant(modal.VariantDanger)).
+			AddSection(modal.Text(errMsg)).
+			AddSection(modal.Spacer()).
+			AddSection(modal.Buttons(
+				modal.Btn("OK", "cancel"),
+			))
+		return OpenModalMsg{Modal: errModal}
+	}
+}
+
+// handleModalAction processes modal button clicks routed back via ModalActionMsg
+func (p *GitPlugin) handleModalAction(action string) (plugin.Plugin, tea.Cmd) {
+	switch action {
+	case "push":
+		return p, p.gitPushCmd("push")
+	case "push-force":
+		return p, p.gitPushCmd("push-force")
+	case "push-upstream":
+		return p, p.gitPushCmd("push-upstream")
+	case "fetch":
+		return p, p.gitPullCmd("fetch")
+	case "pull":
+		return p, p.gitPullCmd("pull")
+	case "pull-rebase":
+		return p, p.gitPullCmd("pull-rebase")
+	case "branches":
+		// Checkout selected branch
+		if p.state.branchSelected >= 0 && p.state.branchSelected < len(p.state.branches) {
+			branch := p.state.branches[p.state.branchSelected]
+			// Strip "remotes/origin/" prefix for remote branches
+			branch = strings.TrimPrefix(branch, "remotes/origin/")
+			return p, p.gitCheckoutCmd(branch)
+		}
+		return p, nil
+	case "commit":
+		// Commit action — for now trigger reload (commit message comes from modal textarea)
+		return p, tea.Batch(p.loadGitStatusCmd(), p.loadCommitsCmd())
+
+	// Stash menu actions (G-4)
+	case "stash-save":
+		return p, p.gitStashCmd("save")
+	case "stash-save-untracked":
+		return p, p.gitStashCmd("save-untracked")
+	case "stash-list":
+		return p, p.loadStashListCmd()
+	case "stash-apply":
+		if p.state.stashSelected >= 0 && p.state.stashSelected < len(p.state.stashes) {
+			return p, p.gitStashActionCmd("apply", p.state.stashes[p.state.stashSelected].Index)
+		}
+		return p, nil
+	case "stash-pop":
+		if p.state.stashSelected >= 0 && p.state.stashSelected < len(p.state.stashes) {
+			return p, p.gitStashActionCmd("pop", p.state.stashes[p.state.stashSelected].Index)
+		}
+		return p, nil
+	case "stash-drop":
+		if p.state.stashSelected >= 0 && p.state.stashSelected < len(p.state.stashes) {
+			return p, p.openStashDropConfirmModal(p.state.stashes[p.state.stashSelected])
+		}
+		return p, nil
+	case "stash-drop-confirm":
+		if p.state.stashSelected >= 0 && p.state.stashSelected < len(p.state.stashes) {
+			return p, p.gitStashActionCmd("drop", p.state.stashes[p.state.stashSelected].Index)
+		}
+		return p, nil
+
+	// Discard confirmation (G-8)
+	case "discard-confirm":
+		file := p.getFileAtCursor()
+		if file != nil {
+			return p, p.gitDiscardCmd(file.Path, file.Status)
+		}
+		return p, nil
+	}
+	return p, nil
+}
+
+// gitPushCmd executes a git push operation (G-1)
+func (p *GitPlugin) gitPushCmd(variant string) tea.Cmd {
+	projectDir := p.ctx.ProjectDir
+	branch := p.state.BranchName
+	return func() tea.Msg {
+		var cmd *exec.Cmd
+		switch variant {
+		case "push-force":
+			cmd = exec.Command("git", "-C", projectDir, "push", "--force")
+		case "push-upstream":
+			cmd = exec.Command("git", "-C", projectDir, "push", "-u", "origin", branch)
+		default:
+			cmd = exec.Command("git", "-C", projectDir, "push")
+		}
+
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			return GitOperationCompleteMsg{Error: fmt.Errorf("%s\n%s", err, string(out))}
+		}
+		return GitOperationCompleteMsg{Result: "Push successful"}
+	}
+}
+
+// gitPullCmd executes a git pull/fetch operation (G-2)
+func (p *GitPlugin) gitPullCmd(variant string) tea.Cmd {
+	projectDir := p.ctx.ProjectDir
+	return func() tea.Msg {
+		var cmd *exec.Cmd
+		switch variant {
+		case "fetch":
+			cmd = exec.Command("git", "-C", projectDir, "fetch")
+		case "pull-rebase":
+			cmd = exec.Command("git", "-C", projectDir, "pull", "--rebase")
+		default:
+			cmd = exec.Command("git", "-C", projectDir, "pull")
+		}
+
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			return GitOperationCompleteMsg{Error: fmt.Errorf("%s\n%s", err, string(out))}
+		}
+		return GitOperationCompleteMsg{Result: "Pull successful"}
+	}
+}
+
+// loadBranchesCmd loads all git branches (G-3)
+func (p *GitPlugin) loadBranchesCmd() tea.Cmd {
+	projectDir := p.ctx.ProjectDir
+	return func() tea.Msg {
+		cmd := exec.Command("git", "-C", projectDir, "branch", "-a", "--format=%(refname:short)")
+		out, err := cmd.Output()
+		if err != nil {
+			return GitBranchesLoadedMsg{Error: err}
+		}
+
+		var branches []string
+		for _, line := range strings.Split(strings.TrimSpace(string(out)), "\n") {
+			line = strings.TrimSpace(line)
+			if line != "" && !strings.Contains(line, "HEAD") {
+				branches = append(branches, line)
+			}
+		}
+
+		return GitBranchesLoadedMsg{Branches: branches}
+	}
+}
+
+// gitCheckoutCmd checks out a branch (G-3)
+func (p *GitPlugin) gitCheckoutCmd(branch string) tea.Cmd {
+	projectDir := p.ctx.ProjectDir
+	return func() tea.Msg {
+		cmd := exec.Command("git", "-C", projectDir, "checkout", branch)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			return GitOperationCompleteMsg{Error: fmt.Errorf("%s\n%s", err, string(out))}
+		}
+		return GitOperationCompleteMsg{Result: "Switched to " + branch}
+	}
+}
+
+// ── Stash Management (G-4) ────────────────────────────────────────────────────
+
+// openStashMenuModal opens the stash action menu
+func (p *GitPlugin) openStashMenuModal() tea.Cmd {
+	return func() tea.Msg {
+		stashModal := modal.New("Stash", modal.WithWidth(50)).
+			AddSection(modal.Text("Save or manage stashes:")).
+			AddSection(modal.Spacer()).
+			AddSection(modal.Buttons(
+				modal.Btn("Stash", "stash-save", modal.BtnPrimary()),
+				modal.Btn("Stash (+untracked)", "stash-save-untracked"),
+				modal.Btn("View Stashes", "stash-list"),
+				modal.Btn("Cancel", "cancel"),
+			))
+		return OpenModalMsg{Modal: stashModal}
+	}
+}
+
+// loadStashListCmd loads the git stash list
+func (p *GitPlugin) loadStashListCmd() tea.Cmd {
+	projectDir := p.ctx.ProjectDir
+	return func() tea.Msg {
+		cmd := exec.Command("git", "-C", projectDir, "stash", "list")
+		out, err := cmd.Output()
+		if err != nil {
+			return StashListLoadedMsg{Error: err}
+		}
+
+		var stashes []StashEntry
+		for i, line := range strings.Split(strings.TrimSpace(string(out)), "\n") {
+			if line == "" {
+				continue
+			}
+			// Parse: stash@{N}: On branch: message
+			parts := strings.SplitN(line, ": ", 3)
+			msg := line
+			branch := ""
+			if len(parts) >= 3 {
+				msg = parts[2]
+				branch = strings.TrimPrefix(parts[1], "On ")
+			} else if len(parts) >= 2 {
+				msg = parts[1]
+			}
+			stashes = append(stashes, StashEntry{
+				Index:   i,
+				Message: msg,
+				Branch:  branch,
+			})
+		}
+
+		return StashListLoadedMsg{Stashes: stashes}
+	}
+}
+
+// openStashListModal opens a modal showing all stashes with actions
+func (p *GitPlugin) openStashListModal() tea.Cmd {
+	items := make([]string, len(p.state.stashes))
+	for i, s := range p.state.stashes {
+		label := fmt.Sprintf("stash@{%d}: %s", s.Index, s.Message)
+		if s.Branch != "" {
+			label = fmt.Sprintf("stash@{%d} (%s): %s", s.Index, s.Branch, s.Message)
+		}
+		items[i] = label
+	}
+
+	return func() tea.Msg {
+		stashListModal := modal.New("Stash List", modal.WithWidth(70)).
+			AddSection(modal.Text("Select a stash and choose an action:")).
+			AddSection(modal.List("stash-items", items, &p.state.stashSelected, modal.WithMaxVisible(8))).
+			AddSection(modal.Spacer()).
+			AddSection(modal.Buttons(
+				modal.Btn("Apply", "stash-apply", modal.BtnPrimary()),
+				modal.Btn("Pop", "stash-pop"),
+				modal.Btn("Drop", "stash-drop", modal.BtnDanger()),
+				modal.Btn("Cancel", "cancel"),
+			))
+		return OpenModalMsg{Modal: stashListModal}
+	}
+}
+
+// openStashDropConfirmModal opens a danger confirmation for stash drop
+func (p *GitPlugin) openStashDropConfirmModal(stash StashEntry) tea.Cmd {
+	msg := fmt.Sprintf("Are you sure you want to drop stash@{%d}?\n\n%s\n\nThis action cannot be undone.", stash.Index, stash.Message)
+	return func() tea.Msg {
+		confirmModal := modal.New("Drop Stash", modal.WithWidth(55), modal.WithVariant(modal.VariantDanger)).
+			AddSection(modal.Text(msg)).
+			AddSection(modal.Spacer()).
+			AddSection(modal.Buttons(
+				modal.Btn("Drop", "stash-drop-confirm", modal.BtnDanger()),
+				modal.Btn("Cancel", "cancel"),
+			))
+		return OpenModalMsg{Modal: confirmModal}
+	}
+}
+
+// gitStashCmd creates or saves a stash
+func (p *GitPlugin) gitStashCmd(variant string) tea.Cmd {
+	projectDir := p.ctx.ProjectDir
+	return func() tea.Msg {
+		var cmd *exec.Cmd
+		switch variant {
+		case "save-untracked":
+			cmd = exec.Command("git", "-C", projectDir, "stash", "push", "--include-untracked")
+		default:
+			cmd = exec.Command("git", "-C", projectDir, "stash", "push")
+		}
+
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			return GitOperationCompleteMsg{Error: fmt.Errorf("%s\n%s", err, string(out))}
+		}
+		return GitOperationCompleteMsg{Result: "Stash saved"}
+	}
+}
+
+// gitStashActionCmd applies, pops, or drops a stash by index
+func (p *GitPlugin) gitStashActionCmd(action string, index int) tea.Cmd {
+	projectDir := p.ctx.ProjectDir
+	stashRef := fmt.Sprintf("stash@{%d}", index)
+	return func() tea.Msg {
+		cmd := exec.Command("git", "-C", projectDir, "stash", action, stashRef)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			return GitOperationCompleteMsg{Error: fmt.Errorf("%s\n%s", err, string(out))}
+		}
+		result := fmt.Sprintf("Stash %s successful", action)
+		return GitOperationCompleteMsg{Result: result}
+	}
+}
+
+// ── Commit Detail View (G-7) ─────────────────────────────────────────────────
+
+// loadCommitDetailCmd loads the full diff for a commit
+func (p *GitPlugin) loadCommitDetailCmd(hash string) tea.Cmd {
+	projectDir := p.ctx.ProjectDir
+	return func() tea.Msg {
+		cmd := exec.Command("git", "-C", projectDir, "show", hash)
+		out, err := cmd.Output()
+		if err != nil {
+			return CommitDetailLoadedMsg{Error: err, Hash: hash}
+		}
+		return CommitDetailLoadedMsg{Raw: string(out), Hash: hash}
+	}
+}
+
+// ── Discard Confirmation (G-8) ───────────────────────────────────────────────
+
+// openDiscardConfirmModal opens a danger confirmation for discarding changes
+func (p *GitPlugin) openDiscardConfirmModal(path, status string) tea.Cmd {
+	action := "discard changes to"
+	if status == "untracked" {
+		action = "delete untracked file"
+	}
+	msg := fmt.Sprintf("Are you sure you want to %s:\n\n  %s\n\nThis action cannot be undone.", action, path)
+	return func() tea.Msg {
+		confirmModal := modal.New("Discard Changes", modal.WithWidth(55), modal.WithVariant(modal.VariantDanger)).
+			AddSection(modal.Text(msg)).
+			AddSection(modal.Spacer()).
+			AddSection(modal.Buttons(
+				modal.Btn("Discard", "discard-confirm", modal.BtnDanger()),
+				modal.Btn("Cancel", "cancel"),
+			))
+		return OpenModalMsg{Modal: confirmModal}
+	}
+}
+
+// gitDiscardCmd discards changes to a file
+func (p *GitPlugin) gitDiscardCmd(path, status string) tea.Cmd {
+	projectDir := p.ctx.ProjectDir
+	return func() tea.Msg {
+		var cmd *exec.Cmd
+		if status == "untracked" {
+			cmd = exec.Command("git", "-C", projectDir, "clean", "-f", "--", path)
+		} else {
+			cmd = exec.Command("git", "-C", projectDir, "checkout", "--", path)
+		}
+
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			return GitOperationCompleteMsg{Error: fmt.Errorf("%s\n%s", err, string(out))}
+		}
+		return GitOperationCompleteMsg{Result: "Changes discarded"}
+	}
+}
+
 // ── Message types ─────────────────────────────────────────────────────────────
 
 // GitStatusLoadedMsg is sent when git status is loaded
@@ -862,6 +1487,7 @@ type GitStatusLoadedMsg struct {
 	StagedFiles    []GitFileStatus
 	ModifiedFiles  []GitFileStatus
 	UntrackedFiles []GitFileStatus
+	ConflictFiles  []GitFileStatus // Merge conflict files (G-5)
 	Error          error
 }
 
@@ -880,5 +1506,25 @@ type RecentCommitsLoadedMsg struct {
 
 // GitOperationCompleteMsg is sent when a git operation completes
 type GitOperationCompleteMsg struct {
+	Error  error
+	Result string // Optional success message
+}
+
+// GitBranchesLoadedMsg carries the list of git branches (G-3)
+type GitBranchesLoadedMsg struct {
+	Branches []string
+	Error    error
+}
+
+// StashListLoadedMsg carries the stash list (G-4)
+type StashListLoadedMsg struct {
+	Stashes []StashEntry
+	Error   error
+}
+
+// CommitDetailLoadedMsg carries the full commit diff (G-7)
+type CommitDetailLoadedMsg struct {
+	Raw   string // Raw git show output
+	Hash  string
 	Error error
 }

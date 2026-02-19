@@ -1,13 +1,17 @@
 package app
 
 import (
+	"bytes"
 	"fmt"
+	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/prism-plugin/prism-tui/modal"
 	"github.com/prism-plugin/prism-tui/plugin"
 	"github.com/prism-plugin/prism-tui/styles"
 )
@@ -23,33 +27,55 @@ type ExecutionRecord struct {
 
 // QualityGate represents the status of a quality gate check
 type QualityGate struct {
-	Name      string
-	Command   string
-	Status    string // "pass", "fail", "pending", "unknown"
-	LastRun   time.Time
-	Output    string // Last few lines of output
+	Name    string
+	Command string
+	Status  string // "pass", "fail", "pending", "running", "unknown"
+	LastRun time.Time
+	Output  string // Full command output
 }
+
+// MonitorPanel represents which panel has focus (M-1)
+type MonitorPanel int
+
+const (
+	PanelHealth  MonitorPanel = iota
+	PanelHistory
+	PanelGates
+)
 
 // MonitorState holds state for the monitor dashboard
 type MonitorState struct {
 	// System health
-	Goroutines   int
-	MemAllocMB   float64
-	MemTotalMB   float64
-	GCCount      uint32
-	LastGCPause  time.Duration
+	Goroutines  int
+	MemAllocMB  float64
+	MemTotalMB  float64
+	GCCount     uint32
+	LastGCPause time.Duration
 
 	// Execution history
-	History       []ExecutionRecord
-	SelectedRow   int
+	History     []ExecutionRecord
+	SelectedRow int
 
 	// Quality gates
 	QualityGates  []QualityGate
 	GatesSelected int
 
+	// Multi-panel focus (M-1)
+	FocusedPanel MonitorPanel
+
 	// Auto-refresh
 	LastRefresh   time.Time
 	RefreshTicker *time.Ticker
+
+	// Agent health tracking (M-5)
+	ActiveAgents []AgentInfo
+}
+
+// AgentInfo represents a running agent's status in the health panel (M-5)
+type AgentInfo struct {
+	WorktreePath string
+	AgentType    string
+	Status       string // "active", "thinking", "waiting", "done", "paused", "error"
 }
 
 // MonitorPlugin implements the technical debt and diagnostics monitor
@@ -113,6 +139,13 @@ func (p *MonitorPlugin) Init(ctx *plugin.Context) error {
 				}
 			}
 		})
+
+		// Subscribe to AgentStatusEvent for agent health display (M-5)
+		ctx.EventBus.Subscribe("agent.status", func(event plugin.Event) {
+			if e, ok := event.(plugin.AgentStatusEvent); ok {
+				p.updateAgentStatus(e)
+			}
+		})
 	}
 
 	return nil
@@ -143,6 +176,28 @@ func (p *MonitorPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 		p.updateHealthStats()
 		p.state.LastRefresh = time.Now()
 		return p, p.waitForRefresh()
+
+	case GateResultMsg:
+		// Quality gate execution completed (M-2)
+		for i := range p.state.QualityGates {
+			if p.state.QualityGates[i].Name == msg.GateName {
+				p.state.QualityGates[i].Status = msg.Status
+				p.state.QualityGates[i].Output = msg.Output
+				p.state.QualityGates[i].LastRun = time.Now()
+
+				// Publish event
+				if p.ctx.EventBus != nil {
+					p.ctx.EventBus.Publish(plugin.QualityGateResultEvent{
+						GateName: msg.GateName,
+						Status:   msg.Status,
+						Output:   msg.Output,
+						Duration: msg.Duration,
+					})
+				}
+				break
+			}
+		}
+		return p, nil
 	}
 
 	return p, nil
@@ -169,7 +224,7 @@ func (p *MonitorPlugin) View(width, height int) string {
 		panelBorder    = 2  // border adds 2 to outer width (left + right)
 		separatorChars = 2  // "  " gap between adjacent panels
 		numPanels      = 3
-		numGaps        = 2  // gaps between 3 panels
+		numGaps        = 2 // gaps between 3 panels
 	)
 	chrome := numGaps*separatorChars + numPanels*panelBorder // 4 + 6 = 10
 	minThreePanelWidth := minPanelInner*numPanels + chrome   // 75 + 10 = 85
@@ -202,9 +257,10 @@ func (p *MonitorPlugin) View(width, height int) string {
 		sections = append(sections, p.renderQualityGatesPanel(stackWidth, stackHeight))
 	}
 
-	// Footer with last refresh time
+	// Footer with last refresh time and focused panel hint
 	lastRefresh := p.state.LastRefresh.Format("15:04:05")
-	footer := styles.DimStyle.Render(fmt.Sprintf("Last refresh: %s (auto-refresh every 5s)", lastRefresh))
+	panelName := [3]string{"Health", "History", "Gates"}[p.state.FocusedPanel]
+	footer := styles.DimStyle.Render(fmt.Sprintf("Last refresh: %s │ Panel: %s │ Tab to switch panels", lastRefresh, panelName))
 	sections = append(sections, "")
 	sections = append(sections, footer)
 
@@ -223,34 +279,102 @@ func (p *MonitorPlugin) SetFocused(focused bool) {
 
 // KeyHints returns footer key hints
 func (p *MonitorPlugin) KeyHints() []plugin.KeyHint {
-	return []plugin.KeyHint{
+	hints := []plugin.KeyHint{
+		{Key: "tab", Description: "switch panel"},
 		{Key: "r", Description: "refresh"},
-		{Key: "esc", Description: "home"},
 	}
+
+	switch p.state.FocusedPanel {
+	case PanelHistory:
+		hints = append(hints, plugin.KeyHint{Key: "j/k", Description: "navigate"})
+		hints = append(hints, plugin.KeyHint{Key: "enter", Description: "view detail"})
+	case PanelGates:
+		hints = append(hints, plugin.KeyHint{Key: "j/k", Description: "navigate"})
+		hints = append(hints, plugin.KeyHint{Key: "enter", Description: "run gate"})
+		hints = append(hints, plugin.KeyHint{Key: "o", Description: "view output"})
+		hints = append(hints, plugin.KeyHint{Key: "R", Description: "run all"})
+	}
+
+	hints = append(hints, plugin.KeyHint{Key: "esc", Description: "home"})
+	return hints
 }
 
-// handleKeyPress handles keyboard input
+// handleKeyPress handles keyboard input with panel-aware navigation (M-1)
 func (p *MonitorPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 	key := msg.String()
 
 	switch key {
+	case "tab":
+		// Cycle focus: Health → History → Gates → Health (M-1)
+		p.state.FocusedPanel = (p.state.FocusedPanel + 1) % 3
+		return p, nil
+
+	case "shift+tab":
+		p.state.FocusedPanel = (p.state.FocusedPanel + 2) % 3
+		return p, nil
+
 	case "r":
-		// Manual refresh
+		// Manual refresh (lowercase r)
 		p.updateHealthStats()
 		p.state.LastRefresh = time.Now()
 		return p, nil
 
+	case "R":
+		// Run all quality gates (M-2)
+		var cmds []tea.Cmd
+		for i := range p.state.QualityGates {
+			p.state.QualityGates[i].Status = "running"
+			cmds = append(cmds, p.runGateCmd(p.state.QualityGates[i].Name, p.state.QualityGates[i].Command))
+		}
+		return p, tea.Batch(cmds...)
+
 	case "j", "down":
-		// Navigate history
-		if len(p.state.History) > 0 {
-			p.state.SelectedRow = (p.state.SelectedRow + 1) % len(p.state.History)
+		// Navigate within focused panel (M-1)
+		switch p.state.FocusedPanel {
+		case PanelHistory:
+			if len(p.state.History) > 0 {
+				p.state.SelectedRow = (p.state.SelectedRow + 1) % len(p.state.History)
+			}
+		case PanelGates:
+			if len(p.state.QualityGates) > 0 {
+				p.state.GatesSelected = (p.state.GatesSelected + 1) % len(p.state.QualityGates)
+			}
 		}
 		return p, nil
 
 	case "k", "up":
-		// Navigate history
-		if len(p.state.History) > 0 {
-			p.state.SelectedRow = (p.state.SelectedRow - 1 + len(p.state.History)) % len(p.state.History)
+		switch p.state.FocusedPanel {
+		case PanelHistory:
+			if len(p.state.History) > 0 {
+				p.state.SelectedRow = (p.state.SelectedRow - 1 + len(p.state.History)) % len(p.state.History)
+			}
+		case PanelGates:
+			if len(p.state.QualityGates) > 0 {
+				p.state.GatesSelected = (p.state.GatesSelected - 1 + len(p.state.QualityGates)) % len(p.state.QualityGates)
+			}
+		}
+		return p, nil
+
+	case "enter":
+		// Run selected gate when Gates panel is focused (M-2)
+		if p.state.FocusedPanel == PanelGates && len(p.state.QualityGates) > 0 {
+			gate := &p.state.QualityGates[p.state.GatesSelected]
+			gate.Status = "running"
+			return p, p.runGateCmd(gate.Name, gate.Command)
+		}
+		// Open history detail when History panel is focused (M-4)
+		if p.state.FocusedPanel == PanelHistory && p.state.SelectedRow < len(p.state.History) {
+			return p, p.openHistoryDetailModal(p.state.History[p.state.SelectedRow])
+		}
+		return p, nil
+
+	case "o":
+		// View gate output when Gates panel is focused (M-3)
+		if p.state.FocusedPanel == PanelGates && len(p.state.QualityGates) > 0 {
+			gate := p.state.QualityGates[p.state.GatesSelected]
+			if gate.Output != "" {
+				return p, p.openGateOutputModal(gate)
+			}
 		}
 		return p, nil
 
@@ -262,6 +386,14 @@ func (p *MonitorPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) 
 	}
 
 	return p, nil
+}
+
+// panelBorderColor returns the border color for a panel based on focus state (M-1)
+func (p *MonitorPlugin) panelBorderColor(panel MonitorPanel, defaultColor lipgloss.Color) lipgloss.Color {
+	if p.focused && p.state.FocusedPanel == panel {
+		return lipgloss.Color("#7C3AED") // Purple highlight for focused panel
+	}
+	return defaultColor
 }
 
 // renderHealthPanel renders the system health dashboard
@@ -290,6 +422,37 @@ func (p *MonitorPlugin) renderHealthPanel(width, height int) string {
 		status = "🟠 High Memory"
 	}
 	lines = append(lines, "  "+styles.SuccessStyle.Render(status))
+	lines = append(lines, "")
+
+	// Agent health section (M-5)
+	lines = append(lines, "  "+styles.DimStyle.Render(fmt.Sprintf("─── Agents (%d) ───", len(p.state.ActiveAgents))))
+	if len(p.state.ActiveAgents) == 0 {
+		lines = append(lines, "  "+styles.DimStyle.Render("No agents running"))
+	} else {
+		for _, agent := range p.state.ActiveAgents {
+			// Status icon
+			var statusIcon string
+			switch agent.Status {
+			case "active":
+				statusIcon = styles.SuccessStyle.Render("●")
+			case "thinking":
+				statusIcon = styles.InfoStyle.Render("◉")
+			case "waiting":
+				statusIcon = styles.WarningStyle.Render("○")
+			case "paused":
+				statusIcon = styles.DimStyle.Render("⏸")
+			default:
+				statusIcon = styles.DimStyle.Render("?")
+			}
+			agentType := agent.AgentType
+			if agentType == "" {
+				agentType = "unknown"
+			}
+			// Show worktree basename for brevity
+			wtName := filepath.Base(agent.WorktreePath)
+			lines = append(lines, fmt.Sprintf("  %s %-8s %s", statusIcon, agentType, styles.DimStyle.Render(wtName)))
+		}
+	}
 
 	// Pad to height
 	for len(lines) < height-2 {
@@ -297,10 +460,10 @@ func (p *MonitorPlugin) renderHealthPanel(width, height int) string {
 	}
 
 	content := strings.Join(lines, "\n")
-	// Height() is inner in lipgloss v1.x; border adds 2 → use h-2 so outer = h
+	borderColor := p.panelBorderColor(PanelHealth, styles.Info)
 	return lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(styles.Info).
+		BorderForeground(borderColor).
 		Width(width).
 		Height(height - 2).
 		Render(content)
@@ -308,6 +471,7 @@ func (p *MonitorPlugin) renderHealthPanel(width, height int) string {
 
 // renderHistoryPanel renders the execution history table
 func (p *MonitorPlugin) renderHistoryPanel(width, height int) string {
+	isFocused := p.focused && p.state.FocusedPanel == PanelHistory
 	var lines []string
 
 	// Panel title
@@ -319,11 +483,10 @@ func (p *MonitorPlugin) renderHistoryPanel(width, height int) string {
 		lines = append(lines, "  "+styles.DimStyle.Render("No executions yet"))
 	} else {
 		// Responsive table: show Time column only when panel is wide enough.
-		// Compact row visual width ≈ 30 chars; with time ≈ 40 chars.
-		tableW := width - 2 // usable width inside 2-char left indent
+		tableW := width - 2
 		showTime := tableW >= 40
 
-		// Table header (extra space accounts for icon column in data rows)
+		// Table header
 		var header string
 		if showTime {
 			header = fmt.Sprintf("  %-10s    %-7s %6s  %-8s", "Story", "Result", "Dur.", "Time")
@@ -357,17 +520,13 @@ func (p *MonitorPlugin) renderHistoryPanel(width, height int) string {
 				statusStyle = styles.WarningStyle
 			}
 
-			// Format duration
 			durationStr := record.Duration.Truncate(time.Second).String()
 
-			// Truncate story ID if needed
 			storyID := record.StoryID
 			if len(storyID) > 10 {
 				storyID = storyID[:10]
 			}
 
-			// Build row with compact columns to prevent wrapping.
-			// ANSI-styled icon is placed via %s (1 visual char); other columns use fixed widths.
 			var row string
 			if showTime {
 				timeStr := record.Timestamp.Format("15:04:05")
@@ -387,8 +546,8 @@ func (p *MonitorPlugin) renderHistoryPanel(width, height int) string {
 				)
 			}
 
-			// Highlight selected row
-			if i == p.state.SelectedRow && p.focused {
+			// Highlight selected row only when this panel is focused (M-1)
+			if i == p.state.SelectedRow && isFocused {
 				row = styles.CurrentStyle.Render(row)
 			}
 
@@ -402,10 +561,10 @@ func (p *MonitorPlugin) renderHistoryPanel(width, height int) string {
 	}
 
 	content := strings.Join(lines, "\n")
-	// Height() is inner in lipgloss v1.x; border adds 2 → use h-2 so outer = h
+	borderColor := p.panelBorderColor(PanelHistory, styles.Success)
 	return lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(styles.Success).
+		BorderForeground(borderColor).
 		Width(width).
 		Height(height - 2).
 		Render(content)
@@ -413,6 +572,7 @@ func (p *MonitorPlugin) renderHistoryPanel(width, height int) string {
 
 // renderQualityGatesPanel renders the quality gates status
 func (p *MonitorPlugin) renderQualityGatesPanel(width, height int) string {
+	isFocused := p.focused && p.state.FocusedPanel == PanelGates
 	var lines []string
 
 	// Panel title
@@ -436,6 +596,9 @@ func (p *MonitorPlugin) renderQualityGatesPanel(width, height int) string {
 		case "pending":
 			statusIcon = "⏳"
 			statusStyle = styles.WarningStyle
+		case "running":
+			statusIcon = "⟳"
+			statusStyle = styles.InfoStyle
 		default:
 			statusIcon = "?"
 			statusStyle = styles.DimStyle
@@ -447,8 +610,8 @@ func (p *MonitorPlugin) renderQualityGatesPanel(width, height int) string {
 			gate.Name,
 		)
 
-		// Highlight selected
-		if i == p.state.GatesSelected && p.focused {
+		// Highlight selected gate when this panel is focused (M-1)
+		if i == p.state.GatesSelected && isFocused {
 			gateLine = styles.CurrentStyle.Render(gateLine)
 		}
 
@@ -469,8 +632,8 @@ func (p *MonitorPlugin) renderQualityGatesPanel(width, height int) string {
 		lines = append(lines, "")
 	}
 
-	// Hint — truncate to fit panel width (2-char indent + content must fit in width)
-	hint := "Run: make test, make lint, make build"
+	// Hint
+	hint := "Enter: run selected │ R: run all"
 	maxHint := width - 2
 	if maxHint > 0 && len(hint) > maxHint {
 		hint = hint[:maxHint-1] + "…"
@@ -483,10 +646,10 @@ func (p *MonitorPlugin) renderQualityGatesPanel(width, height int) string {
 	}
 
 	content := strings.Join(lines, "\n")
-	// Height() is inner in lipgloss v1.x; border adds 2 → use h-2 so outer = h
+	borderColor := p.panelBorderColor(PanelGates, styles.Warning)
 	return lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(styles.Warning).
+		BorderForeground(borderColor).
 		Width(width).
 		Height(height - 2).
 		Render(content)
@@ -517,6 +680,72 @@ func (p *MonitorPlugin) waitForRefresh() tea.Cmd {
 // RefreshMonitorMsg signals that the monitor should refresh its data
 type RefreshMonitorMsg struct{}
 
+// GateResultMsg carries the result of a quality gate execution (M-2)
+type GateResultMsg struct {
+	GateName string
+	Status   string // "pass" or "fail"
+	Output   string
+	Duration int64 // milliseconds
+}
+
+// runGateCmd executes a quality gate command asynchronously (M-2)
+func (p *MonitorPlugin) runGateCmd(name, command string) tea.Cmd {
+	projectDir := p.ctx.ProjectDir
+	return func() tea.Msg {
+		start := time.Now()
+
+		// Split command for exec
+		parts := strings.Fields(command)
+		if len(parts) == 0 {
+			return GateResultMsg{
+				GateName: name,
+				Status:   "fail",
+				Output:   "empty command",
+				Duration: 0,
+			}
+		}
+
+		cmd := exec.Command(parts[0], parts[1:]...)
+		if projectDir != "" && projectDir != "demo" {
+			cmd.Dir = projectDir
+		}
+
+		var stdout, stderr bytes.Buffer
+		cmd.Stdout = &stdout
+		cmd.Stderr = &stderr
+
+		err := cmd.Run()
+		duration := time.Since(start).Milliseconds()
+
+		output := stdout.String()
+		if stderr.Len() > 0 {
+			if output != "" {
+				output += "\n"
+			}
+			output += stderr.String()
+		}
+
+		// Trim to last 50 lines
+		lines := strings.Split(output, "\n")
+		if len(lines) > 50 {
+			lines = lines[len(lines)-50:]
+			output = "...(truncated)\n" + strings.Join(lines, "\n")
+		}
+
+		status := "pass"
+		if err != nil {
+			status = "fail"
+		}
+
+		return GateResultMsg{
+			GateName: name,
+			Status:   status,
+			Output:   output,
+			Duration: duration,
+		}
+	}
+}
+
 // AddExecutionRecord adds a new execution record to the history
 func (p *MonitorPlugin) AddExecutionRecord(storyID, storyName string, duration time.Duration, result string) {
 	record := ExecutionRecord{
@@ -543,5 +772,112 @@ func (p *MonitorPlugin) UpdateQualityGate(name, status, output string) {
 			p.state.QualityGates[i].LastRun = time.Now()
 			break
 		}
+	}
+}
+
+// updateAgentStatus updates or removes an agent entry based on status event (M-5).
+func (p *MonitorPlugin) updateAgentStatus(e plugin.AgentStatusEvent) {
+	// Find existing agent by worktree path
+	for i, a := range p.state.ActiveAgents {
+		if a.WorktreePath == e.WorktreePath {
+			if e.Status == "done" || e.Status == "error" {
+				// Remove completed/errored agents
+				p.state.ActiveAgents = append(p.state.ActiveAgents[:i], p.state.ActiveAgents[i+1:]...)
+			} else {
+				// Update status
+				p.state.ActiveAgents[i].Status = e.Status
+				p.state.ActiveAgents[i].AgentType = e.AgentType
+			}
+			return
+		}
+	}
+
+	// New agent — add if not done/error
+	if e.Status != "done" && e.Status != "error" {
+		p.state.ActiveAgents = append(p.state.ActiveAgents, AgentInfo{
+			WorktreePath: e.WorktreePath,
+			AgentType:    e.AgentType,
+			Status:       e.Status,
+		})
+	}
+}
+
+// openGateOutputModal opens a scrollable modal showing gate output (M-3).
+func (p *MonitorPlugin) openGateOutputModal(gate QualityGate) tea.Cmd {
+	// Status badge
+	var statusBadge string
+	switch gate.Status {
+	case "pass":
+		statusBadge = "PASS"
+	case "fail":
+		statusBadge = "FAIL"
+	default:
+		statusBadge = strings.ToUpper(gate.Status)
+	}
+
+	header := fmt.Sprintf("%s — %s\nCommand: %s", gate.Name, statusBadge, gate.Command)
+	if !gate.LastRun.IsZero() {
+		elapsed := time.Since(gate.LastRun).Truncate(time.Second)
+		header += fmt.Sprintf("\nLast run: %s ago", elapsed)
+	}
+
+	// Trim output to reasonable length for modal display
+	output := gate.Output
+	if output == "" {
+		output = "(no output captured)"
+	}
+
+	variant := modal.VariantInfo
+	if gate.Status == "fail" {
+		variant = modal.VariantDanger
+	}
+
+	return func() tea.Msg {
+		m := modal.New("Gate Output: "+gate.Name, modal.WithWidth(80), modal.WithVariant(variant)).
+			AddSection(modal.Text(header)).
+			AddSection(modal.Spacer()).
+			AddSection(modal.Text(output)).
+			AddSection(modal.Spacer()).
+			AddSection(modal.Buttons(modal.Btn("Close", "cancel")))
+		return OpenModalMsg{Modal: m}
+	}
+}
+
+// openHistoryDetailModal opens a modal showing execution record details (M-4).
+func (p *MonitorPlugin) openHistoryDetailModal(record ExecutionRecord) tea.Cmd {
+	// Result badge
+	var resultBadge string
+	switch record.Result {
+	case "success":
+		resultBadge = "SUCCESS"
+	case "error":
+		resultBadge = "ERROR"
+	case "blocked":
+		resultBadge = "BLOCKED"
+	default:
+		resultBadge = strings.ToUpper(record.Result)
+	}
+
+	detail := fmt.Sprintf("Story:     %s\nName:      %s\nResult:    %s\nDuration:  %s\nTimestamp: %s",
+		record.StoryID,
+		record.StoryName,
+		resultBadge,
+		record.Duration.Truncate(time.Millisecond).String(),
+		record.Timestamp.Format("2006-01-02 15:04:05"),
+	)
+
+	variant := modal.VariantInfo
+	if record.Result == "error" {
+		variant = modal.VariantDanger
+	} else if record.Result == "blocked" {
+		variant = modal.VariantWarning
+	}
+
+	return func() tea.Msg {
+		m := modal.New("Execution Detail", modal.WithWidth(60), modal.WithVariant(variant)).
+			AddSection(modal.Text(detail)).
+			AddSection(modal.Spacer()).
+			AddSection(modal.Buttons(modal.Btn("Close", "cancel")))
+		return OpenModalMsg{Modal: m}
 	}
 }

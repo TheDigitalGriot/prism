@@ -135,6 +135,9 @@ func (r *Registry) Broadcast(msg tea.Msg) []tea.Cmd {
 // Reinit stops all plugins and re-initializes them with the current context.
 // This is used when switching projects or epics.
 func (r *Registry) Reinit() error {
+	// Increment epoch to invalidate stale async messages from the previous context
+	r.context.Epoch++
+
 	// Stop all plugins
 	for _, p := range r.plugins {
 		p.Stop()

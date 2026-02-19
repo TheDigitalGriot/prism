@@ -3,13 +3,17 @@ package app
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 
+	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	zone "github.com/lrstanley/bubblezone"
+	"github.com/prism-plugin/prism-tui/diff"
 	"github.com/prism-plugin/prism-tui/plugin"
 	"github.com/prism-plugin/prism-tui/styles"
 	"github.com/prism-plugin/prism-tui/ui"
@@ -25,6 +29,81 @@ type FileNode struct {
 	Depth    int
 }
 
+// FileTab represents an open file tab in the preview pane (F-3)
+type FileTab struct {
+	Path           string
+	Name           string
+	Content        string
+	ScrollOffset   int
+	Highlighter    *diff.SyntaxHighlighter
+}
+
+// TabManager manages multiple open file tabs (F-3)
+type TabManager struct {
+	Tabs      []FileTab
+	ActiveIdx int
+	MaxTabs   int
+}
+
+// newTabManager creates a new TabManager with default settings
+func newTabManager() TabManager {
+	return TabManager{MaxTabs: 10}
+}
+
+// OpenTab opens a file in a new tab or switches to it if already open.
+// Returns true if a new tab was created (content needs loading).
+func (tm *TabManager) OpenTab(path, name string) bool {
+	// Check if already open
+	for i, tab := range tm.Tabs {
+		if tab.Path == path {
+			tm.ActiveIdx = i
+			return false
+		}
+	}
+
+	// If at max tabs, close the oldest (first) tab
+	if len(tm.Tabs) >= tm.MaxTabs {
+		tm.Tabs = tm.Tabs[1:]
+		if tm.ActiveIdx > 0 {
+			tm.ActiveIdx--
+		}
+	}
+
+	tm.Tabs = append(tm.Tabs, FileTab{Path: path, Name: name})
+	tm.ActiveIdx = len(tm.Tabs) - 1
+	return true
+}
+
+// CloseTab closes the tab at the given index
+func (tm *TabManager) CloseTab(idx int) {
+	if idx < 0 || idx >= len(tm.Tabs) {
+		return
+	}
+	tm.Tabs = append(tm.Tabs[:idx], tm.Tabs[idx+1:]...)
+
+	// Adjust active index
+	if len(tm.Tabs) == 0 {
+		tm.ActiveIdx = 0
+	} else if tm.ActiveIdx >= len(tm.Tabs) {
+		tm.ActiveIdx = len(tm.Tabs) - 1
+	} else if idx < tm.ActiveIdx {
+		tm.ActiveIdx--
+	}
+}
+
+// ActiveTab returns the active tab, or nil if no tabs
+func (tm *TabManager) ActiveTab() *FileTab {
+	if len(tm.Tabs) == 0 || tm.ActiveIdx < 0 || tm.ActiveIdx >= len(tm.Tabs) {
+		return nil
+	}
+	return &tm.Tabs[tm.ActiveIdx]
+}
+
+// CloseActive closes the currently active tab
+func (tm *TabManager) CloseActive() {
+	tm.CloseTab(tm.ActiveIdx)
+}
+
 // FilesState holds state for the file browser
 type FilesState struct {
 	Root           *FileNode
@@ -35,21 +114,38 @@ type FilesState struct {
 	FilterMode     bool   // Filename search/filter mode active
 	FilterQuery    string // Current search query
 
+	// Git status indicators (F-2)
+	GitStatusMap map[string]string // relative path → status indicator ("M", "A", "D", "?", "R")
+
+	// Multi-tab support (F-3)
+	Tabs TabManager
+
 	// Two-pane layout state (Phase 5)
 	activePane       ui.FocusPane
 	treeWidth        int // Calculated left pane width
 	previewWidth     int // Calculated right pane width
 	treeScrollOff    int // Index of first visible item in tree
 	previewScrollOff int // First visible line in preview
+
+	// Edit mode state (F-6)
+	editMode     bool           // True when editing a file
+	editTextarea textarea.Model // Textarea for editing
+	editPath     string         // Path of file being edited
+
+	// Blame view state (F-7)
+	blameMode  bool          // True when showing blame annotations
+	blameLines []BlameLine   // Parsed blame data per line
+	blameError string        // Error message if blame failed
 }
 
 // FilesPlugin implements the file browser view
 type FilesPlugin struct {
-	ctx     *plugin.Context
-	state   FilesState
-	focused bool
-	width   int
-	height  int
+	ctx         *plugin.Context
+	state       FilesState
+	focused     bool
+	width       int
+	height      int
+	highlighter *diff.SyntaxHighlighter // Chroma highlighter for current preview file
 }
 
 // NewFilesPlugin creates a new Files plugin instance
@@ -58,6 +154,7 @@ func NewFilesPlugin() *FilesPlugin {
 		state: FilesState{
 			FlatList:   []*FileNode{},
 			activePane: ui.PaneLeft,
+			Tabs:       newTabManager(),
 		},
 	}
 }
@@ -92,7 +189,7 @@ func (p *FilesPlugin) Start() tea.Cmd {
 	if p.ctx.DemoMode {
 		return nil
 	}
-	return p.buildFileTreeCmd()
+	return tea.Batch(p.buildFileTreeCmd(), p.loadFileGitStatusCmd())
 }
 
 // Stop is called when deactivated
@@ -151,12 +248,81 @@ func (p *FilesPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 		return p, nil
 
 	case FileContentLoadedMsg:
+		if msg.Epoch != p.ctx.Epoch {
+			return p, nil
+		}
 		if msg.Error == nil && msg.ForView == ViewFiles {
 			p.state.PreviewPath = msg.Path
 			p.state.PreviewContent = msg.Content
 			p.state.previewScrollOff = 0
+			// Clear blame data when file changes (F-7)
+			p.state.blameLines = nil
+			p.state.blameError = ""
+			// Create syntax highlighter for this file type (F-1)
+			hl := diff.NewSyntaxHighlighter(filepath.Base(msg.Path))
+			p.highlighter = hl
+
+			// Store content in the active tab (F-3)
+			if tab := p.state.Tabs.ActiveTab(); tab != nil && tab.Path == msg.Path {
+				tab.Content = msg.Content
+				tab.Highlighter = hl
+				tab.ScrollOffset = 0
+			}
 		}
 		return p, nil
+
+	case FileGitStatusLoadedMsg:
+		if msg.Error == nil {
+			p.state.GitStatusMap = msg.StatusMap
+		}
+		return p, nil
+
+	case FileFinderOpenMsg:
+		// Open file from fuzzy finder or content search (F-4, F-5)
+		isNew := p.state.Tabs.OpenTab(msg.Path, msg.Name)
+		if isNew {
+			return p, p.loadPreviewForTab(msg.Path)
+		}
+		// Tab already exists, sync preview state
+		if tab := p.state.Tabs.ActiveTab(); tab != nil {
+			p.state.PreviewPath = tab.Path
+			p.state.PreviewContent = tab.Content
+			p.state.previewScrollOff = tab.ScrollOffset
+			p.highlighter = tab.Highlighter
+		}
+		return p, nil
+
+	case BlameLoadedMsg:
+		// Blame data loaded for a file (F-7)
+		if msg.Epoch != p.ctx.Epoch {
+			return p, nil
+		}
+		if msg.Error != nil {
+			p.state.blameError = msg.Error.Error()
+			p.state.blameLines = nil
+		} else if msg.Path == p.state.PreviewPath {
+			p.state.blameLines = msg.Lines
+			p.state.blameError = ""
+		}
+		return p, nil
+
+	case FileSavedMsg:
+		// File saved from edit mode (F-6)
+		if msg.Error != nil {
+			// Stay in edit mode, user can try again or esc
+			return p, nil
+		}
+		// Exit edit mode, reload content
+		p.state.editMode = false
+		p.state.editPath = ""
+		// Publish file changed event
+		if p.ctx.EventBus != nil {
+			p.ctx.EventBus.Publish(plugin.FileChangedEvent{
+				FilePath: msg.Path,
+				Action:   "modified",
+			})
+		}
+		return p, p.loadPreviewForTab(msg.Path)
 	}
 
 	return p, nil
@@ -186,6 +352,12 @@ func (p *FilesPlugin) SetFocused(focused bool) {
 
 // KeyHints returns footer key hints based on current pane and mode
 func (p *FilesPlugin) KeyHints() []plugin.KeyHint {
+	if p.state.editMode {
+		return []plugin.KeyHint{
+			{Key: "ctrl+s", Description: "save"},
+			{Key: "esc", Description: "cancel edit"},
+		}
+	}
 	if p.state.FilterMode {
 		return []plugin.KeyHint{
 			{Key: "esc", Description: "cancel search"},
@@ -193,17 +365,25 @@ func (p *FilesPlugin) KeyHints() []plugin.KeyHint {
 		}
 	}
 	if p.state.activePane == ui.PaneRight {
+		blameHint := "blame"
+		if p.state.blameMode {
+			blameHint = "blame off"
+		}
 		return []plugin.KeyHint{
-			{Key: "j/k", Description: "scroll preview"},
-			{Key: "tab/esc", Description: "back to tree"},
+			{Key: "j/k", Description: "scroll"},
+			{Key: "h/l", Description: "switch tab"},
+			{Key: "b", Description: blameHint},
+			{Key: "e", Description: "edit file"},
+			{Key: "x", Description: "close tab"},
+			{Key: "esc", Description: "tree pane"},
 		}
 	}
 	return []plugin.KeyHint{
 		{Key: "j/k", Description: "navigate"},
-		{Key: "enter", Description: "expand/collapse"},
+		{Key: "enter", Description: "open/expand"},
+		{Key: "x", Description: "close tab"},
 		{Key: "/", Description: "search"},
 		{Key: "tab", Description: "preview pane"},
-		{Key: "esc", Description: "home"},
 	}
 }
 
@@ -314,6 +494,25 @@ func (p *FilesPlugin) renderTree(treeWidth, innerHeight int) string {
 			plainLine += strings.Repeat(" ", maxWidth-visWidth)
 		}
 
+		// Git status badge (F-2)
+		gitStatus := p.fileGitStatus(node)
+		if gitStatus != "" {
+			// Right-align the badge within maxWidth
+			badgeWidth := 2 // " M" or " ?" etc.
+			lineWidth := lipgloss.Width(plainLine)
+			if lineWidth+badgeWidth <= maxWidth {
+				padding := maxWidth - lineWidth - badgeWidth
+				if padding > 0 {
+					plainLine = plainLine[:len(plainLine)-padding] // trim trailing spaces
+				}
+				// Re-pad to fit badge
+				visW := lipgloss.Width(plainLine)
+				if visW+badgeWidth < maxWidth {
+					plainLine += strings.Repeat(" ", maxWidth-visW-badgeWidth)
+				}
+			}
+		}
+
 		var styledLine string
 		if selected {
 			styledLine = styles.CurrentStyle.Render(plainLine)
@@ -321,6 +520,24 @@ func (p *FilesPlugin) renderTree(treeWidth, innerHeight int) string {
 			styledLine = styles.TitleStyle.Render(plainLine)
 		} else {
 			styledLine = styles.DimStyle.Render(plainLine)
+		}
+
+		// Append colored git status badge after the styled text
+		if gitStatus != "" {
+			var badgeStyle lipgloss.Style
+			switch gitStatus {
+			case "M":
+				badgeStyle = lipgloss.NewStyle().Foreground(styles.Warning) // Yellow
+			case "A":
+				badgeStyle = lipgloss.NewStyle().Foreground(styles.Success) // Green
+			case "D":
+				badgeStyle = lipgloss.NewStyle().Foreground(styles.Error) // Red
+			case "?":
+				badgeStyle = lipgloss.NewStyle().Foreground(styles.Dim) // Gray
+			default:
+				badgeStyle = lipgloss.NewStyle().Foreground(styles.Info) // Blue
+			}
+			styledLine += " " + badgeStyle.Render(gitStatus)
 		}
 
 		// Register zone for mouse click
@@ -344,10 +561,59 @@ func (p *FilesPlugin) renderTree(treeWidth, innerHeight int) string {
 	return sb.String()
 }
 
+// renderTabBar renders the tab bar above the preview (F-3)
+func (p *FilesPlugin) renderTabBar(maxWidth int) string {
+	if len(p.state.Tabs.Tabs) == 0 {
+		return ""
+	}
+
+	var parts []string
+	for i, tab := range p.state.Tabs.Tabs {
+		name := tab.Name
+		if len(name) > 15 {
+			name = name[:12] + "…"
+		}
+
+		if i == p.state.Tabs.ActiveIdx {
+			style := lipgloss.NewStyle().
+				Bold(true).
+				Foreground(styles.White).
+				Background(styles.Primary).
+				Padding(0, 1)
+			parts = append(parts, style.Render(name))
+		} else {
+			style := lipgloss.NewStyle().
+				Foreground(styles.Dim).
+				Padding(0, 1)
+			parts = append(parts, style.Render(name))
+		}
+	}
+
+	bar := lipgloss.JoinHorizontal(lipgloss.Top, parts...)
+	// Truncate if too wide
+	if lipgloss.Width(bar) > maxWidth {
+		return bar[:maxWidth]
+	}
+	return bar
+}
+
 // renderPreview renders the file preview in the right pane with line numbers.
 // Format: "  42 │ content here" (4-digit right-aligned line number + " │ " separator).
 func (p *FilesPlugin) renderPreview(previewWidth, innerHeight int) string {
+	// If in edit mode, render the textarea editor instead (F-6)
+	if p.state.editMode {
+		return p.renderEditPane(previewWidth, innerHeight)
+	}
+
 	var sb strings.Builder
+
+	// Tab bar (F-3)
+	tabBar := p.renderTabBar(previewWidth - 4)
+	if tabBar != "" {
+		sb.WriteString(tabBar)
+		sb.WriteString("\n")
+		innerHeight-- // Consume one line for tab bar
+	}
 
 	// Header: filename with type extension hint
 	header := "Preview"
@@ -402,14 +668,52 @@ func (p *FilesPlugin) renderPreview(previewWidth, innerHeight int) string {
 		maxLineWidth = 10
 	}
 
+	// Blame column width: "abcdef12 JohnDoe  3mo │ " = ~25 chars (F-7)
+	const blameColWidth = 25
+	effectiveMaxLine := maxLineWidth
+	if p.state.blameMode {
+		effectiveMaxLine = maxLineWidth - blameColWidth
+		if effectiveMaxLine < 10 {
+			effectiveMaxLine = 10
+		}
+	}
+
 	for i := start; i < end; i++ {
 		line := contentLines[i]
-		if len(line) > maxLineWidth {
-			line = line[:maxLineWidth-1] + "…"
+		if len(line) > effectiveMaxLine {
+			line = line[:effectiveMaxLine-1] + "…"
 		}
+
+		// Render blame column if active (F-7)
+		if p.state.blameMode {
+			if p.state.blameError != "" {
+				// Show error once at top
+				if i == start {
+					sb.WriteString(styles.WarningStyle.Render("Not in git"))
+					sb.WriteString("\n")
+				}
+			} else if i < len(p.state.blameLines) {
+				bl := p.state.blameLines[i]
+				blameStr := fmt.Sprintf("%s %-8s %3s │ ", bl.Hash, bl.Author, bl.Age)
+				sb.WriteString(styles.DimStyle.Render(blameStr))
+			} else {
+				sb.WriteString(styles.DimStyle.Render(strings.Repeat(" ", blameColWidth)))
+			}
+		}
+
 		lineNum := fmt.Sprintf("%4d │ ", i+1)
 		sb.WriteString(styles.FileBrowserLineNumber.Render(lineNum))
-		sb.WriteString(line)
+
+		// Apply syntax highlighting if available (F-1)
+		if p.highlighter != nil {
+			segments := p.highlighter.HighlightLine(line)
+			for _, seg := range segments {
+				sb.WriteString(seg.Style.Render(seg.Text))
+			}
+		} else {
+			sb.WriteString(line)
+		}
+
 		if i < end-1 {
 			sb.WriteString("\n")
 		}
@@ -421,6 +725,11 @@ func (p *FilesPlugin) renderPreview(previewWidth, innerHeight int) string {
 // handleKeyPress handles keyboard input with pane-aware navigation.
 func (p *FilesPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 	key := msg.String()
+
+	// Edit mode captures all input (F-6)
+	if p.state.editMode {
+		return p.handleEditModeKey(msg)
+	}
 
 	// Filter/search mode captures all input
 	if p.state.FilterMode {
@@ -457,15 +766,58 @@ func (p *FilesPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 		return p, nil
 	}
 
-	// Preview pane: j/k scroll content, esc returns to tree
+	// Preview pane: j/k scroll content, h/l switch tabs, x close tab, e edit, esc returns to tree
 	if p.state.activePane == ui.PaneRight {
 		switch key {
 		case "j", "down":
 			p.state.previewScrollOff++
+			// Save scroll position to active tab
+			if tab := p.state.Tabs.ActiveTab(); tab != nil {
+				tab.ScrollOffset = p.state.previewScrollOff
+			}
 			return p, nil
 		case "k", "up":
 			if p.state.previewScrollOff > 0 {
 				p.state.previewScrollOff--
+			}
+			if tab := p.state.Tabs.ActiveTab(); tab != nil {
+				tab.ScrollOffset = p.state.previewScrollOff
+			}
+			return p, nil
+		case "h", "left":
+			// Previous tab (F-3)
+			if len(p.state.Tabs.Tabs) > 1 {
+				p.state.Tabs.ActiveIdx = (p.state.Tabs.ActiveIdx - 1 + len(p.state.Tabs.Tabs)) % len(p.state.Tabs.Tabs)
+				p.syncFromActiveTab()
+			}
+			return p, nil
+		case "l", "right":
+			// Next tab (F-3)
+			if len(p.state.Tabs.Tabs) > 1 {
+				p.state.Tabs.ActiveIdx = (p.state.Tabs.ActiveIdx + 1) % len(p.state.Tabs.Tabs)
+				p.syncFromActiveTab()
+			}
+			return p, nil
+		case "x":
+			// Close active tab (F-3)
+			if len(p.state.Tabs.Tabs) > 0 {
+				p.state.Tabs.CloseActive()
+				p.syncFromActiveTab()
+			}
+			return p, nil
+		case "b":
+			// Toggle blame view (F-7)
+			if p.state.PreviewPath != "" && p.state.PreviewContent != "" {
+				p.state.blameMode = !p.state.blameMode
+				if p.state.blameMode && p.state.blameLines == nil && p.state.blameError == "" {
+					return p, p.loadBlameCmd(p.state.PreviewPath)
+				}
+			}
+			return p, nil
+		case "e":
+			// Enter edit mode (F-6)
+			if p.state.PreviewPath != "" && p.state.PreviewContent != "" && !p.ctx.DemoMode {
+				p.enterEditMode()
 			}
 			return p, nil
 		case "esc":
@@ -498,7 +850,35 @@ func (p *FilesPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 				node.Expanded = !node.Expanded
 				p.rebuildFlatList()
 			} else {
-				return p, p.loadPreview()
+				// Open in tab (F-3)
+				isNew := p.state.Tabs.OpenTab(node.Path, node.Name)
+				if isNew {
+					return p, p.loadPreviewForTab(node.Path)
+				}
+				// Tab already exists, just sync preview state
+				if tab := p.state.Tabs.ActiveTab(); tab != nil {
+					p.state.PreviewPath = tab.Path
+					p.state.PreviewContent = tab.Content
+					p.state.previewScrollOff = tab.ScrollOffset
+					p.highlighter = tab.Highlighter
+				}
+			}
+		}
+		return p, nil
+	case "x":
+		// Close active tab (F-3)
+		if p.state.activePane == ui.PaneLeft && len(p.state.Tabs.Tabs) > 0 {
+			p.state.Tabs.CloseActive()
+			if tab := p.state.Tabs.ActiveTab(); tab != nil {
+				p.state.PreviewPath = tab.Path
+				p.state.PreviewContent = tab.Content
+				p.state.previewScrollOff = tab.ScrollOffset
+				p.highlighter = tab.Highlighter
+			} else {
+				p.state.PreviewPath = ""
+				p.state.PreviewContent = ""
+				p.state.previewScrollOff = 0
+				p.highlighter = nil
 			}
 		}
 		return p, nil
@@ -560,6 +940,27 @@ func (p *FilesPlugin) applyFilter() {
 	p.state.treeScrollOff = 0
 }
 
+// syncFromActiveTab syncs the preview state from the currently active tab (F-3)
+func (p *FilesPlugin) syncFromActiveTab() {
+	tab := p.state.Tabs.ActiveTab()
+	if tab == nil {
+		p.state.PreviewPath = ""
+		p.state.PreviewContent = ""
+		p.state.previewScrollOff = 0
+		p.highlighter = nil
+		return
+	}
+	p.state.PreviewPath = tab.Path
+	p.state.PreviewContent = tab.Content
+	p.state.previewScrollOff = tab.ScrollOffset
+	p.highlighter = tab.Highlighter
+}
+
+// loadPreviewForTab loads file content into the active tab (F-3)
+func (p *FilesPlugin) loadPreviewForTab(path string) tea.Cmd {
+	return LoadFileContentCmd(path, ViewFiles, p.ctx.Epoch)
+}
+
 // loadPreview loads the preview for the currently selected file
 func (p *FilesPlugin) loadPreview() tea.Cmd {
 	if len(p.state.FlatList) == 0 {
@@ -583,7 +984,7 @@ func (p *FilesPlugin) loadPreview() tea.Cmd {
 		return nil
 	}
 
-	return LoadFileContentCmd(node.Path, ViewFiles)
+	return LoadFileContentCmd(node.Path, ViewFiles, p.ctx.Epoch)
 }
 
 // buildFileTreeCmd builds the file tree asynchronously
@@ -661,6 +1062,277 @@ func (p *FilesPlugin) buildTree(node *FileNode, maxDepth int) error {
 type FileTreeLoadedMsg struct {
 	Root  *FileNode
 	Error error
+}
+
+// FileGitStatusLoadedMsg carries git status for annotation on the file tree (F-2)
+type FileGitStatusLoadedMsg struct {
+	StatusMap map[string]string // relative path → status indicator
+	Error     error
+}
+
+// loadFileGitStatusCmd loads git status for annotation on the file tree (F-2).
+func (p *FilesPlugin) loadFileGitStatusCmd() tea.Cmd {
+	projectDir := p.ctx.ProjectDir
+	return func() tea.Msg {
+		cmd := exec.Command("git", "-C", projectDir, "status", "--porcelain")
+		out, err := cmd.Output()
+		if err != nil {
+			return FileGitStatusLoadedMsg{Error: err}
+		}
+
+		statusMap := make(map[string]string)
+		for _, line := range strings.Split(string(out), "\n") {
+			if len(line) < 4 {
+				continue
+			}
+			x := line[0]
+			y := line[1]
+			path := strings.TrimSpace(line[3:])
+
+			// Determine display indicator
+			switch {
+			case x == '?' && y == '?':
+				statusMap[path] = "?"
+			case x == 'A' || (x == ' ' && y == 'A'):
+				statusMap[path] = "A"
+			case x == 'D' || y == 'D':
+				statusMap[path] = "D"
+			case x == 'R' || y == 'R':
+				statusMap[path] = "R"
+			case x == 'M' || y == 'M':
+				statusMap[path] = "M"
+			}
+		}
+
+		return FileGitStatusLoadedMsg{StatusMap: statusMap, Error: nil}
+	}
+}
+
+// fileGitStatus returns the git status indicator for a given file node,
+// using the relative path from the project root.
+func (p *FilesPlugin) fileGitStatus(node *FileNode) string {
+	if p.state.GitStatusMap == nil || node.IsDir {
+		return ""
+	}
+	// Compute relative path from project dir
+	rel, err := filepath.Rel(p.ctx.ProjectDir, node.Path)
+	if err != nil {
+		return ""
+	}
+	// Normalize to forward slashes for matching
+	rel = filepath.ToSlash(rel)
+	return p.state.GitStatusMap[rel]
+}
+
+// ── Edit Mode (F-6) ───────────────────────────────────────────────────────────
+
+// enterEditMode initializes the textarea with current file content and enters edit mode.
+func (p *FilesPlugin) enterEditMode() {
+	ta := textarea.New()
+	ta.SetValue(p.state.PreviewContent)
+	ta.Focus()
+	ta.CharLimit = 0 // No limit for file editing
+	// Size will be set in renderEditPane based on available dimensions
+	ta.SetWidth(p.state.previewWidth - 6)
+	ta.SetHeight(p.height - 8) // Leave room for header/footer
+	ta.ShowLineNumbers = true
+
+	p.state.editMode = true
+	p.state.editTextarea = ta
+	p.state.editPath = p.state.PreviewPath
+}
+
+// handleEditModeKey handles keys when in file edit mode (F-6).
+func (p *FilesPlugin) handleEditModeKey(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
+	key := msg.String()
+
+	switch key {
+	case "esc":
+		// Cancel editing, discard changes
+		p.state.editMode = false
+		p.state.editPath = ""
+		return p, nil
+
+	case "ctrl+s":
+		// Save file to disk
+		content := p.state.editTextarea.Value()
+		path := p.state.editPath
+		return p, saveFileCmd(path, content)
+	}
+
+	// Forward all other keys to textarea
+	var cmd tea.Cmd
+	p.state.editTextarea, cmd = p.state.editTextarea.Update(msg)
+	return p, cmd
+}
+
+// renderEditPane renders the textarea editor in the preview pane (F-6).
+func (p *FilesPlugin) renderEditPane(previewWidth, innerHeight int) string {
+	var sb strings.Builder
+
+	// Header
+	name := filepath.Base(p.state.editPath)
+	header := fmt.Sprintf("EDITING: %s", name)
+	sb.WriteString(styles.WarningStyle.Render(header))
+	sb.WriteString("\n")
+
+	// Adjust textarea dimensions to fit
+	editHeight := innerHeight - 3 // header + hint line + margin
+	if editHeight < 5 {
+		editHeight = 5
+	}
+	editWidth := previewWidth - 6
+	if editWidth < 20 {
+		editWidth = 20
+	}
+	p.state.editTextarea.SetWidth(editWidth)
+	p.state.editTextarea.SetHeight(editHeight)
+
+	sb.WriteString(p.state.editTextarea.View())
+	sb.WriteString("\n")
+	sb.WriteString(styles.DimStyle.Render("ctrl+s save │ esc cancel"))
+
+	return sb.String()
+}
+
+// saveFileCmd writes content to a file path asynchronously (F-6).
+func saveFileCmd(path, content string) tea.Cmd {
+	return func() tea.Msg {
+		err := os.WriteFile(path, []byte(content), 0644)
+		return FileSavedMsg{Path: path, Error: err}
+	}
+}
+
+// BlameLine holds parsed blame annotation for a single line (F-7)
+type BlameLine struct {
+	Hash   string // Short commit hash
+	Author string // Author name
+	Age    string // Relative time (e.g., "3d", "2mo", "1yr")
+}
+
+// BlameLoadedMsg carries parsed blame data for a file (F-7)
+type BlameLoadedMsg struct {
+	Lines []BlameLine
+	Path  string
+	Error error
+	Epoch uint64
+}
+
+// loadBlameCmd runs `git blame --porcelain` and parses the output (F-7).
+func (p *FilesPlugin) loadBlameCmd(path string) tea.Cmd {
+	projectDir := p.ctx.ProjectDir
+	epoch := p.ctx.Epoch
+	return func() tea.Msg {
+		cmd := exec.Command("git", "-C", projectDir, "blame", "--porcelain", path)
+		out, err := cmd.Output()
+		if err != nil {
+			return BlameLoadedMsg{Error: fmt.Errorf("not tracked by git"), Path: path, Epoch: epoch}
+		}
+
+		lines := parseBlameOutput(string(out))
+		return BlameLoadedMsg{Lines: lines, Path: path, Epoch: epoch}
+	}
+}
+
+// parseBlameOutput parses `git blame --porcelain` output into per-line BlameLine entries.
+// The porcelain format has blocks: first line is "hash origLine finalLine [numLines]",
+// followed by header lines (author, author-time, etc.), then a TAB-prefixed content line.
+func parseBlameOutput(output string) []BlameLine {
+	var result []BlameLine
+	rawLines := strings.Split(output, "\n")
+
+	// Track commit metadata: hash -> {author, timestamp}
+	type commitMeta struct {
+		author string
+		time   int64
+	}
+	commits := make(map[string]*commitMeta)
+
+	i := 0
+	for i < len(rawLines) {
+		line := rawLines[i]
+		if line == "" {
+			i++
+			continue
+		}
+
+		// A commit header line starts with a 40-char hash
+		parts := strings.Fields(line)
+		if len(parts) < 3 || len(parts[0]) < 40 {
+			i++
+			continue
+		}
+
+		hash := parts[0][:8] // Short hash
+
+		// Check if we've seen this commit before
+		meta, known := commits[hash]
+		if !known {
+			meta = &commitMeta{author: "unknown"}
+			commits[hash] = meta
+		}
+
+		i++
+		// Read header lines until we hit a TAB-prefixed content line
+		for i < len(rawLines) {
+			if strings.HasPrefix(rawLines[i], "\t") {
+				// This is the actual content line — we're done with this block
+				i++
+				break
+			}
+			headerLine := rawLines[i]
+			if strings.HasPrefix(headerLine, "author ") {
+				meta.author = strings.TrimPrefix(headerLine, "author ")
+			} else if strings.HasPrefix(headerLine, "author-time ") {
+				var ts int64
+				fmt.Sscanf(strings.TrimPrefix(headerLine, "author-time "), "%d", &ts)
+				meta.time = ts
+			}
+			i++
+		}
+
+		// Compute age string
+		age := ""
+		if meta.time > 0 {
+			age = relativeAge(meta.time)
+		}
+
+		// Truncate author to 8 chars
+		author := meta.author
+		if len(author) > 8 {
+			author = author[:8]
+		}
+
+		result = append(result, BlameLine{
+			Hash:   hash,
+			Author: author,
+			Age:    age,
+		})
+	}
+
+	return result
+}
+
+// relativeAge converts a unix timestamp to a short relative age string (F-7).
+func relativeAge(ts int64) string {
+	now := time.Now().Unix()
+	diff := now - ts
+	if diff < 0 {
+		diff = 0
+	}
+
+	switch {
+	case diff < 3600:
+		return fmt.Sprintf("%dm", diff/60)
+	case diff < 86400:
+		return fmt.Sprintf("%dh", diff/3600)
+	case diff < 86400*30:
+		return fmt.Sprintf("%dd", diff/86400)
+	case diff < 86400*365:
+		return fmt.Sprintf("%dmo", diff/(86400*30))
+	default:
+		return fmt.Sprintf("%dy", diff/(86400*365))
+	}
 }
 
 // demoFileContent returns realistic placeholder content for demo mode files

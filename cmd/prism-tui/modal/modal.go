@@ -266,6 +266,33 @@ func (m *Modal) Reset() {
 	m.scrollOffset = 0
 }
 
+// InputValue returns the current value of an InputSection identified by ID.
+// Returns empty string if no input section with that ID exists.
+func (m *Modal) InputValue(id string) string {
+	for _, section := range m.sections {
+		if input, ok := section.(*InputSection); ok && input.id == id {
+			return input.Value()
+		}
+	}
+	return ""
+}
+
+// InputValues returns all input values from InputSection and TextareaSection
+// as a map of section ID → current value. Used to capture input state before
+// the modal is cleared on action dispatch.
+func (m *Modal) InputValues() map[string]string {
+	values := make(map[string]string)
+	for _, section := range m.sections {
+		if input, ok := section.(*InputSection); ok {
+			values[input.id] = input.Value()
+		}
+		if ta, ok := section.(*TextareaSection); ok {
+			values[ta.id] = ta.Value()
+		}
+	}
+	return values
+}
+
 // modalStyle returns the modal box style based on variant
 func (m *Modal) modalStyle() lipgloss.Style {
 	var borderColor lipgloss.Color

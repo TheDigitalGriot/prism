@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"path/filepath"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -40,7 +41,8 @@ var demoActivities = []struct {
 func (m Model) Init() tea.Cmd {
 	cmds := []tea.Cmd{
 		tickCmd(),
-		splashTimerCmd(), // Start 2-second splash auto-transition timer
+		splashTimerCmd(),                       // Start 2-second splash auto-transition timer
+		buildFileCacheCmd(m.ProjectDir),         // Build file cache for fuzzy finder (F-4)
 	}
 
 	return tea.Batch(cmds...)
@@ -178,6 +180,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, nil
 
+	case FileCacheLoadedMsg:
+		// File cache built (F-4)
+		if msg.Error == nil && msg.Files != nil {
+			m.FileCache = msg.Files
+			m.FileCacheLoaded = true
+		}
+		return m, nil
+
+	case SearchResultsMsg:
+		// Content search results arrived (F-5)
+		if m.ContentSearch != nil {
+			m.ContentSearch.HandleResults(msg)
+			m.ActiveModal = m.ContentSearch.BuildModal()
+		}
+		return m, nil
+
 	default:
 		// Broadcast all other messages to plugins (they handle their own state)
 		broadcastCmds := m.Registry.Broadcast(msg)
@@ -248,6 +266,8 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			// Close modal
 			m.ActiveModal = nil
 			m.CommandPalette = nil
+			m.FileFinder = nil
+			m.ContentSearch = nil
 			return m, cmd
 
 		case "":
@@ -265,6 +285,49 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 					return m, nil
 				}
 			}
+			// File finder navigation + live filtering (F-4)
+			if m.FileFinder != nil {
+				switch msg.String() {
+				case "down", "ctrl+j":
+					m.FileFinder.SelectNext()
+					m.ActiveModal = m.FileFinder.BuildModal()
+					return m, nil
+				case "up", "ctrl+k":
+					m.FileFinder.SelectPrev()
+					m.ActiveModal = m.FileFinder.BuildModal()
+					return m, nil
+				default:
+					// Re-filter on any text change (input section handles the typing)
+					newText := m.ActiveModal.InputValue("finder-filter")
+					if newText != m.FileFinder.filterText {
+						m.FileFinder.Filter(newText)
+						m.ActiveModal = m.FileFinder.BuildModal()
+					}
+				}
+				return m, nil
+			}
+			// Content search navigation + trigger search (F-5)
+			if m.ContentSearch != nil {
+				switch msg.String() {
+				case "down", "ctrl+j":
+					m.ContentSearch.SelectNext()
+					m.ActiveModal = m.ContentSearch.BuildModal()
+					return m, nil
+				case "up", "ctrl+k":
+					m.ContentSearch.SelectPrev()
+					m.ActiveModal = m.ContentSearch.BuildModal()
+					return m, nil
+				default:
+					// Check if query changed, trigger search
+					newText := m.ActiveModal.InputValue("search-filter")
+					if newText != m.ContentSearch.query && len(newText) >= 2 {
+						m.ContentSearch.query = newText
+						m.ActiveModal = m.ContentSearch.BuildModal()
+						return m, m.ContentSearch.RunSearchCmd()
+					}
+				}
+				return m, nil
+			}
 			return m, cmd
 
 		default:
@@ -273,15 +336,58 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			if m.CommandPalette != nil {
 				selectedCmd := m.CommandPalette.SelectedCommand()
 				if selectedCmd != nil {
-					// Execute the command
 					m.ActiveModal = nil
 					m.CommandPalette = nil
 					return m.executeCommand(*selectedCmd)
 				}
 			}
-			// For other modals, just close them
+			// File finder: selection opens file in Files plugin (F-4)
+			if m.FileFinder != nil {
+				selected := m.FileFinder.SelectedFile()
+				if selected != nil {
+					absPath := filepath.Join(m.ProjectDir, filepath.FromSlash(selected.RelPath))
+					m.ActiveModal = nil
+					m.FileFinder = nil
+					// Navigate to Files plugin and open the file
+					m.ActiveView = ViewFiles
+					m.Registry.SetActive("files")
+					return m, func() tea.Msg {
+						return FileFinderOpenMsg{Path: absPath, Name: selected.Name}
+					}
+				}
+				m.ActiveModal = nil
+				m.FileFinder = nil
+				return m, nil
+			}
+			// Content search: selection navigates to file:line (F-5)
+			if m.ContentSearch != nil {
+				selected := m.ContentSearch.SelectedResult()
+				if selected != nil {
+					absPath := filepath.Join(m.ProjectDir, filepath.FromSlash(selected.File))
+					m.ActiveModal = nil
+					m.ContentSearch = nil
+					// Navigate to Files plugin and open at line
+					m.ActiveView = ViewFiles
+					m.Registry.SetActive("files")
+					return m, func() tea.Msg {
+						return FileFinderOpenMsg{Path: absPath, Name: filepath.Base(selected.File)}
+					}
+				}
+				m.ActiveModal = nil
+				m.ContentSearch = nil
+				return m, nil
+			}
+			// Capture input values from the modal before clearing it,
+			// so plugins can access user-entered text (W-2, F-6, etc.)
+			capturedAction := action
+			var capturedInputs map[string]string
+			if m.ActiveModal != nil {
+				capturedInputs = m.ActiveModal.InputValues()
+			}
 			m.ActiveModal = nil
-			return m, cmd
+			return m, func() tea.Msg {
+				return ModalActionMsg{Action: capturedAction, Inputs: capturedInputs}
+			}
 		}
 	}
 
@@ -296,10 +402,24 @@ func (m Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.ActiveModal = createHelpModal()
 		return m, nil
 
-	case "ctrl+p", ":":
+	case "ctrl+p":
+		// Open fuzzy file finder (F-4)
+		if m.FileCacheLoaded {
+			m.FileFinder = NewFileFinder(m.ProjectDir, m.FileCache)
+			m.ActiveModal = m.FileFinder.BuildModal()
+		}
+		return m, nil
+
+	case ":":
 		// Open command palette
 		m.CommandPalette = NewCommandPalette(m.Registry)
 		m.ActiveModal = m.CommandPalette.BuildModal()
+		return m, nil
+
+	case "ctrl+s":
+		// Open content search (F-5)
+		m.ContentSearch = NewContentSearch(m.ProjectDir)
+		m.ActiveModal = m.ContentSearch.BuildModal()
 		return m, nil
 
 	case "ctrl+d":
@@ -416,11 +536,12 @@ func (m Model) pluginFocusCmd(pluginID string) tea.Cmd {
 	if m.DemoMode {
 		return nil
 	}
+	epoch := m.Registry.GetContext().Epoch
 	switch pluginID {
 	case "research":
-		return LoadResearchFilesCmd(m.PrismDir)
+		return LoadResearchFilesCmd(m.PrismDir, epoch)
 	case "plans":
-		return LoadPlansFilesCmd(m.PrismDir)
+		return LoadPlansFilesCmd(m.PrismDir, epoch)
 	case "spectrum":
 		if m.StoriesPath != "" {
 			return LoadStoriesCmd(m.StoriesPath)
@@ -684,7 +805,9 @@ func createHelpModal() *modal.Modal {
 
 GLOBAL KEYS:
   ?         Toggle this help
-  Ctrl+P, : Open command palette
+  Ctrl+P    Find file (fuzzy search)
+  Ctrl+S    Search content (ripgrep)
+  :         Open command palette
   Ctrl+D    Toggle sidebar details
   q, Ctrl+C Quit application
   1-9       Switch to tab by number

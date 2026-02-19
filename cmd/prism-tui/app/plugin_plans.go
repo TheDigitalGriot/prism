@@ -56,7 +56,7 @@ func (p *PlansPlugin) Start() tea.Cmd {
 	if p.ctx.DemoMode {
 		return nil
 	}
-	return LoadPlansFilesCmd(p.ctx.PrismDir)
+	return LoadPlansFilesCmd(p.ctx.PrismDir, p.ctx.Epoch)
 }
 
 // Stop is called when deactivated.
@@ -83,6 +83,9 @@ func (p *PlansPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 		return p, nil
 
 	case PlansFilesLoadedMsg:
+		if msg.Epoch != p.ctx.Epoch {
+			return p, nil
+		}
 		if msg.Error == nil {
 			p.state.Files = msg.Files
 			p.state.SelectedIdx = 0
@@ -90,6 +93,9 @@ func (p *PlansPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 		return p, nil
 
 	case FileContentLoadedMsg:
+		if msg.Epoch != p.ctx.Epoch {
+			return p, nil
+		}
 		if msg.Error == nil && msg.ForView == ViewPlans {
 			p.state.Viewing = true
 			p.state.Viewport.SetContent(msg.Content)
@@ -102,7 +108,7 @@ func (p *PlansPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 		} else {
 			// Plan decomposed successfully - refresh list
 			if !p.ctx.DemoMode {
-				return p, LoadPlansFilesCmd(p.ctx.PrismDir)
+				return p, LoadPlansFilesCmd(p.ctx.PrismDir, p.ctx.Epoch)
 			}
 		}
 		return p, nil
@@ -219,7 +225,7 @@ func (p *PlansPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 	case "enter":
 		if len(p.state.Files) > 0 {
 			file := p.state.Files[p.state.SelectedIdx]
-			return p, LoadFileContentCmd(file.Path, ViewPlans)
+			return p, LoadFileContentCmd(file.Path, ViewPlans, p.ctx.Epoch)
 		}
 		return p, nil
 	case "d":

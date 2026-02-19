@@ -125,12 +125,14 @@ type EpicSelectedMsg struct {
 type ResearchFilesLoadedMsg struct {
 	Files []FileEntry
 	Error error
+	Epoch uint64
 }
 
 // PlansFilesLoadedMsg carries plan file entries
 type PlansFilesLoadedMsg struct {
 	Files []FileEntry
 	Error error
+	Epoch uint64
 }
 
 // FileContentLoadedMsg carries full content of a file for viewing
@@ -139,6 +141,7 @@ type FileContentLoadedMsg struct {
 	Path     string     // Path to the file
 	ForView  ActiveView // which view requested this
 	Error    error
+	Epoch    uint64
 }
 
 // DecomposePlanMsg result of plan decomposition
@@ -188,4 +191,50 @@ type PermissionResponseMsg struct {
 // OpenModalMsg requests opening a modal (sent by plugins)
 type OpenModalMsg struct {
 	Modal interface{} // modal.Modal interface
+}
+
+// ModalActionMsg is dispatched to the active plugin when a modal button/list
+// action is triggered. The plugin handles the action based on the ID.
+// Inputs contains any text input/textarea values captured before the modal was closed.
+type ModalActionMsg struct {
+	Action string            // The action ID from the modal button/list
+	Inputs map[string]string // Input/textarea values keyed by section ID
+}
+
+// FileFinderOpenMsg requests opening a file in the Files plugin (F-4, F-5)
+type FileFinderOpenMsg struct {
+	Path string // Absolute file path
+	Name string // Filename (basename)
+}
+
+// === Workspace Messages (W-1, W-2, W-3) ===
+
+// WorktreeListLoadedMsg carries parsed worktree data from `git worktree list --porcelain`
+type WorktreeListLoadedMsg struct {
+	Worktrees []WorktreeInfo
+	Error     error
+	Epoch     uint64
+}
+
+// WorktreeCreatedMsg signals that a worktree was created
+type WorktreeCreatedMsg struct {
+	Path   string
+	Branch string
+	Error  error
+	Epoch  uint64
+}
+
+// WorktreeDeletedMsg signals that a worktree was deleted
+type WorktreeDeletedMsg struct {
+	Path  string
+	Error error
+	Epoch uint64
+}
+
+// === File Edit Messages (F-6) ===
+
+// FileSavedMsg signals that a file was saved to disk
+type FileSavedMsg struct {
+	Path  string
+	Error error
 }

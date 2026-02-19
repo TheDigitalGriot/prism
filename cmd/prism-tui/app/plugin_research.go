@@ -56,7 +56,7 @@ func (p *ResearchPlugin) Start() tea.Cmd {
 	if p.ctx.DemoMode {
 		return nil
 	}
-	return LoadResearchFilesCmd(p.ctx.PrismDir)
+	return LoadResearchFilesCmd(p.ctx.PrismDir, p.ctx.Epoch)
 }
 
 // Stop is called when deactivated.
@@ -83,6 +83,9 @@ func (p *ResearchPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 		return p, nil
 
 	case ResearchFilesLoadedMsg:
+		if msg.Epoch != p.ctx.Epoch {
+			return p, nil
+		}
 		if msg.Error == nil {
 			p.state.Files = msg.Files
 			p.state.SelectedIdx = 0
@@ -90,6 +93,9 @@ func (p *ResearchPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 		return p, nil
 
 	case FileContentLoadedMsg:
+		if msg.Epoch != p.ctx.Epoch {
+			return p, nil
+		}
 		if msg.Error == nil && msg.ForView == ViewResearch {
 			p.state.Viewing = true
 			p.state.Viewport.SetContent(msg.Content)
@@ -210,7 +216,7 @@ func (p *ResearchPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd)
 	case "enter":
 		if len(p.state.Files) > 0 {
 			file := p.state.Files[p.state.SelectedIdx]
-			return p, LoadFileContentCmd(file.Path, ViewResearch)
+			return p, LoadFileContentCmd(file.Path, ViewResearch, p.ctx.Epoch)
 		}
 		return p, nil
 	case "esc", "backspace":

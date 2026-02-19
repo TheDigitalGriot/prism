@@ -36,4 +36,20 @@ type Context struct {
 
 	// EventBus provides inter-plugin communication via pub/sub events
 	EventBus *EventBus
+
+	// WorkDir is the current working directory (may differ from ProjectDir
+	// when launched from a subdirectory or worktree)
+	WorkDir string
+
+	// GitRoot is the git repository root (result of git rev-parse --show-toplevel).
+	// Empty if not inside a git repo.
+	GitRoot string
+
+	// ConfigDir is the global configuration directory (~/.config/prism-tui/)
+	// for storing per-project persisted state.
+	ConfigDir string
+
+	// Epoch is a project-switch counter. Incremented on Reinit() to invalidate
+	// stale async messages from a previous project context.
+	Epoch uint64
 }

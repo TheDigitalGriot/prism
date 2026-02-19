@@ -125,3 +125,51 @@ type ProjectSwitchedEvent struct {
 func (e ProjectSwitchedEvent) Type() string {
 	return "project.switched"
 }
+
+// --- Sidecar Integration Event Types (SI-6) ---
+
+// AgentStatusEvent is published by the Workspaces plugin when an agent's status changes.
+// Monitor plugin subscribes to this for agent health display.
+type AgentStatusEvent struct {
+	WorktreePath string
+	AgentType    string // "claude", "codex", "cursor", etc.
+	Status       string // "active", "thinking", "waiting", "done", "paused", "error"
+}
+
+func (e AgentStatusEvent) Type() string {
+	return "agent.status"
+}
+
+// ConversationChangedEvent is published by the watcher when conversation files change.
+// Agent plugin subscribes to this to refresh its session list.
+type ConversationChangedEvent struct {
+	AdapterType string
+	SessionPath string
+}
+
+func (e ConversationChangedEvent) Type() string {
+	return "conversation.changed"
+}
+
+// QualityGateResultEvent is published by Monitor when a quality gate finishes execution.
+type QualityGateResultEvent struct {
+	GateName string
+	Status   string // "pass", "fail"
+	Output   string
+	Duration int64 // milliseconds
+}
+
+func (e QualityGateResultEvent) Type() string {
+	return "gate.result"
+}
+
+// WorktreeChangedEvent is published when worktrees are created or deleted.
+type WorktreeChangedEvent struct {
+	Action string // "created", "deleted"
+	Path   string
+	Branch string
+}
+
+func (e WorktreeChangedEvent) Type() string {
+	return "worktree.changed"
+}
