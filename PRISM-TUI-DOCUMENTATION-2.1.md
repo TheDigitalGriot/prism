@@ -88,11 +88,11 @@ Prism TUI is a Go 1.23 terminal user interface that provides real-time monitorin
 
 | Metric | Value |
 |--------|-------|
-| Total Lines of Code | ~19,890 |
-| Production Code | ~18,790 lines |
+| Total Lines of Code | ~19,934 |
+| Production Code | ~18,834 lines |
 | Test Code | ~1,100 lines (9 test files) |
 | Go Files | 67 |
-| Packages | 13 |
+| Packages | 15 |
 | Direct Dependencies | 8 |
 
 ---
@@ -103,18 +103,18 @@ Prism TUI is a Go 1.23 terminal user interface that provides real-time monitorin
 
 ```
 cmd/prism-tui/
-├── main.go                         # CLI entry point, Cobra commands, flag parsing (161 lines)
+├── main.go                         # CLI entry point, Cobra commands, flag parsing (160 lines)
 ├── Makefile                        # Build targets (67 lines)
 ├── go.mod                          # Dependencies (Go 1.23.0)
 ├── build.sh                        # Single-platform build script
 │
-├── app/                            # Bubble Tea UI — Elm Architecture (22 files, 9,847 lines)
+├── app/                            # Bubble Tea UI — Elm Architecture (22 files, 9,891 lines)
 │   ├── model.go                    # Model struct, AnimState, NewModel/NewDemoModel
 │   ├── update.go                   # Update handler, message routing, state transitions
 │   ├── view.go                     # View router, modal overlay compositing
 │   ├── views.go                    # ActiveView enum, FileEntry, ResearchState, PlansState, EpicInfo
 │   ├── view_splash.go              # Splash screen thin wrapper
-│   ├── shell.go                    # App shell: tab bar + sidebar + footer layout
+│   ├── shell.go                    # App shell: tab bar + sidebar + footer layout, breadcrumbs
 │   ├── sidebar.go                  # Sidebar component: logo, execution info, files, gates, epics
 │   ├── footer.go                   # Two-tier footer: key hints + powerline status bar
 │   ├── commands.go                 # Async Bubble Tea commands (LoadStories, DiscoverEpics, etc.)
@@ -124,7 +124,7 @@ cmd/prism-tui/
 │   ├── plugin_home.go              # Home screen plugin (menu)
 │   ├── plugin_research.go          # Research file browser plugin
 │   ├── plugin_plans.go             # Plans file browser plugin (+ decompose)
-│   ├── plugin_spectrum.go          # Spectrum dashboard plugin (1,206 lines — LARGEST)
+│   ├── plugin_spectrum.go          # Spectrum dashboard plugin (1,218 lines — LARGEST)
 │   ├── plugin_files.go             # File tree browser plugin (two-pane)
 │   ├── plugin_git.go               # Git integration plugin (status, diff, stage, commit)
 │   ├── plugin_agent.go             # Agent chat plugin (messages + input)
@@ -408,15 +408,15 @@ Inter-plugin pub/sub communication with these event types:
 
 | # | Plugin ID | Plugin Name | Source File | Lines |
 |---|-----------|-------------|-------------|-------|
-| 1 | `home` | Home | `plugin_home.go` | 217 |
+| 1 | `home` | Home | `plugin_home.go` | 214 |
 | 2 | `research` | Research | `plugin_research.go` | 224 |
 | 3 | `plans` | Plans | `plugin_plans.go` | 239 |
-| 4 | `spectrum` | Spectrum | `plugin_spectrum.go` | 1,206 |
-| 5 | `files` | Files | `plugin_files.go` | 733 |
-| 6 | `git` | Git | `plugin_git.go` | 882 |
-| 7 | `agent` | Agent | `plugin_agent.go` | 410 |
-| 8 | `monitor` | Monitor | `plugin_monitor.go` | 485 |
-| 9 | `workspaces` | Workspaces | `plugin_workspaces.go` | 1,080 |
+| 4 | `spectrum` | Spectrum | `plugin_spectrum.go` | 1,218 |
+| 5 | `files` | Files | `plugin_files.go` | 735 |
+| 6 | `git` | Git | `plugin_git.go` | 884 |
+| 7 | `agent` | Agent | `plugin_agent.go` | 390 |
+| 8 | `monitor` | Monitor | `plugin_monitor.go` | 547 |
+| 9 | `workspaces` | Workspaces | `plugin_workspaces.go` | 1,082 |
 | 10 | `onboarding` | Onboarding | `plugin_onboarding.go` | 501 |
 
 ### Tab Order
