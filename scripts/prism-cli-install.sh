@@ -62,7 +62,9 @@ build_from_source() {
     local ext=""
     [[ "$(uname -s)" == MINGW* || "$(uname -s)" == MSYS* ]] && ext=".exe"
 
-    go build -o "${INSTALL_DIR}/${BINARY_NAME}${ext}" .
+    local ldversion
+    ldversion=$(git describe --tags --always --dirty 2>/dev/null || echo "dev")
+    go build -ldflags "-X main.version=${ldversion}" -o "${INSTALL_DIR}/${BINARY_NAME}${ext}" .
     log "Built successfully: ${INSTALL_DIR}/${BINARY_NAME}${ext}"
 }
 
