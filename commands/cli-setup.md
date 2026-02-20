@@ -1,6 +1,6 @@
 ---
 description: Check for prism-cli installation, update if outdated, install if needed, and set up shell alias
-model: haiku
+model: sonnet
 ---
 
 # Prism CLI Setup
@@ -8,6 +8,8 @@ model: haiku
 Set up the Prism CLI binary so it can be launched from any project terminal.
 
 **IMPORTANT**: The prism-cli source and releases live at `https://github.com/TheDigitalGriot/prism-plugin` — NOT on any Anthropic repository.
+
+**Plugin source directory**: `${CLAUDE_PLUGIN_ROOT}` — this is where the CLI source code lives at `cmd/prism-cli/`.
 
 ## Process
 
@@ -43,7 +45,7 @@ echo "LATEST_VERSION=$LATEST_VERSION"
 
 **If local is older (or "unknown")** — ask the user if they want to update using AskUserQuestion:
 
-- **Update to latest (Recommended)** — re-download the binary from the latest release
+- **Update to latest (Recommended)** — rebuild from plugin source or re-download
 - **Keep current version** — skip the update
 
 If the user chooses to update, proceed to Step 2 (which will overwrite the existing binary). If they decline, skip to Step 3.
@@ -52,28 +54,38 @@ If the user chooses to update, proceed to Step 2 (which will overwrite the exist
 
 ### Step 2: Install Binary
 
-Run the install script from the plugin directory. The script downloads a pre-built binary from GitHub releases at `https://github.com/TheDigitalGriot/prism-plugin/releases` and places it in `~/.prism/bin/`.
+The plugin source code is at `${CLAUDE_PLUGIN_ROOT}`. Build from source when possible (preferred), fall back to downloading a pre-built release binary.
 
-First, locate the plugin directory (where this command file lives):
+**Primary method — Build from source (if Go is installed):**
 
 ```bash
-# The plugin is typically at one of these paths:
-for dir in \
-  "$HOME/.claude/plugins/prism-plugin" \
-  "$HOME/.claude/plugins/prism" \
-  "$USERPROFILE/.claude/plugins/prism-plugin" \
-  "$USERPROFILE/.claude/plugins/prism" \
-  "$LOCALAPPDATA/claude/plugins/prism-plugin" \
-  "$LOCALAPPDATA/claude/plugins/prism" \
-  ; do
-  test -f "$dir/scripts/prism-cli-install.sh" && echo "PLUGIN_DIR=$dir" && break
-done
+# Check if Go is available
+command -v go &> /dev/null && echo "GO=available" || echo "GO=missing"
 ```
 
-Then run the install script:
+If Go is available:
 
 ```bash
-bash "$PLUGIN_DIR/scripts/prism-cli-install.sh"
+cd "${CLAUDE_PLUGIN_ROOT}/cmd/prism-cli" && make build
+```
+
+Then install the built binary:
+
+```bash
+mkdir -p "$HOME/.prism/bin"
+cp "${CLAUDE_PLUGIN_ROOT}/cmd/prism-cli/bin/prism-cli"* "$HOME/.prism/bin/"
+```
+
+On Windows (Git Bash):
+```bash
+mkdir -p "$USERPROFILE/.prism/bin"
+cp "${CLAUDE_PLUGIN_ROOT}/cmd/prism-cli/bin/prism-cli"* "$USERPROFILE/.prism/bin/"
+```
+
+**Fallback — Download pre-built binary (if Go is not installed):**
+
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/prism-cli-install.sh" download
 ```
 
 If the install script fails, do NOT try to download from any other URL. Report the error to the user.
@@ -149,14 +161,13 @@ Check if the current project has a `.prism/` directory:
 test -d .prism && echo "PRISM_DIR=exists" || echo "PRISM_DIR=missing"
 ```
 
-If missing, find and run `init_prism.py`:
+If missing, run `init_prism.py` from the plugin source:
 
 ```bash
-# Find init script in plugin directory
-python "$(dirname "$(which prism-cli 2>/dev/null || echo "$HOME/.prism/bin/prism-cli")")"/../../skills/prism/scripts/init_prism.py .
+python "${CLAUDE_PLUGIN_ROOT}/skills/prism/scripts/init_prism.py" .
 ```
 
-If the script can't be located, create the directory structure manually:
+If the script fails, create the directory structure manually:
 
 ```bash
 mkdir -p .prism/stories .prism/shared/{research,plans,validation,handoffs,prs,spectrum,ref,docs} .prism/local/{ref,docs}
@@ -174,6 +185,7 @@ Prism CLI Setup Complete
   Binary:    ~/.prism/bin/prism-cli (v X.X.X)
   PATH:      Added to ~/.zshrc (permanent)
   Project:   .prism/ initialized
+  Registry:  Project auto-registered on next prism-cli launch
 
   Launch commands:
     prism-cli              # auto-detect stories in current project
@@ -185,7 +197,7 @@ Prism CLI Setup Complete
 
 ## Error Handling
 
-- If install script is not found: tell the user to check their plugin installation
+- If `make build` fails: check that Go 1.22+ is installed, report the error
 - If download fails: tell the user to check https://github.com/TheDigitalGriot/prism-plugin/releases for available binaries
 - If PATH update fails: print the export command for the user to run manually
 - If .prism/ init fails: print the mkdir commands for manual creation

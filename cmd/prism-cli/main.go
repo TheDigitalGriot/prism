@@ -8,10 +8,11 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	zone "github.com/lrstanley/bubblezone"
 	"github.com/prism-plugin/prism-cli/app"
+	"github.com/prism-plugin/prism-cli/registry"
 	"github.com/spf13/cobra"
 )
 
-var version = "2.1.5"
+var version = "2.1.6"
 
 func main() {
 	var (
@@ -92,8 +93,8 @@ Keyboard controls:
 					// Check for legacy thoughts/ directory before erroring
 					legacyDir := filepath.Join(cwd, "thoughts")
 					if _, legacyErr := os.Stat(legacyDir); os.IsNotExist(legacyErr) {
-						// Neither .prism/ nor thoughts/ — original error
-						return fmt.Errorf(".prism/ directory not found in %s\n\nRun init_prism.py first to initialize the project", cwd)
+						// Neither .prism/ nor thoughts/ — launch onboarding to create it
+						onboardingMode = true
 					}
 					// Legacy project detected — TUI will handle migration via onboarding
 				} else {
@@ -123,6 +124,11 @@ Keyboard controls:
 			// G0 charset as DEC Special Graphics, which persists after
 			// alt screen exit and corrupts the parent shell.
 			fmt.Print("\x1b(B\x1b[0m")
+
+			// Register project in global workspace registry (silent, best-effort)
+			if projectDir != "" && !demoMode {
+				registry.Register(projectDir, version)
+			}
 
 			return nil
 		},

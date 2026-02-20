@@ -12,6 +12,7 @@ import (
 	"github.com/prism-plugin/prism-cli/domain"
 	"github.com/prism-plugin/prism-cli/modal"
 	"github.com/prism-plugin/prism-cli/plugin"
+	"github.com/prism-plugin/prism-cli/registry"
 	"github.com/prism-plugin/prism-cli/styles"
 	"github.com/prism-plugin/prism-cli/ui"
 )
@@ -1678,6 +1679,25 @@ func (p *WorkspacesPlugin) scanProjects() tea.Cmd {
 			if stat, err := os.Stat(prismPath); err == nil && stat.IsDir() {
 				project := p.scanProject(projectPath)
 				projects = append(projects, project)
+			}
+		}
+
+		// Merge projects from global workspace registry
+		if globalEntries, err := registry.LoadAll(); err == nil {
+			seen := make(map[string]bool)
+			for _, proj := range projects {
+				seen[filepath.Clean(proj.Path)] = true
+			}
+			for _, entry := range globalEntries {
+				cleanPath := filepath.Clean(entry.Path)
+				if seen[cleanPath] {
+					continue
+				}
+				prismPath := filepath.Join(entry.Path, ".prism")
+				if stat, statErr := os.Stat(prismPath); statErr == nil && stat.IsDir() {
+					project := p.scanProject(entry.Path)
+					projects = append(projects, project)
+				}
 			}
 		}
 

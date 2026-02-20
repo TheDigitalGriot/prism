@@ -12,6 +12,7 @@ import (
 	"github.com/prism-plugin/prism-cli/dialog"
 	"github.com/prism-plugin/prism-cli/modal"
 	"github.com/prism-plugin/prism-cli/plugin"
+	"github.com/prism-plugin/prism-cli/registry"
 )
 
 // demoActivities is a list of fake tool activities for demo mode
@@ -150,6 +151,25 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.OnboardingDone = true
 		m.ActiveView = ViewHome
 		m.Registry.SetActive("home")
+		// Register project in global workspace registry
+		if m.ProjectDir != "" {
+			go registry.Register(m.ProjectDir, "")
+		}
+		return m, nil
+
+	case SwitchProjectMsg:
+		// Project switch from Workspaces plugin — update context and reinit all plugins
+		if msg.Context != nil {
+			m.PrismDir = msg.Context.PrismDir
+			m.ProjectDir = msg.Context.ProjectDir
+			m.StoriesPath = msg.Context.StoriesPath
+			m.Registry.UpdateContext(msg.Context)
+			m.Registry.Reinit()
+			m.ActiveView = ViewHome
+			m.Registry.SetActive("home")
+			// Register in global workspace registry
+			go registry.Register(msg.Context.ProjectDir, "")
+		}
 		return m, nil
 
 	case plugin.FocusPluginMsg:
