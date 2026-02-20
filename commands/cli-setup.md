@@ -7,100 +7,53 @@ model: haiku
 
 Set up the Prism CLI binary so it can be launched from any project terminal.
 
+**IMPORTANT**: The prism-cli source and releases live at `https://github.com/TheDigitalGriot/prism-plugin` — NOT on any Anthropic repository.
+
 ## Process
 
 Follow these steps in order. Use the Bash tool for all checks and commands.
 
-### Step 1: Detect Platform
-
-Determine the user's platform and shell:
+### Step 1: Check for Existing Installation
 
 ```bash
-# Check for PowerShell (Windows)
-echo "$OS" | grep -qi windows && echo "PLATFORM=windows" || echo "PLATFORM=unix"
-echo "SHELL=$SHELL"
+# Check PATH, then standard install location
+which prism-cli 2>/dev/null || which prism-cli.exe 2>/dev/null && echo "FOUND_IN=path" || \
+{ test -x "$HOME/.prism/bin/prism-cli" && echo "FOUND_IN=prism-bin"; } || \
+{ test -x "$USERPROFILE/.prism/bin/prism-cli.exe" && echo "FOUND_IN=prism-bin"; } || \
+echo "NOT_FOUND"
 ```
 
-- If `PLATFORM=windows`: use PowerShell commands
-- If `PLATFORM=unix`: use bash/zsh commands
+If found, report the location and skip to Step 3.
 
-### Step 2: Check for Existing Installation
+### Step 2: Install Binary
 
-Check these locations in order. Stop at the first match:
+Run the install script from the plugin directory. The script downloads a pre-built binary from GitHub releases at `https://github.com/TheDigitalGriot/prism-plugin/releases` and places it in `~/.prism/bin/`.
 
-**Unix/Git Bash:**
+First, locate the plugin directory (where this command file lives):
+
 ```bash
-# 1. Already in PATH?
-which prism-cli 2>/dev/null && echo "FOUND_IN=path"
-
-# 2. Standard install location?
-test -x "$HOME/.prism/bin/prism-cli" && echo "FOUND_IN=prism-bin"
-
-# 3. Local plugin build? (find plugin dir from this command's context)
-# Check common locations
+# The plugin is typically at one of these paths:
 for dir in \
-  "$HOME/.claude/plugins/prism/cmd/prism-cli/bin" \
-  "$HOME/.claude/plugins/prism-plugin/cmd/prism-cli/bin" \
+  "$HOME/.claude/plugins/prism-plugin" \
+  "$HOME/.claude/plugins/prism" \
+  "$USERPROFILE/.claude/plugins/prism-plugin" \
+  "$USERPROFILE/.claude/plugins/prism" \
+  "$LOCALAPPDATA/claude/plugins/prism-plugin" \
+  "$LOCALAPPDATA/claude/plugins/prism" \
   ; do
-  test -x "$dir/prism-cli" && echo "FOUND_IN=$dir" && break
+  test -f "$dir/scripts/prism-cli-install.sh" && echo "PLUGIN_DIR=$dir" && break
 done
 ```
 
-**PowerShell/Windows:**
-```bash
-# 1. Already in PATH?
-which prism-cli.exe 2>/dev/null && echo "FOUND_IN=path"
-
-# 2. Standard install location?
-test -x "$USERPROFILE/.prism/bin/prism-cli.exe" && echo "FOUND_IN=prism-bin"
-
-# 3. Local plugin build?
-for dir in \
-  "$USERPROFILE/.claude/plugins/prism/cmd/prism-cli/bin" \
-  "$USERPROFILE/.claude/plugins/prism-plugin/cmd/prism-cli/bin" \
-  "$LOCALAPPDATA/claude/plugins/prism/cmd/prism-cli/bin" \
-  ; do
-  test -x "$dir/prism-cli.exe" && echo "FOUND_IN=$dir" && break
-done
-```
-
-If found, report the location and skip to Step 4.
-
-### Step 3: Install Binary
-
-If not found, ask the user which installation method they prefer using AskUserQuestion:
-
-**Option 1 — Download pre-built binary (Recommended):**
-
-Find the plugin's `scripts/` directory and run the appropriate install script:
+Then run the install script:
 
 ```bash
-# Unix
-./scripts/prism-cli-install.sh
-
-# Windows (from Git Bash in IDE)
-./scripts/prism-cli-install.sh
+bash "$PLUGIN_DIR/scripts/prism-cli-install.sh"
 ```
 
-Or if PowerShell is preferred:
-```powershell
-.\scripts\prism-cli-install.ps1
-```
+If the install script fails, do NOT try to download from any other URL. Report the error to the user.
 
-**Option 2 — Build from source (requires Go 1.22+):**
-
-```bash
-cd cmd/prism-cli && go build -o "$HOME/.prism/bin/prism-cli" .
-```
-
-Windows:
-```bash
-cd cmd/prism-cli && go build -o "$USERPROFILE/.prism/bin/prism-cli.exe" .
-```
-
-The install scripts automatically place the binary in `~/.prism/bin/`.
-
-### Step 4: Set Up PATH / Alias
+### Step 3: Set Up PATH / Alias
 
 After the binary is confirmed to exist, set up the shell so `prism-cli` is accessible.
 
@@ -155,7 +108,7 @@ Add-Content $PROFILE "`n# Prism CLI`n`$env:PATH += `";$env:USERPROFILE\.prism\bi
 
 Just use the export already done. User will need to re-export in new terminals.
 
-### Step 5: Verify Installation
+### Step 4: Verify Installation
 
 ```bash
 prism-cli --version
@@ -163,7 +116,7 @@ prism-cli --version
 
 If this succeeds, report the version. If it fails, troubleshoot the PATH.
 
-### Step 6: Initialize .prism/ Directory
+### Step 5: Initialize .prism/ Directory
 
 Check if the current project has a `.prism/` directory:
 
@@ -186,7 +139,7 @@ mkdir -p .prism/stories .prism/shared/{research,plans,validation,handoffs,prs,sp
 
 And add `.prism/local/` to `.gitignore` if not already present.
 
-### Step 7: Report Results
+### Step 6: Report Results
 
 Print a summary:
 
@@ -207,7 +160,8 @@ Prism CLI Setup Complete
 
 ## Error Handling
 
-- If install script is not found: offer to build from source or download manually
-- If Go is not installed and download fails: provide manual download URL
+- If install script is not found: tell the user to check their plugin installation
+- If download fails: tell the user to check https://github.com/TheDigitalGriot/prism-plugin/releases for available binaries
 - If PATH update fails: print the export command for the user to run manually
 - If .prism/ init fails: print the mkdir commands for manual creation
+- NEVER attempt to download from any URL other than `https://github.com/TheDigitalGriot/prism-plugin/releases`

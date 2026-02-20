@@ -20,11 +20,15 @@ build:
 build-all:
 	@mkdir -p bin
 	@for platform in $(PLATFORMS); do \
-		GOOS=$${platform%/*} GOARCH=$${platform#*/} \
+		os=$${platform%/*}; \
+		arch=$${platform#*/}; \
+		ext=""; \
+		if [ "$$os" = "windows" ]; then ext=".exe"; fi; \
+		GOOS=$$os GOARCH=$$arch \
 		go build -ldflags "$(LDFLAGS)" \
-		-o bin/$(BINARY)-$${platform%/*}-$${platform#*/}$(if $(findstring windows,$${platform%/*}),.exe,) \
+		-o bin/$(BINARY)-$$os-$$arch$$ext \
 		. ; \
-		echo "Built bin/$(BINARY)-$${platform%/*}-$${platform#*/}"; \
+		echo "Built bin/$(BINARY)-$$os-$$arch$$ext"; \
 	done
 
 # Run tests
