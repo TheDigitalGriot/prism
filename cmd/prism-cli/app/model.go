@@ -227,6 +227,7 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 	gitPlugin := NewGitPlugin()
 	agentPlugin := NewAgentPlugin()
 	monitorPlugin := NewMonitorPlugin()
+	browserPlugin := NewBrowserPlugin()
 	workspacesPlugin := NewWorkspacesPlugin()
 	onboardingPlugin := NewOnboardingPlugin()
 
@@ -238,6 +239,7 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 	registry.Register(gitPlugin)
 	registry.Register(agentPlugin)
 	registry.Register(monitorPlugin)
+	registry.Register(browserPlugin)
 	registry.Register(workspacesPlugin)
 	registry.Register(onboardingPlugin)
 
@@ -300,7 +302,7 @@ func NewModel(prismDir, storiesPath, projectDir string, maxIter, pause int, pris
 	return Model{
 		Registry:        registry,
 		ActiveView:      ViewSplash,
-		TabOrder:        []ActiveView{ViewHome, ViewResearch, ViewPlans, ViewSpectrum, ViewFiles, ViewGit, ViewAgent, ViewMonitor, ViewWorkspaces},
+		TabOrder:        []ActiveView{ViewHome, ViewResearch, ViewPlans, ViewSpectrum, ViewFiles, ViewGit, ViewAgent, ViewMonitor, ViewBrowser, ViewWorkspaces},
 		NeedsOnboarding: needsOnboarding,
 		HasNerdFont:     termInfo.HasNerdFont,
 		PrismDir:        prismDir,

@@ -590,6 +590,8 @@ func pluginIDToView(id string) ActiveView {
 		return ViewAgent
 	case "monitor":
 		return ViewMonitor
+	case "browser":
+		return ViewBrowser
 	case "workspaces":
 		return ViewWorkspaces
 	case "onboarding":
@@ -618,6 +620,8 @@ func viewToPluginID(view ActiveView) string {
 		return "agent"
 	case ViewMonitor:
 		return "monitor"
+	case ViewBrowser:
+		return "browser"
 	case ViewWorkspaces:
 		return "workspaces"
 	case ViewOnboarding:

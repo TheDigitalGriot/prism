@@ -122,7 +122,7 @@ func TestIntegrationTabOrderPopulated(t *testing.T) {
 	}
 
 	// Verify expected tab order
-	expectedTabs := []ActiveView{ViewHome, ViewResearch, ViewPlans, ViewSpectrum, ViewFiles, ViewGit, ViewAgent, ViewMonitor, ViewWorkspaces}
+	expectedTabs := []ActiveView{ViewHome, ViewResearch, ViewPlans, ViewSpectrum, ViewFiles, ViewGit, ViewAgent, ViewMonitor, ViewBrowser, ViewWorkspaces}
 	if len(m.TabOrder) != len(expectedTabs) {
 		t.Fatalf("expected %d tabs, got %d", len(expectedTabs), len(m.TabOrder))
 	}
@@ -234,7 +234,7 @@ func TestIntegrationNumberKeysNavigateViews(t *testing.T) {
 		{"6", ViewGit},
 		{"7", ViewAgent},
 		{"8", ViewMonitor},
-		{"9", ViewWorkspaces},
+		{"9", ViewBrowser},
 	}
 
 	for _, tc := range tests {

@@ -19,6 +19,7 @@ Focus complexity through specialized agents to produce clear, quality code.
 | Research | `/prism-research` | `.prism/shared/research/YYYY-MM-DD-topic.md` |
 | Plan | `/prism-plan` | `.prism/shared/plans/YYYY-MM-DD-feature.md` |
 | Implement | `/prism-implement` | Working code + updated checkboxes |
+| Verify UI | `/prism-verify` | `.prism/local/verifications/{date}-{context}/` |
 | Validate | `/prism-validate` | `.prism/shared/validation/YYYY-MM-DD-report.md` |
 | Iterate | `/prism-iterate` | Updated plan + continued implementation |
 | Spectrum | `/prism-spectrum` | Autonomous story execution via `spectrum.sh` |
@@ -112,6 +113,17 @@ Execute plan phase by phase.
 - Run verification commands
 - Stop at checkpoints for approval
 - Document mismatches
+
+### Verify UI (`/prism-verify`)
+
+Browser verification — confirm the UI renders correctly after implementation.
+
+**Key behaviors**:
+- Checks playwright-cli is installed (graceful skip if not)
+- Detects dev server from package.json
+- Spawns `browser-verifier` agent for headless checks
+- Stores screenshots and results in `.prism/local/verifications/` (gitignored)
+- Optional phase: runs between Implement and Validate
 
 ### Validate (`/prism-validate`)
 

@@ -102,6 +102,22 @@ From plan's verification commands, create `qualityGates` array.
 ["go build ./...", "go test ./..."]
 ```
 
+### 6b. Extract Browser Gates (if applicable)
+
+If the plan includes UI verification, visual testing, or browser-based success criteria, create a `browserGates` array in the `plan` object:
+
+```json
+"browserGates": [
+  {
+    "name": "Homepage renders correctly",
+    "url": "http://localhost:3000",
+    "checks": ["screenshot", "no-console-errors"]
+  }
+]
+```
+
+Only include `browserGates` if the plan explicitly mentions UI verification or browser-based checks. Do not add them for backend-only plans.
+
 ### 7. Generate Stories
 
 Create each story with:

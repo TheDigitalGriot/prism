@@ -27,11 +27,12 @@ type ExecutionRecord struct {
 
 // QualityGate represents the status of a quality gate check
 type QualityGate struct {
-	Name    string
-	Command string
-	Status  string // "pass", "fail", "pending", "running", "unknown"
-	LastRun time.Time
-	Output  string // Full command output
+	Name     string
+	Command  string
+	Status   string // "pass", "fail", "pending", "running", "unknown"
+	LastRun  time.Time
+	Output   string // Full command output
+	Category string // "build", "test", "lint", "browser"
 }
 
 // MonitorPanel represents which panel has focus (M-1)
@@ -144,6 +145,35 @@ func (p *MonitorPlugin) Init(ctx *plugin.Context) error {
 		ctx.EventBus.Subscribe("agent.status", func(event plugin.Event) {
 			if e, ok := event.(plugin.AgentStatusEvent); ok {
 				p.updateAgentStatus(e)
+			}
+		})
+
+		// Subscribe to BrowserVerificationEvent to display browser gates
+		ctx.EventBus.Subscribe("browser.verification", func(event plugin.Event) {
+			if e, ok := event.(plugin.BrowserVerificationEvent); ok {
+				gateName := browserVerificationToGateName(e.CheckType)
+				// Update existing gate or append a new one
+				found := false
+				for i := range p.state.QualityGates {
+					if p.state.QualityGates[i].Name == gateName {
+						p.state.QualityGates[i].Status = e.Status
+						p.state.QualityGates[i].Output = e.Details
+						p.state.QualityGates[i].LastRun = time.Now()
+						p.state.QualityGates[i].Category = "browser"
+						found = true
+						break
+					}
+				}
+				if !found {
+					p.state.QualityGates = append(p.state.QualityGates, QualityGate{
+						Name:     gateName,
+						Command:  "playwright-cli " + e.CheckType,
+						Status:   e.Status,
+						Output:   e.Details,
+						LastRun:  time.Now(),
+						Category: "browser",
+					})
+				}
 			}
 		})
 	}
@@ -604,10 +634,14 @@ func (p *MonitorPlugin) renderQualityGatesPanel(width, height int) string {
 			statusStyle = styles.DimStyle
 		}
 
-		// Gate name and status
+		// Gate name and status — browser gates use teal accent
+		nameStyle := lipgloss.NewStyle()
+		if gate.Category == "browser" {
+			nameStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#0D9488"))
+		}
 		gateLine := fmt.Sprintf("  %s %s",
 			statusStyle.Render(statusIcon),
-			gate.Name,
+			nameStyle.Render(gate.Name),
 		)
 
 		// Highlight selected gate when this panel is focused (M-1)

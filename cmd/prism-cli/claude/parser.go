@@ -161,6 +161,15 @@ func detectPhase(line string) string {
 		return "Implementation"
 	}
 
+	// Browser verification phase indicators
+	if strings.Contains(line, "playwright") ||
+		strings.Contains(line, "browser verification") ||
+		strings.Contains(line, "screenshot") ||
+		strings.Contains(line, "capturing") ||
+		strings.Contains(line, "console errors") {
+		return "Browser Verification"
+	}
+
 	// Quality gates phase
 	if strings.Contains(line, "quality gate") ||
 		strings.Contains(line, "typecheck") ||

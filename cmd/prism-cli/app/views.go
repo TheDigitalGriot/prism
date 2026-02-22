@@ -20,6 +20,7 @@ const (
 	ViewAgent
 	ViewChat
 	ViewMonitor
+	ViewBrowser
 	ViewWorkspaces
 	ViewOnboarding
 )
@@ -46,6 +47,8 @@ func (v ActiveView) String() string {
 		return "CHAT"
 	case ViewMonitor:
 		return "MONITOR"
+	case ViewBrowser:
+		return "BROWSER"
 	case ViewWorkspaces:
 		return "WORKSPACES"
 	case ViewOnboarding:

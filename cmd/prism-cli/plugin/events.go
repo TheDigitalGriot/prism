@@ -173,3 +173,23 @@ type WorktreeChangedEvent struct {
 func (e WorktreeChangedEvent) Type() string {
 	return "worktree.changed"
 }
+
+// BrowserVerificationEvent is published when a browser verification check completes.
+// Browser and Monitor plugins subscribe to update their displays.
+type BrowserVerificationEvent struct {
+	StoryID      string
+	CheckType    string // "screenshot", "console", "snapshot", "network"
+	Status       string // "pass", "fail"
+	ArtifactPath string
+	Details      string
+}
+
+func (e BrowserVerificationEvent) Type() string { return "browser.verification" }
+
+// BrowserSessionEvent is published when a playwright browser session changes state.
+type BrowserSessionEvent struct {
+	SessionID string
+	Action    string // "created", "closed", "error"
+}
+
+func (e BrowserSessionEvent) Type() string { return "browser.session" }

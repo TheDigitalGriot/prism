@@ -126,6 +126,27 @@ func formatToolUse(toolName string, inputRaw json.RawMessage) string {
 
 	case "Bash":
 		if input.Command != "" {
+			// Playwright-CLI activity detection
+			if strings.Contains(input.Command, "playwright-cli") {
+				switch {
+				case strings.Contains(input.Command, "screenshot"):
+					return "Capturing: screenshot"
+				case strings.Contains(input.Command, "snapshot"):
+					return "Verifying: page structure"
+				case strings.Contains(input.Command, "console"):
+					return "Checking: console errors"
+				case strings.Contains(input.Command, "network"):
+					return "Checking: network requests"
+				case strings.Contains(input.Command, "open"):
+					return "Opening: browser"
+				case strings.Contains(input.Command, "session-close"):
+					return "Closing: browser session"
+				case strings.Contains(input.Command, "tracing"):
+					return "Recording: browser trace"
+				default:
+					return "Browser: " + truncate(input.Command, 40)
+				}
+			}
 			cmd := truncate(input.Command, 50)
 			return "Running: " + cmd
 		}
