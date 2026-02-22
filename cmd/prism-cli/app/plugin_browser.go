@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -236,6 +237,10 @@ func (p *BrowserPlugin) KeyHints() []plugin.KeyHint {
 	return []plugin.KeyHint{
 		{Key: "tab", Description: "switch panel"},
 		{Key: "j/k", Description: "navigate"},
+		{Key: "enter", Description: "view details"},
+		{Key: "d", Description: "delete session"},
+		{Key: "K", Description: "kill all sessions"},
+		{Key: "s", Description: "screenshot"},
 		{Key: "r", Description: "refresh"},
 		{Key: "esc", Description: "home"},
 	}
@@ -279,6 +284,51 @@ func (p *BrowserPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) 
 			}
 		}
 		return p, nil
+
+	case "enter":
+		switch p.state.FocusedPanel {
+		case BrowserPanelSessions:
+			// Show selected session details in the artifact panel
+			if p.state.SelectedSession < len(p.state.Sessions) {
+				s := p.state.Sessions[p.state.SelectedSession]
+				p.state.SelectedArtifact = &BrowserArtifact{
+					Name:      s.SessionID,
+					Path:      s.URL,
+					Timestamp: s.CreatedAt,
+					StoryID:   s.Action,
+				}
+				p.state.FocusedPanel = BrowserPanelArtifact
+			}
+		case BrowserPanelHistory:
+			p.updateSelectedArtifact()
+			if p.state.SelectedArtifact != nil {
+				p.state.FocusedPanel = BrowserPanelArtifact
+			}
+		}
+		return p, nil
+
+	case "d":
+		// Delete selected session from list
+		if p.state.FocusedPanel == BrowserPanelSessions && len(p.state.Sessions) > 0 {
+			idx := p.state.SelectedSession
+			p.state.Sessions = append(p.state.Sessions[:idx], p.state.Sessions[idx+1:]...)
+			if p.state.SelectedSession >= len(p.state.Sessions) && len(p.state.Sessions) > 0 {
+				p.state.SelectedSession = len(p.state.Sessions) - 1
+			} else if len(p.state.Sessions) == 0 {
+				p.state.SelectedSession = 0
+			}
+		}
+		return p, nil
+
+	case "K":
+		// Kill all sessions — clear session list
+		p.state.Sessions = []BrowserSessionInfo{}
+		p.state.SelectedSession = 0
+		return p, nil
+
+	case "s":
+		// Take a quick screenshot via playwright-cli
+		return p, takeScreenshotCmd(p.state.ArtifactDir)
 
 	case "r":
 		if p.state.ArtifactDir != "" {
@@ -580,6 +630,45 @@ func scanVerificationsCmd(dir string) tea.Cmd {
 		}
 
 		return BrowserScanResultMsg{Artifacts: artifacts}
+	}
+}
+
+// takeScreenshotCmd runs playwright-cli screenshot and returns a scan result
+func takeScreenshotCmd(artifactDir string) tea.Cmd {
+	return func() tea.Msg {
+		// Check if playwright-cli is available
+		if _, err := exec.LookPath("playwright-cli"); err != nil {
+			return BrowserScanResultMsg{Error: fmt.Errorf("playwright-cli not installed: %w", err)}
+		}
+
+		timestamp := time.Now().Format("20060102-150405")
+		sessionID := "screenshot-" + timestamp
+
+		// Ensure output directory exists
+		outputDir := filepath.Join(artifactDir, timestamp)
+		if artifactDir != "" {
+			os.MkdirAll(outputDir, 0755)
+		}
+
+		outputFile := filepath.Join(outputDir, "quick-capture.png")
+		cmd := exec.Command("playwright-cli", "screenshot",
+			"--session", sessionID,
+			"http://localhost:3000",
+			"--name", outputFile,
+		)
+		if err := cmd.Run(); err != nil {
+			return BrowserScanResultMsg{Error: fmt.Errorf("screenshot failed: %w", err)}
+		}
+
+		// Close the session
+		closeCmd := exec.Command("playwright-cli", "session-close", sessionID)
+		closeCmd.Run() //nolint:errcheck // best-effort cleanup
+
+		// Re-scan to pick up the new artifact
+		if artifactDir != "" {
+			return scanVerificationsCmd(artifactDir)()
+		}
+		return BrowserScanResultMsg{}
 	}
 }
 
