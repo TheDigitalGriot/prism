@@ -147,3 +147,44 @@ export class PluginServiceClient extends ProtoBusClient {
     return this.makeUnaryRequest("PluginService", "getSkills", {})
   }
 }
+
+// ---------------------------------------------------------------------------
+// SpectrumService (Phase 6: Autonomous Execution)
+// ---------------------------------------------------------------------------
+
+export interface SpectrumResponse {
+  ok: boolean
+  error?: string
+}
+
+export class SpectrumServiceClient extends ProtoBusClient {
+  /** Start the Spectrum execution loop. */
+  static start(options?: { maxIterations?: number; pauseMs?: number }): Promise<SpectrumResponse> {
+    return this.makeUnaryRequest("SpectrumService", "start", options ?? {})
+  }
+
+  /** Pause the running Spectrum loop. */
+  static pause(): Promise<SpectrumResponse> {
+    return this.makeUnaryRequest("SpectrumService", "pause", {})
+  }
+
+  /** Resume a paused Spectrum loop. */
+  static resume(): Promise<SpectrumResponse> {
+    return this.makeUnaryRequest("SpectrumService", "resume", {})
+  }
+
+  /** Stop the Spectrum loop (returns to idle). */
+  static stop(): Promise<SpectrumResponse> {
+    return this.makeUnaryRequest("SpectrumService", "stop", {})
+  }
+
+  /** Skip the currently executing story. */
+  static skipStory(): Promise<SpectrumResponse> {
+    return this.makeUnaryRequest("SpectrumService", "skipStory", {})
+  }
+
+  /** Reset Spectrum to idle state. */
+  static reset(): Promise<SpectrumResponse> {
+    return this.makeUnaryRequest("SpectrumService", "reset", {})
+  }
+}

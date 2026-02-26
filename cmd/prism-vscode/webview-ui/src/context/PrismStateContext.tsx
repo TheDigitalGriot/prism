@@ -39,6 +39,72 @@ export interface PrismChatMessage {
   errorText?: string
 }
 
+// ---------------------------------------------------------------------------
+// Spectrum types (mirrors src/core/controller/prism/spectrum.ts)
+// ---------------------------------------------------------------------------
+
+export type SpectrumExecutionState =
+  | "idle"
+  | "running"
+  | "paused"
+  | "complete"
+  | "maxIterations"
+  | "error"
+
+export interface SpectrumLogEntry {
+  ts: number
+  level: "info" | "warn" | "error"
+  message: string
+}
+
+export interface SpectrumActivity {
+  toolName: string
+  description: string
+  ts: number
+}
+
+export interface PrismSpectrumState {
+  executionState: SpectrumExecutionState
+  currentIteration: number
+  maxIterations: number
+  currentStoryId: string | null
+  progress: number
+  elapsedMs: number
+  startedAt: number | null
+  consecutiveErrors: number
+  lastSignalType: string
+  lastSignalContent: string
+  recentActivities: SpectrumActivity[]
+  logs: SpectrumLogEntry[]
+}
+
+// ---------------------------------------------------------------------------
+// Story types (mirrors src/prism/stories.ts)
+// ---------------------------------------------------------------------------
+
+export interface PrismStory {
+  id: string
+  title: string
+  description: string
+  priority: number
+  status: string
+  blockedBy: string | null
+  files: Array<{ path: string; action: string }>
+  steps: Array<{ description: string; done: boolean }>
+  completedAt?: string
+  commitHash?: string
+}
+
+export interface PrismPlan {
+  name: string
+  source: string
+  qualityGates: string[]
+}
+
+// ---------------------------------------------------------------------------
+// Extension state
+// ---------------------------------------------------------------------------
+
 export interface PrismExtensionState {
   version: string
   didHydrateState: boolean
@@ -49,11 +115,38 @@ export interface PrismExtensionState {
   workflowPhase: WorkflowPhase
   defaultModel: string
   planningModel: string
+  // Stories
+  stories: PrismStory[]
+  plan: PrismPlan | undefined
+  completedCount: number
+  remainingCount: number
+  // Chat
   chatMessages: PrismChatMessage[]
   isChatStreaming: boolean
   pendingApprovalToolUseId: string | undefined
   hasActiveTask: boolean
   hasApiKey: boolean
+  // CLI
+  chatMode: "sdk" | "plugin"
+  activePluginSkill: string | null
+  hasClaudeCli: boolean
+  // Spectrum
+  spectrum: PrismSpectrumState
+}
+
+const DEFAULT_SPECTRUM_STATE: PrismSpectrumState = {
+  executionState: "idle",
+  currentIteration: 0,
+  maxIterations: 50,
+  currentStoryId: null,
+  progress: 0,
+  elapsedMs: 0,
+  startedAt: null,
+  consecutiveErrors: 0,
+  lastSignalType: "none",
+  lastSignalContent: "",
+  recentActivities: [],
+  logs: [],
 }
 
 const DEFAULT_STATE: PrismExtensionState = {
@@ -66,11 +159,19 @@ const DEFAULT_STATE: PrismExtensionState = {
   workflowPhase: "idle",
   defaultModel: "sonnet",
   planningModel: "opus",
+  stories: [],
+  plan: undefined,
+  completedCount: 0,
+  remainingCount: 0,
   chatMessages: [],
   isChatStreaming: false,
   pendingApprovalToolUseId: undefined,
   hasActiveTask: false,
   hasApiKey: false,
+  chatMode: "sdk",
+  activePluginSkill: null,
+  hasClaudeCli: false,
+  spectrum: DEFAULT_SPECTRUM_STATE,
 }
 
 // ---------------------------------------------------------------------------

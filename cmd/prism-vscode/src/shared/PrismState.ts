@@ -56,7 +56,7 @@ export interface PrismExtensionState {
   hasClaudeCli: boolean
 
   // -------------------------------------------------------------------------
-  // Spectrum (Phase 5 placeholder)
+  // Spectrum (Phase 6: full execution dashboard)
   // -------------------------------------------------------------------------
   spectrum: SpectrumState
 
@@ -92,7 +92,15 @@ export const DEFAULT_PRISM_STATE: PrismExtensionState = {
     executionState: "idle",
     currentIteration: 0,
     maxIterations: 50,
+    currentStoryId: null,
+    progress: 0,
+    elapsedMs: 0,
+    startedAt: null,
     consecutiveErrors: 0,
+    lastSignalType: "none",
+    lastSignalContent: "",
+    recentActivities: [],
+    logs: [],
   },
   defaultModel: "sonnet",
   planningModel: "opus",

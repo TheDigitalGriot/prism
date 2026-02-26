@@ -1,6 +1,13 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { usePrismState } from "./context/PrismStateContext"
 import { ChatView } from "./views/ChatView"
+import { SpectrumView } from "./views/SpectrumView"
+
+// ---------------------------------------------------------------------------
+// View type
+// ---------------------------------------------------------------------------
+
+type AppView = "chat" | "spectrum"
 
 // ---------------------------------------------------------------------------
 // Loading screen
@@ -27,14 +34,24 @@ const LoadingView: React.FC = () => (
 
 export const App: React.FC = () => {
   const state = usePrismState()
+  const [currentView, setCurrentView] = useState<AppView>("chat")
 
-  // Listen for command messages from extension host (e.g. phase changes triggered by keybindings)
+  // Listen for command messages from extension host
+  // (e.g. "startSpectrum" triggered by prism.spectrum command or status bar click)
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       const msg = event.data as { type: string; command?: string; payload?: unknown }
-      if (msg?.type === "command") {
-        console.log("[Prism] Received command:", msg.command, msg.payload)
-        // Future: dispatch to command handler
+      if (msg?.type !== "command") return
+
+      switch (msg.command) {
+        case "startSpectrum":
+          setCurrentView("spectrum")
+          break
+        case "startPhase":
+          setCurrentView("chat")
+          break
+        default:
+          console.log("[Prism] Received command:", msg.command, msg.payload)
       }
     }
     window.addEventListener("message", handler)
@@ -46,20 +63,52 @@ export const App: React.FC = () => {
     return <LoadingView />
   }
 
-  // Main view — ChatView is always shown (Phase 3+)
+  const outerStyle: React.CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    height: "100vh",
+    overflow: "hidden",
+    backgroundColor: "var(--vscode-sideBar-background)",
+    color: "var(--vscode-foreground)",
+    fontFamily: "var(--vscode-font-family)",
+    fontSize: "var(--vscode-font-size, 13px)",
+  }
+
+  // Spectrum dashboard view
+  if (currentView === "spectrum") {
+    return (
+      <div style={outerStyle}>
+        <SpectrumView onBack={() => setCurrentView("chat")} />
+      </div>
+    )
+  }
+
+  // Default: Chat view (always mounted to preserve state)
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-        overflow: "hidden",
-        backgroundColor: "var(--vscode-sideBar-background)",
-        color: "var(--vscode-foreground)",
-        fontFamily: "var(--vscode-font-family)",
-        fontSize: "var(--vscode-font-size, 13px)",
-      }}
-    >
+    <div style={outerStyle}>
+      {/* Spectrum shortcut pill — only visible when Spectrum is active */}
+      {state.hasStoriesJson && state.spectrum?.executionState !== "idle" && (
+        <button
+          onClick={() => setCurrentView("spectrum")}
+          style={{
+            position: "absolute",
+            top: "8px",
+            right: "8px",
+            zIndex: 100,
+            padding: "3px 10px",
+            borderRadius: "9999px",
+            border: "1px solid #3b82f655",
+            backgroundColor: "#3b82f622",
+            color: "#3b82f6",
+            fontSize: "11px",
+            cursor: "pointer",
+            fontWeight: 500,
+          }}
+          title="Open Spectrum dashboard"
+        >
+          ◉ Spectrum
+        </button>
+      )}
       <ChatView />
     </div>
   )

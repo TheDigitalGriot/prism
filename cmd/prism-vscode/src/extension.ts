@@ -109,6 +109,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       await vscode.commands.executeCommand("prism.sidebar.focus")
     }),
 
+    // Spectrum execution quick-access commands
+    vscode.commands.registerCommand("prism.spectrum.start", async () => {
+      // Open the Spectrum view — user clicks Start from there
+      await _provider?.sendCommandToWebview("startSpectrum")
+      await vscode.commands.executeCommand("prism.sidebar.focus")
+    }),
+
     vscode.commands.registerCommand("prism.initPrism", async () => {
       await _provider?.sendCommandToWebview("initPrism")
       await vscode.commands.executeCommand("prism.sidebar.focus")

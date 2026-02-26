@@ -4,6 +4,9 @@ import { WorkflowPhase } from "../../shared/types"
 import { registerUnary, registerStream, StreamResponseFn } from "./grpc-handler"
 import { WorkflowStateMachine, WorkflowTransition } from "./prism/workflow"
 import { StoriesManager } from "./prism/stories"
+import { SpectrumEngine, DEFAULT_SPECTRUM_CONFIG, type SpectrumConfig } from "./prism/spectrum"
+import { SpectrumRunner, type SpectrumRunnerEventType } from "./prism/spectrum-runner"
+import { ProgressFile } from "../../prism/progress"
 import { PrismWatcher } from "../../prism/watcher"
 import { detectPrismDir, detectStoriesPath } from "../../prism/config"
 import { getApiKey, promptForApiKey } from "../api/auth"
@@ -14,6 +17,14 @@ import { SystemPromptContext } from "../prompts/system-prompt"
 import { ModeBridge, detectSkillTrigger, type ChatMode } from "./prism/mode-bridge"
 import { SKILL_MAP } from "./prism/plugin-bridge"
 import { checkClaudeCli } from "../../claude/runner"
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
 export type PostMessageFn = (message: unknown) => Promise<void>
 
@@ -51,6 +62,11 @@ export class PrismController implements vscode.Disposable {
   // Phase 4: Claude CLI Integration
   private _modeBridge: ModeBridge | undefined
 
+  // Phase 6: Spectrum Execution Engine
+  private _spectrumEngine: SpectrumEngine | undefined
+  private _spectrumRunner: SpectrumRunner | undefined
+  private _spectrumAbort = false
+
   constructor(context: vscode.ExtensionContext) {
     this._context = context
     this._state = { ...DEFAULT_PRISM_STATE }
@@ -71,6 +87,14 @@ export class PrismController implements vscode.Disposable {
     this._onDidChangeState.dispose()
     if (this._modeBridge) {
       this._modeBridge.terminate()
+    }
+    // Stop Spectrum if running
+    this._spectrumAbort = true
+    if (this._spectrumRunner) {
+      this._spectrumRunner.terminate()
+    }
+    if (this._spectrumEngine) {
+      this._spectrumEngine.dispose()
     }
   }
 
@@ -351,6 +375,107 @@ export class PrismController implements vscode.Disposable {
     registerUnary("PluginService", "getSkills", async () => {
       return { skills: SKILL_MAP }
     })
+
+    // -----------------------------------------------------------------------
+    // SpectrumService (Phase 6: Autonomous Execution)
+    // -----------------------------------------------------------------------
+
+    /** Start the Spectrum execution loop. */
+    registerUnary("SpectrumService", "start", async (message: unknown) => {
+      const msg = (message ?? {}) as { maxIterations?: number; pauseMs?: number }
+
+      if (!this._state.hasClaudeCli) {
+        return { ok: false, error: "Claude CLI not found. Install it to use Spectrum." }
+      }
+
+      const workspaceRoot = this._getWorkspaceRoot()
+      if (!workspaceRoot) {
+        return { ok: false, error: "No workspace folder open" }
+      }
+
+      if (!this._state.storiesPath) {
+        return { ok: false, error: "No stories.json found. Create one with /decompose_plan." }
+      }
+
+      if (this._spectrumEngine?.isActive) {
+        return { ok: false, error: "Spectrum is already running" }
+      }
+
+      const config: Partial<SpectrumConfig> = {
+        ...DEFAULT_SPECTRUM_CONFIG,
+        ...(msg.maxIterations !== undefined ? { maxIterations: msg.maxIterations } : {}),
+        ...(msg.pauseMs !== undefined ? { pauseMs: msg.pauseMs } : {}),
+      }
+
+      this._startSpectrumLoop(workspaceRoot, this._state.storiesPath, config)
+      return { ok: true }
+    })
+
+    /** Pause the Spectrum loop. */
+    registerUnary("SpectrumService", "pause", async () => {
+      if (!this._spectrumEngine?.isRunning) {
+        return { ok: false, error: "Spectrum is not running" }
+      }
+      this._spectrumEngine.pause()
+      await this.updateState({ spectrum: this._spectrumEngine.state })
+      return { ok: true }
+    })
+
+    /** Resume a paused Spectrum loop. */
+    registerUnary("SpectrumService", "resume", async () => {
+      if (!this._spectrumEngine?.isPaused) {
+        return { ok: false, error: "Spectrum is not paused" }
+      }
+      const completed = this.storiesManager.completedCount()
+      const total = completed + this.storiesManager.remainingCount()
+      this._spectrumEngine.resume(completed, total)
+      await this.updateState({ spectrum: this._spectrumEngine.state })
+      return { ok: true }
+    })
+
+    /** Stop the Spectrum loop. */
+    registerUnary("SpectrumService", "stop", async () => {
+      this._spectrumAbort = true
+      if (this._spectrumRunner) {
+        this._spectrumRunner.terminate()
+      }
+      if (this._spectrumEngine) {
+        this._spectrumEngine.stop()
+        await this.updateState({ spectrum: this._spectrumEngine.state })
+      }
+      return { ok: true }
+    })
+
+    /** Skip the current story and move to the next. */
+    registerUnary("SpectrumService", "skipStory", async () => {
+      const currentStoryId = this._spectrumEngine?.state.currentStoryId
+      if (!currentStoryId || !this._state.storiesPath) {
+        return { ok: false, error: "No active story to skip" }
+      }
+      try {
+        await this.storiesManager.markComplete(currentStoryId, "SKIPPED")
+        this._spectrumEngine?.addLog("warn", `Skipped story: ${currentStoryId}`)
+        if (this._spectrumEngine) {
+          await this.updateState({ spectrum: this._spectrumEngine.state })
+        }
+        return { ok: true }
+      } catch (err) {
+        return { ok: false, error: String(err) }
+      }
+    })
+
+    /** Reset Spectrum to idle state. */
+    registerUnary("SpectrumService", "reset", async () => {
+      this._spectrumAbort = true
+      if (this._spectrumRunner) {
+        this._spectrumRunner.terminate()
+      }
+      if (this._spectrumEngine) {
+        this._spectrumEngine.reset()
+        await this.updateState({ spectrum: this._spectrumEngine.state })
+      }
+      return { ok: true }
+    })
   }
 
   // ---------------------------------------------------------------------------
@@ -436,6 +561,155 @@ export class PrismController implements vscode.Disposable {
       this._modeBridge.setProjectDir(workspaceRoot)
     }
     return this._modeBridge
+  }
+
+  // ---------------------------------------------------------------------------
+  // Spectrum execution loop
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Initialize and start the Spectrum autonomous execution loop.
+   * Runs in the background — non-blocking.
+   */
+  private _startSpectrumLoop(
+    workspaceRoot: string,
+    storiesPath: string,
+    config: Partial<SpectrumConfig>,
+  ): void {
+    // Clean up any previous engine/runner
+    if (this._spectrumEngine) {
+      this._spectrumEngine.dispose()
+    }
+    if (this._spectrumRunner) {
+      this._spectrumRunner.terminate()
+    }
+
+    this._spectrumAbort = false
+
+    // Create fresh engine
+    this._spectrumEngine = new SpectrumEngine(config, async (state) => {
+      await this.updateState({ spectrum: state })
+    })
+
+    // Create fresh runner
+    this._spectrumRunner = new SpectrumRunner(workspaceRoot, this.storiesManager)
+
+    // Wire runner events → engine state updates
+    this._spectrumRunner.on("event", (event: SpectrumRunnerEventType) => {
+      if (!this._spectrumEngine) return
+      switch (event.type) {
+        case "story_started":
+          this._spectrumEngine.setCurrentStory(
+            event.storyId,
+            this.storiesManager.completedCount(),
+            this.storiesManager.completedCount() + this.storiesManager.remainingCount(),
+          )
+          break
+        case "story_complete":
+        case "story_blocked":
+        case "story_retry":
+          this._spectrumEngine.setCurrentStory(
+            null,
+            this.storiesManager.completedCount(),
+            this.storiesManager.completedCount() + this.storiesManager.remainingCount(),
+          )
+          break
+        case "story_error":
+          this._spectrumEngine.recordSignal("error", event.error)
+          this._spectrumEngine.setCurrentStory(null, 0, 0)
+          break
+        case "tool_activity":
+          this._spectrumEngine.addActivity(event.activity.toolName, event.activity.description)
+          break
+        case "log":
+          this._spectrumEngine.addLog(event.level, event.message)
+          break
+      }
+    })
+
+    // Initialize progress file
+    const progressFile = ProgressFile.fromStoriesPath(storiesPath)
+    void progressFile.exists().then(async (exists) => {
+      if (!exists && this._state.plan) {
+        await progressFile.initialize(this._state.plan.name).catch(() => {/* ignore */})
+      }
+    })
+    this._spectrumRunner.setProgressFile(progressFile)
+
+    // Start the engine state
+    const completed = this.storiesManager.completedCount()
+    const total = completed + this.storiesManager.remainingCount()
+    this._spectrumEngine.start(completed, total)
+
+    // Run the loop in background
+    void this._runSpectrumLoop(storiesPath).catch((err: Error) => {
+      console.error("[Spectrum] Loop error:", err)
+      if (this._spectrumEngine) {
+        this._spectrumEngine.error(err.message)
+        void this.updateState({ spectrum: this._spectrumEngine.state })
+      }
+    })
+  }
+
+  /** The main Spectrum execution loop — runs until done/stopped/error. */
+  private async _runSpectrumLoop(storiesPath: string): Promise<void> {
+    if (!this._spectrumEngine || !this._spectrumRunner) return
+
+    while (!this._spectrumAbort) {
+      const execState = this._spectrumEngine.state.executionState
+
+      // Paused — wait and poll
+      if (execState === "paused") {
+        await sleep(200)
+        continue
+      }
+
+      // Not running → exit loop
+      if (execState !== "running") break
+
+      // Check iteration cap
+      if (!this._spectrumEngine.incrementIteration()) {
+        break // engine already set to maxIterations
+      }
+
+      // Run one iteration
+      const signalType = await this._spectrumRunner.runIteration(storiesPath)
+      this._spectrumEngine.recordSignal(signalType, "")
+
+      // Reload stories to reflect updated status
+      if (this._state.storiesPath) {
+        await this._loadStories(this._state.storiesPath)
+      }
+
+      // Check for completion
+      if (this.storiesManager.allComplete()) {
+        this._spectrumEngine.complete()
+        await this.updateState({ spectrum: this._spectrumEngine.state })
+        break
+      }
+
+      // Check for "no next story" (e.g., all blocked)
+      if (signalType === "none") {
+        this._spectrumEngine.addLog("warn", "No next story available — all blocked or complete")
+        this._spectrumEngine.stop()
+        await this.updateState({ spectrum: this._spectrumEngine.state })
+        break
+      }
+
+      // Check consecutive errors
+      if (this._spectrumEngine.hasTooManyErrors()) {
+        this._spectrumEngine.error(
+          `${this._spectrumEngine.state.consecutiveErrors} consecutive errors exceeded limit`,
+        )
+        await this.updateState({ spectrum: this._spectrumEngine.state })
+        break
+      }
+
+      // Pause between iterations
+      if (!this._spectrumAbort) {
+        await sleep(this._spectrumEngine.config.pauseMs)
+      }
+    }
   }
 
   private _getWorkspaceRoot(): string | undefined {
