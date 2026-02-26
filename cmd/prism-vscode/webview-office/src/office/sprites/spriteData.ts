@@ -274,11 +274,11 @@ export const LAMP_SPRITE: SpriteData = (() => {
 
 // ── Speech Bubble Sprites ───────────────────────────────────────
 
-/** Permission bubble: white square with "..." in amber, and a tail pointer (11x13) */
+/** Permission bubble: white square with "..." in Prism amber, and a tail pointer (11x13) */
 export const BUBBLE_PERMISSION_SPRITE: SpriteData = (() => {
   const B = '#555566' // border
   const F = '#EEEEFF' // fill
-  const A = '#CCA700' // amber dots
+  const A = '#F59E0B' // Prism amber dots
   return [
     [B, B, B, B, B, B, B, B, B, B, B],
     [B, F, F, F, F, F, F, F, F, F, B],
@@ -296,11 +296,11 @@ export const BUBBLE_PERMISSION_SPRITE: SpriteData = (() => {
   ]
 })()
 
-/** Waiting bubble: white square with green checkmark, and a tail pointer (11x13) */
+/** Waiting bubble: white square with Prism teal checkmark, and a tail pointer (11x13) */
 export const BUBBLE_WAITING_SPRITE: SpriteData = (() => {
   const B = '#555566' // border
   const F = '#EEEEFF' // fill
-  const G = '#44BB66' // green check
+  const G = '#14B8A6' // Prism teal check
   return [
     [_, B, B, B, B, B, B, B, B, B, _],
     [B, F, F, F, F, F, F, F, F, F, B],
@@ -321,14 +321,20 @@ export const BUBBLE_WAITING_SPRITE: SpriteData = (() => {
 // ── Character Sprites ───────────────────────────────────────────
 // 16x24 characters with palette substitution
 
-/** Palette colors for 6 distinct agent characters */
+/** Palette colors for 6 distinct agent characters — Prism spectral brand colors */
 export const CHARACTER_PALETTES = [
-  { skin: '#FFCC99', shirt: '#4488CC', pants: '#334466', hair: '#553322', shoes: '#222222' },
-  { skin: '#FFCC99', shirt: '#CC4444', pants: '#333333', hair: '#FFD700', shoes: '#222222' },
-  { skin: '#DEB887', shirt: '#44AA66', pants: '#334444', hair: '#222222', shoes: '#333333' },
-  { skin: '#FFCC99', shirt: '#AA55CC', pants: '#443355', hair: '#AA4422', shoes: '#222222' },
-  { skin: '#DEB887', shirt: '#CCAA33', pants: '#444433', hair: '#553322', shoes: '#333333' },
-  { skin: '#FFCC99', shirt: '#FF8844', pants: '#443322', hair: '#111111', shoes: '#222222' },
+  // Blue primary (Prism blue #3B82F6)
+  { skin: '#F5D6C3', shirt: '#3B82F6', pants: '#1E40AF', hair: '#1E293B', shoes: '#334155' },
+  // Teal secondary (Prism teal #14B8A6)
+  { skin: '#E8C4A8', shirt: '#14B8A6', pants: '#0F766E', hair: '#44403C', shoes: '#292524' },
+  // Green success (Prism green #22C55E)
+  { skin: '#D4A574', shirt: '#22C55E', pants: '#15803D', hair: '#1C1917', shoes: '#1C1917' },
+  // Amber accent (Prism amber #F59E0B)
+  { skin: '#F5D6C3', shirt: '#F59E0B', pants: '#B45309', hair: '#78350F', shoes: '#451A03' },
+  // Indigo (complementary)
+  { skin: '#E8C4A8', shirt: '#6366F1', pants: '#4338CA', hair: '#27272A', shoes: '#18181B' },
+  // Rose (complementary)
+  { skin: '#D4A574', shirt: '#F43F5E', pants: '#BE123C', hair: '#292524', shoes: '#1C1917' },
 ] as const
 
 interface CharPalette {

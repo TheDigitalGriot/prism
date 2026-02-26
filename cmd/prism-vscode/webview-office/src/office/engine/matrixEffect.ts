@@ -8,11 +8,26 @@ import {
   MATRIX_FLICKER_VISIBILITY_THRESHOLD,
   MATRIX_COLUMN_STAGGER_RANGE,
   MATRIX_HEAD_COLOR,
+  MATRIX_TRAIL_BRIGHT,
+  MATRIX_TRAIL_MID,
+  MATRIX_TRAIL_DIM,
   MATRIX_TRAIL_OVERLAY_ALPHA,
   MATRIX_TRAIL_EMPTY_ALPHA,
   MATRIX_TRAIL_MID_THRESHOLD,
   MATRIX_TRAIL_DIM_THRESHOLD,
 } from '../../constants.js'
+
+/** Parse a hex color string to its r,g,b components as a comma-separated string for use in rgba() */
+function hexToRgb(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `${r}, ${g}, ${b}`
+}
+
+const BRIGHT_RGB = hexToRgb(MATRIX_TRAIL_BRIGHT)
+const MID_RGB = hexToRgb(MATRIX_TRAIL_MID)
+const DIM_RGB = hexToRgb(MATRIX_TRAIL_DIM)
 
 /** Hash-based flicker: ~70% visible for shimmer effect */
 function flickerVisible(col: number, row: number, time: number): boolean {
@@ -77,19 +92,19 @@ export function renderMatrixEffect(
             // Draw original pixel
             ctx.fillStyle = pixel
             ctx.fillRect(px, py, zoom, zoom)
-            // Green overlay that fades as trail progresses
-            const greenAlpha = (1 - trailPos) * MATRIX_TRAIL_OVERLAY_ALPHA
+            // Blue overlay that fades as trail progresses (spectral blue)
+            const blueAlpha = (1 - trailPos) * MATRIX_TRAIL_OVERLAY_ALPHA
             if (flickerVisible(col, row, time)) {
-              ctx.fillStyle = `rgba(0, 255, 65, ${greenAlpha})`
+              ctx.fillStyle = `rgba(${BRIGHT_RGB}, ${blueAlpha})`
               ctx.fillRect(px, py, zoom, zoom)
             }
           } else {
-            // No character pixel: fading green trail
+            // No character pixel: fading blue trail
             if (flickerVisible(col, row, time)) {
               const alpha = (1 - trailPos) * MATRIX_TRAIL_EMPTY_ALPHA
-              ctx.fillStyle = trailPos < MATRIX_TRAIL_MID_THRESHOLD ? `rgba(0, 255, 65, ${alpha})`
-                : trailPos < MATRIX_TRAIL_DIM_THRESHOLD ? `rgba(0, 170, 40, ${alpha})`
-                  : `rgba(0, 85, 20, ${alpha})`
+              ctx.fillStyle = trailPos < MATRIX_TRAIL_MID_THRESHOLD ? `rgba(${BRIGHT_RGB}, ${alpha})`
+                : trailPos < MATRIX_TRAIL_DIM_THRESHOLD ? `rgba(${MID_RGB}, ${alpha})`
+                  : `rgba(${DIM_RGB}, ${alpha})`
               ctx.fillRect(px, py, zoom, zoom)
             }
           }
@@ -113,13 +128,13 @@ export function renderMatrixEffect(
           ctx.fillStyle = MATRIX_HEAD_COLOR
           ctx.fillRect(px, py, zoom, zoom)
         } else if (distFromHead < MATRIX_TRAIL_LENGTH) {
-          // Trail zone: fading green
+          // Trail zone: fading blue (spectral)
           if (flickerVisible(col, row, time)) {
             const trailPos = distFromHead / MATRIX_TRAIL_LENGTH
             const alpha = (1 - trailPos) * MATRIX_TRAIL_EMPTY_ALPHA
-            ctx.fillStyle = trailPos < MATRIX_TRAIL_MID_THRESHOLD ? `rgba(0, 255, 65, ${alpha})`
-              : trailPos < MATRIX_TRAIL_DIM_THRESHOLD ? `rgba(0, 170, 40, ${alpha})`
-                : `rgba(0, 85, 20, ${alpha})`
+            ctx.fillStyle = trailPos < MATRIX_TRAIL_MID_THRESHOLD ? `rgba(${BRIGHT_RGB}, ${alpha})`
+              : trailPos < MATRIX_TRAIL_DIM_THRESHOLD ? `rgba(${MID_RGB}, ${alpha})`
+                : `rgba(${DIM_RGB}, ${alpha})`
             ctx.fillRect(px, py, zoom, zoom)
           }
         }
