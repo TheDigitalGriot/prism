@@ -17,6 +17,7 @@ import { ModeBridge, detectSkillTrigger, type ChatMode } from "./prism/mode-brid
 import { SKILL_MAP } from "./prism/plugin-bridge"
 import { checkClaudeCli } from "../../claude/runner"
 import { initPrismDirInWorkspace } from "../../prism/init"
+import { AgentBridge } from "../../office/agentBridge"
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -67,6 +68,9 @@ export class PrismController implements vscode.Disposable {
   private _spectrumEngine: SpectrumEngine | undefined
   private _spectrumRunner: SpectrumRunner | undefined
   private _spectrumAbort = false
+
+  // Phase 7: Agent Bridge (connects Prism sessions to Office agents)
+  readonly agentBridge = new AgentBridge()
 
   constructor(context: vscode.ExtensionContext) {
     this._context = context
@@ -677,6 +681,10 @@ export class PrismController implements vscode.Disposable {
             this.storiesManager.completedCount(),
             this.storiesManager.completedCount() + this.storiesManager.remainingCount(),
           )
+          // Register story context in agent bridge for active spectrum sessions
+          for (const [agentId] of this.agentBridge.getAllContexts()) {
+            this.agentBridge.updateStoryContext(agentId, event.storyId, event.storyTitle)
+          }
           break
         case "story_complete":
         case "story_blocked":

@@ -27,6 +27,7 @@ import {
 import { WORKSPACE_KEY_AGENT_SEATS, GLOBAL_KEY_SOUND_ENABLED } from '../../office/constants';
 import { writeLayoutToFile, readLayoutFromFile, watchLayoutFile } from '../../office/layoutPersistence';
 import type { LayoutWatcher } from '../../office/layoutPersistence';
+import type { PrismController } from '../../core/controller';
 
 export class OfficeViewProvider implements vscode.WebviewViewProvider {
 	static readonly VIEW_ID = 'prism.officeView';
@@ -56,7 +57,10 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 	// Cross-window layout sync
 	private _layoutWatcher: LayoutWatcher | null = null;
 
-	constructor(private readonly _context: vscode.ExtensionContext) {}
+	constructor(
+		private readonly _context: vscode.ExtensionContext,
+		private readonly _controller?: PrismController,
+	) {}
 
 	private get _extensionUri(): vscode.Uri {
 		return this._context.extensionUri;
@@ -68,7 +72,30 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 
 	private _persistAgents = (): void => {
 		persistAgents(this.agents, this._context);
+		this._syncAgentState();
 	};
+
+	/** Sync active agent list to PrismController state so the webview can show agent count. */
+	private _syncAgentState(): void {
+		if (!this._controller) return;
+		const bridge = this._controller.agentBridge;
+		const activeAgents = Array.from(this.agents.keys()).map((id) => {
+			const ctx = bridge.getContext(id);
+			return {
+				id,
+				sessionId: ctx?.sessionId,
+				storyId: ctx?.storyId,
+				storyTitle: ctx?.storyTitle,
+			};
+		});
+		void this._controller.updateState({
+			office: {
+				enabled: true,
+				agentCount: this.agents.size,
+				activeAgents,
+			},
+		});
+	}
 
 	resolveWebviewView(webviewView: vscode.WebviewView): void {
 		this._webviewView = webviewView;

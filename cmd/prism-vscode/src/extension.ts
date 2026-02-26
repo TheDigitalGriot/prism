@@ -81,7 +81,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   // ---------------------------------------------------------------------------
   // Office view provider
   // ---------------------------------------------------------------------------
-  _officeProvider = new OfficeViewProvider(context)
+  _officeProvider = new OfficeViewProvider(context, controller)
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       OfficeViewProvider.VIEW_ID,

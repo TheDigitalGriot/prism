@@ -66,6 +66,12 @@ export interface PrismExtensionState {
   office: {
     enabled: boolean;
     agentCount: number;
+    activeAgents: Array<{
+      id: number;
+      sessionId?: string;
+      storyId?: string;
+      storyTitle?: string;
+    }>;
   }
 
   // -------------------------------------------------------------------------
@@ -109,7 +115,7 @@ export const DEFAULT_PRISM_STATE: PrismExtensionState = {
     recentActivities: [],
     logs: [],
   },
-  office: { enabled: false, agentCount: 0 },
+  office: { enabled: false, agentCount: 0, activeAgents: [] },
   defaultModel: "sonnet",
   planningModel: "opus",
 }
