@@ -418,9 +418,10 @@
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "npm run check-types && node esbuild.mjs && npm run build:office",
-    "watch": "npm-run-all -p watch:esbuild watch:webview",
+    "watch": "npm-run-all -p watch:esbuild watch:webview watch:office",
     "watch:esbuild": "node esbuild.mjs --watch",
     "watch:webview": "cd webview-ui && npm run dev",
+    "watch:office": "cd webview-office && npm run dev",
     "build:webview": "cd webview-ui && npm run build",
     "build:office": "cd webview-office && npm run build",
     "package": "npm run check-types && npm run build:office && npm run build:webview && node esbuild.mjs --production",

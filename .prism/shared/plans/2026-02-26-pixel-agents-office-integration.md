@@ -1,7 +1,7 @@
 # Implementation Plan: Pixel Agents Office Integration into Prism VS Code
 
 **Date**: 2026-02-26
-**Status**: Phase 5 Complete
+**Status**: Phase 6 Complete
 **Research**: `.prism/shared/research/2026-02-26-pixel-agents-integration-research.md`
 **Ideation**: `.prism/shared/docs/pixel-agents-integration-analysis.md`
 
@@ -39,7 +39,7 @@ Integrate Pixel Agents' animated pixel-art office visualization into the Prism V
 - [x] Extension compiles: `cd cmd/prism-vscode && npm run compile`
 - [x] TypeScript checks pass: `cd cmd/prism-vscode && npx tsc --noEmit`
 - [x] Office webview builds: `cd cmd/prism-vscode/webview-office && npm run build`
-- [ ] Full package builds: `cd cmd/prism-vscode && npm run package`
+- [x] Full package builds: `cd cmd/prism-vscode && npm run package`
 - [x] Extension compiles (Phase 3): `cd cmd/prism-vscode && npm run compile`
 - [x] Extension compiles (Phase 4): `cd cmd/prism-vscode && npm run compile`
 - [x] Extension compiles (Phase 5): `cd cmd/prism-vscode && npm run compile`
@@ -768,6 +768,15 @@ cd cmd/prism-vscode/webview-ui && npm install
 cd cmd/prism-vscode/webview-office && npm install
 cd cmd/prism-vscode && npm run package  # Full clean build succeeds
 ```
+
+**Checkpoint**: [x] Phase 6 complete — `npm run package` passes from clean `rm -rf dist` state. All automated verification criteria met.
+
+### Phase 6 Notes (2026-02-26)
+
+- Steps 6.2, 6.3, and 6.5 were already implemented in prior sessions
+- Step 6.1: `cmd/prism-vscode/assets/` had all available assets (`characters/`, `walls.png`, `default-layout.json`); `furniture/` and `floors.png` not present in ref source
+- Step 6.4: Added `watch:office` script and updated `watch` to include it via `npm-run-all`
+- `npm run package` verified: typecheck → build:office → build:webview → esbuild prod → asset copy — all pass clean
 
 ---
 
