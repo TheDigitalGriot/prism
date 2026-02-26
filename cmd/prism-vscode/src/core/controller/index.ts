@@ -57,6 +57,15 @@ export class PrismController implements vscode.Disposable {
   /** Fires after every state update, letting status bar items re-render. */
   readonly onDidChangeState: vscode.Event<void> = this._onDidChangeState.event
 
+  // Phase 4: Office integration events
+  private readonly _onDidStartSession = new vscode.EventEmitter<{ sessionId: string; storyId?: string; storyTitle?: string }>()
+  /** Fires when a Prism-managed Claude session starts (chat, skill, or spectrum story). */
+  readonly onDidStartSession: vscode.Event<{ sessionId: string; storyId?: string; storyTitle?: string }> = this._onDidStartSession.event
+
+  private readonly _onDidUpdateStory = new vscode.EventEmitter<{ storyId: string; storyTitle: string }>()
+  /** Fires when the active Spectrum story changes (story_started event). */
+  readonly onDidUpdateStory: vscode.Event<{ storyId: string; storyTitle: string }> = this._onDidUpdateStory.event
+
   // Chat / Task management (CLI-based)
   private _chatRunner: ClaudeRunner | null = null
   private _chatMessages: PrismChatMessage[] = []
@@ -89,6 +98,8 @@ export class PrismController implements vscode.Disposable {
     this._watcherSub.dispose()
     this._onDidChangeFile.dispose()
     this._onDidChangeState.dispose()
+    this._onDidStartSession.dispose()
+    this._onDidUpdateStory.dispose()
     if (this._modeBridge) {
       this._modeBridge.terminate()
     }
@@ -255,6 +266,11 @@ export class PrismController implements vscode.Disposable {
         })
         const prompt = this._buildChatPrompt(text, systemPrompt)
 
+        // Register session in agent bridge for Office integration
+        const chatSessionId = uuidv4()
+        this.agentBridge.registerSession(chatSessionId, {})
+        this._onDidStartSession.fire({ sessionId: chatSessionId })
+
         // Run in background via ClaudeRunner
         void this._runChatSession(prompt, workspaceRoot, assistantMsg).catch((err: Error) => {
           console.error("[Prism] Chat session error:", err)
@@ -331,6 +347,13 @@ export class PrismController implements vscode.Disposable {
         }
 
         const bridge = this._getOrCreateModeBridge(workspaceRoot)
+
+        // Register session in agent bridge for Office integration
+        const { v4: skillUuid } = await import("uuid")
+        const skillSessionId = skillUuid()
+        this.agentBridge.registerSession(skillSessionId, {})
+        this._onDidStartSession.fire({ sessionId: skillSessionId })
+
         void bridge.runPluginSkill(`/${skillName}${args ? ` ${args}` : ""}`).catch((err: Error) => {
           console.error("[Prism] Plugin skill error:", err)
         })
@@ -685,6 +708,8 @@ export class PrismController implements vscode.Disposable {
           for (const [agentId] of this.agentBridge.getAllContexts()) {
             this.agentBridge.updateStoryContext(agentId, event.storyId, event.storyTitle)
           }
+          // Notify OfficeViewProvider so it can send agentStoryContext to webview
+          this._onDidUpdateStory.fire({ storyId: event.storyId, storyTitle: event.storyTitle })
           break
         case "story_complete":
         case "story_blocked":

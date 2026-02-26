@@ -35,6 +35,11 @@ export interface FurnitureAsset {
   backgroundTiles?: number
 }
 
+export interface AgentStoryContext {
+  storyId: string
+  storyTitle: string
+}
+
 export interface ExtensionMessageState {
   agents: number[]
   selectedAgent: number | null
@@ -44,6 +49,7 @@ export interface ExtensionMessageState {
   subagentCharacters: SubagentCharacter[]
   layoutReady: boolean
   loadedAssets?: { catalog: FurnitureAsset[]; sprites: Record<string, string[][]> }
+  agentStories: Record<number, AgentStoryContext>
 }
 
 function saveAgentSeats(os: OfficeState): void {
@@ -68,6 +74,7 @@ export function useExtensionMessages(
   const [subagentCharacters, setSubagentCharacters] = useState<SubagentCharacter[]>([])
   const [layoutReady, setLayoutReady] = useState(false)
   const [loadedAssets, setLoadedAssets] = useState<{ catalog: FurnitureAsset[]; sprites: Record<string, string[][]> } | undefined>()
+  const [agentStories, setAgentStories] = useState<Record<number, AgentStoryContext>>({})
 
   // Track whether initial layout has been loaded (ref to avoid re-render)
   const layoutReadyRef = useRef(false)
@@ -341,6 +348,11 @@ export function useExtensionMessages(
         } catch (err) {
           console.error(`❌ Webview: Error processing furnitureAssetsLoaded:`, err)
         }
+      } else if (msg.type === 'agentStoryContext') {
+        const id = msg.id as number
+        const storyId = msg.storyId as string
+        const storyTitle = msg.storyTitle as string
+        setAgentStories((prev) => ({ ...prev, [id]: { storyId, storyTitle } }))
       }
     }
     window.addEventListener('message', handler)
@@ -348,5 +360,5 @@ export function useExtensionMessages(
     return () => window.removeEventListener('message', handler)
   }, [getOfficeState])
 
-  return { agents, selectedAgent, agentTools, agentStatuses, subagentTools, subagentCharacters, layoutReady, loadedAssets }
+  return { agents, selectedAgent, agentTools, agentStatuses, subagentTools, subagentCharacters, layoutReady, loadedAssets, agentStories }
 }

@@ -57,10 +57,39 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 	// Cross-window layout sync
 	private _layoutWatcher: LayoutWatcher | null = null;
 
+	// Controller event subscriptions (disposed with the provider)
+	private readonly _subscriptions: vscode.Disposable[] = [];
+
 	constructor(
 		private readonly _context: vscode.ExtensionContext,
 		private readonly _controller?: PrismController,
-	) {}
+	) {
+		if (_controller) {
+			// When a Prism session starts, ensure it's registered in the agent bridge
+			this._subscriptions.push(
+				_controller.onDidStartSession(({ sessionId, storyId, storyTitle }) => {
+					_controller.agentBridge.registerSession(sessionId, { storyId, storyTitle });
+				}),
+			);
+
+			// When the active Spectrum story changes, push agentStoryContext to the webview
+			// for all office agents that have been matched to Prism sessions.
+			this._subscriptions.push(
+				_controller.onDidUpdateStory(() => {
+					for (const [agentId, ctx] of _controller.agentBridge.getAllContexts()) {
+						if (ctx.storyId) {
+							this._webview?.postMessage({
+								type: 'agentStoryContext',
+								id: agentId,
+								storyId: ctx.storyId,
+								storyTitle: ctx.storyTitle ?? '',
+							});
+						}
+					}
+				}),
+			);
+		}
+	}
 
 	private get _extensionUri(): vscode.Uri {
 		return this._context.extensionUri;
@@ -367,6 +396,10 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 	}
 
 	dispose(): void {
+		for (const sub of this._subscriptions) {
+			sub.dispose();
+		}
+		this._subscriptions.length = 0;
 		this._layoutWatcher?.dispose();
 		this._layoutWatcher = null;
 		for (const id of [...this.agents.keys()]) {
