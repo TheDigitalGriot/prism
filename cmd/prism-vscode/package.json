@@ -25,7 +25,6 @@
     "onStartupFinished"
   ],
   "main": "./dist/extension.js",
-  "icon": "media/prism-icon.png",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -155,6 +154,48 @@
         "title": "Refresh Stories",
         "category": "Prism",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "prism.spectrum.start",
+        "title": "Start Spectrum Execution",
+        "category": "Prism",
+        "icon": "$(play)"
+      },
+      {
+        "command": "prism.spectrum.pause",
+        "title": "Pause Spectrum",
+        "category": "Prism",
+        "icon": "$(debug-pause)"
+      },
+      {
+        "command": "prism.spectrum.stop",
+        "title": "Stop Spectrum",
+        "category": "Prism",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "prism.commit",
+        "title": "Prism Commit",
+        "category": "Prism",
+        "icon": "$(git-commit)"
+      },
+      {
+        "command": "prism.decompose",
+        "title": "Decompose Plan to Stories",
+        "category": "Prism",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "prism.handoff",
+        "title": "Create Handoff Document",
+        "category": "Prism",
+        "icon": "$(export)"
+      },
+      {
+        "command": "prism.describePR",
+        "title": "Generate PR Description",
+        "category": "Prism",
+        "icon": "$(git-pull-request)"
       }
     ],
     "menus": {
@@ -226,6 +267,12 @@
         "when": "prism.hasPrismDir"
       },
       {
+        "command": "prism.plan",
+        "key": "ctrl+shift+alt+p",
+        "mac": "cmd+shift+alt+p",
+        "when": "prism.hasPrismDir"
+      },
+      {
         "command": "prism.implement",
         "key": "ctrl+shift+i",
         "mac": "cmd+shift+i",
@@ -238,15 +285,75 @@
         "when": "prism.hasPrismDir"
       },
       {
-        "command": "prism.spectrum",
+        "command": "prism.spectrum.start",
         "key": "ctrl+shift+s",
         "mac": "cmd+shift+s",
         "when": "prism.hasStoriesJson"
       }
     ],
+    "walkthroughs": [
+      {
+        "id": "prism.gettingStarted",
+        "title": "Get Started with Prism",
+        "description": "Set up your AI-powered 4-phase development workflow.",
+        "steps": [
+          {
+            "id": "welcome",
+            "title": "Welcome to Prism",
+            "description": "Prism guides you through Research → Plan → Implement → Validate using Claude AI.\n\n[Open Prism Sidebar](command:prism.openSidebar)",
+            "media": {
+              "svg": "media/prism-icon.svg",
+              "altText": "Prism logo"
+            },
+            "completionEvents": [
+              "onCommand:prism.openSidebar"
+            ]
+          },
+          {
+            "id": "init-prism",
+            "title": "Set Up .prism/ Directory",
+            "description": "Initialize the Prism directory structure in your workspace root to store research, plans, and stories.\n\n[Initialize .prism/](command:prism.initPrism)",
+            "media": {
+              "svg": "media/prism-icon.svg",
+              "altText": "Initialize .prism/"
+            },
+            "completionEvents": [
+              "onCommand:prism.initPrism"
+            ]
+          },
+          {
+            "id": "configure-claude",
+            "title": "Configure Claude",
+            "description": "Enter your Anthropic API key in the Prism sidebar. Keys are stored securely in VS Code's Secret Storage. Alternatively, install the Claude CLI for Spectrum autonomous execution.\n\n[Open Prism Sidebar](command:prism.openSidebar)",
+            "media": {
+              "svg": "media/prism-icon.svg",
+              "altText": "Configure Claude"
+            },
+            "completionEvents": []
+          },
+          {
+            "id": "first-research",
+            "title": "Your First Research",
+            "description": "Start the Research phase to document your codebase. Prism spawns parallel AI agents to map your architecture, patterns, and existing code.\n\n[Start Research](command:prism.research)",
+            "media": {
+              "svg": "media/prism-icon.svg",
+              "altText": "Start Research"
+            },
+            "completionEvents": [
+              "onCommand:prism.research"
+            ]
+          }
+        ]
+      }
+    ],
     "configuration": {
       "title": "Prism",
       "properties": {
+        "prism.claudeApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Anthropic API key for Claude Agent SDK (stored in Settings; prefer using the sidebar to store in SecretStorage)"
+        },
         "prism.defaultModel": {
           "type": "string",
           "enum": [

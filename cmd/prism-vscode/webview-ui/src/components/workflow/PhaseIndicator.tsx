@@ -83,12 +83,15 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
     )
   }
 
+  // Use CSS phase-bar class for glow animation when active (non-idle)
+  const phaseBarClass = currentPhase !== "idle" ? `prism-phase-bar-${currentPhase} prism-phase-transition` : ""
+
   return (
     <div
+      className={phaseBarClass}
       style={{
         padding: "8px 12px",
         backgroundColor: `${meta.color}11`,
-        borderBottom: `2px solid ${meta.color}`,
       }}
     >
       {/* Phase label */}

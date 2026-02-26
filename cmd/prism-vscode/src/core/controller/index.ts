@@ -17,6 +17,7 @@ import { SystemPromptContext } from "../prompts/system-prompt"
 import { ModeBridge, detectSkillTrigger, type ChatMode } from "./prism/mode-bridge"
 import { SKILL_MAP } from "./prism/plugin-bridge"
 import { checkClaudeCli } from "../../claude/runner"
+import { initPrismDirInWorkspace } from "../../prism/init"
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -141,6 +142,15 @@ export class PrismController implements vscode.Disposable {
     registerUnary("UiService", "initializeWebview", async (_message: unknown) => {
       await this._detectPrismDir()
       return { ok: true }
+    })
+
+    /** Initialize .prism/ directory from the welcome screen. */
+    registerUnary("UiService", "initPrism", async (_message: unknown) => {
+      const prismDir = await initPrismDirInWorkspace()
+      if (prismDir) {
+        await this._detectPrismDir()
+      }
+      return { ok: !!prismDir }
     })
 
     // -----------------------------------------------------------------------

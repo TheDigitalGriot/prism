@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react"
 import { usePrismState } from "./context/PrismStateContext"
 import { ChatView } from "./views/ChatView"
 import { SpectrumView } from "./views/SpectrumView"
+import { WelcomeView } from "./components/WelcomeView"
+import { SpectrumServiceClient } from "./services/grpc-client"
 
 // ---------------------------------------------------------------------------
 // View type
@@ -36,6 +38,9 @@ export const App: React.FC = () => {
   const state = usePrismState()
   const [currentView, setCurrentView] = useState<AppView>("chat")
 
+  // True first-time user: no .prism/ dir and no API key
+  const isFirstTimeUser = !state.hasPrismDir && !state.hasApiKey
+
   // Listen for command messages from extension host
   // (e.g. "startSpectrum" triggered by prism.spectrum command or status bar click)
   useEffect(() => {
@@ -49,6 +54,12 @@ export const App: React.FC = () => {
           break
         case "startPhase":
           setCurrentView("chat")
+          break
+        case "spectrumPause":
+          void SpectrumServiceClient.pause()
+          break
+        case "spectrumStop":
+          void SpectrumServiceClient.stop()
           break
         default:
           console.log("[Prism] Received command:", msg.command, msg.payload)
@@ -83,9 +94,20 @@ export const App: React.FC = () => {
     )
   }
 
+  // First-time user: show welcome onboarding
+  if (isFirstTimeUser) {
+    return (
+      <div style={outerStyle}>
+        <WelcomeView />
+      </div>
+    )
+  }
+
   // Default: Chat view (always mounted to preserve state)
   return (
     <div style={outerStyle}>
+      {/* Spectral accent bar at top of sidebar */}
+      <div className="prism-header-accent" />
       {/* Spectrum shortcut pill — only visible when Spectrum is active */}
       {state.hasStoriesJson && state.spectrum?.executionState !== "idle" && (
         <button

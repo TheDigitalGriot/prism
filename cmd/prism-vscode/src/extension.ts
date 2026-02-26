@@ -120,6 +120,36 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       await _provider?.sendCommandToWebview("initPrism")
       await vscode.commands.executeCommand("prism.sidebar.focus")
     }),
+
+    // Spectrum pause/stop
+    vscode.commands.registerCommand("prism.spectrum.pause", async () => {
+      await _provider?.sendCommandToWebview("spectrumPause")
+    }),
+
+    vscode.commands.registerCommand("prism.spectrum.stop", async () => {
+      await _provider?.sendCommandToWebview("spectrumStop")
+    }),
+
+    // Workflow utility commands — invoke Prism plugin skills via CLI
+    vscode.commands.registerCommand("prism.commit", async () => {
+      await _provider?.sendCommandToWebview("runSkill", { skill: "/commit" })
+      await vscode.commands.executeCommand("prism.sidebar.focus")
+    }),
+
+    vscode.commands.registerCommand("prism.decompose", async () => {
+      await _provider?.sendCommandToWebview("runSkill", { skill: "/decompose_plan" })
+      await vscode.commands.executeCommand("prism.sidebar.focus")
+    }),
+
+    vscode.commands.registerCommand("prism.handoff", async () => {
+      await _provider?.sendCommandToWebview("runSkill", { skill: "/create_handoff" })
+      await vscode.commands.executeCommand("prism.sidebar.focus")
+    }),
+
+    vscode.commands.registerCommand("prism.describePR", async () => {
+      await _provider?.sendCommandToWebview("runSkill", { skill: "/describe_pr" })
+      await vscode.commands.executeCommand("prism.sidebar.focus")
+    }),
   )
 
   // ---------------------------------------------------------------------------

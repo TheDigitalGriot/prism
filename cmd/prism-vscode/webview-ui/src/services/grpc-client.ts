@@ -39,6 +39,11 @@ export class UiServiceClient extends ProtoBusClient {
   static initializeWebview(): Promise<InitializeWebviewResponse> {
     return this.makeUnaryRequest("UiService", "initializeWebview", {})
   }
+
+  /** Trigger .prism/ directory initialization from the welcome screen. */
+  static initPrism(): Promise<InitializeWebviewResponse> {
+    return this.makeUnaryRequest("UiService", "initPrism", {})
+  }
 }
 
 // ---------------------------------------------------------------------------
