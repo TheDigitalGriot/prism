@@ -46,6 +46,16 @@ export interface PrismExtensionState {
   hasActiveTask: boolean
 
   // -------------------------------------------------------------------------
+  // Claude CLI Integration (Phase 4)
+  // -------------------------------------------------------------------------
+  /** Current chat mode: "sdk" for Agent SDK, "plugin" for CLI-based skills */
+  chatMode: "sdk" | "plugin"
+  /** The skill currently running in plugin mode (null if SDK mode) */
+  activePluginSkill: string | null
+  /** Whether the CLI is available on PATH */
+  hasClaudeCli: boolean
+
+  // -------------------------------------------------------------------------
   // Spectrum (Phase 5 placeholder)
   // -------------------------------------------------------------------------
   spectrum: SpectrumState
@@ -75,6 +85,9 @@ export const DEFAULT_PRISM_STATE: PrismExtensionState = {
   isChatStreaming: false,
   pendingApprovalToolUseId: undefined,
   hasActiveTask: false,
+  chatMode: "sdk",
+  activePluginSkill: null,
+  hasClaudeCli: false,
   spectrum: {
     executionState: "idle",
     currentIteration: 0,

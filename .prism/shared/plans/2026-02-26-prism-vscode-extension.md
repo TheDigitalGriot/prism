@@ -442,18 +442,18 @@ webview-ui/src/components/workflow/
 
 ### Phase 4.1: Claude CLI Runner
 
-- [ ] Create `src/claude/runner.ts` — CLI process management (adapted from CLI's `claude/runner.go`):
+- [x] Create `src/claude/runner.ts` — CLI process management (adapted from CLI's `claude/runner.go`):
   - `runClaudeSession()` — spawn `claude` with Prism plugin loaded
   - `runClaudeStreaming()` — spawn with `--output-format stream-json` for real-time output
   - Stream-JSON event parsing (tool_use, text, result events)
   - Process lifecycle management (start, pause, kill)
   - Platform-specific termination (taskkill on Windows, kill on Unix)
-- [ ] Create `src/claude/parser.ts` — output parser:
+- [x] Create `src/claude/parser.ts` — output parser:
   - Tool activity extraction (Reading, Editing, Running, Agent, etc.)
   - Phase detection from output keywords
   - Quality gate status detection
   - Signal detection (spectrum protocol)
-- [ ] Create `src/claude/events.ts` — event types:
+- [x] Create `src/claude/events.ts` — event types:
   - `ClaudeStreamEvent` — parsed stream-json events
   - `ToolActivityEvent` — humanized tool activity
   - `PhaseEvent` — workflow phase detection
@@ -469,7 +469,7 @@ src/claude/
 
 ### Phase 4.2: Prism Plugin Command Bridge
 
-- [ ] Create `src/core/controller/prism/plugin-bridge.ts`:
+- [x] Create `src/core/controller/prism/plugin-bridge.ts`:
   - `executeSkill(skillName, args)` — spawn Claude with skill trigger phrase
   - `executeCommand(commandName, args)` — spawn Claude with `/command-name`
   - Map VS Code commands to Prism plugin skills:
@@ -493,12 +493,12 @@ src/core/controller/prism/
 
 ### Phase 4.3: Hybrid Chat Mode
 
-- [ ] Implement mode switching in `PrismController`:
+- [x] Implement mode switching in `PrismController`:
   - **SDK Mode** (default for interactive chat): Direct Claude Agent SDK connection
   - **Plugin Mode** (for workflow commands): Spawns Claude CLI with Prism plugin
   - Seamless switching: when user invokes `/prism-research` in chat, switch to Plugin Mode
   - Output bridging: CLI streaming output → webview chat messages
-- [ ] Create `src/core/controller/prism/mode-bridge.ts`:
+- [x] Create `src/core/controller/prism/mode-bridge.ts`:
   - Convert CLI stream events to chat messages
   - Convert tool activities to tool-use visualization
   - Handle approval delegation (CLI approval → webview approval UI)
@@ -512,9 +512,11 @@ src/core/controller/prism/
 ### Phase 4 Verification
 
 **Automated**:
-- [ ] CLI runner spawns and captures output
-- [ ] Signal parser correctly identifies all signal types
-- [ ] Tool activity parser extracts all tool types
+- [x] CLI runner spawns and captures output
+- [x] Signal parser correctly identifies all signal types (reuses existing signals.ts with 75 passing tests)
+- [x] Tool activity parser extracts all tool types
+- [x] `npm run compile` — zero TypeScript errors
+- [x] `npm run build:webview` — builds successfully (561KB bundle)
 
 **Manual**:
 - [ ] `/prism-research` in chat triggers CLI session with research skill

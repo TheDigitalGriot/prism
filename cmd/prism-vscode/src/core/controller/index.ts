@@ -11,6 +11,9 @@ import { PrismApiHandler, ModelName } from "../api/claude-sdk"
 import { PrismTask } from "../task/index"
 import { PrismChatMessage } from "../api/types"
 import { SystemPromptContext } from "../prompts/system-prompt"
+import { ModeBridge, detectSkillTrigger, type ChatMode } from "./prism/mode-bridge"
+import { SKILL_MAP } from "./prism/plugin-bridge"
+import { checkClaudeCli } from "../../claude/runner"
 
 export type PostMessageFn = (message: unknown) => Promise<void>
 
@@ -36,6 +39,9 @@ export class PrismController implements vscode.Disposable {
   // Chat / Task management
   private _currentTask: PrismTask | undefined
 
+  // Phase 4: Claude CLI Integration
+  private _modeBridge: ModeBridge | undefined
+
   constructor(context: vscode.ExtensionContext) {
     this._context = context
     this._state = { ...DEFAULT_PRISM_STATE }
@@ -44,13 +50,17 @@ export class PrismController implements vscode.Disposable {
     })
     this._registerHandlers()
 
-    // Check if API key exists on startup
+    // Check if API key and Claude CLI exist on startup
     void this._checkApiKey()
+    void this._checkClaudeCli()
   }
 
   dispose(): void {
     this._watcher.dispose()
     this._watcherSub.dispose()
+    if (this._modeBridge) {
+      this._modeBridge.terminate()
+    }
   }
 
   /** Called once by VscodeWebviewProvider after webview resolves. */
@@ -139,6 +149,30 @@ export class PrismController implements vscode.Disposable {
           return { ok: false, error: "Message text is required" }
         }
 
+        const workspaceRoot = this._getWorkspaceRoot()
+        if (!workspaceRoot) {
+          return { ok: false, error: "No workspace folder open" }
+        }
+
+        // ---------------------------------------------------------------
+        // Phase 4: Check if message triggers a Prism plugin skill
+        // ---------------------------------------------------------------
+        const skillTrigger = detectSkillTrigger(text)
+        if (skillTrigger) {
+          // Route to Plugin Mode via ModeBridge
+          if (!this._state.hasClaudeCli) {
+            return { ok: false, error: "Claude CLI not found. Install it to use Prism workflow commands." }
+          }
+          const bridge = this._getOrCreateModeBridge(workspaceRoot)
+          void bridge.runPluginSkill(text).catch((err: Error) => {
+            console.error("[Prism] Plugin skill error:", err)
+          })
+          return { ok: true }
+        }
+
+        // ---------------------------------------------------------------
+        // SDK Mode: interactive chat
+        // ---------------------------------------------------------------
         const apiKey = await getApiKey(this._context)
         if (!apiKey) {
           // Prompt user for API key
@@ -151,11 +185,6 @@ export class PrismController implements vscode.Disposable {
         const finalApiKey = await getApiKey(this._context)
         if (!finalApiKey) {
           return { ok: false, error: "No API key configured" }
-        }
-
-        const workspaceRoot = this._getWorkspaceRoot()
-        if (!workspaceRoot) {
-          return { ok: false, error: "No workspace folder open" }
         }
 
         // Create or reuse task
@@ -194,12 +223,21 @@ export class PrismController implements vscode.Disposable {
       },
     )
 
-    /** Abort the current streaming task. */
+    /** Abort the current streaming task (SDK or Plugin mode). */
     registerUnary("ChatService", "abortTask", async () => {
+      // Abort Plugin mode if running
+      if (this._modeBridge?.isPluginStreaming) {
+        this._modeBridge.terminate()
+      }
+      // Abort SDK mode if running
       if (this._currentTask) {
         this._currentTask.abort()
-        await this.updateState({ isChatStreaming: false })
       }
+      await this.updateState({
+        isChatStreaming: false,
+        chatMode: "sdk",
+        activePluginSkill: null,
+      })
       return { ok: true }
     })
 
@@ -254,6 +292,54 @@ export class PrismController implements vscode.Disposable {
         }
       },
     )
+
+    // -----------------------------------------------------------------------
+    // PluginService (Phase 4: Claude CLI Integration)
+    // -----------------------------------------------------------------------
+
+    /** Execute a Prism plugin skill via Claude CLI. */
+    registerUnary(
+      "PluginService",
+      "executeSkill",
+      async (message: unknown) => {
+        const { skillName, args } = message as { skillName: string; args?: string }
+
+        if (!this._state.hasClaudeCli) {
+          return { ok: false, error: "Claude CLI not found" }
+        }
+
+        const workspaceRoot = this._getWorkspaceRoot()
+        if (!workspaceRoot) {
+          return { ok: false, error: "No workspace folder open" }
+        }
+
+        const bridge = this._getOrCreateModeBridge(workspaceRoot)
+        void bridge.runPluginSkill(`/${skillName}${args ? ` ${args}` : ""}`).catch((err: Error) => {
+          console.error("[Prism] Plugin skill error:", err)
+        })
+
+        return { ok: true }
+      },
+    )
+
+    /** Terminate the running plugin skill. */
+    registerUnary("PluginService", "terminateSkill", async () => {
+      if (this._modeBridge) {
+        this._modeBridge.terminate()
+      }
+      return { ok: true }
+    })
+
+    /** Check if Claude CLI is available. */
+    registerUnary("PluginService", "checkCli", async () => {
+      await this._checkClaudeCli()
+      return { hasClaudeCli: this._state.hasClaudeCli }
+    })
+
+    /** Get the available skill commands. */
+    registerUnary("PluginService", "getSkills", async () => {
+      return { skills: SKILL_MAP }
+    })
   }
 
   // ---------------------------------------------------------------------------
@@ -311,6 +397,33 @@ export class PrismController implements vscode.Disposable {
   private async _checkApiKey(): Promise<void> {
     const apiKey = await getApiKey(this._context)
     await this.updateState({ hasApiKey: !!apiKey })
+  }
+
+  /** Check if Claude CLI is available on PATH. */
+  private async _checkClaudeCli(): Promise<void> {
+    const claudePath = await checkClaudeCli()
+    await this.updateState({ hasClaudeCli: claudePath !== null })
+  }
+
+  /** Lazily create the ModeBridge for hybrid SDK/CLI mode. */
+  private _getOrCreateModeBridge(workspaceRoot: string): ModeBridge {
+    if (!this._modeBridge) {
+      this._modeBridge = new ModeBridge(
+        workspaceRoot,
+        (messages: PrismChatMessage[], isStreaming: boolean, mode: ChatMode) => {
+          void this.updateState({
+            chatMessages: messages,
+            isChatStreaming: isStreaming,
+            chatMode: mode,
+            activePluginSkill: this._modeBridge?.activeSkill ?? null,
+            hasActiveTask: true,
+          })
+        },
+      )
+    } else {
+      this._modeBridge.setProjectDir(workspaceRoot)
+    }
+    return this._modeBridge
   }
 
   private _getWorkspaceRoot(): string | undefined {

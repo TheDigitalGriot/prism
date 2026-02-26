@@ -108,3 +108,42 @@ export class ChatServiceClient extends ProtoBusClient {
     return this.makeUnaryRequest("ChatService", "setApiKey", { apiKey })
   }
 }
+
+// ---------------------------------------------------------------------------
+// PluginService (Phase 4: Claude CLI Integration)
+// ---------------------------------------------------------------------------
+
+export interface PluginResponse {
+  ok: boolean
+  error?: string
+}
+
+export interface CheckCliResponse {
+  hasClaudeCli: boolean
+}
+
+export interface GetSkillsResponse {
+  skills: Record<string, string>
+}
+
+export class PluginServiceClient extends ProtoBusClient {
+  /** Execute a Prism plugin skill via Claude CLI. */
+  static executeSkill(skillName: string, args?: string): Promise<PluginResponse> {
+    return this.makeUnaryRequest("PluginService", "executeSkill", { skillName, args })
+  }
+
+  /** Terminate the running plugin skill. */
+  static terminateSkill(): Promise<PluginResponse> {
+    return this.makeUnaryRequest("PluginService", "terminateSkill", {})
+  }
+
+  /** Check if Claude CLI is available. */
+  static checkCli(): Promise<CheckCliResponse> {
+    return this.makeUnaryRequest("PluginService", "checkCli", {})
+  }
+
+  /** Get the available skill commands and their mappings. */
+  static getSkills(): Promise<GetSkillsResponse> {
+    return this.makeUnaryRequest("PluginService", "getSkills", {})
+  }
+}
