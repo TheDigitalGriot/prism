@@ -6,6 +6,11 @@ import { WorkflowStateMachine, WorkflowTransition } from "./prism/workflow"
 import { StoriesManager } from "./prism/stories"
 import { PrismWatcher } from "../../prism/watcher"
 import { detectPrismDir, detectStoriesPath } from "../../prism/config"
+import { getApiKey, promptForApiKey } from "../api/auth"
+import { PrismApiHandler, ModelName } from "../api/claude-sdk"
+import { PrismTask } from "../task/index"
+import { PrismChatMessage } from "../api/types"
+import { SystemPromptContext } from "../prompts/system-prompt"
 
 export type PostMessageFn = (message: unknown) => Promise<void>
 
@@ -13,12 +18,14 @@ export type PostMessageFn = (message: unknown) => Promise<void>
  * PrismController — central orchestrator for the extension.
  *
  * Manages application state and broadcasts it to all webview subscribers.
- * Integrates the workflow state machine, stories manager, and .prism/ watcher.
+ * Integrates the workflow state machine, stories manager, .prism/ watcher,
+ * and chat task management.
  */
 export class PrismController implements vscode.Disposable {
   private _state: PrismExtensionState
   private _stateSubscribers = new Map<string, StreamResponseFn>()
   private _postMessage: PostMessageFn | null = null
+  private _context: vscode.ExtensionContext
 
   // Prism Core Services
   readonly workflow = new WorkflowStateMachine()
@@ -26,12 +33,19 @@ export class PrismController implements vscode.Disposable {
   private readonly _watcher = new PrismWatcher()
   private readonly _watcherSub: vscode.Disposable
 
-  constructor() {
+  // Chat / Task management
+  private _currentTask: PrismTask | undefined
+
+  constructor(context: vscode.ExtensionContext) {
+    this._context = context
     this._state = { ...DEFAULT_PRISM_STATE }
     this._watcherSub = this._watcher.onDidChange((event) => {
       void this._onPrismFileChange(event.type)
     })
     this._registerHandlers()
+
+    // Check if API key exists on startup
+    void this._checkApiKey()
   }
 
   dispose(): void {
@@ -109,6 +123,137 @@ export class PrismController implements vscode.Disposable {
     registerUnary("WorkflowService", "getAvailableTransitions", async () => {
       return { transitions: this.workflow.availableTransitions() }
     })
+
+    // -----------------------------------------------------------------------
+    // ChatService
+    // -----------------------------------------------------------------------
+
+    /** Send a user message and start/continue the AI task. */
+    registerUnary(
+      "ChatService",
+      "sendMessage",
+      async (message: unknown) => {
+        const { text } = message as { text: string }
+
+        if (!text?.trim()) {
+          return { ok: false, error: "Message text is required" }
+        }
+
+        const apiKey = await getApiKey(this._context)
+        if (!apiKey) {
+          // Prompt user for API key
+          const key = await promptForApiKey(this._context)
+          if (!key) {
+            return { ok: false, error: "Anthropic API key required. Please configure it in Prism settings." }
+          }
+        }
+
+        const finalApiKey = await getApiKey(this._context)
+        if (!finalApiKey) {
+          return { ok: false, error: "No API key configured" }
+        }
+
+        const workspaceRoot = this._getWorkspaceRoot()
+        if (!workspaceRoot) {
+          return { ok: false, error: "No workspace folder open" }
+        }
+
+        // Create or reuse task
+        if (!this._currentTask || this._currentTask.isComplete) {
+          const model = this._state.defaultModel as ModelName
+          const apiHandler = new PrismApiHandler({ apiKey: finalApiKey, model })
+          const systemPromptCtx: SystemPromptContext = {
+            workflowPhase: this._state.workflowPhase,
+            workflowContext: this.workflow.context,
+            workspaceRoot,
+            prismDir: this._state.prismDir,
+            hasPrismDir: this._state.hasPrismDir,
+            hasStoriesJson: this._state.hasStoriesJson,
+          }
+          this._currentTask = new PrismTask({
+            apiHandler,
+            workspaceRoot,
+            systemPromptCtx,
+            onUpdate: (messages: PrismChatMessage[], isStreaming: boolean) => {
+              void this.updateState({
+                chatMessages: messages,
+                isChatStreaming: isStreaming,
+                hasActiveTask: true,
+                pendingApprovalToolUseId: this._currentTask?.['_state']?.pendingApprovalToolUseId,
+              })
+            },
+          })
+        }
+
+        // Run in background (non-blocking)
+        void this._currentTask.sendMessage(text).catch((err: Error) => {
+          console.error("[Prism] Task error:", err)
+        })
+
+        return { ok: true }
+      },
+    )
+
+    /** Abort the current streaming task. */
+    registerUnary("ChatService", "abortTask", async () => {
+      if (this._currentTask) {
+        this._currentTask.abort()
+        await this.updateState({ isChatStreaming: false })
+      }
+      return { ok: true }
+    })
+
+    /** Clear all chat messages (start fresh). */
+    registerUnary("ChatService", "clearMessages", async () => {
+      this._currentTask = undefined
+      await this.updateState({
+        chatMessages: [],
+        isChatStreaming: false,
+        hasActiveTask: false,
+        pendingApprovalToolUseId: undefined,
+      })
+      return { ok: true }
+    })
+
+    /** Approve or deny a pending tool use. */
+    registerUnary(
+      "ChatService",
+      "approveToolUse",
+      async (message: unknown) => {
+        const { toolUseId, approved } = message as { toolUseId: string; approved: boolean }
+
+        if (!this._currentTask) {
+          return { ok: false, error: "No active task" }
+        }
+
+        this._currentTask.resolveApproval(toolUseId, approved)
+        this._currentTask['_messages'].setToolApproval(toolUseId, approved)
+
+        await this.updateState({
+          pendingApprovalToolUseId: undefined,
+          chatMessages: [...this._currentTask.chatMessages],
+        })
+
+        return { ok: true }
+      },
+    )
+
+    /** Set API key. */
+    registerUnary(
+      "ChatService",
+      "setApiKey",
+      async (message: unknown) => {
+        const { apiKey } = message as { apiKey: string }
+        try {
+          const { setApiKey } = await import("../api/auth")
+          await setApiKey(this._context, apiKey)
+          await this.updateState({ hasApiKey: true })
+          return { ok: true }
+        } catch (err) {
+          return { ok: false, error: String(err) }
+        }
+      },
+    )
   }
 
   // ---------------------------------------------------------------------------
@@ -161,6 +306,16 @@ export class PrismController implements vscode.Disposable {
     if (type === "stories" && this._state.storiesPath) {
       await this._loadStories(this._state.storiesPath)
     }
+  }
+
+  private async _checkApiKey(): Promise<void> {
+    const apiKey = await getApiKey(this._context)
+    await this.updateState({ hasApiKey: !!apiKey })
+  }
+
+  private _getWorkspaceRoot(): string | undefined {
+    const folders = vscode.workspace.workspaceFolders
+    return folders?.[0]?.uri.fsPath
   }
 
   /** Remove a state subscriber (called when webview sends grpc_request_cancel). */

@@ -40,3 +40,71 @@ export class UiServiceClient extends ProtoBusClient {
     return this.makeUnaryRequest("UiService", "initializeWebview", {})
   }
 }
+
+// ---------------------------------------------------------------------------
+// WorkflowService
+// ---------------------------------------------------------------------------
+
+export type WorkflowTransition =
+  | "start_research"
+  | "start_plan"
+  | "start_implement"
+  | "start_validate"
+  | "complete"
+  | "reset"
+
+export interface TransitionResponse {
+  ok: boolean
+  newPhase?: string
+  error?: string
+}
+
+export interface AvailableTransitionsResponse {
+  transitions: WorkflowTransition[]
+}
+
+export class WorkflowServiceClient extends ProtoBusClient {
+  static transition(transition: WorkflowTransition): Promise<TransitionResponse> {
+    return this.makeUnaryRequest("WorkflowService", "transition", { transition })
+  }
+
+  static getAvailableTransitions(): Promise<AvailableTransitionsResponse> {
+    return this.makeUnaryRequest("WorkflowService", "getAvailableTransitions", {})
+  }
+}
+
+// ---------------------------------------------------------------------------
+// ChatService
+// ---------------------------------------------------------------------------
+
+export interface ChatResponse {
+  ok: boolean
+  error?: string
+}
+
+export class ChatServiceClient extends ProtoBusClient {
+  /** Send a user message to the AI. */
+  static sendMessage(text: string): Promise<ChatResponse> {
+    return this.makeUnaryRequest("ChatService", "sendMessage", { text })
+  }
+
+  /** Abort the current streaming task. */
+  static abortTask(): Promise<ChatResponse> {
+    return this.makeUnaryRequest("ChatService", "abortTask", {})
+  }
+
+  /** Clear all chat messages. */
+  static clearMessages(): Promise<ChatResponse> {
+    return this.makeUnaryRequest("ChatService", "clearMessages", {})
+  }
+
+  /** Approve or deny a pending tool use. */
+  static approveToolUse(toolUseId: string, approved: boolean): Promise<ChatResponse> {
+    return this.makeUnaryRequest("ChatService", "approveToolUse", { toolUseId, approved })
+  }
+
+  /** Set the Anthropic API key. */
+  static setApiKey(apiKey: string): Promise<ChatResponse> {
+    return this.makeUnaryRequest("ChatService", "setApiKey", { apiKey })
+  }
+}

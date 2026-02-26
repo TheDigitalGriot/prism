@@ -22,7 +22,7 @@ export class VscodeWebviewProvider extends WebviewProvider implements vscode.Web
 
   constructor(private readonly _context: vscode.ExtensionContext) {
     super()
-    this._controller = new PrismController()
+    this._controller = new PrismController(_context)
   }
 
   get controller(): PrismController {

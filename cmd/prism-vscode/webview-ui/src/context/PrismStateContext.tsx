@@ -14,6 +14,31 @@ import { StateServiceClient, UiServiceClient } from "../services/grpc-client"
 
 export type WorkflowPhase = "idle" | "research" | "plan" | "implement" | "validate"
 
+export type PrismMessageType =
+  | "user"
+  | "assistant_text"
+  | "tool_use"
+  | "tool_result"
+  | "completion"
+  | "error"
+
+export interface PrismChatMessage {
+  id: string
+  ts: number
+  type: PrismMessageType
+  text?: string
+  isStreaming?: boolean
+  toolName?: string
+  toolInput?: Record<string, unknown>
+  toolUseId?: string
+  needsApproval?: boolean
+  approved?: boolean
+  toolResult?: string
+  isToolError?: boolean
+  completionText?: string
+  errorText?: string
+}
+
 export interface PrismExtensionState {
   version: string
   didHydrateState: boolean
@@ -24,6 +49,11 @@ export interface PrismExtensionState {
   workflowPhase: WorkflowPhase
   defaultModel: string
   planningModel: string
+  chatMessages: PrismChatMessage[]
+  isChatStreaming: boolean
+  pendingApprovalToolUseId: string | undefined
+  hasActiveTask: boolean
+  hasApiKey: boolean
 }
 
 const DEFAULT_STATE: PrismExtensionState = {
@@ -36,6 +66,11 @@ const DEFAULT_STATE: PrismExtensionState = {
   workflowPhase: "idle",
   defaultModel: "sonnet",
   planningModel: "opus",
+  chatMessages: [],
+  isChatStreaming: false,
+  pendingApprovalToolUseId: undefined,
+  hasActiveTask: false,
+  hasApiKey: false,
 }
 
 // ---------------------------------------------------------------------------
