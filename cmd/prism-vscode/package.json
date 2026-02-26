@@ -42,6 +42,21 @@
           "type": "webview",
           "id": "prism.sidebar",
           "name": "Prism"
+        },
+        {
+          "id": "prism.research",
+          "name": "Research",
+          "when": "prism.hasPrismDir"
+        },
+        {
+          "id": "prism.plans",
+          "name": "Plans",
+          "when": "prism.hasPrismDir"
+        },
+        {
+          "id": "prism.stories",
+          "name": "Stories",
+          "when": "prism.hasStoriesJson"
         }
       ]
     },
@@ -80,8 +95,129 @@
         "command": "prism.initPrism",
         "title": "Initialize .prism/ Directory",
         "category": "Prism"
+      },
+      {
+        "command": "prism.research.open",
+        "title": "Open Research Document",
+        "category": "Prism"
+      },
+      {
+        "command": "prism.research.delete",
+        "title": "Delete Research Document",
+        "category": "Prism",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "prism.research.refresh",
+        "title": "Refresh Research",
+        "category": "Prism",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "prism.plans.open",
+        "title": "Open Plan",
+        "category": "Prism"
+      },
+      {
+        "command": "prism.plans.decompose",
+        "title": "Decompose to Stories",
+        "category": "Prism"
+      },
+      {
+        "command": "prism.plans.implement",
+        "title": "Implement Plan",
+        "category": "Prism"
+      },
+      {
+        "command": "prism.plans.delete",
+        "title": "Delete Plan",
+        "category": "Prism",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "prism.plans.refresh",
+        "title": "Refresh Plans",
+        "category": "Prism",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "prism.stories.execute",
+        "title": "Execute Story",
+        "category": "Prism"
+      },
+      {
+        "command": "prism.stories.markComplete",
+        "title": "Mark Story Complete",
+        "category": "Prism"
+      },
+      {
+        "command": "prism.stories.refresh",
+        "title": "Refresh Stories",
+        "category": "Prism",
+        "icon": "$(refresh)"
       }
     ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "prism.research.refresh",
+          "when": "view == prism.research",
+          "group": "navigation"
+        },
+        {
+          "command": "prism.plans.refresh",
+          "when": "view == prism.plans",
+          "group": "navigation"
+        },
+        {
+          "command": "prism.stories.refresh",
+          "when": "view == prism.stories",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "prism.research.open",
+          "when": "viewItem == researchDoc",
+          "group": "1_open"
+        },
+        {
+          "command": "prism.research.delete",
+          "when": "viewItem == researchDoc",
+          "group": "9_delete"
+        },
+        {
+          "command": "prism.plans.open",
+          "when": "viewItem == planDoc",
+          "group": "1_open"
+        },
+        {
+          "command": "prism.plans.decompose",
+          "when": "viewItem == planDoc",
+          "group": "2_actions"
+        },
+        {
+          "command": "prism.plans.implement",
+          "when": "viewItem == planDoc",
+          "group": "2_actions"
+        },
+        {
+          "command": "prism.plans.delete",
+          "when": "viewItem == planDoc",
+          "group": "9_delete"
+        },
+        {
+          "command": "prism.stories.execute",
+          "when": "viewItem =~ /^story_pending/ || viewItem =~ /^story_in_progress/",
+          "group": "1_actions"
+        },
+        {
+          "command": "prism.stories.markComplete",
+          "when": "viewItem =~ /^story_/",
+          "group": "1_actions"
+        }
+      ]
+    },
     "keybindings": [
       {
         "command": "prism.research",

@@ -36,6 +36,15 @@ export class PrismController implements vscode.Disposable {
   private readonly _watcher = new PrismWatcher()
   private readonly _watcherSub: vscode.Disposable
 
+  // Public events for tree providers / status bar
+  private readonly _onDidChangeFile = new vscode.EventEmitter<{ type: string }>()
+  /** Fires whenever a watched .prism/ file changes (research, plans, stories, etc.). */
+  readonly onDidChangePrismFile: vscode.Event<{ type: string }> = this._onDidChangeFile.event
+
+  private readonly _onDidChangeState = new vscode.EventEmitter<void>()
+  /** Fires after every state update, letting status bar items re-render. */
+  readonly onDidChangeState: vscode.Event<void> = this._onDidChangeState.event
+
   // Chat / Task management
   private _currentTask: PrismTask | undefined
 
@@ -58,6 +67,8 @@ export class PrismController implements vscode.Disposable {
   dispose(): void {
     this._watcher.dispose()
     this._watcherSub.dispose()
+    this._onDidChangeFile.dispose()
+    this._onDidChangeState.dispose()
     if (this._modeBridge) {
       this._modeBridge.terminate()
     }
@@ -392,6 +403,7 @@ export class PrismController implements vscode.Disposable {
     if (type === "stories" && this._state.storiesPath) {
       await this._loadStories(this._state.storiesPath)
     }
+    this._onDidChangeFile.fire({ type })
   }
 
   private async _checkApiKey(): Promise<void> {
@@ -440,6 +452,7 @@ export class PrismController implements vscode.Disposable {
   async updateState(partial: Partial<PrismExtensionState>): Promise<void> {
     this._state = { ...this._state, ...partial }
     await this._broadcastState()
+    this._onDidChangeState.fire()
   }
 
   /** Set workflow phase (force) and broadcast. */

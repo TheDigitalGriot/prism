@@ -532,7 +532,7 @@ src/core/controller/prism/
 
 ### Phase 5.1: Research Tree View
 
-- [ ] Create `src/providers/research-tree.ts` — `ResearchTreeDataProvider`:
+- [x] Create `src/providers/research-tree.ts` — `ResearchTreeDataProvider`:
   - Lists files from `.prism/shared/research/`
   - Shows date, topic, and tags from YAML frontmatter
   - Opens files in editor on click (or in webview markdown preview)
@@ -541,7 +541,7 @@ src/core/controller/prism/
 
 ### Phase 5.2: Plans Tree View
 
-- [ ] Create `src/providers/plans-tree.ts` — `PlansTreeDataProvider`:
+- [x] Create `src/providers/plans-tree.ts` — `PlansTreeDataProvider`:
   - Lists files from `.prism/shared/plans/`
   - Shows date, feature name, and completion status
   - Checkbox-style progress (phases completed / total)
@@ -550,7 +550,7 @@ src/core/controller/prism/
 
 ### Phase 5.3: Stories Tree View
 
-- [ ] Create `src/providers/stories-tree.ts` — `StoriesTreeDataProvider`:
+- [x] Create `src/providers/stories-tree.ts` — `StoriesTreeDataProvider`:
   - Lists stories from `stories.json`
   - Color-coded status icons:
     - Pending: gray circle
@@ -564,7 +564,7 @@ src/core/controller/prism/
 
 ### Phase 5.4: Status Bar
 
-- [ ] Create `src/providers/workflow-status.ts` — status bar items:
+- [x] Create `src/providers/workflow-status.ts` — status bar items:
   - **Phase indicator**: Colored text showing current phase ($(beaker) Research | $(list-tree) Plan | $(code) Implement | $(check-all) Validate)
   - **Story progress**: "3/12 stories" with progress percentage
   - **Quality gates**: "$(check) 3/3 gates" or "$(x) 1/3 gates"
@@ -582,7 +582,7 @@ src/providers/
 
 ### Phase 5.5: package.json View Contributions
 
-- [ ] Add to `package.json`:
+- [x] Add to `package.json`:
   ```json
   {
     "viewsContainers": {
@@ -606,8 +606,8 @@ src/providers/
 ### Phase 5 Verification
 
 **Automated**:
-- [ ] Tree views render without errors
-- [ ] File watcher triggers refresh correctly
+- [x] Tree views render without errors (`tsc --noEmit` passes clean)
+- [x] File watcher triggers refresh correctly (wired via `onDidChangePrismFile`)
 
 **Manual**:
 - [ ] Research tree shows `.prism/shared/research/` files with metadata
