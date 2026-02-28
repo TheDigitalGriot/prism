@@ -39,10 +39,10 @@ Merge the three separate VSCode webviews (Monitor bottom panel tab, Workspaces b
 ## Success Criteria
 
 ### Automated Verification
-- [ ] `cd cmd/prism-vscode/webview-panel && npm run build` — succeeds with all office code merged
+- [x] `cd cmd/prism-vscode/webview-panel && npm run build` — succeeds with all office code merged
 - [x] `cd cmd/prism-vscode && npm run compile` — no TypeScript errors
 - [x] `cd cmd/prism-vscode && npx tsc --noEmit` — passes
-- [ ] `cd cmd/prism-vscode && npm run package` — VSIX packages successfully
+- [x] `cd cmd/prism-vscode && npm run package` — VSIX packages successfully
 
 ### Manual Verification
 - [ ] Single "Prism" tab appears in VS Code bottom panel (NOT separate Monitor/Workspaces tabs)
@@ -741,6 +741,22 @@ cd cmd/prism-vscode && npm run package
 ```
 
 All four must succeed.
+
+## Phase 5 Complete — 2026-02-28
+
+**Changes**:
+- Deleted `MonitorViewProvider.ts` — merged into PrismPanelProvider (Phase 3)
+- Deleted `WorkspacesViewProvider.ts` — merged into PrismPanelProvider (Phase 3)
+- Kept `OfficeViewProvider.ts` as dormant reference
+- No esbuild.mjs changes needed: `copyOfficeAssets()` copies `assets/` → `dist/assets/` (essential for `assetLoader.ts` runtime sprite loading); `copyPanelAssets()` is already a no-op (webview-panel outputs directly to `dist/webview-panel/`)
+
+**Verification**: All 4 commands passed:
+- webview-panel build: 76 modules, 331.82 kB
+- `npm run compile`: tsc clean, esbuild success, assets copied
+- `npx tsc --noEmit`: no type errors
+- `npm run package`: all builds complete (check-types, build:panel, build:webview, esbuild --production)
+
+---
 
 ### Step 5.4: Save plan to .prism/shared/plans/
 
