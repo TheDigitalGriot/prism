@@ -1,5 +1,11 @@
 import React from "react"
 import { useLayout, type LeftPanel, type RightPanel } from "../../context/LayoutContext"
+import { StoriesPanel } from "../panels/StoriesPanel"
+import { FilesPanel } from "../panels/FilesPanel"
+import { GitPanel } from "../panels/GitPanel"
+import { MonitorPanel } from "../panels/MonitorPanel"
+import { SpectrumPanel } from "../panels/SpectrumPanel"
+import { WorkspacePanel } from "../panels/WorkspacePanel"
 
 // ---------------------------------------------------------------------------
 // Collapse chevron icon
@@ -109,19 +115,22 @@ export const ContentRail: React.FC<ContentRailProps> = ({ side }) => {
         </button>
       </div>
 
-      {/* Panel content — placeholder for Phase 2 */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "var(--prism-fg-disabled)",
-          fontSize: 11,
-          overflow: "hidden",
-        }}
-      >
-        {PANEL_TITLES[panel]}
+      {/* Panel content */}
+      <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        {side === "left" && (
+          <>
+            {panel === "files" && <FilesPanel />}
+            {panel === "stories" && <StoriesPanel />}
+            {panel === "git" && <GitPanel />}
+          </>
+        )}
+        {side === "right" && (
+          <>
+            {panel === "monitor" && <MonitorPanel />}
+            {panel === "spectrum" && <SpectrumPanel />}
+            {panel === "workspace" && <WorkspacePanel />}
+          </>
+        )}
       </div>
     </div>
   )

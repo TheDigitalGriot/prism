@@ -541,14 +541,16 @@ switch (leftPanel) {
 ```
 
 ### Checkpoint 4
-- [ ] StoriesPanel shows stories from PrismStateContext with status dots and step counts
-- [ ] Clicking a story opens it as a center tab (StoryDetailView placeholder)
-- [ ] FilesPanel shows mock file tree with expand/collapse
-- [ ] Clicking a file opens FileContentView placeholder as tab
-- [ ] GitPanel shows mock staged/unstaged with status badges
-- [ ] "View Git Graph" button opens GitGraphView placeholder as tab
-- [ ] CollapsibleSection chevron rotates on toggle
-- [ ] `npx tsc --noEmit` passes
+- [x] StoriesPanel shows stories from PrismStateContext with status dots and step counts
+- [x] Clicking a story opens it as a center tab (StoryDetailView placeholder)
+- [x] FilesPanel shows mock file tree with expand/collapse
+- [x] Clicking a file opens FileContentView placeholder as tab
+- [x] GitPanel shows mock staged/unstaged with status badges
+- [x] "View Git Graph" button opens GitGraphView placeholder as tab
+- [x] CollapsibleSection chevron rotates on toggle
+- [x] `npx tsc --noEmit` passes
+
+**Checkpoint**: [x] Phase 4 complete
 
 ---
 
@@ -605,12 +607,14 @@ switch (rightPanel) {
 ```
 
 ### Checkpoint 5
-- [ ] MonitorPanel shows system health and completed story history
-- [ ] SpectrumPanel renders all spectrum controls and they work (start/pause/stop)
-- [ ] ProgressBar and SignalStatus display correctly in the rail
-- [ ] WorkspacePanel shows current project card
-- [ ] All three panels switch correctly from activity bar
-- [ ] `npx tsc --noEmit` passes
+- [x] MonitorPanel shows system health and completed story history
+- [x] SpectrumPanel renders all spectrum controls and they work (start/pause/stop)
+- [x] ProgressBar and SignalStatus display correctly in the rail
+- [x] WorkspacePanel shows current project card
+- [x] All three panels switch correctly from activity bar
+- [x] `npx tsc --noEmit` passes
+
+**Checkpoint**: [x] Phase 5 complete
 
 ---
 
