@@ -40,7 +40,7 @@ Merge the three separate VSCode webviews (Monitor bottom panel tab, Workspaces b
 
 ### Automated Verification
 - [ ] `cd cmd/prism-vscode/webview-panel && npm run build` — succeeds with all office code merged
-- [ ] `cd cmd/prism-vscode && npm run compile` — no TypeScript errors
+- [x] `cd cmd/prism-vscode && npm run compile` — no TypeScript errors
 - [ ] `cd cmd/prism-vscode && npx tsc --noEmit` — passes
 - [ ] `cd cmd/prism-vscode && npm run package` — VSIX packages successfully
 
@@ -584,7 +584,20 @@ dispose(): void { ... }  // clean up all watchers, timers, agents
 cd cmd/prism-vscode && npm run compile
 ```
 
-**Checkpoint**: Extension compiles with PrismPanelProvider. No TypeScript errors.
+**Checkpoint**: [x] Extension compiles with PrismPanelProvider. No TypeScript errors.
+
+## Phase 3 Complete — 2026-02-28
+
+**Changes**:
+- Created `cmd/prism-vscode/src/hosts/vscode/PrismPanelProvider.ts` (~570 lines)
+- VIEW_ID = 'prism.mainView'
+- Merged all state from OfficeViewProvider (agent lifecycle, layout watcher, spectrum map), MonitorViewProvider (gates, outputChannel), WorkspacesViewProvider (cachedWorkspacesState, activeAgents), plus unified panel state (dividerPos, activeView)
+- Single `_handleMessage` routes all 20+ message types: panel-level, monitor, workspaces, office
+- `_sendInitialState` sends initialState, pushes monitorState, refreshes workspaces, runs full office init (restore agents, load settings, load assets, send layout, start layout watcher, send existing agents)
+- HTML generation: no data-view injection, blob: in img-src CSP, dev mode checks .vite-panel-port
+- All helpers ported faithfully from original providers
+
+**Verification**: `npm run compile` → tsc --noEmit passed, esbuild success, both webview builds succeeded (76 + 61 modules)
 
 ---
 
