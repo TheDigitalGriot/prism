@@ -1,6 +1,9 @@
 import React, { useEffect } from "react"
 import { useLayout } from "../../context/LayoutContext"
 import { ChatView } from "../../views/ChatView"
+import { StoryDetailView } from "../../views/StoryDetailView"
+import { FileContentView } from "../../views/FileContentView"
+import { GitGraphView } from "../../views/GitGraphView"
 import { SpectrumServiceClient } from "../../services/grpc-client"
 import { HeaderBar } from "./HeaderBar"
 import { ActivityBar } from "./ActivityBar"
@@ -10,11 +13,41 @@ import { FloatingChatPill } from "./FloatingChatPill"
 import { BottomPanel } from "./BottomPanel"
 import { BottomStatusBar } from "./BottomStatusBar"
 
+// ---------------------------------------------------------------------------
+// Center content router
+// ---------------------------------------------------------------------------
+
+const CenterContent: React.FC = () => {
+  const { tabs, activeTabId } = useLayout()
+  const activeTab = tabs.find((t) => t.id === activeTabId)
+
+  // Keep ChatView always mounted (hidden when not active) for scroll position preservation
+  const showChat = !activeTab || activeTab.type === "chat"
+
+  return (
+    <>
+      <div style={{ height: "100%", display: showChat ? "block" : "none" }}>
+        <ChatView />
+      </div>
+      {!showChat && activeTab && (
+        <div style={{ height: "100%", overflow: "auto" }}>
+          {activeTab.type === "story" && (
+            <StoryDetailView storyId={activeTab.id.replace("story:", "")} />
+          )}
+          {activeTab.type === "file" && (
+            <FileContentView filePath={activeTab.id.replace("file:", "")} />
+          )}
+          {activeTab.type === "git" && <GitGraphView />}
+        </div>
+      )}
+    </>
+  )
+}
+
 /**
  * AppShell — VS Code-style IDE layout.
  *
- * Phase 2: Real activity bars + collapsible rails. ChatView mounted in center.
- * Panels are placeholder content — real panels come in later phases.
+ * Phase 3: Tab system + center content router. Views switch based on active tab.
  */
 export const AppShell: React.FC = () => {
   const layout = useLayout()
@@ -82,8 +115,8 @@ export const AppShell: React.FC = () => {
 
           {/* Center content area */}
           <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
-            {/* Phase 1: ChatView always rendered in center */}
-            <ChatView />
+            {/* Center content router — renders view based on active tab */}
+            <CenterContent />
 
             {/* Floating chat pill (visible when not on chat tab) */}
             <FloatingChatPill />

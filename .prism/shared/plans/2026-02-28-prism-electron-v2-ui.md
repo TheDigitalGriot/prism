@@ -470,13 +470,13 @@ Based on `activeTabId`, render the correct view:
 - `transition: bottom 0.2s ease`
 
 ### Checkpoint 3
-- [ ] Chat tab is always first, always pinned (no close button)
-- [ ] Clicking a tab switches center content
-- [ ] Tab close works; closing active tab falls back to chat
-- [ ] FloatingChatPill appears when not on chat tab
-- [ ] Clicking pill returns to chat
-- [ ] Pill shifts up when bottom panel opens
-- [ ] `npx tsc --noEmit` passes
+- [x] Chat tab is always first, always pinned (no close button)
+- [x] Clicking a tab switches center content
+- [x] Tab close works; closing active tab falls back to chat
+- [x] FloatingChatPill appears when not on chat tab
+- [x] Clicking pill returns to chat
+- [x] Pill shifts up when bottom panel opens
+- [x] `npx tsc --noEmit` passes
 
 ---
 
