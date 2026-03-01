@@ -1224,14 +1224,39 @@ From `cmd/prism-vscode/webview-office/src/components/`:
 
 ### Verification
 #### Automated
-- [ ] `cd packages/prism-core && npm run typecheck` passes
-- [ ] `cd cmd/prism-electron && npm run make` succeeds
+- [x] `cd packages/prism-core && npm run typecheck` passes
+- [x] `cd cmd/prism-electron && npm run make` succeeds
 
 #### Manual
 - [ ] Electron: workspace panel shows current project with real branch name
 - [ ] Electron: sibling projects with `.prism/` appear in the list
 - [ ] Electron: story counts are accurate
 - [ ] Electron: "Add Workspace" adds a folder to the list
+
+**Checkpoint**: [x] Phase 15 complete
+
+### Phase 15 Session Notes — 2026-03-01
+- Created `packages/prism-core/src/workspace/types.ts`: `EpicInfo`, `ProjectInfo`, `WorktreeInfo`, `WorkspacesState` interfaces extracted from `PrismPanelProvider.ts` lines 73-107
+- Created `packages/prism-core/src/workspace/discovery.ts`: pure Node.js implementation of:
+  - `parseStoriesJson(filePath)` — reads stories.json, counts total/complete
+  - `parsePorcelainWorktrees(output)` — parses `git worktree list --porcelain` output
+  - `buildProjectInfo(projectPath, currentResolved)` — git branch + stories + epics aggregation
+  - `discoverProjects(workspaceRoot)` — sibling dir scan + global workspaces.json
+  - `addToGlobalWorkspaces(projectPath)` — writes to `~/.prism/workspaces.json`
+  - `listWorktrees(workspaceRoot)` — git worktree list via exec
+- Updated `ElectronIPCBridge.ts`: added 4 IPC handlers using `@prism-core/workspace/discovery`:
+  - `prism:discoverProjects` → returns `ProjectInfo[]`
+  - `prism:addWorkspace` → adds path to global registry
+  - `prism:browseAndAddWorkspace` → dialog + add to registry
+  - `prism:listWorktrees` → returns `WorktreeInfo[]`
+  - All handlers added to `dispose()` cleanup
+- Rewrote `WorkspacePanel.tsx`: replaced mock data with live IPC calls:
+  - Projects section: shows all discovered projects with branch, progress bar, epics, current badge
+  - "Add Workspace" button: opens native dir dialog via `prism:browseAndAddWorkspace`
+  - Worktrees section: shows real git worktrees with branch, HEAD hash, MAIN/PRUNABLE badges
+  - Auto-refreshes when `prismDir` changes (new project opened) and on `prism:fileChange` events
+  - Refresh buttons for both sections
+- `prism-core typecheck` and `npm run make` both pass cleanly
 
 ---
 

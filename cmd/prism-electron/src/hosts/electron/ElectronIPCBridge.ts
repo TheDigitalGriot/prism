@@ -9,6 +9,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import { BrowserWindow, app, ipcMain, dialog, shell } from 'electron'
 import { handleGrpcRequest } from '@prism-core/core/controller/grpc-handler'
+import { discoverProjects, addToGlobalWorkspaces, listWorktrees } from '@prism-core/workspace/discovery'
 import { ElectronPrismController } from './ElectronPrismController'
 import { ElectronOfficeProvider } from '../../office/ElectronOfficeProvider'
 
@@ -282,6 +283,55 @@ export class ElectronIPCBridge {
         return null
       }
     })
+
+    // Workspace discovery
+    ipcMain.handle('prism:discoverProjects', async () => {
+      const projectDir = this._currentProjectDir
+      if (!projectDir) return []
+      try {
+        return await discoverProjects(projectDir)
+      } catch {
+        return []
+      }
+    })
+
+    // Add a path to the global workspaces registry
+    ipcMain.handle('prism:addWorkspace', async (_event, projectPath: string) => {
+      try {
+        await addToGlobalWorkspaces(projectPath)
+        return { ok: true }
+      } catch (err) {
+        return { ok: false, error: String(err) }
+      }
+    })
+
+    // Open a project folder via native dialog and add to global registry
+    ipcMain.handle('prism:browseAndAddWorkspace', async () => {
+      const result = await dialog.showOpenDialog(this.mainWindow, {
+        properties: ['openDirectory'],
+        title: 'Add Workspace',
+      })
+      if (!result.canceled && result.filePaths[0]) {
+        try {
+          await addToGlobalWorkspaces(result.filePaths[0])
+          return { ok: true, path: result.filePaths[0] }
+        } catch (err) {
+          return { ok: false, error: String(err) }
+        }
+      }
+      return { ok: false }
+    })
+
+    // List git worktrees for the current project
+    ipcMain.handle('prism:listWorktrees', async () => {
+      const projectDir = this._currentProjectDir
+      if (!projectDir) return []
+      try {
+        return await listWorktrees(projectDir)
+      } catch {
+        return []
+      }
+    })
   }
 
   /** Called from native menu "Open Project…" action. */
@@ -307,6 +357,10 @@ export class ElectronIPCBridge {
     ipcMain.removeHandler('prism:fileTree')
     ipcMain.removeHandler('prism:saveLayoutState')
     ipcMain.removeHandler('prism:loadLayoutState')
+    ipcMain.removeHandler('prism:discoverProjects')
+    ipcMain.removeHandler('prism:addWorkspace')
+    ipcMain.removeHandler('prism:browseAndAddWorkspace')
+    ipcMain.removeHandler('prism:listWorktrees')
     this._officeProvider.dispose()
     this.controller.dispose()
   }
