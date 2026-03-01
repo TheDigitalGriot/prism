@@ -647,8 +647,25 @@ Phases within a group are sequential. Groups 2-3 (UI Package) can start after Ph
 
 ### Verification
 #### Automated
-- [ ] `cd packages/prism-ui && npm run typecheck` passes
-- [ ] No `--vscode-` or `--prism-editor-` CSS variables remain in moved files (only `--prism-*`)
+- [x] `cd packages/prism-ui && npm run typecheck` passes
+- [x] No `--vscode-` or `--prism-editor-` CSS variables remain in moved files (only `--prism-*`)
+
+**Checkpoint**: [x] Phase 7 complete
+
+### Phase 7 Session Notes — 2026-03-01
+- **Adaptation**: Plan file names didn't match actual codebase. Mapped to actual files:
+  - `ChatInput.tsx` → `ChatTextArea.tsx`, `ChatMessage.tsx` → `ChatRow.tsx`, `SpectrumPanel.tsx` → `SpectrumView.tsx` + spectrum sub-components
+  - `ResearchView.tsx`, `PlansView.tsx`, `hooks/useGrpcClient.ts`, `hooks/useMessages.ts` do not exist — skipped
+- **Files created** in `packages/prism-ui/src/`:
+  - `services/grpc-client-base.ts` (WebviewTransport pattern), `services/grpc-client.ts`
+  - `context/PrismStateContext.tsx`
+  - `views/ChatView.tsx`, `views/SpectrumView.tsx`
+  - `components/WelcomeView.tsx` (merged with optional `onOpenProject` prop)
+  - `components/common/MarkdownBlock.tsx` (merged with optional `onLinkClick` prop)
+  - `components/chat/ChatRow.tsx`, `ChatTextArea.tsx`, `ToolRow.tsx`
+  - `components/workflow/PhaseIndicator.tsx`
+  - `components/spectrum/SpectrumControls.tsx`, `ProgressBar.tsx`, `StoryList.tsx`, `ActivityLog.tsx`, `SignalStatus.tsx`
+- **Deletion deferred**: Original files remain in both platform webview-ui dirs to keep builds working; deletion happens in Phase 8 after imports are wired
 
 ---
 
