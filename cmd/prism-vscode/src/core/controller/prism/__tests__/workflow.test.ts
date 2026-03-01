@@ -2,8 +2,8 @@
  * Unit tests for src/core/controller/prism/workflow.ts
  */
 
-import { WorkflowStateMachine } from "../workflow"
-import { WorkflowPhase } from "../../../../shared/types"
+import { WorkflowStateMachine } from "@prism-core/core/controller/prism/workflow"
+import { WorkflowPhase } from "@prism-core/shared/types"
 
 describe("WorkflowStateMachine", () => {
   let sm: WorkflowStateMachine

@@ -11,8 +11,8 @@
  */
 
 import * as vscode from "vscode"
-import { WorkflowPhase, WORKFLOW_PHASE_COLORS, WORKFLOW_PHASE_LABELS } from "../shared/types"
-import type { SpectrumState } from "../core/controller/prism/spectrum"
+import { WorkflowPhase, WORKFLOW_PHASE_COLORS, WORKFLOW_PHASE_LABELS } from "@prism-core/shared/types"
+import type { SpectrumState } from "@prism-core/core/controller/prism/spectrum"
 
 // ---------------------------------------------------------------------------
 // Phase icons (VS Code Codicon names)

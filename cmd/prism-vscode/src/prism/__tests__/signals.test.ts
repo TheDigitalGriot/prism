@@ -8,7 +8,7 @@ import {
   containsSignal,
   extractStoryID,
   parseStoryAnnouncement,
-} from "../signals"
+} from "@prism-core/prism/signals"
 
 // ---------------------------------------------------------------------------
 // parseSignal — mirrors TestParseSignal

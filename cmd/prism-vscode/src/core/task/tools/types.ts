@@ -4,7 +4,7 @@
  * Defines the tool enum, handler interface, and tool definitions
  * that are sent to the Claude API.
  */
-import { ApiToolDefinition } from "../../api/types"
+import { ApiToolDefinition } from "@prism-core/core/api/types"
 
 // ---------------------------------------------------------------------------
 // Tool enum

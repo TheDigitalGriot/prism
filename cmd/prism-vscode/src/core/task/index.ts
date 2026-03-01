@@ -14,7 +14,7 @@
  */
 import * as vscode from "vscode"
 import { PrismApiHandler, ModelName } from "../api/claude-sdk"
-import { PrismChatMessage, ApiStreamChunk } from "../api/types"
+import { PrismChatMessage, ApiStreamChunk } from "@prism-core/core/api/types"
 import { MessageState } from "./message-state"
 import { TaskState, createInitialTaskState } from "./task-state"
 import { ToolCoordinator } from "./tools/coordinator"

@@ -1,6 +1,6 @@
 import type * as vscode from 'vscode';
 import type { AgentState } from './types';
-import { PERMISSION_TIMER_DELAY_MS } from './constants';
+import { PERMISSION_TIMER_DELAY_MS } from '@prism-core/office/constants';
 
 export function clearAgentActivity(
 	agent: AgentState | undefined,

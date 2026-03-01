@@ -22,7 +22,7 @@ import {
   CHAR_FRAME_H,
   CHAR_FRAMES_PER_ROW,
   CHAR_COUNT,
-} from './constants';
+} from '@prism-core/office/constants';
 
 export interface FurnitureAsset {
   id: string;

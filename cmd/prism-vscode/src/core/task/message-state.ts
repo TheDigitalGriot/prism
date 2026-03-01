@@ -6,7 +6,7 @@
  * - chatMessages: displayed in the webview UI (richer display format)
  */
 import { v4 as uuidv4 } from "uuid"
-import { ApiConversationMessage, PrismChatMessage } from "../api/types"
+import { ApiConversationMessage, PrismChatMessage } from "@prism-core/core/api/types"
 
 export class MessageState {
   /** API-level conversation history. Sent to Claude on each request. */

@@ -4,8 +4,8 @@
  * Composes the base Prism context with phase-specific instructions
  * and workspace state to create a tailored system prompt per request.
  */
-import { WorkflowPhase } from "../../shared/types"
-import { WorkflowContext } from "../controller/prism/workflow"
+import { WorkflowPhase } from "@prism-core/shared/types"
+import { WorkflowContext } from "@prism-core/core/controller/prism/workflow"
 import { RESEARCH_PHASE_INSTRUCTIONS } from "./phase-research"
 import { PLAN_PHASE_INSTRUCTIONS } from "./phase-plan"
 import { IMPLEMENT_PHASE_INSTRUCTIONS } from "./phase-implement"

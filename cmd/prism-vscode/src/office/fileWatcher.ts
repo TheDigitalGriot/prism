@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import type { AgentState } from './types';
 import { cancelWaitingTimer, cancelPermissionTimer, clearAgentActivity } from './timerManager';
 import { processTranscriptLine } from './transcriptParser';
-import { FILE_WATCHER_POLL_INTERVAL_MS, PROJECT_SCAN_INTERVAL_MS } from './constants';
+import { FILE_WATCHER_POLL_INTERVAL_MS, PROJECT_SCAN_INTERVAL_MS } from '@prism-core/office/constants';
 
 export function startFileWatching(
 	agentId: number,

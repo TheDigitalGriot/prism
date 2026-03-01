@@ -5,7 +5,6 @@
     "module": "CommonJS",
     "moduleResolution": "Node",
     "outDir": "./out",
-    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -13,7 +12,8 @@
     "sourceMap": true,
     "declaration": false,
     "paths": {
-      "@shared/*": ["./src/shared/*"]
+      "@shared/*": ["./src/shared/*"],
+      "@prism-core/*": ["../../packages/prism-core/src/*"]
     }
   },
   "include": ["src/**/*"],

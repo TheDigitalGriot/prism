@@ -2,8 +2,8 @@ import * as vscode from "vscode"
 import * as path from "path"
 import { WebviewProvider, getNonce } from "../../core/webview/WebviewProvider"
 import { PrismController } from "../../core/controller/index"
-import { handleGrpcRequest } from "../../core/controller/grpc-handler"
-import { WebviewToExtMessage } from "../../shared/PrismMessage"
+import { handleGrpcRequest } from "@prism-core/core/controller/grpc-handler"
+import { WebviewToExtMessage } from "@prism-core/shared/PrismMessage"
 
 /**
  * VS Code WebviewViewProvider implementation.

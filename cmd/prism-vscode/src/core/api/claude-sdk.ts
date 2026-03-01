@@ -10,7 +10,7 @@ import {
   ApiStreamChunk,
   ApiConversationMessage,
   ApiToolDefinition,
-} from "./types"
+} from "@prism-core/core/api/types"
 
 // ---------------------------------------------------------------------------
 // Model IDs

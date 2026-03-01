@@ -15,8 +15,8 @@ import { EventEmitter } from "events"
 import { PluginBridge, BridgeEvent } from "./plugin-bridge"
 import { StoriesManager } from "./stories"
 import { ProgressFile } from "../../../prism/progress"
-import { parseSignal } from "../../../prism/signals"
-import { ToolActivity } from "../../../claude/events"
+import { parseSignal } from "@prism-core/prism/signals"
+import { ToolActivity } from "@prism-core/claude/events"
 
 // ---------------------------------------------------------------------------
 // Event types

@@ -25,7 +25,7 @@ import {
   buildSpectrumPrompt,
   checkClaudeCli,
 } from "../../../claude/runner"
-import { ClaudeRunnerEvent, ToolActivity } from "../../../claude/events"
+import { ClaudeRunnerEvent, ToolActivity } from "@prism-core/claude/events"
 
 // ---------------------------------------------------------------------------
 // Types

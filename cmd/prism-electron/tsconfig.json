@@ -12,7 +12,7 @@
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "paths": {
-      "@prism-core/*": ["../prism-vscode/src/*"]
+      "@prism-core/*": ["../../packages/prism-core/src/*", "../prism-vscode/src/*"]
     }
   },
   "include": ["src/**/*"],

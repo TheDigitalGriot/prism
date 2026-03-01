@@ -17,12 +17,12 @@ import { EventEmitter } from "events"
 import {
   ClaudeRunnerEvent,
   ToolActivity,
-} from "./events"
+} from "@prism-core/claude/events"
 import {
   parseStreamEvent,
   extractToolActivity,
   OutputParser,
-} from "./parser"
+} from "@prism-core/claude/parser"
 import { progressPathFromStories } from "../prism/progress"
 
 // ---------------------------------------------------------------------------

@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import type { AgentState, PersistedAgent } from './types';
 import { cancelWaitingTimer, cancelPermissionTimer } from './timerManager';
 import { startFileWatching, readNewLines, ensureProjectScan } from './fileWatcher';
-import { JSONL_POLL_INTERVAL_MS, TERMINAL_NAME_PREFIX, WORKSPACE_KEY_AGENTS, WORKSPACE_KEY_AGENT_SEATS } from './constants';
+import { JSONL_POLL_INTERVAL_MS, TERMINAL_NAME_PREFIX, WORKSPACE_KEY_AGENTS, WORKSPACE_KEY_AGENT_SEATS } from '@prism-core/office/constants';
 import { migrateAndLoadLayout } from './layoutPersistence';
 
 export function getProjectDirPath(cwd?: string): string | null {

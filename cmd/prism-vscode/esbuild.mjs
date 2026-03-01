@@ -50,6 +50,9 @@ const extensionConfig = {
   define: {
     "process.env.IS_PRODUCTION": production ? '"true"' : '"false"',
   },
+  alias: {
+    "@prism-core": join(__dirname, "../../packages/prism-core/src"),
+  },
 }
 
 function copyOfficeAssets() {

@@ -25,7 +25,7 @@ import {
 	sendCharacterSpritesToWebview,
 	loadDefaultLayout,
 } from '../../office/assetLoader';
-import { WORKSPACE_KEY_AGENT_SEATS, GLOBAL_KEY_SOUND_ENABLED } from '../../office/constants';
+import { WORKSPACE_KEY_AGENT_SEATS, GLOBAL_KEY_SOUND_ENABLED } from '@prism-core/office/constants';
 import { writeLayoutToFile, readLayoutFromFile, watchLayoutFile } from '../../office/layoutPersistence';
 import type { LayoutWatcher } from '../../office/layoutPersistence';
 import type { PrismController } from '../../core/controller';

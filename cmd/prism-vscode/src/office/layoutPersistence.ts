@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import type { ExtensionContext } from 'vscode';
-import { LAYOUT_FILE_POLL_INTERVAL_MS, WORKSPACE_KEY_LAYOUT } from './constants';
+import { LAYOUT_FILE_POLL_INTERVAL_MS, WORKSPACE_KEY_LAYOUT } from '@prism-core/office/constants';
 
 export interface LayoutWatcher {
 	markOwnWrite(): void;

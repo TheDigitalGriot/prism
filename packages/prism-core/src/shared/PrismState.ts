@@ -1,5 +1,5 @@
 import { WorkflowPhase } from "./types"
-import type { Story, Plan } from "../prism/stories"
+import type { Story, Plan } from "../prism/types"
 import type { WorkflowContext } from "../core/controller/prism/workflow"
 import type { SpectrumState } from "../core/controller/prism/spectrum"
 import type { PrismChatMessage } from "../core/api/types"

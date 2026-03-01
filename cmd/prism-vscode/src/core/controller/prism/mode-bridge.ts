@@ -18,9 +18,9 @@
  */
 
 import { v4 as uuidv4 } from "uuid"
-import { PrismChatMessage } from "../../api/types"
+import { PrismChatMessage } from "@prism-core/core/api/types"
 import { PluginBridge, BridgeEvent, SKILL_MAP, isWorkflowSkill } from "./plugin-bridge"
-import { ToolActivity } from "../../../claude/events"
+import { ToolActivity } from "@prism-core/claude/events"
 
 // ---------------------------------------------------------------------------
 // Types
