@@ -1579,8 +1579,8 @@ From `cmd/prism-vscode/webview-office/src/components/`:
 
 ### Verification
 #### Automated
-- [ ] `cd packages/prism-core && npm run typecheck` passes
-- [ ] `cd cmd/prism-electron && npm run make` succeeds
+- [x] `cd packages/prism-core && npm run typecheck` passes
+- [x] `cd cmd/prism-electron && npm run make` succeeds
 
 #### Manual
 - [ ] Electron: can enter an API key and it persists across restarts
@@ -1588,6 +1588,16 @@ From `cmd/prism-vscode/webview-office/src/components/`:
 - [ ] Electron: deleting the key works
 - [ ] Electron: validation rejects malformed keys
 - [ ] VSCode: existing API key functionality still works
+
+**Checkpoint**: [x] Phase 19 complete
+
+### Phase 19 Session Notes — 2026-03-01
+- Created `packages/prism-core/src/core/api/auth.ts`: `SecretStore` interface + `API_KEY_SECRET` constant + `isValidApiKey`, `getApiKey`, `setApiKey`, `deleteApiKey` helpers (all platform-agnostic)
+- Created `cmd/prism-electron/src/auth/ElectronSecretStorage.ts`: implements `SecretStore` via Electron `safeStorage` API (OS keychain/DPAPI/libsecret); stores encrypted JSON map at `<userData>/prism-secrets.enc`; fallback to plaintext JSON when `safeStorage.isEncryptionAvailable()` is false (headless/CI environments)
+- Refactored `cmd/prism-vscode/src/core/api/auth.ts`: now delegates to shared helpers via a `makeVscodeStore(context)` adapter; wraps `context.secrets.*` returns in `Promise.resolve()` to satisfy `SecretStore` interface (VSCode Secrets returns `Thenable<T>`, not `Promise<T>`)
+- Updated `cmd/prism-electron/src/hosts/electron/ElectronIPCBridge.ts`: added `ElectronSecretStorage` instance; added 4 IPC handlers: `prism:getApiKey`, `prism:setApiKey`, `prism:deleteApiKey`, `prism:validateApiKey`; all 4 added to `dispose()` cleanup
+- Rewrote `cmd/prism-electron/webview-ui/src/components/layout/HeaderBar.tsx`: added `ApiKeyPopover` component (status indicator, password input, Save/Delete buttons, inline validation, outside-click and Escape key dismissal); added ⚙ gear button to HeaderBar right side that toggles the popover; popover loads current key status on mount via `prism:getApiKey` IPC
+- `prism-core typecheck` and `npm run make` both pass cleanly
 
 ---
 

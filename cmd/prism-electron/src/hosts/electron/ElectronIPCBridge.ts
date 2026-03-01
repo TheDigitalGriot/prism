@@ -14,8 +14,10 @@ import { createWorktree, deleteWorktree } from '@prism-core/workspace/worktrees'
 import { executeGate } from '@prism-core/workspace/qualityGates'
 import { discoverResearch } from '@prism-core/workspace/research'
 import { discoverPlans } from '@prism-core/workspace/plans'
+import { getApiKey, setApiKey, deleteApiKey, isValidApiKey } from '@prism-core/core/api/auth'
 import { ElectronPrismController } from './ElectronPrismController'
 import { ElectronOfficeProvider } from '../../office/ElectronOfficeProvider'
+import { ElectronSecretStorage } from '../../auth/ElectronSecretStorage'
 
 // ---------------------------------------------------------------------------
 // File tree helper
@@ -66,10 +68,12 @@ async function buildFileTree(
 export class ElectronIPCBridge {
   private controller: ElectronPrismController
   private _officeProvider: ElectronOfficeProvider
+  private _secretStorage: ElectronSecretStorage
   private _currentProjectDir: string | undefined
 
   constructor(private mainWindow: BrowserWindow) {
     this.controller = new ElectronPrismController()
+    this._secretStorage = new ElectronSecretStorage()
     this.controller.setPostMessageFn(async (msg) => {
       mainWindow.webContents.send('grpc_response', msg)
     })
@@ -404,6 +408,38 @@ export class ElectronIPCBridge {
         return []
       }
     })
+
+    // ── API key management (Phase 19) ────────────────────────────────────────
+
+    ipcMain.handle('prism:getApiKey', async () => {
+      try {
+        return await getApiKey(this._secretStorage)
+      } catch {
+        return undefined
+      }
+    })
+
+    ipcMain.handle('prism:setApiKey', async (_event, key: string) => {
+      try {
+        await setApiKey(this._secretStorage, key)
+        return { ok: true }
+      } catch (err) {
+        return { ok: false, error: String(err) }
+      }
+    })
+
+    ipcMain.handle('prism:deleteApiKey', async () => {
+      try {
+        await deleteApiKey(this._secretStorage)
+        return { ok: true }
+      } catch (err) {
+        return { ok: false, error: String(err) }
+      }
+    })
+
+    ipcMain.handle('prism:validateApiKey', (_event, key: string) => {
+      return isValidApiKey(key)
+    })
   }
 
   /** Called from native menu "Open Project…" action. */
@@ -439,6 +475,10 @@ export class ElectronIPCBridge {
     ipcMain.removeHandler('prism:executeGate')
     ipcMain.removeHandler('prism:getResearch')
     ipcMain.removeHandler('prism:getPlans')
+    ipcMain.removeHandler('prism:getApiKey')
+    ipcMain.removeHandler('prism:setApiKey')
+    ipcMain.removeHandler('prism:deleteApiKey')
+    ipcMain.removeHandler('prism:validateApiKey')
     this._officeProvider.dispose()
     this.controller.dispose()
   }

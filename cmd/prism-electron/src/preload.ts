@@ -56,6 +56,7 @@ declare global {
       invoke: (channel: string, data?: unknown) => Promise<unknown>;
       officeMessage: (callback: (msg: unknown) => void) => () => void;
       officeAction: (msg: unknown) => void;
+      // Auth channels (Phase 19) — via invoke('prism:getApiKey') etc.
     };
   }
 }
