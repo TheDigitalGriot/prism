@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { writeFileSync } from 'fs'
 import type { Plugin, ViteDevServer } from 'vite'
+import path from 'path'
 
 /** Write the dev server port to a file so the extension host can read it. */
 const writePortPlugin = (): Plugin => ({
@@ -19,6 +20,11 @@ const writePortPlugin = (): Plugin => ({
 
 export default defineConfig({
   plugins: [react(), writePortPlugin()],
+  resolve: {
+    alias: {
+      '@prism-ui': path.resolve(__dirname, '../../../packages/prism-ui/src'),
+    },
+  },
   build: {
     outDir: '../dist/webview-panel',
     emptyOutDir: true,

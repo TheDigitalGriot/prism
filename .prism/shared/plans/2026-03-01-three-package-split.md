@@ -816,13 +816,15 @@ From `cmd/prism-vscode/webview-office/src/components/`:
 
 ### Verification
 #### Automated
-- [ ] `cd packages/prism-ui && npm run typecheck` passes
-- [ ] `cd cmd/prism-vscode/webview-office && npm run build` succeeds
-- [ ] `cd cmd/prism-vscode/webview-panel && npm run build` succeeds
+- [x] `cd packages/prism-ui && npm run typecheck` passes
+- [x] `cd cmd/prism-vscode/webview-office && npm run build` succeeds
+- [x] `cd cmd/prism-vscode/webview-panel && npm run build` succeeds
 
 #### Manual
 - [ ] VSCode: office renders in sidebar with sprites, agents walk, furniture editor works
 - [ ] VSCode: office renders in bottom panel identically
+
+**Checkpoint**: [x] Phase 9 complete
 
 ---
 
