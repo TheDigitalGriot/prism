@@ -14,6 +14,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'webview-ui/src'),
+      '@prism-ui': path.resolve(__dirname, '../../packages/prism-ui/src'),
     },
   },
   define: {

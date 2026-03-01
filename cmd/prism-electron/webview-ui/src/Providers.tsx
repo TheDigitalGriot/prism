@@ -1,5 +1,5 @@
 import React from "react"
-import { PrismStateContextProvider } from "./context/PrismStateContext"
+import { PrismStateContextProvider } from "@prism-ui/context/PrismStateContext"
 import { LayoutProvider } from "./context/LayoutContext"
 
 /**

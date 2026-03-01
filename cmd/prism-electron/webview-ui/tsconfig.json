@@ -16,7 +16,8 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@prism-ui/*": ["../../../packages/prism-ui/src/*"]
     }
   },
   "include": ["src"]

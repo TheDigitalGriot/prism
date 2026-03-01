@@ -53,6 +53,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
+      "@prism-ui": resolve(__dirname, "../../../packages/prism-ui/src"),
     },
   },
 

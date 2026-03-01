@@ -1,5 +1,5 @@
 import React from "react"
-import { usePrismState } from "../context/PrismStateContext"
+import { usePrismState } from "@prism-ui/context/PrismStateContext"
 import { StatusDot } from "../components/common/StatusDot"
 import type { StatusDotStatus } from "../components/common/StatusDot"
 

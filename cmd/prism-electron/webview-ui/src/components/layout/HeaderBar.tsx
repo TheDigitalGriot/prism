@@ -1,6 +1,6 @@
 import React from "react"
-import { usePrismState, type WorkflowPhase } from "../../context/PrismStateContext"
-import { WorkflowServiceClient, type WorkflowTransition } from "../../services/grpc-client"
+import { usePrismState, type WorkflowPhase } from "@prism-ui/context/PrismStateContext"
+import { WorkflowServiceClient, type WorkflowTransition } from "@prism-ui/services/grpc-client"
 import { StatusDot } from "../common/StatusDot"
 
 // ---------------------------------------------------------------------------

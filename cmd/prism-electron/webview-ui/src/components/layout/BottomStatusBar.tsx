@@ -1,6 +1,6 @@
 import React from "react"
 import { useLayout } from "../../context/LayoutContext"
-import { usePrismState } from "../../context/PrismStateContext"
+import { usePrismState } from "@prism-ui/context/PrismStateContext"
 
 // ---------------------------------------------------------------------------
 // Prism logo icon (small triangle prism shape)

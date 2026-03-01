@@ -1,6 +1,6 @@
 import React from "react"
-import { usePrismState } from "./context/PrismStateContext"
-import { WelcomeView } from "./components/WelcomeView"
+import { usePrismState } from "@prism-ui/context/PrismStateContext"
+import { WelcomeView } from "@prism-ui/components/WelcomeView"
 import { AppShell } from "./components/layout/AppShell"
 
 // ---------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 import React from "react"
-import { usePrismState } from "../../context/PrismStateContext"
+import { usePrismState } from "@prism-ui/context/PrismStateContext"
 import { useLayout } from "../../context/LayoutContext"
 import { CollapsibleSection } from "../common/CollapsibleSection"
 import { StatusDot } from "../common/StatusDot"

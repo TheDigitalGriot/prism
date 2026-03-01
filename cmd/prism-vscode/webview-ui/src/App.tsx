@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react"
-import { usePrismState } from "./context/PrismStateContext"
-import { ChatView } from "./views/ChatView"
-import { SpectrumView } from "./views/SpectrumView"
-import { WelcomeView } from "./components/WelcomeView"
-import { SpectrumServiceClient } from "./services/grpc-client"
+import { usePrismState } from "@prism-ui/context/PrismStateContext"
+import { ChatView } from "@prism-ui/views/ChatView"
+import { SpectrumView } from "@prism-ui/views/SpectrumView"
+import { WelcomeView } from "@prism-ui/components/WelcomeView"
+import { SpectrumServiceClient } from "@prism-ui/services/grpc-client"
 
 // ---------------------------------------------------------------------------
 // View type
@@ -22,7 +22,7 @@ const LoadingView: React.FC = () => (
       alignItems: "center",
       justifyContent: "center",
       height: "100%",
-      color: "var(--vscode-descriptionForeground)",
+      color: "var(--prism-fg-muted)",
       fontSize: "13px",
     }}
   >
@@ -79,10 +79,10 @@ export const App: React.FC = () => {
     flexDirection: "column",
     height: "100vh",
     overflow: "hidden",
-    backgroundColor: "var(--vscode-sideBar-background)",
-    color: "var(--vscode-foreground)",
-    fontFamily: "var(--vscode-font-family)",
-    fontSize: "var(--vscode-font-size, 13px)",
+    backgroundColor: "var(--prism-bg)",
+    color: "var(--prism-fg)",
+    fontFamily: "var(--prism-font-family)",
+    fontSize: "var(--prism-font-size)",
   }
 
   // Spectrum dashboard view

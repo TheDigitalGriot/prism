@@ -718,14 +718,28 @@ Phases within a group are sequential. Groups 2-3 (UI Package) can start after Ph
 
 ### Verification
 #### Automated
-- [ ] `cd cmd/prism-vscode/webview-ui && npm run build` succeeds
-- [ ] `cd cmd/prism-electron && npm run make` succeeds
-- [ ] No duplicate component files exist in both webview-ui directories
+- [x] `cd cmd/prism-vscode/webview-ui && npm run build` succeeds
+- [x] `cd cmd/prism-electron && npm run make` succeeds
+- [x] No duplicate component files exist in both webview-ui directories
 
 #### Manual
 - [ ] VSCode: all views render with correct colors (CSS bridge maps --prism-* → --vscode-*)
 - [ ] Electron: all views render with correct colors (CSS bridge uses hardcoded hex)
 - [ ] Both: chat, Spectrum panel, research/plans views all work
+
+**Checkpoint**: [x] Phase 8 complete
+
+### Phase 8 Session Notes — 2026-03-01
+- Added `@prism-ui/*` alias to both webview-ui tsconfigs and vite configs
+- Added `@prism-ui` alias to `cmd/prism-electron/vite.renderer.config.mts` (Forge renderer config)
+- Added `data-platform="vscode"` / `data-platform="electron"` to both index.html #root elements
+- Updated both `main.tsx` files to import bridge.css + call `setTransport()` before render
+- Updated VSCode `App.tsx`: all shared imports → `@prism-ui/*`, outerStyle CSS vars → `--prism-*`
+- Updated Electron `App.tsx`: WelcomeView + context → `@prism-ui/*`
+- Updated both `Providers.tsx`: `PrismStateContextProvider` → `@prism-ui/context/PrismStateContext`
+- Updated electron-specific files: AppShell, HeaderBar, BottomStatusBar, SpectrumPanel, MonitorPanel, WorkspacePanel, StoriesPanel, StoryDetailView — all shared imports → `@prism-ui/*`
+- Deleted 16 duplicate files from each webview-ui/src directory (32 total deletions)
+- Both builds succeeded: VSCode (529 modules) and Electron (549 modules + Forge make)
 
 ---
 

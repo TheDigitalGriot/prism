@@ -1,11 +1,11 @@
 import React from "react"
-import { usePrismState } from "../../context/PrismStateContext"
+import { usePrismState } from "@prism-ui/context/PrismStateContext"
 import { CollapsibleSection } from "../common/CollapsibleSection"
-import { SpectrumControls } from "../spectrum/SpectrumControls"
-import { ProgressBar } from "../spectrum/ProgressBar"
-import { SignalStatus } from "../spectrum/SignalStatus"
-import { StoryList } from "../spectrum/StoryList"
-import { ActivityLog } from "../spectrum/ActivityLog"
+import { SpectrumControls } from "@prism-ui/components/spectrum/SpectrumControls"
+import { ProgressBar } from "@prism-ui/components/spectrum/ProgressBar"
+import { SignalStatus } from "@prism-ui/components/spectrum/SignalStatus"
+import { StoryList } from "@prism-ui/components/spectrum/StoryList"
+import { ActivityLog } from "@prism-ui/components/spectrum/ActivityLog"
 
 // ---------------------------------------------------------------------------
 // Execution state labels
