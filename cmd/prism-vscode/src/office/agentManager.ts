@@ -2,11 +2,17 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import * as vscode from 'vscode';
-import type { AgentState, PersistedAgent } from './types';
-import { cancelWaitingTimer, cancelPermissionTimer } from './timerManager';
+import type { AgentState, PersistedAgent, PostMessageFn } from '@prism-core/office/types';
+import { cancelWaitingTimer, cancelPermissionTimer } from '@prism-core/office/timerManager';
 import { startFileWatching, readNewLines, ensureProjectScan } from './fileWatcher';
-import { JSONL_POLL_INTERVAL_MS, TERMINAL_NAME_PREFIX, WORKSPACE_KEY_AGENTS, WORKSPACE_KEY_AGENT_SEATS } from '@prism-core/office/constants';
-import { migrateAndLoadLayout } from './layoutPersistence';
+import {
+	JSONL_POLL_INTERVAL_MS,
+	TERMINAL_NAME_PREFIX,
+	WORKSPACE_KEY_AGENTS,
+	WORKSPACE_KEY_AGENT_SEATS,
+	WORKSPACE_KEY_LAYOUT,
+} from '@prism-core/office/constants';
+import { readLayoutFromFile, writeLayoutToFile } from '@prism-core/office/layoutPersistence';
 
 export function getProjectDirPath(cwd?: string): string | null {
 	const workspacePath = cwd || vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
@@ -27,7 +33,7 @@ export function launchNewTerminal(
 	permissionTimers: Map<number, ReturnType<typeof setTimeout>>,
 	jsonlPollTimers: Map<number, ReturnType<typeof setInterval>>,
 	projectScanTimerRef: { current: ReturnType<typeof setInterval> | null },
-	webview: vscode.Webview | undefined,
+	postMessage: PostMessageFn | undefined,
 	persistAgentsFn: () => void,
 ): void {
 	const idx = nextTerminalIndexRef.current++;
@@ -74,12 +80,12 @@ export function launchNewTerminal(
 	activeAgentIdRef.current = id;
 	persistAgentsFn();
 	console.log(`[Prism Office] Agent ${id}: created for terminal ${terminal.name}`);
-	webview?.postMessage({ type: 'agentCreated', id });
+	postMessage?.({ type: 'agentCreated', id });
 
 	ensureProjectScan(
 		projectDir, knownJsonlFiles, projectScanTimerRef, activeAgentIdRef,
 		nextAgentIdRef, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers,
-		webview, persistAgentsFn,
+		postMessage, persistAgentsFn,
 	);
 
 	// Poll for the specific JSONL file to appear
@@ -89,8 +95,8 @@ export function launchNewTerminal(
 				console.log(`[Prism Office] Agent ${id}: found JSONL file ${path.basename(agent.jsonlFile)}`);
 				clearInterval(pollTimer);
 				jsonlPollTimers.delete(id);
-				startFileWatching(id, agent.jsonlFile, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers, webview);
-				readNewLines(id, agents, waitingTimers, permissionTimers, webview);
+				startFileWatching(id, agent.jsonlFile, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers, postMessage);
+				readNewLines(id, agents, waitingTimers, permissionTimers, postMessage);
 			}
 		} catch { /* file may not exist yet */ }
 	}, JSONL_POLL_INTERVAL_MS);
@@ -139,9 +145,10 @@ export function persistAgents(
 	for (const agent of agents.values()) {
 		// Skip headless Spectrum agents — they're transient and have no terminal to restore
 		if (!agent.terminalRef) continue;
+		const terminal = agent.terminalRef as vscode.Terminal;
 		persisted.push({
 			id: agent.id,
-			terminalName: agent.terminalRef.name,
+			terminalName: terminal.name,
 			jsonlFile: agent.jsonlFile,
 			projectDir: agent.projectDir,
 		});
@@ -165,7 +172,7 @@ export function createHeadlessAgent(
 	pollingTimers: Map<number, ReturnType<typeof setInterval>>,
 	waitingTimers: Map<number, ReturnType<typeof setTimeout>>,
 	permissionTimers: Map<number, ReturnType<typeof setTimeout>>,
-	webview: vscode.Webview | undefined,
+	postMessage: PostMessageFn | undefined,
 ): number {
 	const expectedFile = path.join(projectDir, `${sessionId}.jsonl`);
 	knownJsonlFiles.add(expectedFile);
@@ -189,7 +196,7 @@ export function createHeadlessAgent(
 	};
 
 	agents.set(id, agent);
-	webview?.postMessage({ type: 'agentCreated', id });
+	postMessage?.({ type: 'agentCreated', id });
 	console.log(`[Prism Office] Headless agent ${id}: created for Spectrum session ${sessionId}`);
 
 	// Poll until Claude creates the JSONL transcript file
@@ -199,8 +206,8 @@ export function createHeadlessAgent(
 				console.log(`[Prism Office] Headless agent ${id}: found JSONL file ${path.basename(agent.jsonlFile)}`);
 				clearInterval(pollTimer);
 				jsonlPollTimers.delete(id);
-				startFileWatching(id, agent.jsonlFile, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers, webview);
-				readNewLines(id, agents, waitingTimers, permissionTimers, webview);
+				startFileWatching(id, agent.jsonlFile, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers, postMessage);
+				readNewLines(id, agents, waitingTimers, permissionTimers, postMessage);
 			}
 		} catch { /* file may not exist yet */ }
 	}, JSONL_POLL_INTERVAL_MS);
@@ -222,7 +229,7 @@ export function restoreAgents(
 	jsonlPollTimers: Map<number, ReturnType<typeof setInterval>>,
 	projectScanTimerRef: { current: ReturnType<typeof setInterval> | null },
 	activeAgentIdRef: { current: number | null },
-	webview: vscode.Webview | undefined,
+	postMessage: PostMessageFn | undefined,
 	doPersist: () => void,
 ): void {
 	const persisted = context.workspaceState.get<PersistedAgent[]>(WORKSPACE_KEY_AGENTS, []);
@@ -273,7 +280,7 @@ export function restoreAgents(
 			if (fs.existsSync(p.jsonlFile)) {
 				const stat = fs.statSync(p.jsonlFile);
 				agent.fileOffset = stat.size;
-				startFileWatching(p.id, p.jsonlFile, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers, webview);
+				startFileWatching(p.id, p.jsonlFile, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers, postMessage);
 			} else {
 				// Poll for the file to appear
 				const pollTimer = setInterval(() => {
@@ -284,7 +291,7 @@ export function restoreAgents(
 							jsonlPollTimers.delete(p.id);
 							const stat = fs.statSync(agent.jsonlFile);
 							agent.fileOffset = stat.size;
-							startFileWatching(p.id, agent.jsonlFile, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers, webview);
+							startFileWatching(p.id, agent.jsonlFile, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers, postMessage);
 						}
 					} catch { /* file may not exist yet */ }
 				}, JSONL_POLL_INTERVAL_MS);
@@ -309,7 +316,7 @@ export function restoreAgents(
 		ensureProjectScan(
 			restoredProjectDir, knownJsonlFiles, projectScanTimerRef, activeAgentIdRef,
 			nextAgentIdRef, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers,
-			webview, doPersist,
+			postMessage, doPersist,
 		);
 	}
 }
@@ -317,9 +324,9 @@ export function restoreAgents(
 export function sendExistingAgents(
 	agents: Map<number, AgentState>,
 	context: vscode.ExtensionContext,
-	webview: vscode.Webview | undefined,
+	postMessage: PostMessageFn | undefined,
 ): void {
-	if (!webview) return;
+	if (!postMessage) return;
 	const agentIds: number[] = [];
 	for (const id of agents.keys()) {
 		agentIds.push(id);
@@ -330,24 +337,24 @@ export function sendExistingAgents(
 	const agentMeta = context.workspaceState.get<Record<string, { palette?: number; seatId?: string }>>(WORKSPACE_KEY_AGENT_SEATS, {});
 	console.log(`[Prism Office] sendExistingAgents: agents=${JSON.stringify(agentIds)}, meta=${JSON.stringify(agentMeta)}`);
 
-	webview.postMessage({
+	postMessage({
 		type: 'existingAgents',
 		agents: agentIds,
 		agentMeta,
 	});
 
-	sendCurrentAgentStatuses(agents, webview);
+	sendCurrentAgentStatuses(agents, postMessage);
 }
 
 export function sendCurrentAgentStatuses(
 	agents: Map<number, AgentState>,
-	webview: vscode.Webview | undefined,
+	postMessage: PostMessageFn | undefined,
 ): void {
-	if (!webview) return;
+	if (!postMessage) return;
 	for (const [agentId, agent] of agents) {
 		// Re-send active tools
 		for (const [toolId, status] of agent.activeToolStatuses) {
-			webview.postMessage({
+			postMessage({
 				type: 'agentToolStart',
 				id: agentId,
 				toolId,
@@ -356,7 +363,7 @@ export function sendCurrentAgentStatuses(
 		}
 		// Re-send waiting status
 		if (agent.isWaiting) {
-			webview.postMessage({
+			postMessage({
 				type: 'agentStatus',
 				id: agentId,
 				status: 'waiting',
@@ -365,15 +372,34 @@ export function sendCurrentAgentStatuses(
 	}
 }
 
+/**
+ * Send layout to webview.
+ * Handles VSCode-specific migration from workspaceState if no layout file exists yet.
+ */
 export function sendLayout(
 	context: vscode.ExtensionContext,
-	webview: vscode.Webview | undefined,
+	postMessage: PostMessageFn | undefined,
 	defaultLayout?: Record<string, unknown> | null,
 ): void {
-	if (!webview) return;
-	const layout = migrateAndLoadLayout(context, defaultLayout);
-	webview.postMessage({
-		type: 'layoutLoaded',
-		layout,
-	});
+	if (!postMessage) return;
+
+	let layout = readLayoutFromFile();
+	if (!layout) {
+		// VSCode-specific: migrate from workspaceState if it exists
+		const fromState = context.workspaceState.get<Record<string, unknown>>(WORKSPACE_KEY_LAYOUT);
+		if (fromState) {
+			console.log('[Prism Office] Migrating layout from workspace state to file');
+			writeLayoutToFile(fromState);
+			void context.workspaceState.update(WORKSPACE_KEY_LAYOUT, undefined);
+			layout = fromState;
+		} else if (defaultLayout) {
+			console.log('[Prism Office] Writing bundled default layout to file');
+			writeLayoutToFile(defaultLayout);
+			layout = defaultLayout;
+		}
+	} else {
+		console.log('[Prism Office] Layout loaded from file');
+	}
+
+	postMessage({ type: 'layoutLoaded', layout });
 }

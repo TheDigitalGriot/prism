@@ -7,8 +7,8 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as vscode from 'vscode';
 import { PNG } from 'pngjs';
+import type { PostMessageFn } from './types';
 import {
   PNG_ALPHA_THRESHOLD,
   WALL_PIECE_WIDTH,
@@ -22,7 +22,7 @@ import {
   CHAR_FRAME_H,
   CHAR_FRAMES_PER_ROW,
   CHAR_COUNT,
-} from '@prism-core/office/constants';
+} from './constants';
 
 export interface FurnitureAsset {
   id: string;
@@ -236,13 +236,13 @@ export async function loadWallTiles(
 }
 
 /**
- * Send wall tiles to webview
+ * Send wall tiles to webview via PostMessageFn
  */
 export function sendWallTilesToWebview(
-  webview: vscode.Webview,
+  postMessage: PostMessageFn,
   wallTiles: LoadedWallTiles,
 ): void {
-  webview.postMessage({
+  postMessage({
     type: 'wallTilesLoaded',
     sprites: wallTiles.sprites,
   });
@@ -284,7 +284,7 @@ export async function loadFloorTiles(
           if (a < PNG_ALPHA_THRESHOLD) {
             row.push('');
           } else {
-            row.push(`#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`.toUpperCase());
+            row.push(`#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '00')}`.toUpperCase());
           }
         }
         sprite.push(row);
@@ -301,13 +301,13 @@ export async function loadFloorTiles(
 }
 
 /**
- * Send floor tiles to webview
+ * Send floor tiles to webview via PostMessageFn
  */
 export function sendFloorTilesToWebview(
-  webview: vscode.Webview,
+  postMessage: PostMessageFn,
   floorTiles: LoadedFloorTiles,
 ): void {
-  webview.postMessage({
+  postMessage({
     type: 'floorTilesLoaded',
     sprites: floorTiles.sprites,
   });
@@ -390,13 +390,13 @@ export async function loadCharacterSprites(
 }
 
 /**
- * Send character sprites to webview
+ * Send character sprites to webview via PostMessageFn
  */
 export function sendCharacterSpritesToWebview(
-  webview: vscode.Webview,
+  postMessage: PostMessageFn,
   charSprites: LoadedCharacterSprites,
 ): void {
-  webview.postMessage({
+  postMessage({
     type: 'characterSpritesLoaded',
     characters: charSprites.characters,
   });
@@ -404,10 +404,10 @@ export function sendCharacterSpritesToWebview(
 }
 
 /**
- * Send loaded assets to webview
+ * Send loaded furniture assets to webview via PostMessageFn
  */
 export function sendAssetsToWebview(
-  webview: vscode.Webview,
+  postMessage: PostMessageFn,
   assets: LoadedAssets,
 ): void {
   console.log('[AssetLoader] Converting sprites Map to object...');
@@ -417,7 +417,7 @@ export function sendAssetsToWebview(
   }
 
   console.log(`[AssetLoader] Posting furnitureAssetsLoaded message with ${assets.catalog.length} assets`);
-  webview.postMessage({
+  postMessage({
     type: 'furnitureAssetsLoaded',
     catalog: assets.catalog,
     sprites: spritesObj,

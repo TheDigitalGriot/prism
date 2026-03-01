@@ -1,8 +1,9 @@
-import type * as vscode from 'vscode';
+/** Synchronous fire-and-forget function to post a message to the webview/renderer. */
+export type PostMessageFn = (msg: unknown) => void;
 
 export interface AgentState {
 	id: number;
-	terminalRef: vscode.Terminal | null;  // null for headless Spectrum agents
+	terminalRef: unknown | null;  // platform-specific handle (vscode.Terminal, ChildProcess, etc.)
 	projectDir: string;
 	jsonlFile: string;
 	fileOffset: number;

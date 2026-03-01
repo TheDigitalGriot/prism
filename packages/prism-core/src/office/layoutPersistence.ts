@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import type { ExtensionContext } from 'vscode';
-import { LAYOUT_FILE_POLL_INTERVAL_MS, WORKSPACE_KEY_LAYOUT } from '@prism-core/office/constants';
+import { LAYOUT_FILE_POLL_INTERVAL_MS } from './constants';
 
 export interface LayoutWatcher {
 	markOwnWrite(): void;
@@ -42,14 +41,14 @@ export function writeLayoutToFile(layout: Record<string, unknown>): void {
 }
 
 /**
- * Load layout with migration from workspace state:
+ * Load layout using only file I/O (no platform-specific storage).
  * 1. If file exists → return it
- * 2. Else if workspace state has layout → write to file, clear workspace state, return it
- * 3. Else if defaultLayout provided → write to file, return it
- * 4. Else → return null
+ * 2. Else if defaultLayout provided → write to file, return it
+ * 3. Else → return null
+ *
+ * VSCode-specific migration from workspaceState is handled in OfficeViewProvider.ts.
  */
-export function migrateAndLoadLayout(
-	context: ExtensionContext,
+export function loadLayout(
 	defaultLayout?: Record<string, unknown> | null,
 ): Record<string, unknown> | null {
 	// 1. Try file
@@ -59,23 +58,14 @@ export function migrateAndLoadLayout(
 		return fromFile;
 	}
 
-	// 2. Migrate from workspace state
-	const fromState = context.workspaceState.get<Record<string, unknown>>(WORKSPACE_KEY_LAYOUT);
-	if (fromState) {
-		console.log('[Prism Office] Migrating layout from workspace state to file');
-		writeLayoutToFile(fromState);
-		void context.workspaceState.update(WORKSPACE_KEY_LAYOUT, undefined);
-		return fromState;
-	}
-
-	// 3. Use bundled default
+	// 2. Use bundled default
 	if (defaultLayout) {
 		console.log('[Prism Office] Writing bundled default layout to file');
 		writeLayoutToFile(defaultLayout);
 		return defaultLayout;
 	}
 
-	// 4. Nothing
+	// 3. Nothing
 	return null;
 }
 

@@ -879,12 +879,14 @@ From `cmd/prism-vscode/webview-office/src/components/`:
 
 ### Verification
 #### Automated
-- [ ] `cd packages/prism-core && npm run typecheck` passes
-- [ ] `cd cmd/prism-vscode && npm run compile` succeeds
-- [ ] Zero `import * as vscode` in `packages/prism-core/`
+- [x] `cd packages/prism-core && npm run typecheck` passes
+- [x] `cd cmd/prism-vscode && npm run compile` succeeds
+- [x] Zero `import * as vscode` in `packages/prism-core/`
 
 #### Manual
 - [ ] VSCode: office agents still track correctly, tools display, permissions show
+
+**Checkpoint**: [x] Phase 10 complete
 
 ---
 

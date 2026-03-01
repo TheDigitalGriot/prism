@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import type { AgentState } from '../../office/types';
+import type { AgentState, PostMessageFn } from '@prism-core/office/types';
 import {
 	launchNewTerminal,
 	removeAgent,
@@ -24,10 +24,10 @@ import {
 	loadCharacterSprites,
 	sendCharacterSpritesToWebview,
 	loadDefaultLayout,
-} from '../../office/assetLoader';
+} from '@prism-core/office/assetLoader';
 import { WORKSPACE_KEY_AGENT_SEATS, GLOBAL_KEY_SOUND_ENABLED } from '@prism-core/office/constants';
-import { writeLayoutToFile, readLayoutFromFile, watchLayoutFile } from '../../office/layoutPersistence';
-import type { LayoutWatcher } from '../../office/layoutPersistence';
+import { writeLayoutToFile, readLayoutFromFile, watchLayoutFile } from '@prism-core/office/layoutPersistence';
+import type { LayoutWatcher } from '@prism-core/office/layoutPersistence';
 import type { PrismController } from '../../core/controller';
 
 export class OfficeViewProvider implements vscode.WebviewViewProvider {
@@ -81,7 +81,7 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 								sessionId, projectDir,
 								this.nextAgentId, this.agents, this.knownJsonlFiles,
 								this.jsonlPollTimers, this.fileWatchers, this.pollingTimers,
-								this.waitingTimers, this.permissionTimers, this._webview,
+								this.waitingTimers, this.permissionTimers, this._postMessage,
 							);
 							this._spectrumAgentMap.set(sessionId, agentId);
 							this._persistAgents();
@@ -131,6 +131,13 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 
 	private get _webview(): vscode.Webview | undefined {
 		return this._webviewView?.webview;
+	}
+
+	/** Wrapped postMessage function for office module calls (no vscode.Webview dependency). */
+	private get _postMessage(): PostMessageFn | undefined {
+		const webview = this._webview;
+		if (!webview) return undefined;
+		return (msg) => void webview.postMessage(msg);
 	}
 
 	private _persistAgents = (): void => {
@@ -217,17 +224,17 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 				this.agents, this.activeAgentId, this.knownJsonlFiles,
 				this.fileWatchers, this.pollingTimers, this.waitingTimers, this.permissionTimers,
 				this.jsonlPollTimers, this.projectScanTimer,
-				this._webview, this._persistAgents,
+				this._postMessage, this._persistAgents,
 			);
 		} else if (message.type === 'focusAgent') {
 			const agent = this.agents.get(message.id as number);
 			if (agent?.terminalRef) {
-				agent.terminalRef.show();
+				(agent.terminalRef as vscode.Terminal).show();
 			}
 		} else if (message.type === 'closeAgent') {
 			const agent = this.agents.get(message.id as number);
 			if (agent?.terminalRef) {
-				agent.terminalRef.dispose();
+				(agent.terminalRef as vscode.Terminal).dispose();
 				// Terminal close handler will call removeAgent + postMessage agentClosed
 			} else if (agent) {
 				// Headless agent (no terminal) — remove directly
@@ -253,7 +260,7 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 				this.agents, this.knownJsonlFiles,
 				this.fileWatchers, this.pollingTimers, this.waitingTimers, this.permissionTimers,
 				this.jsonlPollTimers, this.projectScanTimer, this.activeAgentId,
-				this._webview, this._persistAgents,
+				this._postMessage, this._persistAgents,
 			);
 
 			const soundEnabled = this._context.globalState.get<boolean>(GLOBAL_KEY_SOUND_ENABLED, true);
@@ -269,7 +276,7 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 					projectDir, this.knownJsonlFiles, this.projectScanTimer, this.activeAgentId,
 					this.nextAgentId, this.agents,
 					this.fileWatchers, this.pollingTimers, this.waitingTimers, this.permissionTimers,
-					this._webview, this._persistAgents,
+					this._postMessage, this._persistAgents,
 				);
 
 				// Load assets BEFORE sending layout
@@ -291,8 +298,9 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 
 						if (!assetsRoot) {
 							console.log('[Prism Office] ⚠️  No assets directory found');
-							if (this._webview) {
-								sendLayout(this._context, this._webview, this._defaultLayout);
+							const pm = this._postMessage;
+							if (pm) {
+								sendLayout(this._context, pm, this._defaultLayout);
 								this._startLayoutWatcher();
 							}
 							return;
@@ -303,29 +311,34 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 						this._defaultLayout = loadDefaultLayout(assetsRoot);
 
 						const charSprites = await loadCharacterSprites(assetsRoot);
-						if (charSprites && this._webview) {
-							sendCharacterSpritesToWebview(this._webview, charSprites);
+						const pm1 = this._postMessage;
+						if (charSprites && pm1) {
+							sendCharacterSpritesToWebview(pm1, charSprites);
 						}
 
 						const floorTiles = await loadFloorTiles(assetsRoot);
-						if (floorTiles && this._webview) {
-							sendFloorTilesToWebview(this._webview, floorTiles);
+						const pm2 = this._postMessage;
+						if (floorTiles && pm2) {
+							sendFloorTilesToWebview(pm2, floorTiles);
 						}
 
 						const wallTiles = await loadWallTiles(assetsRoot);
-						if (wallTiles && this._webview) {
-							sendWallTilesToWebview(this._webview, wallTiles);
+						const pm3 = this._postMessage;
+						if (wallTiles && pm3) {
+							sendWallTilesToWebview(pm3, wallTiles);
 						}
 
 						const assets = await loadFurnitureAssets(assetsRoot);
-						if (assets && this._webview) {
-							sendAssetsToWebview(this._webview, assets);
+						const pm4 = this._postMessage;
+						if (assets && pm4) {
+							sendAssetsToWebview(pm4, assets);
 						}
 					} catch (err) {
 						console.error('[Prism Office] ❌ Error loading assets:', err);
 					}
-					if (this._webview) {
-						sendLayout(this._context, this._webview, this._defaultLayout);
+					const pm5 = this._postMessage;
+					if (pm5) {
+						sendLayout(this._context, pm5, this._defaultLayout);
 						this._startLayoutWatcher();
 					}
 				})();
@@ -339,26 +352,30 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 							const distRoot = path.join(ep, 'dist');
 							this._defaultLayout = loadDefaultLayout(distRoot);
 							const cs = await loadCharacterSprites(distRoot);
-							if (cs && this._webview) {
-								sendCharacterSpritesToWebview(this._webview, cs);
+							const pmA = this._postMessage;
+							if (cs && pmA) {
+								sendCharacterSpritesToWebview(pmA, cs);
 							}
 							const ft = await loadFloorTiles(distRoot);
-							if (ft && this._webview) {
-								sendFloorTilesToWebview(this._webview, ft);
+							const pmB = this._postMessage;
+							if (ft && pmB) {
+								sendFloorTilesToWebview(pmB, ft);
 							}
 							const wt = await loadWallTiles(distRoot);
-							if (wt && this._webview) {
-								sendWallTilesToWebview(this._webview, wt);
+							const pmC = this._postMessage;
+							if (wt && pmC) {
+								sendWallTilesToWebview(pmC, wt);
 							}
 						}
 					} catch { /* ignore */ }
-					if (this._webview) {
-						sendLayout(this._context, this._webview, this._defaultLayout);
+					const pm6 = this._postMessage;
+					if (pm6) {
+						sendLayout(this._context, pm6, this._defaultLayout);
 						this._startLayoutWatcher();
 					}
 				})();
 			}
-			sendExistingAgents(this.agents, this._context, this._webview);
+			sendExistingAgents(this.agents, this._context, this._postMessage);
 		} else if (message.type === 'openSessionsFolder') {
 			const projectDir = getProjectDirPath();
 			if (projectDir && fs.existsSync(projectDir)) {
@@ -408,7 +425,7 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 			this.agents, this.activeAgentId, this.knownJsonlFiles,
 			this.fileWatchers, this.pollingTimers, this.waitingTimers, this.permissionTimers,
 			this.jsonlPollTimers, this.projectScanTimer,
-			this._webview, this._persistAgents,
+			this._postMessage, this._persistAgents,
 		);
 	}
 

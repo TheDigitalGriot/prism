@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import type { AgentState } from './types';
-import { cancelWaitingTimer, cancelPermissionTimer, clearAgentActivity } from './timerManager';
-import { processTranscriptLine } from './transcriptParser';
+import type { AgentState, PostMessageFn } from '@prism-core/office/types';
+import { cancelWaitingTimer, cancelPermissionTimer, clearAgentActivity } from '@prism-core/office/timerManager';
+import { processTranscriptLine } from '@prism-core/office/transcriptParser';
 import { FILE_WATCHER_POLL_INTERVAL_MS, PROJECT_SCAN_INTERVAL_MS } from '@prism-core/office/constants';
 
 export function startFileWatching(
@@ -14,12 +14,12 @@ export function startFileWatching(
 	pollingTimers: Map<number, ReturnType<typeof setInterval>>,
 	waitingTimers: Map<number, ReturnType<typeof setTimeout>>,
 	permissionTimers: Map<number, ReturnType<typeof setTimeout>>,
-	webview: vscode.Webview | undefined,
+	postMessage: PostMessageFn | undefined,
 ): void {
 	// Primary: fs.watch
 	try {
 		const watcher = fs.watch(filePath, () => {
-			readNewLines(agentId, agents, waitingTimers, permissionTimers, webview);
+			readNewLines(agentId, agents, waitingTimers, permissionTimers, postMessage);
 		});
 		fileWatchers.set(agentId, watcher);
 	} catch (e) {
@@ -29,7 +29,7 @@ export function startFileWatching(
 	// Backup: poll every 2s
 	const interval = setInterval(() => {
 		if (!agents.has(agentId)) { clearInterval(interval); return; }
-		readNewLines(agentId, agents, waitingTimers, permissionTimers, webview);
+		readNewLines(agentId, agents, waitingTimers, permissionTimers, postMessage);
 	}, FILE_WATCHER_POLL_INTERVAL_MS);
 	pollingTimers.set(agentId, interval);
 }
@@ -39,7 +39,7 @@ export function readNewLines(
 	agents: Map<number, AgentState>,
 	waitingTimers: Map<number, ReturnType<typeof setTimeout>>,
 	permissionTimers: Map<number, ReturnType<typeof setTimeout>>,
-	webview: vscode.Webview | undefined,
+	postMessage: PostMessageFn | undefined,
 ): void {
 	const agent = agents.get(agentId);
 	if (!agent) return;
@@ -64,13 +64,13 @@ export function readNewLines(
 			cancelPermissionTimer(agentId, permissionTimers);
 			if (agent.permissionSent) {
 				agent.permissionSent = false;
-				webview?.postMessage({ type: 'agentToolPermissionClear', id: agentId });
+				postMessage?.({ type: 'agentToolPermissionClear', id: agentId });
 			}
 		}
 
 		for (const line of lines) {
 			if (!line.trim()) continue;
-			processTranscriptLine(agentId, line, agents, waitingTimers, permissionTimers, webview);
+			processTranscriptLine(agentId, line, agents, waitingTimers, permissionTimers, postMessage);
 		}
 	} catch (e) {
 		console.log(`[Prism Office] Read error for agent ${agentId}: ${e}`);
@@ -88,7 +88,7 @@ export function ensureProjectScan(
 	pollingTimers: Map<number, ReturnType<typeof setInterval>>,
 	waitingTimers: Map<number, ReturnType<typeof setTimeout>>,
 	permissionTimers: Map<number, ReturnType<typeof setTimeout>>,
-	webview: vscode.Webview | undefined,
+	postMessage: PostMessageFn | undefined,
 	persistAgents: () => void,
 ): void {
 	if (projectScanTimerRef.current) return;
@@ -106,7 +106,7 @@ export function ensureProjectScan(
 		scanForNewJsonlFiles(
 			projectDir, knownJsonlFiles, activeAgentIdRef, nextAgentIdRef,
 			agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers,
-			webview, persistAgents,
+			postMessage, persistAgents,
 		);
 	}, PROJECT_SCAN_INTERVAL_MS);
 }
@@ -121,7 +121,7 @@ function scanForNewJsonlFiles(
 	pollingTimers: Map<number, ReturnType<typeof setInterval>>,
 	waitingTimers: Map<number, ReturnType<typeof setTimeout>>,
 	permissionTimers: Map<number, ReturnType<typeof setTimeout>>,
-	webview: vscode.Webview | undefined,
+	postMessage: PostMessageFn | undefined,
 	persistAgents: () => void,
 ): void {
 	let files: string[];
@@ -140,7 +140,7 @@ function scanForNewJsonlFiles(
 				reassignAgentToFile(
 					activeAgentIdRef.current, file,
 					agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers,
-					webview, persistAgents,
+					postMessage, persistAgents,
 				);
 			} else {
 				// No active agent → try to adopt the focused terminal
@@ -158,7 +158,7 @@ function scanForNewJsonlFiles(
 							activeTerminal, file, projectDir,
 							nextAgentIdRef, agents, activeAgentIdRef,
 							fileWatchers, pollingTimers, waitingTimers, permissionTimers,
-							webview, persistAgents,
+							postMessage, persistAgents,
 						);
 					}
 				}
@@ -178,7 +178,7 @@ function adoptTerminalForFile(
 	pollingTimers: Map<number, ReturnType<typeof setInterval>>,
 	waitingTimers: Map<number, ReturnType<typeof setTimeout>>,
 	permissionTimers: Map<number, ReturnType<typeof setTimeout>>,
-	webview: vscode.Webview | undefined,
+	postMessage: PostMessageFn | undefined,
 	persistAgents: () => void,
 ): void {
 	const id = nextAgentIdRef.current++;
@@ -204,10 +204,10 @@ function adoptTerminalForFile(
 	persistAgents();
 
 	console.log(`[Prism Office] Agent ${id}: adopted terminal "${terminal.name}" for ${path.basename(jsonlFile)}`);
-	webview?.postMessage({ type: 'agentCreated', id });
+	postMessage?.({ type: 'agentCreated', id });
 
-	startFileWatching(id, jsonlFile, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers, webview);
-	readNewLines(id, agents, waitingTimers, permissionTimers, webview);
+	startFileWatching(id, jsonlFile, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers, postMessage);
+	readNewLines(id, agents, waitingTimers, permissionTimers, postMessage);
 }
 
 export function reassignAgentToFile(
@@ -218,7 +218,7 @@ export function reassignAgentToFile(
 	pollingTimers: Map<number, ReturnType<typeof setInterval>>,
 	waitingTimers: Map<number, ReturnType<typeof setTimeout>>,
 	permissionTimers: Map<number, ReturnType<typeof setTimeout>>,
-	webview: vscode.Webview | undefined,
+	postMessage: PostMessageFn | undefined,
 	persistAgents: () => void,
 ): void {
 	const agent = agents.get(agentId);
@@ -234,7 +234,7 @@ export function reassignAgentToFile(
 	// Clear activity
 	cancelWaitingTimer(agentId, waitingTimers);
 	cancelPermissionTimer(agentId, permissionTimers);
-	clearAgentActivity(agent, agentId, permissionTimers, webview);
+	clearAgentActivity(agent, agentId, permissionTimers, postMessage);
 
 	// Swap to new file
 	agent.jsonlFile = newFilePath;
@@ -243,6 +243,6 @@ export function reassignAgentToFile(
 	persistAgents();
 
 	// Start watching new file
-	startFileWatching(agentId, newFilePath, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers, webview);
-	readNewLines(agentId, agents, waitingTimers, permissionTimers, webview);
+	startFileWatching(agentId, newFilePath, agents, fileWatchers, pollingTimers, waitingTimers, permissionTimers, postMessage);
+	readNewLines(agentId, agents, waitingTimers, permissionTimers, postMessage);
 }
