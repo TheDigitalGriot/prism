@@ -1,5 +1,5 @@
 /**
- * Prism Plugin Command Bridge — maps VS Code commands to Prism plugin skills.
+ * Prism Plugin Command Bridge — maps commands to Prism plugin skills.
  *
  * Spawns Claude CLI sessions with the appropriate skill trigger phrase,
  * captures streaming output, and routes events to the extension.
@@ -31,7 +31,7 @@ import { ClaudeRunnerEvent, ToolActivity } from "@prism-core/claude/events"
 // Types
 // ---------------------------------------------------------------------------
 
-/** Maps VS Code command IDs to Prism plugin skill names. */
+/** Maps command IDs to Prism plugin skill names. */
 export const SKILL_MAP: Record<string, string> = {
   "prism.research": "prism-research",
   "prism.plan": "prism-plan",
@@ -93,7 +93,7 @@ export interface BridgeEvent {
 // ---------------------------------------------------------------------------
 
 /**
- * Bridges VS Code commands to Prism plugin skills via the Claude CLI.
+ * Bridges commands to Prism plugin skills via the Claude CLI.
  *
  * Usage:
  *   const bridge = new PluginBridge(projectDir)
@@ -183,9 +183,9 @@ export class PluginBridge extends EventEmitter {
   }
 
   /**
-   * Execute a VS Code command by looking up its skill mapping.
+   * Execute a command by looking up its skill mapping.
    *
-   * @param commandId  The VS Code command ID (e.g., "prism.research")
+   * @param commandId  The command ID (e.g., "prism.research")
    * @param args       Optional arguments
    */
   async executeCommand(commandId: string, args?: string): Promise<RunSessionResult> {
@@ -341,7 +341,7 @@ export function isWorkflowSkill(skillName: string): boolean {
   return WORKFLOW_SKILLS.has(skillName)
 }
 
-/** Get the VS Code command ID for a skill name (reverse lookup). */
+/** Get the command ID for a skill name (reverse lookup). */
 export function commandIdForSkill(skillName: string): string | undefined {
   for (const [cmdId, name] of Object.entries(SKILL_MAP)) {
     if (name === skillName) return cmdId

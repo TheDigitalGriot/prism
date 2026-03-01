@@ -4,7 +4,7 @@
  */
 
 import * as path from "path"
-import { progressPathFromStories } from "../progress"
+import { progressPathFromStories } from "@prism-core/prism/progress"
 
 // ---------------------------------------------------------------------------
 // progressPathFromStories — mirrors TestNewProgressFile_* in Go

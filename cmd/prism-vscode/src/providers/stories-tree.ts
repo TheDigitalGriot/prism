@@ -12,8 +12,8 @@
  */
 
 import * as vscode from "vscode"
-import { Story, Step } from "../prism/stories"
-import { isBlocked } from "../prism/stories"
+import { Story, Step } from "@prism-core/prism/stories"
+import { isBlocked } from "@prism-core/prism/stories"
 
 // ---------------------------------------------------------------------------
 // Tree item union

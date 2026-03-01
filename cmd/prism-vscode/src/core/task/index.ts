@@ -19,7 +19,7 @@ import { MessageState } from "./message-state"
 import { TaskState, createInitialTaskState } from "./task-state"
 import { ToolCoordinator } from "./tools/coordinator"
 import { PrismTool, PRISM_TOOL_DEFINITIONS } from "./tools/types"
-import { buildSystemPrompt, SystemPromptContext } from "../prompts/system-prompt"
+import { buildSystemPrompt, SystemPromptContext } from "@prism-core/core/prompts/system-prompt"
 
 export type TaskUpdateFn = (messages: PrismChatMessage[], isStreaming: boolean) => void
 

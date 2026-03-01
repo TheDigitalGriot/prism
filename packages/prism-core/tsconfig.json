@@ -12,7 +12,10 @@
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "@prism-core/*": ["./src/*"]
+    }
   },
   "include": ["src/**/*"]
 }

@@ -12,7 +12,6 @@
 
 import { ChildProcess, spawn } from "child_process"
 import * as readline from "readline"
-import * as path from "path"
 import { EventEmitter } from "events"
 import {
   ClaudeRunnerEvent,

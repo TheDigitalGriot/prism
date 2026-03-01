@@ -1,13 +1,13 @@
 /**
- * .prism/ directory detection and path resolution — Electron version.
+ * .prism/ directory detection and path resolution — platform-agnostic version.
  * Uses Node.js fs.stat instead of vscode.workspace.fs.stat.
  */
 
-import * as fs from 'fs/promises'
-import * as path from 'path'
+import * as fs from "fs/promises"
+import * as path from "path"
 
 // ---------------------------------------------------------------------------
-// Types (mirrored from prism-vscode)
+// Types
 // ---------------------------------------------------------------------------
 
 export interface PrismConfig {
@@ -30,24 +30,24 @@ export interface PrismConfig {
 
 /** Build a PrismConfig from the .prism/ root directory path. */
 export function getPrismConfig(prismDir: string): PrismConfig {
-  const shared = path.join(prismDir, 'shared')
+  const shared = path.join(prismDir, "shared")
   return {
     prismDir,
-    storiesDir: path.join(prismDir, 'stories'),
+    storiesDir: path.join(prismDir, "stories"),
     sharedDir: shared,
-    researchDir: path.join(shared, 'research'),
-    plansDir: path.join(shared, 'plans'),
-    validationDir: path.join(shared, 'validation'),
-    spectrumDir: path.join(shared, 'spectrum'),
-    handoffsDir: path.join(shared, 'handoffs'),
-    prsDir: path.join(shared, 'prs'),
-    docsDir: path.join(shared, 'docs'),
-    localDir: path.join(prismDir, 'local'),
+    researchDir: path.join(shared, "research"),
+    plansDir: path.join(shared, "plans"),
+    validationDir: path.join(shared, "validation"),
+    spectrumDir: path.join(shared, "spectrum"),
+    handoffsDir: path.join(shared, "handoffs"),
+    prsDir: path.join(shared, "prs"),
+    docsDir: path.join(shared, "docs"),
+    localDir: path.join(prismDir, "local"),
   }
 }
 
 // ---------------------------------------------------------------------------
-// Detection (Node.js fs.stat — no vscode dependency)
+// Detection (Node.js fs.stat — no platform dependency)
 // ---------------------------------------------------------------------------
 
 /**
@@ -55,7 +55,7 @@ export function getPrismConfig(prismDir: string): PrismConfig {
  * Returns the absolute path, or undefined if not found.
  */
 export async function detectPrismDir(projectDir: string): Promise<string | undefined> {
-  const candidate = path.join(projectDir, '.prism')
+  const candidate = path.join(projectDir, ".prism")
   try {
     await fs.stat(candidate)
     return candidate
@@ -69,7 +69,7 @@ export async function detectPrismDir(projectDir: string): Promise<string | undef
  * Returns the absolute path, or undefined if not found.
  */
 export async function detectStoriesPath(prismDir: string): Promise<string | undefined> {
-  const candidate = path.join(prismDir, 'stories', 'stories.json')
+  const candidate = path.join(prismDir, "stories", "stories.json")
   try {
     await fs.stat(candidate)
     return candidate

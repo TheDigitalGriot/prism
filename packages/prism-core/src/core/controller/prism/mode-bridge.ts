@@ -393,3 +393,6 @@ export class ModeBridge {
     )
   }
 }
+
+// Re-export for consumers that need it
+export { isWorkflowSkill, SKILL_MAP }

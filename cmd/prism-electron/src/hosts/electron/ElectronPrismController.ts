@@ -27,9 +27,9 @@ import { ClaudeRunner, checkClaudeCli, type RunnerOptions } from '@prism-core/cl
 import type { ClaudeRunnerEvent, ClaudeStreamEvent } from '@prism-core/claude/events'
 import { ModeBridge, detectSkillTrigger, type ChatMode } from '@prism-core/core/controller/prism/mode-bridge'
 import { SKILL_MAP } from '@prism-core/core/controller/prism/plugin-bridge'
-import { initPrismDir } from '../../prism/init'
-import { PrismWatcher, type PrismFileChangeEvent } from '../../prism/watcher'
-import { detectPrismDir, detectStoriesPath } from '../../prism/config'
+import { initPrismDir } from '@prism-core/prism/init'
+import { PrismWatcher, type PrismFileChangeEvent } from '@prism-core/prism/watcher'
+import { detectPrismDir, detectStoriesPath } from '@prism-core/prism/config'
 
 // ---------------------------------------------------------------------------
 // Helpers

@@ -16,7 +16,7 @@ import {
   getStoryByID,
   loadStoriesFile,
   saveStoriesFile,
-} from "../stories"
+} from "@prism-core/prism/stories"
 import * as fs from "fs/promises"
 
 // ---------------------------------------------------------------------------

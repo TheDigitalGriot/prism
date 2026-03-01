@@ -1,7 +1,7 @@
 /**
  * Stories state manager — loads and caches stories.json for the controller.
  *
- * This sits between the domain model (src/prism/stories.ts) and the
+ * This sits between the domain model (prism/stories.ts) and the
  * extension state, keeping the in-memory StoriesFile in sync with disk.
  */
 
