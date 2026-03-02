@@ -23,7 +23,13 @@ function prismCoreAliasPlugin(): Plugin {
         for (const ext of extensions) {
           const candidate = path.resolve(base, subpath + ext);
           if (fs.existsSync(candidate)) {
-            return candidate;
+            // Normalize to forward slashes so Vite/Rollup deduplicates this
+            // module with relative imports resolved inside the same package.
+            // On Windows, path.resolve() returns backslashes, but Vite uses
+            // forward slashes internally — mismatched IDs create two separate
+            // module instances with separate global Maps (the grpc-handler
+            // singleton registries), causing "Unknown handler" errors.
+            return candidate.replace(/\\/g, '/');
           }
         }
       }
