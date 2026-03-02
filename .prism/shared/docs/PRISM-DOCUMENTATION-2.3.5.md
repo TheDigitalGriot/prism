@@ -997,8 +997,8 @@ Prism CLI is a Go 1.23 terminal user interface that provides real-time monitorin
 
 ### Key Features (CLI)
 
-- **12 views**: Splash, Onboarding, Home menu, Research browser, Plans browser, Spectrum execution dashboard, Files browser, Git integration, Agent chat, Monitor dashboard, Workspaces manager
-- **Plugin architecture**: 10 composable plugins with shared context, event bus, and lifecycle management
+- **13 views**: Splash, Onboarding, Home menu, Research browser, Plans browser, Spectrum execution dashboard, Files browser, Git integration, Agent chat, Monitor dashboard, Browser verification, Workspaces manager
+- **Plugin architecture**: 11 composable plugins with shared context, event bus, epoch-based staleness, and lifecycle management
 - **Real-time execution monitoring**: Streaming Claude CLI output with tool activity extraction
 - **Procedural splash screen**: Icosahedron mesh, beam particles, spectral wave field, and ANSI true-color rendering
 - **3D animated prism logo**: FauxGL software rasterizer with half-block Unicode encoding
@@ -1009,13 +1009,19 @@ Prism CLI is a Go 1.23 terminal user interface that provides real-time monitorin
 - **Terminal detection**: Auto-detects IDE (VS Code, Cursor, Windsurf), theme colors, Nerd Font support
 - **Diff rendering**: Unified and side-by-side views with syntax highlighting and word-level diffs
 - **Modal & dialog system**: Layered overlays with focus cycling, permission prompts, command palette
+- **File watcher**: fsnotify-based real-time file change detection with debouncing and EventBus integration
+- **Persisted UI state**: Per-project state persistence (open tabs, expanded dirs, diff mode) across sessions
+- **Fuzzy file finder**: Project-wide fuzzy file search overlay with scoring algorithm
+- **Content search**: Ripgrep-powered project-wide content search with result navigation
+- **Conversation browser**: Multi-adapter session scanning (Claude Code `.jsonl` files)
+- **Uninstaller**: `--uninstall` flag for clean removal of binary, PATH entries, and global config
 - **Demo mode**: 36 pre-seeded stories with auto-progression for previewing animations
 
 ### Technology Stack
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                        Prism CLI v1.9.8                             │
+│                        Prism CLI v2.3.0                             │
 ├──────────────┬──────────────┬──────────────┬────────────┬───────────┤
 │  Bubble Tea  │   Lipgloss   │  Harmonica   │  FauxGL    │  Termenv  │
 │  TUI         │   Styling    │  Spring      │  3D        │  Terminal │
@@ -1035,11 +1041,11 @@ Prism CLI is a Go 1.23 terminal user interface that provides real-time monitorin
 
 | Metric | Value |
 |--------|-------|
-| Total Lines of Code | ~19,934 |
-| Production Code | ~18,834 lines |
-| Test Code | ~1,100 lines (9 test files) |
-| Go Files | 67 |
-| Packages | 15 |
+| Total Lines of Code | ~27,000 |
+| Production Code | ~25,211 lines |
+| Test Code | ~1,800 lines (18 test files) |
+| Go Files | 85 |
+| Packages | 19 |
 | Direct Dependencies | 8 |
 
 ---
@@ -1050,43 +1056,51 @@ Prism CLI is a Go 1.23 terminal user interface that provides real-time monitorin
 
 ```
 cmd/prism-cli/
-├── main.go                         # CLI entry point, Cobra commands, flag parsing (160 lines)
+├── main.go                         # CLI entry point, Cobra commands, flag parsing, uninstaller (340 lines)
 ├── Makefile                        # Build targets (67 lines)
 ├── go.mod                          # Dependencies (Go 1.23.0)
 ├── build.sh                        # Single-platform build script
 │
-├── app/                            # Bubble Tea UI — Elm Architecture (22 files, 9,891 lines)
+├── app/                            # Bubble Tea UI — Elm Architecture (27 files, ~14,000 lines)
 │   ├── model.go                    # Model struct, AnimState, NewModel/NewDemoModel
 │   ├── update.go                   # Update handler, message routing, state transitions
 │   ├── view.go                     # View router, modal overlay compositing
-│   ├── views.go                    # ActiveView enum, FileEntry, ResearchState, PlansState, EpicInfo
+│   ├── views.go                    # ActiveView enum (13 views), FileEntry, ResearchState, PlansState, EpicInfo
 │   ├── view_splash.go              # Splash screen thin wrapper
 │   ├── shell.go                    # App shell: tab bar + sidebar + footer layout, breadcrumbs
 │   ├── sidebar.go                  # Sidebar component: logo, execution info, files, gates, epics
 │   ├── footer.go                   # Two-tier footer: key hints + powerline status bar
 │   ├── commands.go                 # Async Bubble Tea commands (LoadStories, DiscoverEpics, etc.)
 │   ├── command_palette.go          # Command palette: fuzzy search, modal builder
-│   ├── messages.go                 # All message type definitions
+│   ├── content_search.go           # Project-wide content search via ripgrep (F-5)
+│   ├── file_finder.go              # Fuzzy file search overlay with scoring algorithm (F-4)
+│   ├── messages.go                 # All message type definitions (~35 message types)
 │   │
-│   ├── plugin_home.go              # Home screen plugin (menu)
-│   ├── plugin_research.go          # Research file browser plugin
-│   ├── plugin_plans.go             # Plans file browser plugin (+ decompose)
+│   ├── plugin_home.go              # Home screen plugin (menu, 214 lines)
+│   ├── plugin_research.go          # Research file browser plugin (230 lines)
+│   ├── plugin_plans.go             # Plans file browser plugin + decompose (245 lines)
 │   ├── plugin_spectrum.go          # Spectrum dashboard plugin (1,218 lines — LARGEST)
-│   ├── plugin_files.go             # File tree browser plugin (two-pane)
-│   ├── plugin_git.go               # Git integration plugin (status, diff, stage, commit)
-│   ├── plugin_agent.go             # Agent chat plugin (messages + input)
-│   ├── plugin_monitor.go           # System monitor plugin (health, history, gates)
-│   ├── plugin_workspaces.go        # Multi-project workspace manager (1,080 lines)
-│   ├── plugin_onboarding.go        # First-run setup wizard
+│   ├── plugin_files.go             # File tree browser plugin, two-pane + tabs + edit + blame (1,407 lines)
+│   ├── plugin_git.go               # Git integration plugin: status, diff, stage, commit, push, pull, stash (1,530 lines)
+│   ├── plugin_agent.go             # Agent chat plugin: conversations, adapters, analytics (1,051 lines)
+│   ├── plugin_monitor.go           # System monitor plugin: health, history, gates, agents (917 lines)
+│   ├── plugin_browser.go           # Browser verification plugin: sessions, history, artifacts (726 lines)
+│   ├── plugin_workspaces.go        # Multi-project workspace + worktree + kanban manager (1,981 lines)
+│   ├── plugin_onboarding.go        # First-run setup wizard + legacy migration (685 lines)
+│   │
+│   ├── adapter/                    # AI agent conversation scanning
+│   │   ├── adapter.go              # Adapter interface, Session struct (35 lines)
+│   │   ├── claude.go               # ClaudeAdapter: scans ~/.claude/projects/ .jsonl files (334 lines)
+│   │   └── claude_test.go          # Adapter tests
 │   │
 │   └── chat/
 │       └── renderer.go             # Chat message rendering (user/assistant/tool)
 │
 ├── plugin/                         # Plugin system framework (5 files, 397 lines)
-│   ├── plugin.go                   # Plugin interface (10 methods)
-│   ├── registry.go                 # Plugin registry: register, activate, broadcast
-│   ├── context.go                  # Shared plugin context struct
-│   ├── events.go                   # EventBus + concrete event types
+│   ├── plugin.go                   # Plugin interface (11 methods)
+│   ├── registry.go                 # Plugin registry: register, activate, broadcast, reinit
+│   ├── context.go                  # Shared plugin context struct (16 fields)
+│   ├── events.go                   # EventBus + 11 concrete event types
 │   └── messages.go                 # Inter-plugin messages (FocusPluginMsg, PluginResizeMsg)
 │
 ├── domain/                         # Business logic — no UI dependencies (6 files, 850 lines)
@@ -1101,6 +1115,14 @@ cmd/prism-cli/
 │   ├── runner.go                   # Process spawning, streaming output, lifecycle
 │   ├── parser.go                   # Real-time output parsing (phases, signals, gates)
 │   └── events.go                   # Stream-JSON event deserialization, tool formatting
+│
+├── state/                          # Per-project persisted UI state (2 files, 113 lines)
+│   ├── state.go                    # Store: Load/Save to ~/.config/prism-cli/state/<hash>.json
+│   └── state_test.go               # State persistence tests
+│
+├── watcher/                        # Real-time file change detection (2 files, 235 lines)
+│   ├── watcher.go                  # fsnotify wrapper: debouncing, filtering, EventBus integration
+│   └── watcher_test.go             # Watcher tests
 │
 ├── styles/                         # Visual theming (5 files, 1,455 lines)
 │   ├── theme.go                    # Color palette, component styles, prism variants, theme overrides
@@ -1136,6 +1158,10 @@ cmd/prism-cli/
 │   ├── scrollbar_test.go           # Scrollbar tests
 │   └── divider_test.go             # Divider tests
 │
+├── registry/                       # Global workspace registry (2 files, 222 lines)
+│   ├── registry.go                 # ~/.prism/workspaces.json: register, load, prune, cross-process locking
+│   └── registry_test.go            # Registry tests
+│
 ├── terminal/                       # Terminal environment detection (2 files, 999 lines)
 │   ├── detect.go                   # Terminal, shell, color profile, Nerd Font, git branch detection
 │   └── theme.go                    # IDE theme color extraction (accent, foreground, editor bg)
@@ -1143,6 +1169,10 @@ cmd/prism-cli/
 ├── splash/                         # Procedural splash animation (2 files, 883 lines)
 │   ├── splash.go                   # Icosahedron mesh, beam particles, spectral wave, ANSI render
 │   └── mesh_data.go                # Embedded mesh: 444 vertices, 360 faces
+│
+├── markdown/                       # Markdown rendering (2 files)
+│   ├── renderer.go                 # Glamour wrapper: Render(), RenderDark(), Available()
+│   └── renderer_test.go            # Renderer tests
 │
 ├── prism/                          # 3D prism rendering engine
 │   ├── prism.go                    # FauxGL renderer, half-block ANSI encoding (266 lines)
@@ -1276,8 +1306,19 @@ prism-cli -f stories.json -n 100 -p 5 --prism-style braille
 | `--demo` | | `false` | Run with simulated stories |
 | `--onboarding` | | `false` | Force onboarding flow (for testing/refining the setup wizard) |
 | `--prism-style` | | `gradient` | Animation style: `gradient` `simple` `braille` `ascii` |
+| `--uninstall` | | `false` | Remove prism-cli binary, PATH entries, and global `~/.prism/` directory |
 
 Auto-generated: `--version`, `--help`/`-h`
+
+#### Uninstall System
+
+The `--uninstall` flag provides clean removal:
+1. Prompts for `yes` confirmation via stdin
+2. Removes binary from `~/.prism/bin/` (both `prism-cli` and `prism-cli.exe`)
+3. Cleans shell profiles (`.zshrc`, `.bashrc`, `.bash_profile`) — removes lines containing `.prism/bin` or `# Prism CLI`
+4. On Windows: cleans PowerShell profile (auto-detects `pwsh.exe` or `powershell.exe`)
+5. Removes entire `~/.prism/` directory (global config, not per-project)
+6. Does NOT touch per-project `.prism/` directories
 
 ### Initial View Selection
 
@@ -1285,10 +1326,13 @@ Auto-generated: `--version`, `--help`/`-h`
 --demo flag set           → ViewSplash → Home (demo mode)
 stories.json provided     → ViewSplash → Home or Onboarding
 No stories.json, .prism/  → ViewSplash → Onboarding (if needed) → Home
-No .prism/ directory      → Error: "Run init_prism.py first"
+No .prism/ directory      → ViewSplash → Onboarding (auto-set)
+Legacy thoughts/ dir      → ViewSplash → Onboarding (legacy migration)
 ```
 
-The splash screen always displays first (5-second timer or any keypress to skip). After splash, the app transitions to Onboarding if `.prism/` doesn't exist or `stories.json` is missing, otherwise to Home.
+The splash screen always displays first (5-second timer or any keypress to skip). After splash, the app transitions to Onboarding if `.prism/` doesn't exist or `stories.json` is missing, otherwise to Home. Legacy `thoughts/` directories trigger the onboarding migration flow.
+
+After TUI exits, the project is auto-registered in the global workspace registry (`~/.prism/workspaces.json`) via `registry.Register()`. The terminal G0 charset is also reset (`\x1b(B\x1b[0m`) to prevent DEC Special Graphics mode from persisting into the parent shell.
 
 ---
 
@@ -1296,7 +1340,7 @@ The splash screen always displays first (5-second timer or any keypress to skip)
 
 ### Plugin Interface
 
-Every screen in the TUI is implemented as a plugin conforming to `plugin.Plugin` (10 methods):
+Every screen in the TUI is implemented as a plugin conforming to `plugin.Plugin` (11 methods):
 
 | Method | Signature | Purpose |
 |--------|-----------|---------|
@@ -1329,6 +1373,16 @@ Shared state passed to all plugins during `Init()`:
 | `Pause` | `int` | Seconds between iterations |
 | `HasNerdFont` | `bool` | Terminal supports Nerd Font glyphs |
 | `EventBus` | `*EventBus` | Inter-plugin pub/sub communication |
+| `WorkDir` | `string` | Working directory at startup |
+| `GitRoot` | `string` | Git repository root directory |
+| `ConfigDir` | `string` | User config directory (`~/.config/prism-cli`) |
+| `Epoch` | `uint64` | Monotonic counter incremented on project switch (for staleness detection) |
+| `HasLegacyDir` | `bool` | Whether a legacy `thoughts/` directory was detected |
+| `LegacyDir` | `string` | Path to legacy `thoughts/` directory (for migration) |
+
+### Epoch-Based Staleness
+
+`Context.Epoch` is a critical architectural pattern. When the user switches projects (via Workspaces), `Registry.Reinit()` increments the epoch. All async `tea.Cmd` results carry the epoch at which they were dispatched. Handlers compare the message epoch against the current `Context.Epoch` — if they differ, the result is from a previous project and is silently discarded. This prevents stale file lists, story data, or Claude output from a previous project from corrupting the current view.
 
 ### Plugin Registry
 
@@ -1337,41 +1391,48 @@ The registry manages plugin lifecycle:
 1. **Registration** (`Register`): Validates ID uniqueness, calls `Init(ctx)` with panic recovery, first plugin is auto-activated
 2. **Activation** (`SetActive`): Unfocuses previous, focuses new plugin
 3. **Broadcast** (`Broadcast`): Routes messages to ALL plugins, collects commands
-4. **Reinit** (`Reinit`): Stops all plugins, re-initializes with current context (used on project switch)
+4. **Reinit** (`Reinit`): Increments `Context.Epoch`, stops all plugins, re-initializes with current context (used on project switch)
 
 ### Event Bus
 
-Inter-plugin pub/sub communication with these event types:
+Thread-safe pub/sub communication (`sync.RWMutex`) with these event types:
 
 | Event | Type String | Fields |
 |-------|-------------|--------|
-| `StoryCompletedEvent` | `"story.completed"` | StoryID, StoryName, Result, Duration |
+| `StoryCompletedEvent` | `"story.completed"` | StoryID, StoryTitle |
 | `FileChangedEvent` | `"file.changed"` | FilePath, Action |
-| `BranchChangedEvent` | `"branch.changed"` | BranchName, Ahead, Behind |
+| `BranchChangedEvent` | `"branch.changed"` | Branch |
 | `EpicSwitchedEvent` | `"epic.switched"` | EpicName, StoriesPath |
 | `ProjectSwitchedEvent` | `"project.switched"` | ProjectDir, PrismDir, StoriesPath |
+| `AgentStatusEvent` | `"agent.status"` | AgentID, Status, Model, Activity |
+| `ConversationChangedEvent` | `"conversation.changed"` | FilePath, Action |
+| `QualityGateResultEvent` | `"gate.result"` | Gate, Passed, Output |
+| `WorktreeChangedEvent` | `"worktree.changed"` | Action, Path |
+| `BrowserVerificationEvent` | `"browser.verification"` | URL, Status, ScreenshotPath, ConsoleErrors |
+| `BrowserSessionEvent` | `"browser.session"` | SessionID, Action, URL |
 
 ### Registered Plugins (in order)
 
 | # | Plugin ID | Plugin Name | Source File | Lines |
 |---|-----------|-------------|-------------|-------|
 | 1 | `home` | Home | `plugin_home.go` | 214 |
-| 2 | `research` | Research | `plugin_research.go` | 224 |
-| 3 | `plans` | Plans | `plugin_plans.go` | 239 |
+| 2 | `research` | Research | `plugin_research.go` | 230 |
+| 3 | `plans` | Plans | `plugin_plans.go` | 245 |
 | 4 | `spectrum` | Spectrum | `plugin_spectrum.go` | 1,218 |
-| 5 | `files` | Files | `plugin_files.go` | 735 |
-| 6 | `git` | Git | `plugin_git.go` | 884 |
-| 7 | `agent` | Agent | `plugin_agent.go` | 390 |
-| 8 | `monitor` | Monitor | `plugin_monitor.go` | 547 |
-| 9 | `workspaces` | Workspaces | `plugin_workspaces.go` | 1,082 |
-| 10 | `onboarding` | Onboarding | `plugin_onboarding.go` | 501 |
+| 5 | `files` | Files | `plugin_files.go` | 1,407 |
+| 6 | `git` | Git | `plugin_git.go` | 1,530 |
+| 7 | `agent` | Agent | `plugin_agent.go` | 1,051 |
+| 8 | `monitor` | Monitor | `plugin_monitor.go` | 917 |
+| 9 | `browser` | Browser | `plugin_browser.go` | 726 |
+| 10 | `workspaces` | Workspaces | `plugin_workspaces.go` | 1,981 |
+| 11 | `onboarding` | Onboarding | `plugin_onboarding.go` | 685 |
 
 ### Tab Order
 
-The tab bar displays 9 tabs (excluding Splash and Onboarding):
+The tab bar displays 10 tabs (excluding Splash and Onboarding):
 
 ```
-[1] Home  [2] Research  [3] Plans  [4] Spectrum  [5] Files  [6] Git  [7] Agent  [8] Monitor  [9] Workspaces
+[1] Home  [2] Research  [3] Plans  [4] Spectrum  [5] Files  [6] Git  [7] Agent  [8] Monitor  [9] Browser  [0] Workspaces
 ```
 
 ---
@@ -1621,7 +1682,7 @@ The primary operational screen. Displays real-time execution progress with 6 sub
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ LOG OUTPUT                                                    [z/x scroll]  │
 │ ─────────────────────────────────────────────────────────────────────────── │
-│ [14:32:05] INFO  Prism CLI v1.9.8                                          │
+│ [14:32:05] INFO  Prism CLI v2.3.0                                          │
 │ [14:32:05] INFO  Starting iteration 1                                      │
 │ [14:32:15] OK    DEMO-009 completed (commit: abc123)                       │
 │ [14:32:20] INFO  Starting iteration 2                                      │
@@ -1730,9 +1791,11 @@ A two-pane file tree browser with preview. Left pane shows an expandable directo
 
 #### Features
 
+- **Syntax highlighting** (F-1): Chroma-based highlighting for 100+ languages
 - **Git status badges** (F-2): Modified (M/yellow), Added (A/green), Deleted (D/red), Untracked (?/gray) indicators on tree items
 - **Multi-tab support** (F-3): Open multiple files in tabs, switch with `h`/`l`, close with `x`, max 10 tabs
-- **Syntax highlighting** (F-1): Chroma-based highlighting for 100+ languages
+- **Fuzzy file finder** (F-4): `Ctrl+D` opens a project-wide fuzzy file search overlay. File cache built asynchronously via `git ls-files` (or `filepath.Walk` fallback). Scoring: +10 per character match, +5 consecutive bonus, +8 separator boundary, +6 camelCase boundary, +15 filename start, -2 per gap. Shorter paths preferred as tiebreaker
+- **Content search** (F-5): `Ctrl+S` opens a ripgrep-powered project-wide content search (`rg --json --max-count 30`). Results show file:line:text with navigation. Displays install instructions if `rg` binary not found
 - **Inline file editing** (F-6): `e` opens a full textarea editor, `Ctrl+S` saves, `Esc` cancels
 - **Git blame view** (F-7): `b` toggles blame annotations (short hash, author, relative age) alongside code
 
@@ -1798,6 +1861,13 @@ Blame mode (`b` in preview pane):
 | `Esc` | Cancel editing, discard changes |
 
 **Filter Mode:** Captures all keystrokes for search query. `Esc` cancels, `Enter` applies, `Backspace` deletes.
+
+**Global overlays (from Files Screen):**
+
+| Key | Action |
+|-----|--------|
+| `Ctrl+D` | Open fuzzy file finder overlay (F-4) |
+| `Ctrl+S` | Open content search overlay (F-5) |
 
 ---
 
@@ -1882,7 +1952,26 @@ Sidebar sections appear in order: Conflicts (if any), Staged, Modified, Untracke
 
 ### 9. Agent Screen
 
-A chat interface with message history and text input. Supports wide mode (sidebar + chat) and compact mode (chat only).
+A chat interface with conversation history browsing, message rendering, and text input. Uses the **adapter system** (`app/adapter/`) to scan AI agent conversation files from disk. Supports wide mode (sidebar + chat) and compact mode (chat only).
+
+#### Adapter System
+
+The Agent screen uses a pluggable `Adapter` interface to discover conversation sessions:
+
+| Adapter | ID | Data Source | Format |
+|---------|----|-------------|--------|
+| `ClaudeAdapter` | `"claude"` | `~/.claude/projects/` | `.jsonl` per session |
+
+Each adapter implements: `ID()`, `Name()`, `Available()`, `ScanSessions()`, `LoadMessages(path)`.
+
+**Session** metadata includes: ID, Title (first user message excerpt), Path, ProjectPath, CreatedAt, UpdatedAt, MessageCount, TokenCount, Model.
+
+The sidebar groups sessions by date (Today, Yesterday, This Week, etc.). `ClaudeAdapter.decodeProjectPath()` converts Claude's directory encoding (`c--Users-digit-Developer-prism-plugin`) back to filesystem paths.
+
+**Message rendering** (`chat/renderer.go`) supports:
+- **User messages**: `"> "` prompt prefix with blue styling
+- **Assistant messages**: Left accent bar (`▎`) with dark background, Glamour markdown rendering
+- **Tool messages**: Compact single-line status (▸ running, ✓ complete, ✗ error)
 
 #### UI Layout — Wide Mode
 
@@ -1890,11 +1979,11 @@ A chat interface with message history and text input. Supports wide mode (sideba
 ╭──────── 1/3 ────────╮╭─────────────── 2/3 ──────────────────────────────────╮
 │ CONVERSATIONS        ││                                                       │
 │ ────────────────    ││   How do I implement authentication?                  │
-│ > Current Session    ││                          ┌──────────────────────────┐ │
-│                      ││                          │ Use OAuth2 + JWT auth.  │ │
-│                      ││                          │ Here's the approach:    │ │
-│                      ││                          │ ...                     │ │
-│                      ││                          └──────────────────────────┘ │
+│ ── Today ─────────  ││                          ┌──────────────────────────┐ │
+│ > Fix auth bug       ││                          │ ▎ Use OAuth2 + JWT.     │ │
+│   Add dark mode      ││                          │ ▎ Here's the approach:  │ │
+│ ── Yesterday ─────  ││                          │ ▎ ...                   │ │
+│   Refactor API       ││                          └──────────────────────────┘ │
 │                      ││ ┌──────────────────────────────────────────────────┐  │
 │                      ││ │ Type a message... (Ctrl+Enter to send)          │  │
 │                      ││ └──────────────────────────────────────────────────┘  │
@@ -1907,6 +1996,8 @@ A chat interface with message history and text input. Supports wide mode (sideba
 |-----|--------|
 | `Ctrl+B` | Toggle wide/compact mode |
 | `Ctrl+Enter` | Send message |
+| `j` / `k` | Navigate conversations (sidebar) or scroll messages (chat) |
+| `Enter` | Load selected conversation |
 | `Esc` / `Backspace` | Focus Home |
 
 ---
@@ -1947,7 +2038,7 @@ Three-panel system health dashboard with multi-panel focus navigation, quality g
   Last refresh: 14:32:05
 ```
 
-Auto-refreshes every 5 seconds. Subscribes to `"story.completed"` and `"agent.status"` EventBus events. When terminal width is narrow, panels stack vertically instead of side-by-side.
+Auto-refreshes every 5 seconds. Subscribes to `"story.completed"`, `"agent.status"`, and `"browser.verification"` EventBus events. When terminal width is narrow, panels stack vertically instead of side-by-side.
 
 #### Key Bindings
 
@@ -1968,7 +2059,56 @@ Auto-refreshes every 5 seconds. Subscribes to `"story.completed"` and `"agent.st
 
 ---
 
-### 11. Workspaces Screen
+### 11. Browser Screen
+
+A Playwright browser verification dashboard that monitors automated browser sessions, tracks verification history, and manages screenshot/artifact files. Three-panel layout.
+
+#### Types
+
+- **`BrowserSessionInfo`**: SessionID, URL, CreatedAt, Action (`"created"`, `"closed"`, `"error"`)
+- **`BrowserVerificationRecord`**: StoryID, CheckType (`"screenshot"`, `"console"`, `"snapshot"`, `"network"`), Status (`"pass"`, `"fail"`), ArtifactPath, Details, Timestamp
+- **`BrowserArtifact`**: Path, Name, Size, Timestamp, StoryID
+
+#### UI Layout
+
+```
+╭──────── 1/3 ────────╮╭──────── 1/3 ─────────╮╭──────── 1/3 ────────────────╮
+│ SESSIONS             ││ HISTORY               ││ ARTIFACTS                   │
+│ ────────────────    ││ ──────────────────    ││ ───────────────────────    │
+│                      ││                       ││                             │
+│ ● abc123  localhost  ││ ✓ STORY-001 screenshot││ screenshot-001.png  45KB   │
+│   Created 2m ago     ││ ✓ STORY-001 console   ││ snapshot-002.html   12KB   │
+│                      ││ ✗ STORY-002 network   ││ console-003.log     3KB    │
+│ ○ def456  localhost  ││ ✓ STORY-003 snapshot  ││                             │
+│   Closed  5m ago     ││                       ││                             │
+│                      ││                       ││                             │
+╰──────────────────────╯╰───────────────────────╯╰─────────────────────────────╯
+```
+
+#### Event Subscriptions
+
+- `"browser.verification"` — Adds records to history panel
+- `"browser.session"` — Adds/updates entries in sessions panel
+
+Periodic artifact scanning runs every 10 seconds to discover new files on disk.
+
+#### Key Bindings
+
+| Key | Panel | Action |
+|-----|-------|--------|
+| `Tab` | Any | Cycle focus: Sessions → History → Artifacts |
+| `Shift+Tab` | Any | Cycle focus backward |
+| `j` / `↓` | Any | Navigate items within focused panel |
+| `k` / `↑` | Any | Navigate items within focused panel |
+| `Enter` | Sessions | View session details |
+| `Enter` | History | View verification details |
+| `Enter` | Artifacts | Open artifact preview |
+| `r` | Any | Refresh panels |
+| `Esc` / `Backspace` | Any | Focus Home |
+
+---
+
+### 12. Workspaces Screen
 
 A multi-project workspace manager with three view modes: **Projects** (`.prism/` scanning), **Worktrees** (git worktree management), and **Kanban** (agent status board). Two-pane layout with tabbed preview (Info/Stories/Progress).
 
@@ -2187,7 +2327,7 @@ Key hints include view-specific hints from the active plugin's `KeyHints()` meth
 **Tier 2: Powerline Status Bar**
 
 ```
- IMPLEMENT ╲ ⚡ Spectrum ╲  main ╲ STORY-003 ╲                ╱ v1.9.8 ╱ 3✓ 0✗ ╱ 8/12 ╱ iter 3 ╱ 🕒 2m 15s
+ IMPLEMENT ╲ ⚡ Spectrum ╲  main ╲ STORY-003 ╲                ╱ v2.3.0 ╱ 3✓ 0✗ ╱ 8/12 ╱ iter 3 ╱ 🕒 2m 15s
 ```
 
 Left segments:
@@ -2197,7 +2337,7 @@ Left segments:
 4. Current story ID (from Spectrum plugin, when width >= 100)
 
 Right segments:
-1. Version (`v1.9.8`)
+1. Version (`v2.3.0`)
 2. Quality gate counts (pass/fail, when width >= 80)
 3. Story progress (completed/total)
 4. Iteration counter (when width >= 90)
@@ -2970,6 +3110,123 @@ The diff system (`diff/`) provides parsing and rendering of unified diffs with s
 
 ---
 
+## File Watcher
+
+The `watcher/` package provides real-time file change detection using `fsnotify`, enabling auto-refresh across plugins.
+
+### Architecture
+
+```
+Project Directory
+    │
+    ▼
+┌──────────────────┐
+│  fsnotify.Watcher │  Recursive directory watching
+│  (all subdirs)    │  Auto-adds newly created directories
+└────────┬─────────┘
+         │
+    fs event
+         │
+         ▼
+┌──────────────────┐
+│  Ignore Filter    │  Skips: .git, node_modules, vendor,
+│                   │  dist, build, __pycache__, .cache,
+│                   │  hidden dirs (except .prism)
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│  Debounce         │  Per-path timer (default 500ms)
+│  (time.Timer map) │  Resets on repeated events
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│  EventBus.Publish │  FileChangedEvent{FilePath, Action}
+│                   │  Action: "created", "modified", "deleted"
+└──────────────────┘
+```
+
+### Configuration
+
+- **Default debounce**: 500ms
+- **Functional options**: `WithDebounce(duration)`, `WithIgnoreFunc(fn)`
+- **Thread-safe**: Uses `sync.Mutex` for timer map access
+- **Lifecycle**: `Start()` walks directory tree, `Stop()` cancels all timers and closes watcher
+
+Subscribers: Git plugin (auto-refresh status), Files plugin (tree refresh), Browser plugin (artifact scanning).
+
+---
+
+## Persisted UI State
+
+The `state/` package provides per-project UI state persistence across sessions.
+
+### Storage
+
+State files are stored at `~/.config/prism-cli/state/<project-hash>.json`. The hash is SHA-256 of the project directory path (first 12 hex characters).
+
+### Schema
+
+```go
+type ProjectState struct {
+    ActivePlugin string                    // Last active tab
+    Files        FilesPersistedState       // Open tabs, expanded directories, sidebar width
+    Git          GitPersistedState         // Sidebar width, diff view mode
+    Workspaces   WorkspacesPersistedState  // Linked tasks (worktree path → story ID)
+}
+```
+
+### Operations
+
+| Method | Description |
+|--------|-------------|
+| `NewStore(configDir)` | Creates store rooted at config directory; empty `configDir` makes all operations no-ops |
+| `Load(projectDir)` | Reads state for project; returns zero-value on missing/corrupt file |
+| `Save(projectDir, state)` | Writes state atomically as indented JSON |
+
+Thread-safe via `sync.RWMutex`.
+
+---
+
+## Global Workspace Registry
+
+The `registry/` package manages `~/.prism/workspaces.json` for cross-directory project discovery.
+
+### Schema
+
+```json
+{
+  "projects": [
+    {
+      "path": "/Users/demo/project",
+      "name": "project",
+      "lastAccessed": "2026-03-02T14:00:00Z",
+      "version": "2.3.0"
+    }
+  ]
+}
+```
+
+### Operations
+
+| Function | Description |
+|----------|-------------|
+| `Register(projectDir, version)` | Add/update project entry (called on TUI exit from `main.go`) |
+| `LoadAll()` | Read all registered projects |
+| `Prune()` | Remove entries where `.prism/` no longer exists on disk |
+
+### Cross-Process Safety
+
+Uses an exclusive lockfile at `~/.prism/workspaces.json.lock`:
+- Retries up to 10 times with 50ms delay
+- Removes stale lock and retries once on failure
+- Windows paths are lowercased via `normalizePath()` for case-insensitive deduplication
+
+The Workspaces plugin reads from this registry to discover projects across different directories (not just siblings).
+
+---
+
 ## Keyboard Reference
 
 ### Global Keys (All Screens)
@@ -2979,7 +3236,8 @@ The diff system (`diff/`) provides parsing and rendering of unified diffs with s
 | `q` / `Ctrl+C` | Quit application |
 | `?` | Toggle help modal |
 | `Ctrl+P` / `:` | Open command palette |
-| `Ctrl+D` | Toggle sidebar |
+| `Ctrl+D` | Open fuzzy file finder overlay (F-4) |
+| `Ctrl+S` | Open content search overlay (F-5) |
 | `1`–`9` | Switch to tab N |
 | `Tab` | Next tab (unless Spectrum has multiple epics) |
 | `Shift+Tab` | Previous tab (unless Spectrum has multiple epics) |
@@ -2993,7 +3251,7 @@ When a key is pressed, it is processed in this strict order:
 3. **Quit** — `q` / `Ctrl+C` always quit
 4. **Dialog** — If a dialog is open, keys route to dialog
 5. **Modal** — If a modal is open, keys route to modal
-6. **Global keys** — Help, command palette, sidebar toggle, tab switching
+6. **Global keys** — Help, command palette, file finder, content search, tab switching
 7. **Active plugin** — Remaining keys delegated to the focused plugin
 
 ### Home Screen
@@ -3044,6 +3302,8 @@ When a key is pressed, it is processed in this strict order:
 | `Enter` / `Space` | Tree | Toggle expand / open in tab |
 | `x` | Tree/Preview | Close active tab |
 | `/` | Tree | Enter filter mode |
+| `Ctrl+D` | Any | Open fuzzy file finder (F-4) |
+| `Ctrl+S` | Any (not editing) | Open content search (F-5) |
 | `Tab` | Any | Toggle tree/preview pane |
 | `j` / `k` | Preview | Scroll content |
 | `h` / `l` | Preview | Previous / next tab |
@@ -3079,6 +3339,8 @@ When a key is pressed, it is processed in this strict order:
 |-----|--------|
 | `Ctrl+B` | Toggle wide/compact mode |
 | `Ctrl+Enter` | Send message |
+| `j` / `k` | Navigate conversations (sidebar) or scroll messages (chat) |
+| `Enter` | Load selected conversation |
 | `Esc` | Focus Home |
 
 ### Monitor Screen
@@ -3093,6 +3355,19 @@ When a key is pressed, it is processed in this strict order:
 | `Enter` | History | Open detail modal (M-4) |
 | `Enter` | Gates | Run selected gate (M-2) |
 | `o` | Gates | View gate output (M-3) |
+| `Esc` | Any | Focus Home |
+
+### Browser Screen
+
+| Key | Panel | Action |
+|-----|-------|--------|
+| `Tab` | Any | Cycle focus: Sessions → History → Artifacts |
+| `Shift+Tab` | Any | Cycle focus backward |
+| `j` / `k` | Any | Navigate items within panel |
+| `Enter` | Sessions | View session details |
+| `Enter` | History | View verification details |
+| `Enter` | Artifacts | Open artifact preview |
+| `r` | Any | Refresh panels |
 | `Esc` | Any | Focus Home |
 
 ### Workspaces Screen
@@ -3220,14 +3495,14 @@ When running in an IDE terminal, detected accent and editor background colors ov
 
 ## Vertical Layout & Height Budget
 
-### Critical: lipgloss v1.1.0 `Height()` Semantic
+### Critical: lipgloss `Height()` Semantic
 
 **`Height(h)` sets the INNER (content) height, not the outer frame height.**
 
-Despite the v1 migration guide claiming Width/Height are "outer dimensions including borders and padding," the actual implementation in lipgloss v1.1.0 applies `Height()` to content BEFORE `applyBorder()`:
+Despite the v1 migration guide claiming Width/Height are "outer dimensions including borders and padding," the actual implementation in lipgloss (v1.1.1-pre) applies `Height()` to content BEFORE `applyBorder()`:
 
 ```go
-// lipgloss v1.1.0 style.go Render() order of operations:
+// lipgloss style.go Render() order of operations:
 // 1. alignTextVertical(str, verticalAlign, height, nil)  ← pads content to `height` lines
 // 2. alignTextHorizontal(str, horizontalAlign, width, st)
 // 3. s.applyBorder(str)                                   ← adds 2 lines (top + bottom border)
@@ -3380,7 +3655,11 @@ case plugin.PluginResizeMsg:
 | Monitor Auto-refresh | 5 seconds | `plugin_monitor.go` |
 | Files Max Depth | 3 levels | `plugin_files.go` |
 | Workspace Scan | Parent directory siblings | `plugin_workspaces.go` |
-| Version | 1.9.8 | `main.go:14` |
+| Watcher Debounce | 500ms | `watcher.go` |
+| Watcher Artifact Scan | 10 seconds | `plugin_browser.go` |
+| State Storage | `~/.config/prism-cli/state/` | `state.go` |
+| Workspace Registry | `~/.prism/workspaces.json` | `registry.go` |
+| Version | 2.3.0 | `main.go:19` |
 
 ### Pagination Configuration
 
@@ -3444,13 +3723,13 @@ LDFLAGS := -X main.version=$(VERSION)
 1. `github.com/charmbracelet/bubbles v0.20.0` — Bubble Tea components
 2. `github.com/charmbracelet/bubbletea v1.3.4` — TUI framework
 3. `github.com/charmbracelet/harmonica v0.2.0` — Spring physics
-4. `github.com/charmbracelet/lipgloss v1.1.0` — Terminal styling
+4. `github.com/charmbracelet/lipgloss v1.1.1-pre` — Terminal styling (unreleased commit)
 5. `github.com/charmbracelet/x/ansi v0.8.0` — ANSI utilities
 6. `github.com/fogleman/fauxgl v0.0.0` — 3D rendering
 7. `github.com/muesli/termenv v0.16.0` — Terminal environment detection
 8. `github.com/spf13/cobra v1.8.1` — CLI framework
 
-**Notable indirect:** Chroma (syntax highlighting), bubblezone (mouse zones), clipboard, colorprofile, cellbuf
+**Notable indirect:** Chroma v2 (syntax highlighting), Glamour (markdown rendering), bubblezone (mouse zones), fsnotify v1.9.0 (file watcher), clipboard, colorprofile, cellbuf
 
 ---
 ---
