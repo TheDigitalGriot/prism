@@ -103,7 +103,7 @@
 65. [packages/prism-ui](#packagesprism-ui)
 66. [Platform Shell Responsibilities](#platform-shell-responsibilities)
 67. [Development Workflow](#development-workflow)
-68. [Production Hardening (v2.4.0)](#production-hardening-v240)
+68. [Production Hardening (v2.3.5)](#production-hardening-v235)
 
 ---
 
@@ -3750,7 +3750,7 @@ The Prism VS Code Extension (`cmd/prism-vscode/`) brings the full 4-phase workfl
 - **Plugin skill routing**: Seamless bridging between SDK chat and CLI plugin skills (`/prism-research`, `/prism-plan`, etc.)
 - **Workflow state machine**: Validated phase transitions (Idle → Research → Plan → Implement → Validate)
 - **Status bar integration**: Workflow phase, story progress, and Spectrum status indicators
-- **24 commands**: Workflow phases, Spectrum control, tree operations, Office/Monitor actions
+- **33 commands**: Workflow phases, Spectrum control, tree operations, Office/Monitor actions
 - **7 configurable settings**: Model selection, Spectrum parameters, auto-approval options
 
 ### Extension Metadata
@@ -3758,7 +3758,7 @@ The Prism VS Code Extension (`cmd/prism-vscode/`) brings the full 4-phase workfl
 | Field | Value |
 |-------|-------|
 | Name | Prism |
-| Version | 2.1.8 |
+| Version | 2.3.0 |
 | Publisher | prism |
 | Categories | AI, Programming Languages, Other |
 | Min VS Code | 1.84.0 |
@@ -3846,10 +3846,16 @@ User Input (chat, commands, tree clicks)
 cmd/prism-vscode/
 ├── package.json                          # Extension manifest, commands, views, settings
 ├── tsconfig.json                         # TypeScript configuration
-├── esbuild.js                            # Build script
+├── esbuild.mjs                           # Build script (aliases @prism-core → ../../packages/prism-core/src)
+├── jest.config.js                        # Test config (note: some collectCoverageFrom paths are stale)
 ├── dist/                                 # Compiled extension bundle
 ├── media/                                # Icons and assets
-├── assets/                               # Additional resources
+├── assets/                               # Office game assets (copied to dist/assets/ via esbuild)
+│   ├── char_0.png – char_5.png          # Character sprite PNGs
+│   ├── floors.png                       # Floor tile sheet
+│   ├── walls.png                        # Wall tile sheet
+│   ├── default-layout.json             # Default office layout
+│   └── furniture/                       # 33 furniture PNGs + furniture-catalog.json
 │
 ├── src/
 │   ├── extension.ts                      # Main entry point — activation, registration
@@ -3867,70 +3873,115 @@ cmd/prism-vscode/
 │   │
 │   ├── core/                             # Core business logic
 │   │   ├── controller/
-│   │   │   ├── index.ts                 # PrismController (central orchestrator)
-│   │   │   └── prism/
-│   │   │       ├── workflow.ts          # 4-phase state machine
-│   │   │       ├── spectrum.ts          # Spectrum execution engine
-│   │   │       ├── spectrum-runner.ts   # Per-iteration CLI runner
-│   │   │       ├── stories.ts          # stories.json management
-│   │   │       ├── plugin-bridge.ts    # Plugin skill routing
-│   │   │       └── mode-bridge.ts      # SDK ↔ CLI mode switching
+│   │   │   └── index.ts                 # PrismController (central orchestrator, extends BasePrismController from @prism-core)
 │   │   ├── api/                         # API types and Claude SDK
-│   │   ├── prompts/                     # Phase-specific system prompts
-│   │   ├── task/                        # Task execution with tool handlers
+│   │   ├── task/                        # Task execution subsystem (see below)
 │   │   └── webview/                     # Webview provider base class
 │   │
-│   ├── claude/                           # Claude CLI integration
-│   │   ├── runner.ts                    # CLI subprocess spawning
-│   │   ├── parser.ts                    # Output parsing (tools, signals)
-│   │   └── events.ts                    # Event type definitions
-│   │
-│   ├── office/                           # Office agent management
+│   ├── office/                           # Office agent management (VSCode-specific)
 │   │   ├── agentManager.ts             # Agent lifecycle
-│   │   ├── agentBridge.ts              # Session routing
-│   │   ├── assetLoader.ts             # Sprite/furniture loading
-│   │   └── layoutPersistence.ts       # Layout serialization
+│   │   └── fileWatcher.ts              # JSONL file watcher for Office agent terminals (249 lines)
 │   │
-│   ├── prism/                            # .prism/ directory handling
-│   │   ├── config.ts                    # Directory detection
-│   │   ├── init.ts                      # Directory initialization
-│   │   ├── watcher.ts                   # FileSystemWatcher
-│   │   └── stories.ts                   # Story model
+│   ├── prism/                            # .prism/ directory handling (VSCode-specific tests only)
+│   │   └── __tests__/
+│   │       ├── signals.test.ts          # Imports from @prism-core
+│   │       ├── stories.test.ts
+│   │       └── progress.test.ts
 │   │
-│   └── shared/                           # Shared types (extension ↔ webview)
-│       ├── PrismState.ts                # Full extension state type
-│       ├── types.ts                     # Workflow phases, colors
-│       └── PrismMessage.ts             # IPC message types
+│   └── core/controller/prism/__tests__/
+│       └── workflow.test.ts              # Workflow state machine tests (imports @prism-core)
 │
-├── webview-ui/                           # Sidebar React webview
+│   # NOTE: The following directories moved to packages/prism-core/:
+│   #   src/core/controller/prism/   → packages/prism-core/src/core/controller/prism/
+│   #   src/core/prompts/            → packages/prism-core/src/core/prompts/
+│   #   src/claude/                  → packages/prism-core/src/claude/
+│   #   src/office/agentBridge.ts    → packages/prism-core/src/office/agentBridge.ts
+│   #   src/office/assetLoader.ts    → packages/prism-core/src/office/assetLoader.ts
+│   #   src/office/layoutPersistence.ts → packages/prism-core/src/office/layoutPersistence.ts
+│   #   src/prism/                   → packages/prism-core/src/prism/
+│   #   src/shared/                  → packages/prism-core/src/shared/
+│   # All consumed via @prism-core/* path aliases.
+│
+├── webview-ui/                           # Sidebar React webview (thin shell)
 │   ├── src/
-│   │   ├── App.tsx                      # Routes between Chat/Spectrum views
-│   │   ├── ChatView.tsx                 # Streaming chat with phase awareness
-│   │   ├── SpectrumView.tsx             # Real-time Spectrum dashboard
-│   │   ├── WelcomeView.tsx              # Onboarding screen
-│   │   ├── PhaseIndicator.tsx           # Visual workflow phase indicator
-│   │   ├── ChatRow.tsx / ToolRow.tsx    # Message rendering
-│   │   ├── MarkdownBlock.tsx            # Syntax-highlighted markdown
-│   │   ├── SpectrumControls.tsx         # Spectrum control buttons
-│   │   ├── StoryList.tsx                # Story list with status badges
-│   │   ├── PrismStateContext.tsx        # Global state context
-│   │   └── services/
-│   │       ├── grpc-client.ts           # gRPC client
-│   │       └── grpc-client-base.ts      # gRPC client base
-│   └── vite.config.ts                   # Vite configuration
+│   │   ├── main.tsx                     # React root
+│   │   ├── App.tsx                      # View switcher (imports from @prism-ui)
+│   │   ├── Providers.tsx                # PrismStateContextProvider wrapper
+│   │   ├── vscode.ts                    # VSCode postMessage transport adapter
+│   │   ├── lib/utils.ts                # Utilities
+│   │   ├── index.css
+│   │   └── theme/
+│   │       ├── spectral.css
+│   │       └── theme.css
+│   └── vite.config.ts
 │
-└── webview-panel/                        # Bottom panel React webview
-    ├── src/
-    │   ├── MonitorView.tsx              # Quality gates, execution history
-    │   ├── WorkspacesView.tsx           # Project browser, worktrees
-    │   ├── OfficeApp.tsx                # Pixel-art office main view
-    │   ├── OfficeCanvas.tsx             # Canvas renderer
-    │   ├── engine/                      # Game loop, character animation
-    │   ├── office/editor/              # Layout editor for furniture
-    │   ├── sprites/                    # Character sprite management
-    │   └── layout/                     # Furniture catalog, tile mapping
-    └── vite.config.ts
+│   # NOTE: The following moved to packages/prism-ui/:
+│   #   ChatView.tsx          → packages/prism-ui/src/views/ChatView.tsx
+│   #   SpectrumView.tsx      → packages/prism-ui/src/views/SpectrumView.tsx
+│   #   WelcomeView.tsx       → packages/prism-ui/src/components/WelcomeView.tsx
+│   #   PhaseIndicator.tsx    → packages/prism-ui/src/components/workflow/PhaseIndicator.tsx
+│   #   ChatRow.tsx/ToolRow.tsx → packages/prism-ui/src/components/chat/
+│   #   MarkdownBlock.tsx     → packages/prism-ui/src/components/common/MarkdownBlock.tsx
+│   #   SpectrumControls.tsx  → packages/prism-ui/src/components/spectrum/
+│   #   StoryList.tsx         → packages/prism-ui/src/components/spectrum/StoryList.tsx
+│   #   PrismStateContext.tsx → packages/prism-ui/src/context/PrismStateContext.tsx
+│   #   services/grpc-client*.ts → packages/prism-ui/src/services/
+│   # All consumed via @prism-ui/* path aliases.
+│
+├── webview-panel/                        # Bottom panel React webview
+│   ├── src/
+│   │   ├── MonitorView.tsx              # Quality gates, execution history
+│   │   └── WorkspacesView.tsx           # Project browser, worktrees
+│   └── vite.config.ts
+│
+│   # NOTE: Office components moved to packages/prism-ui/src/office/:
+│   #   OfficeCanvas.tsx   → packages/prism-ui/src/office/components/OfficeCanvas.tsx
+│   #   engine/            → packages/prism-ui/src/office/engine/
+│   #   office/editor/     → packages/prism-ui/src/office/editor/
+│   #   sprites/           → packages/prism-ui/src/office/sprites/
+│   #   layout/            → packages/prism-ui/src/office/layout/
+│
+└── webview-office/                       # Standalone Office webview app (NEW)
+    ├── package.json                     # React 19.2.4, Vite 6.4.1
+    ├── vite.config.ts                   # Dev port 5174
+    ├── tsconfig.json
+    └── src/
+        └── main.tsx                     # Sets up OfficeApp via @prism-ui with VSCode postMessage transport
 ```
+
+### `src/core/task/` — Task Execution Subsystem
+
+The task subsystem handles tool execution during chat sessions:
+
+```
+src/core/task/
+├── index.ts              # Task module entry
+├── task-state.ts         # Task state management
+├── message-state.ts      # Message state management
+└── tools/
+    ├── coordinator.ts    # Tool coordinator
+    ├── types.ts          # Tool type definitions
+    └── handlers/
+        ├── read-file.ts
+        ├── write-file.ts
+        ├── edit-file.ts
+        ├── execute-command.ts
+        ├── search-files.ts
+        ├── list-files.ts
+        ├── ask-followup.ts
+        └── attempt-completion.ts
+```
+
+### Walkthroughs
+
+The extension defines a walkthrough `prism.gettingStarted` in `package.json` with 4 steps:
+
+| Step | Description |
+|------|-------------|
+| `welcome` | Welcome to Prism |
+| `init-prism` | Initialize `.prism/` directory |
+| `configure-claude` | Configure Claude CLI |
+| `first-research` | Run your first research |
 
 ---
 
@@ -4359,24 +4410,26 @@ The Office view provides a pixel-art visualization of AI agents working in a vir
 ## Extension Technology Stack
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                     Prism VS Code Extension v2.1.8                  │
-├──────────────┬──────────────┬──────────────┬────────────────────────┤
-│  Extension   │  Sidebar     │  Bottom      │  Build                 │
-│  Host        │  Webview     │  Panel       │  Tools                 │
-├──────────────┼──────────────┼──────────────┼────────────────────────┤
-│ TypeScript   │ React 18     │ React 18     │ esbuild                │
-│ VS Code API  │ Vite         │ Vite         │ TypeScript             │
-│ Node.js      │ Tailwind v4  │ Tailwind v4  │ Jest                   │
-│ Anthropic SDK│ React        │ Canvas 2D    │ VS Code Test CLI       │
-│              │  Virtuoso    │ PNG.js       │                        │
-│              │ React        │              │                        │
-│              │  Markdown    │              │                        │
-├──────────────┴──────────────┴──────────────┴────────────────────────┤
-│  Claude CLI (child process — shared with Prism CLI)                 │
-├─────────────────────────────────────────────────────────────────────┤
-│  .prism/ Directory (shared — research, plans, stories, spectrum)    │
-└─────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                     Prism VS Code Extension v2.3.0                          │
+├──────────────┬──────────────┬──────────────┬───────────────┬────────────────┤
+│  Extension   │  Sidebar     │  Bottom      │  Office       │  Build         │
+│  Host        │  Webview     │  Panel       │  Webview      │  Tools         │
+├──────────────┼──────────────┼──────────────┼───────────────┼────────────────┤
+│ TypeScript   │ React 18     │ React 18     │ React 19.2.4  │ esbuild        │
+│ VS Code API  │ Vite 6.4.1   │ Vite 6.4.1   │ Vite 6.4.1    │ TypeScript     │
+│ Node.js      │ Tailwind v4  │ Tailwind v4  │ Tailwind v4   │ Jest           │
+│ Anthropic SDK│ React        │ Canvas 2D    │ Port 5174     │ VS Code Test   │
+│              │  Virtuoso    │ PNG.js       │               │  CLI           │
+│              │ React        │              │               │                │
+│              │  Markdown    │              │               │                │
+├──────────────┴──────────────┴──────────────┴───────────────┴────────────────┤
+│  @prism-core/* (packages/prism-core) │ @prism-ui/* (packages/prism-ui)      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  Claude CLI (child process — shared with Prism CLI)                         │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  .prism/ Directory (shared — research, plans, stories, spectrum)            │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Activation Flow (`extension.ts`)
@@ -4395,16 +4448,16 @@ The Office view provides a pixel-art visualization of AI agents working in a vir
 | Feature | CLI Dashboard | VS Code Extension | Electron Desktop App |
 |---------|--------------|-------------------|---------------------|
 | 4-Phase Workflow | Tab-based navigation | Commands + sidebar chat | Chat-driven + native menu |
-| Research Browser | Two-mode file viewer | Native tree view + markdown preview | — (deferred) |
-| Plans Browser | Two-mode file viewer + decompose | Native tree view + context menu | — (deferred) |
-| Stories View | Paginated list in Spectrum | Native tree view with expandable steps | Shared React component |
-| Spectrum Execution | Full-screen dashboard | Sidebar + bottom panel | Full React dashboard |
+| Research Browser | Two-mode file viewer | Native tree view + markdown preview | Research discovery via `prism:getResearch` IPC |
+| Plans Browser | Two-mode file viewer + decompose | Native tree view + context menu | Plans discovery via `prism:getPlans` IPC |
+| Stories View | Paginated list in Spectrum | Native tree view with expandable steps | Shared React component + `StoriesPanel` |
+| Spectrum Execution | Full-screen dashboard | Sidebar + bottom panel | Full React dashboard + `SpectrumPanel` |
 | Chat / Agent | Compact TUI chat | Full chat with streaming markdown | Shared ChatView (streaming) |
-| Git Integration | Two-pane staging + diff | Delegates to VS Code's built-in git | — (deferred) |
-| File Browser | Two-pane with tabs + edit + blame | Delegates to VS Code's file explorer | — (deferred) |
-| Monitor | Three-panel health dashboard | Bottom panel quality gates + history | — (deferred) |
-| Workspaces | Projects + worktrees + kanban | Bottom panel project browser | — (deferred) |
-| Office | — | Pixel-art agent visualization | — (out of scope) |
+| Git Integration | Two-pane staging + diff | Delegates to VS Code's built-in git | `GitPanel` + `GitGraphView` via `prism:gitStatus`/`prism:gitLog`/`prism:gitBranchInfo` IPC |
+| File Browser | Two-pane with tabs + edit + blame | Delegates to VS Code's file explorer | `FilesPanel` + `FileContentView` via `prism:fileTree`/`prism:readFile` IPC |
+| Monitor | Three-panel health dashboard | Bottom panel quality gates + history | `MonitorPanel` with `prism:executeGate`/`prism:cancelGate` IPC |
+| Workspaces | Projects + worktrees + kanban | Bottom panel project browser | `WorkspacePanel` via `prism:discoverProjects`/`prism:listWorktrees`/`prism:createWorktree` IPC |
+| Office | — | Pixel-art agent visualization | Full office subsystem (`ElectronAgentManager`, `ElectronOfficeProvider`, `electronOfficeTransport`) |
 | Splash / 3D | Procedural 3D animation | — | — |
 | Spring Animations | Harmonica physics | CSS transitions | CSS transitions |
 | Window State | — | VS Code manages | Custom persistence (JSON) |
@@ -4457,16 +4510,19 @@ The Electron app was built by wiring the existing platform-agnostic prism-vscode
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    Prism Electron v1.0.0                            │
 ├──────────────┬──────────────┬──────────────┬────────────────────────┤
-│  Electron 40 │   React 19   │   Vite 5.4   │   Tailwind CSS 4.2    │
+│  Electron 40 │ React 18.3.1 │   Vite 6.0   │   Tailwind CSS 4.2    │
 │  (Chromium)  │   (UI)       │   (Build)    │   (Styling)           │
 ├──────────────┴──────────────┴──────────────┴────────────────────────┤
-│  @prism-core/* — Shared business logic from prism-vscode           │
+│  @prism-core/* — Shared business logic from packages/prism-core    │
+│  @prism-ui/*  — Shared React components from packages/prism-ui     │
 ├─────────────────────────────────────────────────────────────────────┤
 │  chokidar (file watching) │ uuid (request IDs) │ electron-forge     │
 ├─────────────────────────────────────────────────────────────────────┤
-│  TypeScript 4.5 │ ESLint │ Prettier                                │
+│  TypeScript 5.4.5 │ ESLint │ Prettier                              │
 └─────────────────────────────────────────────────────────────────────┘
 ```
+
+> **Note**: The root `package.json` declares React 19, but `webview-ui/package.json` pins React 18.3.1.
 
 ---
 
@@ -4564,83 +4620,122 @@ PrismStateContext re-renders → ChatView updates
 ```
 cmd/prism-electron/
 ├── src/                               # Main process (Node.js + TypeScript)
-│   ├── main.ts                        # App lifecycle, window, menu, CLI args (65 lines)
-│   ├── preload.ts                     # contextBridge: electronAPI (22 lines)
-│   ├── window-state.ts                # Window bounds + lastProjectDir persistence (50 lines)
+│   ├── main.ts                        # App lifecycle, window, menu, CLI args (111 lines)
+│   ├── preload.ts                     # contextBridge: electronAPI + office IPC (62 lines)
+│   ├── window-state.ts                # Window bounds + lastProjectDir persistence (58 lines)
 │   ├── renderer.tsx                   # Renderer entry (minimal, unused — webview-ui is root)
 │   ├── App.tsx                        # Placeholder (webview-ui/src/App.tsx is real app)
 │   │
 │   ├── hosts/electron/                # Platform shell (mirrors hosts/vscode/)
-│   │   ├── ElectronIPCBridge.ts      # ipcMain handler registration + controller wiring (80 lines)
-│   │   └── ElectronPrismController.ts # VSCode-free controller (adapted, ~650 lines)
+│   │   ├── ElectronIPCBridge.ts      # ipcMain handler registration + controller wiring (511 lines)
+│   │   └── ElectronPrismController.ts # VSCode-free controller (thin — extends BasePrismController, 45 lines)
+│   │
+│   ├── auth/                          # Authentication (NEW)
+│   │   └── ElectronSecretStorage.ts  # SecretStore via Electron safeStorage API (102 lines)
+│   │
+│   ├── office/                        # Office subsystem (NEW — 692 lines combined)
+│   │   ├── ElectronAgentManager.ts   # Spawns Claude CLI, watches JSONL transcripts (386 lines)
+│   │   └── ElectronOfficeProvider.ts # Orchestrates office: assets, agents, messages, layout (306 lines)
 │   │
 │   └── prism/                         # Electron-specific Prism domain modules
-│       ├── config.ts                  # .prism/ detection via fs.stat (45 lines)
-│       ├── watcher.ts                 # PrismWatcher using chokidar (55 lines)
-│       └── init.ts                    # .prism/ directory initialization (40 lines)
+│       │   # NOTE: config.ts (79 lines), watcher.ts (72 lines), init.ts (50 lines)
+│       │   # have moved to packages/prism-core/src/prism/ and are consumed via @prism-core/*.
+│       │   # This directory may be empty or contain thin wrappers.
 │
-├── webview-ui/                        # React SPA (separate Vite build root)
+├── webview-ui/                        # React SPA (separate Vite build root, dev port 5174)
 │   ├── src/
 │   │   ├── main.tsx                   # React root entry
-│   │   ├── App.tsx                    # Top-level view switcher (Welcome/Chat/Spectrum)
+│   │   ├── App.tsx                    # Top-level IDE shell (AppShell + view switcher)
 │   │   ├── Providers.tsx              # PrismStateContextProvider
 │   │   ├── electron.ts               # Transport adapter (replaces vscode.ts)
 │   │   │
-│   │   ├── services/
-│   │   │   ├── grpc-client-base.ts   # Unary + streaming gRPC over postMessage
-│   │   │   └── grpc-client.ts        # Service clients (State, Chat, Workflow, Plugin, Spectrum)
+│   │   ├── services/                  # gRPC clients (imported from @prism-ui or local)
+│   │   │   ├── grpc-client-base.ts
+│   │   │   └── grpc-client.ts
 │   │   │
 │   │   ├── context/
-│   │   │   └── PrismStateContext.tsx  # Global state (hydrated from main process)
+│   │   │   ├── PrismStateContext.tsx  # Global state (hydrated from main process)
+│   │   │   └── LayoutContext.tsx      # IDE shell layout state management (233 lines, NEW)
 │   │   │
-│   │   ├── views/
-│   │   │   ├── ChatView.tsx           # Main chat interface (358 lines)
-│   │   │   └── SpectrumView.tsx       # Spectrum dashboard (270 lines)
+│   │   ├── views/                     # View components (NEW)
+│   │   │   ├── FileContentView.tsx   # File content viewer with syntax highlighting (215 lines)
+│   │   │   ├── GitGraphView.tsx      # Visual git commit graph (309 lines)
+│   │   │   └── StoryDetailView.tsx   # Story details with progress bars + file lists (291 lines)
 │   │   │
 │   │   ├── components/
-│   │   │   ├── chat/                  # ChatRow, ChatTextArea, ToolRow
-│   │   │   ├── spectrum/             # ActivityLog, ProgressBar, StoryList, Controls
-│   │   │   ├── workflow/             # PhaseIndicator
-│   │   │   └── common/               # MarkdownBlock, shared UI
+│   │   │   ├── layout/               # IDE shell layout components (NEW — 8 files)
+│   │   │   │   ├── ActivityBar.tsx   # Vertical icon bar, left rail (200 lines)
+│   │   │   │   ├── AppShell.tsx      # Top-level IDE layout shell (178 lines)
+│   │   │   │   ├── BottomPanel.tsx   # Collapsible bottom panel area (211 lines)
+│   │   │   │   ├── BottomStatusBar.tsx # Status bar at bottom (101 lines)
+│   │   │   │   ├── ContentRail.tsx   # Content panel for tree views (138 lines)
+│   │   │   │   ├── FloatingChatPill.tsx # Floating chat trigger button (63 lines)
+│   │   │   │   ├── HeaderBar.tsx     # Top header with phase buttons (392 lines)
+│   │   │   │   └── TabBar.tsx        # Tab bar for editor area (164 lines)
+│   │   │   │
+│   │   │   ├── panels/               # Panel components (NEW — 6 files)
+│   │   │   │   ├── FilesPanel.tsx    # File tree panel
+│   │   │   │   ├── GitPanel.tsx      # Git status panel
+│   │   │   │   ├── MonitorPanel.tsx  # Quality gates panel
+│   │   │   │   ├── SpectrumPanel.tsx # Spectrum execution panel
+│   │   │   │   ├── StoriesPanel.tsx  # Stories list panel
+│   │   │   │   └── WorkspacePanel.tsx # Workspace management panel
+│   │   │   │
+│   │   │   ├── chat/                  # ChatRow, ChatTextArea, ToolRow (via @prism-ui)
+│   │   │   ├── spectrum/             # ActivityLog, ProgressBar, StoryList, Controls (via @prism-ui)
+│   │   │   ├── workflow/             # PhaseIndicator (via @prism-ui)
+│   │   │   └── common/               # MarkdownBlock, shared UI (via @prism-ui)
+│   │   │
+│   │   ├── office/                    # Office transport (NEW)
+│   │   │   └── electronOfficeTransport.ts  # Wires canvas office to Electron IPC (36 lines)
 │   │   │
 │   │   ├── lib/                       # Utilities (cn, formatters)
 │   │   └── theme/                     # theme.css (--prism-* vars), spectral.css
 │   │
 │   ├── package.json                   # React SPA dependencies
-│   ├── vite.config.ts                 # Vite SPA config
-│   └── tsconfig.json                  # React/JSX TypeScript config
+│   ├── vite.config.ts                 # Vite SPA config (port 5174, @prism-ui alias)
+│   └── tsconfig.json                  # React/JSX TypeScript config (@prism-ui/* alias)
 │
 ├── package.json                       # Main app dependencies + scripts
-├── forge.config.ts                    # Electron Forge packaging config
-├── tsconfig.json                      # Main process TypeScript config (paths: @prism-core/*)
-├── vite.main.config.mts               # Vite config for main process
+├── forge.config.ts                    # Electron Forge config (extraResource: ['../prism-vscode/assets'])
+├── tsconfig.json                      # Main process config (paths: @prism-core/* dual fallback)
+├── vite.main.config.mts               # Vite config for main process (prismCoreAliasPlugin)
 ├── vite.preload.config.mts            # Vite config for preload script
-└── vite.renderer.config.mts           # Vite config for renderer (root: webview-ui/)
+└── vite.renderer.config.mts           # Vite config for renderer (root: webview-ui/, @prism-ui alias)
 ```
 
 ### Import Strategy
 
-The Electron app imports shared business logic from `prism-vscode` using TypeScript path aliases, avoiding file duplication:
+The Electron app imports shared business logic using TypeScript path aliases with a **dual-path fallback** — it checks `packages/prism-core/src` first, then falls back to `../prism-vscode/src`:
 
 ```json
 // tsconfig.json
 {
   "paths": {
-    "@prism-core/*": ["../prism-vscode/src/*"]
+    "@prism-core/*": ["../../packages/prism-core/src/*", "../prism-vscode/src/*"]
   }
 }
 ```
 
 ```typescript
-// vite.main.config.mts
-resolve: {
-  alias: {
-    '@prism-core': path.resolve(__dirname, '../prism-vscode/src')
+// vite.main.config.mts — custom plugin with dual resolution
+function prismCoreAliasPlugin() {
+  // Checks packages/prism-core/src first, falls back to ../prism-vscode/src
+}
+```
+
+Additionally, a **`@prism-ui/*` alias** provides access to shared React components:
+
+```json
+// webview-ui/tsconfig.json
+{
+  "paths": {
+    "@prism-ui/*": ["../../../packages/prism-ui/src/*"]
   }
 }
 ```
 
-This means both apps remain independently buildable while sharing all platform-agnostic code.
+Both `webview-ui/vite.config.ts` and `vite.renderer.config.mts` set up the same `@prism-ui` alias. This means both apps remain independently buildable while sharing all platform-agnostic code.
 
 ---
 
@@ -4744,7 +4839,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 |--------|---------|-------|
 | `send(channel, data)` | Fire-and-forget | Rarely used in Prism |
 | `on(channel, callback)` | Listen for events | `grpc_response` stream from main |
-| `invoke(channel, data)` | Request-response | `grpc_request`, `prism:openProject`, `shell:openExternal` |
+| `invoke(channel, data)` | Request-response | `grpc_request`, `prism:openProject`, `shell:openExternal`, etc. |
+| `officeMessage(callback)` | Listen for events | Subscribe to office messages from main process |
+| `officeAction(msg)` | Fire-and-forget | Send office actions to main process |
 
 #### Type Declaration
 
@@ -4755,6 +4852,8 @@ declare global {
       send: (channel: string, data: unknown) => void;
       on: (channel: string, cb: (data: unknown) => void) => () => void;
       invoke: (channel: string, data?: unknown) => Promise<unknown>;
+      officeMessage: (callback: (data: unknown) => void) => () => void;
+      officeAction: (msg: unknown) => void;
     };
   }
 }
@@ -4770,12 +4869,66 @@ The IPC Bridge does what `VscodeWebviewProvider.ts` does in the VS Code extensio
 
 #### Registered IPC Handlers
 
+**Core handlers:**
+
 | Channel | Method | Purpose |
 |---------|--------|---------|
 | `grpc_request` | `handle` | Routes gRPC requests to `handleGrpcRequest()` → controller handlers |
 | `grpc_request_cancel` | `handle` | Removes streaming subscriber by `request_id` |
 | `prism:openProject` | `handle` | Opens native folder picker → `setProjectDir()` |
 | `shell:openExternal` | `handle` | Opens external URLs in system browser |
+
+**File and Git handlers:**
+
+| Channel | Method | Purpose |
+|---------|--------|---------|
+| `prism:readFile` | `handle` | Read file content (with path traversal protection) |
+| `prism:fileTree` | `handle` | Recursive file tree (depth-limited) |
+| `prism:gitStatus` | `handle` | Git status via child_process |
+| `prism:gitLog` | `handle` | Git log with formatted output |
+| `prism:gitBranchInfo` | `handle` | Branch + ahead/behind info |
+
+**Workspace and project handlers:**
+
+| Channel | Method | Purpose |
+|---------|--------|---------|
+| `prism:discoverProjects` | `handle` | Workspace discovery (50-entry cap) |
+| `prism:addWorkspace` | `handle` | Add workspace directory |
+| `prism:browseAndAddWorkspace` | `handle` | Browse + add workspace |
+| `prism:switchProject` | `handle` | Switch active project directory |
+| `prism:listWorktrees` | `handle` | List git worktrees |
+| `prism:createWorktree` | `handle` | Create git worktree |
+| `prism:deleteWorktree` | `handle` | Delete git worktree |
+
+**Quality gate handlers:**
+
+| Channel | Method | Purpose |
+|---------|--------|---------|
+| `prism:executeGate` | `handle` | Quality gate execution with AbortController |
+| `prism:cancelGate` | `handle` | Cancel running quality gate |
+
+**Research and plans handlers:**
+
+| Channel | Method | Purpose |
+|---------|--------|---------|
+| `prism:getResearch` | `handle` | Research file discovery |
+| `prism:getPlans` | `handle` | Plans file discovery |
+
+**API key management handlers:**
+
+| Channel | Method | Purpose |
+|---------|--------|---------|
+| `prism:getApiKey` | `handle` | Retrieve stored API key |
+| `prism:setApiKey` | `handle` | Store API key (via ElectronSecretStorage) |
+| `prism:deleteApiKey` | `handle` | Remove stored API key |
+| `prism:validateApiKey` | `handle` | Validate API key with Anthropic |
+
+**Layout persistence handlers:**
+
+| Channel | Method | Purpose |
+|---------|--------|---------|
+| `prism:saveLayoutState` | `handle` | Persist IDE layout state |
+| `prism:loadLayoutState` | `handle` | Restore IDE layout state |
 
 #### Bidirectional Communication
 
@@ -4812,7 +4965,7 @@ The bridge tracks the current project directory and exposes:
 
 ### `src/hosts/electron/ElectronPrismController.ts`
 
-The central orchestrator — a VSCode-free adaptation of `PrismController` from `prism-vscode/src/core/controller/index.ts`. It manages all state, services, and handler routing.
+A thin platform shell (45 lines) that extends `BasePrismController` from `packages/prism-core/`. The bulk of orchestration logic (state management, services, handler routing) now lives in the base class. This file provides only Electron-specific overrides.
 
 ### VSCode API Replacements
 
@@ -4918,6 +5071,8 @@ Subscribers are tracked by `request_id`. Dead subscribers are auto-cleaned on se
 ---
 
 ## Platform Modules (Electron)
+
+> **Note**: The `src/prism/config.ts` (79 lines), `src/prism/watcher.ts` (72 lines), and `src/prism/init.ts` (50 lines) modules have been extracted to `packages/prism-core/src/prism/` and are now consumed via `@prism-core/*` aliases. The descriptions below document their functionality as it exists in the shared package.
 
 ### `src/prism/config.ts` — Directory Detection
 
@@ -5333,25 +5488,31 @@ The Electron app shares approximately 90% of its codebase with the VS Code exten
 
 | Layer | Shared? | Notes |
 |-------|---------|-------|
-| Workflow state machine | Yes | Imported via `@prism-core/core/workflow/*` |
-| Stories manager | Yes | Imported via `@prism-core/prism/stories` |
+| Workflow state machine | Yes | Imported via `@prism-core/core/controller/prism/workflow` |
+| Stories manager | Yes | Imported via `@prism-core/core/controller/prism/stories` |
 | Signal parser | Yes | Imported via `@prism-core/prism/signals` |
 | Claude runner | Yes | Imported via `@prism-core/claude/runner` |
 | gRPC handler | Yes | Imported via `@prism-core/core/controller/grpc-handler` |
-| Spectrum engine/runner | Yes | Imported via `@prism-core/core/controller/spectrum/*` |
-| ModeBridge (skills) | Yes | Imported via `@prism-core/core/controller/modes/*` |
-| React components | Copied | Full copy of `webview-ui/` with transport swap |
-| gRPC client base | Copied | Only import changed (`vscode` → `electron`) |
-| Platform shell | New | `ElectronIPCBridge`, `ElectronPrismController` |
-| Platform modules | New | `config.ts`, `watcher.ts`, `init.ts` |
-| Theme CSS | Modified | `--vscode-*` → `--prism-*` custom properties |
+| Base controller | Yes | Imported via `@prism-core/core/controller/BasePrismController` |
+| Spectrum engine/runner | Yes | Imported via `@prism-core/core/controller/prism/spectrum*` |
+| ModeBridge (skills) | Yes | Imported via `@prism-core/core/controller/prism/mode-bridge` |
+| React components | Yes | Imported via `@prism-ui/*` (ChatView, SpectrumView, all sub-components) |
+| gRPC clients | Yes | Imported via `@prism-ui/services/*` |
+| State context | Yes | Imported via `@prism-ui/context/PrismStateContext` |
+| Office engine | Yes | Imported via `@prism-ui/office/*` |
+| CSS bridge | Yes | `@prism-ui/styles/bridge.css` maps `--prism-*` tokens per platform |
+| Platform shell | New | `ElectronIPCBridge` (511 lines), `ElectronPrismController` (45 lines) |
+| Auth | New | `ElectronSecretStorage` (102 lines, OS-level encryption via safeStorage) |
+| Office subsystem | New | `ElectronAgentManager` (386 lines), `ElectronOfficeProvider` (306 lines) |
+| IDE shell | New | Layout components (8 files), panel components (6 files), view components (3 files) |
+| Theme CSS | Thin shell | `webview-ui/src/theme/` with `--prism-*` custom properties |
 
 
 ---
 
 # Part V — Monorepo Architecture (v2.3.5)
 
-The repository was restructured from two independent applications with fragile path aliases into a proper npm workspaces monorepo in v2.4.0.
+The repository was restructured from two independent applications with fragile path aliases into a proper npm workspaces monorepo in v2.3.5.
 
 ---
 
@@ -5402,15 +5563,26 @@ Root `package.json` registers 8 workspaces — run `npm install` from the repo r
 
 ### Contents
 
-| Directory | Description |
-|-----------|-------------|
-| `src/shared/` | `WorkflowPhase`, `PrismMessage`, `PrismExtensionState` types |
-| `src/core/api/` | SDK types, API key auth (`ISecretStorage` adapter) |
-| `src/core/controller/` | `SpectrumEngine`, `WorkflowStateMachine`, `grpc-handler`, `BasePrismController` |
-| `src/claude/` | Claude event types and JSONL parser |
-| `src/prism/` | Spectrum signal protocol constants |
-| `src/office/` | `AgentBridge`, asset loader, layout persistence, JSONL transcript parser, timer manager, office types |
-| `src/workspace/` | Project discovery, worktree management, quality gate execution, research/plans discovery |
+| Directory | Files | Description |
+|-----------|-------|-------------|
+| `src/shared/` | `types.ts`, `PrismMessage.ts`, `PrismState.ts` | `WorkflowPhase` enum, `WORKFLOW_PHASE_COLORS`, `WORKFLOW_PHASE_LABELS`, GrpcRequest/Response types, `PrismExtensionState`, `DEFAULT_PRISM_STATE` |
+| `src/core/api/` | `types.ts`, `auth.ts` | Stream chunk types, conversation message types, tool definitions, UI chat types; `SecretStore` interface, API key helpers |
+| `src/core/controller/` | `BasePrismController.ts`, `grpc-handler.ts`, `types.ts` | Abstract base controller (866 lines, extends EventEmitter), transport-agnostic gRPC handler with `registerUnary`/`registerStream`/`clearHandlers`, `PostMessageFn`/`AgentSessionData`/`UpdatedStoryData` types |
+| `src/core/controller/prism/` | `workflow.ts`, `spectrum.ts`, `spectrum-runner.ts`, `stories.ts`, `plugin-bridge.ts`, `mode-bridge.ts` | `WorkflowStateMachine`, `SpectrumEngine`, `SpectrumRunner`, `StoriesManager`, `PluginBridge` (with `SKILL_MAP`, `WORKFLOW_SKILLS`), `ModeBridge` (with `detectSkillTrigger()`) |
+| `src/core/prompts/` | `system-prompt.ts`, `phase-research.ts`, `phase-plan.ts`, `phase-implement.ts`, `phase-validate.ts` | `buildSystemPrompt()` function, per-phase instruction constants |
+| `src/claude/` | `events.ts`, `parser.ts`, `runner.ts` | Stream event types, `OutputParser` class with signal/tool/phase detection, `ClaudeRunner` class (443 lines — CLI process spawner, prompt builders, `checkClaudeCli()`) |
+| `src/prism/` | `signals.ts`, `types.ts`, `stories.ts`, `progress.ts`, `config.ts`, `init.ts`, `watcher.ts` | Signal parsing (`parseSignal`, `containsSignal`), domain model (`Plan`, `Story`, `StoriesFile`), story file I/O + queries, `ProgressFile` class, `PrismConfig` + directory detection, `.prism/` initialization, `PrismWatcher` (chokidar) |
+| `src/office/` | `agentBridge.ts`, `assetLoader.ts`, `layoutPersistence.ts`, `transcriptParser.ts`, `timerManager.ts`, `types.ts`, `constants.ts` | `AgentBridge`, asset loading functions, layout read/write/watch, JSONL transcript processing, agent timer management, `PostMessageFn`/`AgentState`/`PersistedAgent` types, 31 timing/display/parsing constants |
+| `src/workspace/` | `types.ts`, `discovery.ts`, `worktrees.ts`, `qualityGates.ts`, `research.ts`, `plans.ts` | `ProjectInfo`/`WorktreeInfo`/`EpicInfo` types, project discovery (50-entry cap, git timeouts), worktree create/delete, gate execution with `AbortSignal`, research/plans file discovery with frontmatter parsing |
+
+### Infrastructure Notes
+
+- `package.json` declares `"main": "src/index.ts"` and `"types": "src/index.ts"` but **`src/index.ts` does not exist** — this should be created or the declarations removed
+- `tsconfig.json` has `noEmit: true` — no compiled output is produced, no `dist/` directory exists
+- Dependencies: `uuid`, `chokidar`, `pngjs`
+- DevDependencies: `typescript`, `@types/node`, `@types/uuid`, `@types/pngjs`
+- Scripts: `build` and `typecheck` both run `tsc --noEmit`
+- Zero test files across 42 source files
 
 ### Key Patterns
 
@@ -5438,20 +5610,39 @@ handleGrpcRequest(
 **Package name**: `@prism/ui`  
 **Purpose**: Shared React components and canvas office engine.
 
-**TypeScript path alias**: `@prism-ui/*` → `../../packages/prism-ui/src/*`
+**TypeScript path alias**: `@prism-ui/*` → `../../../packages/prism-ui/src/*` (consumers are 3 levels deep from repo root)
 
 ### Contents
 
-| Directory | Description |
-|-----------|-------------|
-| `src/context/` | `PrismStateContext` — shared React state context |
-| `src/components/chat/` | `ChatView`, `ChatMessage`, `ChatInput`, `ChatScrollButton`, `FloatingSpectrumPill` |
-| `src/components/spectrum/` | `SpectrumPanel`, `PhaseProgress`, `StoryCard`, `StoryItem`, `StoryList`, `SpectrumStatus` |
-| `src/components/views/` | `WelcomeView`, `ResearchView`, `PlansView` |
-| `src/hooks/` | `useGrpcClient`, `useMessages` |
-| `src/services/` | `grpc-client-base` (platform transport injected) |
-| `src/styles/` | `bridge.css` — CSS variable bridge (`--prism-*` tokens) |
-| `src/office/` | Complete canvas office engine |
+| Directory | Files | Description |
+|-----------|-------|-------------|
+| `src/context/` | `PrismStateContext.tsx` | `PrismStateContextProvider`, `usePrismState` hook, re-exports all state types |
+| `src/transport/` | `types.ts` | `WebviewTransport` interface (postMessage, getState, setState) |
+| `src/services/` | `grpc-client-base.ts`, `grpc-client.ts` | `ProtoBusClient` abstract class with `WebviewTransport` injection, unary + streaming; 6 concrete clients: StateService, UiService, WorkflowService, ChatService, PluginService, SpectrumService |
+| `src/views/` | `ChatView.tsx`, `SpectrumView.tsx` | Main chat interface (Virtuoso virtual scrolling, phase indicator, suggestion chips), Spectrum dashboard (controls, progress, stories, signals, activity log) |
+| `src/components/` | `WelcomeView.tsx` | Onboarding / first-run view when `.prism/` not detected |
+| `src/components/common/` | `MarkdownBlock.tsx` | react-markdown renderer with remark-gfm, rehype-highlight, custom overrides for code blocks, tables, links |
+| `src/components/chat/` | `ChatRow.tsx`, `ChatTextArea.tsx`, `ToolRow.tsx` | Message type dispatcher (user/assistant/tool_use/tool_result/completion/error), auto-resizing input with Enter-to-send, tool use + result row renderers |
+| `src/components/workflow/` | `PhaseIndicator.tsx` | Phase indicator (icon + label + animated dots) and `PhaseTransition` buttons |
+| `src/components/spectrum/` | `SpectrumControls.tsx`, `ProgressBar.tsx`, `StoryList.tsx`, `ActivityLog.tsx`, `SignalStatus.tsx` | Start/Pause/Resume/Stop/Skip buttons, animated spectral gradient bar, compact story list with status icons, timestamped log with auto-scroll, signal badge + error count |
+| `src/styles/` | `bridge.css`, `tokens.ts` | 342-line CSS variable bridge (`[data-platform="vscode"]` / `[data-platform="electron"]`), typed `PRISM_TOKENS` constant + `PrismPlatform` type |
+| `src/office/` | `OfficeApp.tsx`, `OfficeErrorBoundary.tsx`, `transport.ts`, `types.ts`, `office-constants.ts`, `colorize.ts`, `floorTiles.ts`, `wallTiles.ts`, `toolUtils.ts`, `notificationSound.ts` | Top-level office component, error boundary with retry, `OfficeTransport` interface, all type defs (`SpriteData = string[][]`, `Character`, `OfficeLayout`, `EditTool`, etc.), 117 lines of game constants, sprite HSL colorization, tile data, tool status mapping, Web Audio notifications |
+| `src/office/engine/` | `officeState.ts`, `gameLoop.ts`, `renderer.ts`, `characters.ts`, `matrixEffect.ts` | `OfficeState` class (layout, characters, tiles, seats), rAF loop, canvas tile/character rendering, character FSM + BFS pathfinding, spawn/despawn visual effect |
+| `src/office/sprites/` | `spriteData.ts`, `spriteCache.ts` | Hand-drawn sprite arrays (string[][]), render cache |
+| `src/office/layout/` | `furnitureCatalog.ts`, `layoutSerializer.ts`, `tileMap.ts` | Furniture catalog + metadata, layout-to-tile conversion, walkability + BFS pathfinding |
+| `src/office/editor/` | `EditorToolbar.tsx`, `editorActions.ts`, `editorState.ts` | UI toolbar for edit mode, paint/place/remove/move/rotate actions, editor state management |
+| `src/office/hooks/` | `useExtensionMessages.ts`, `useEditorActions.ts`, `useEditorKeyboard.ts` | Extension-to-office message bridge, editor action handlers, keyboard shortcuts in edit mode |
+| `src/office/components/` | `OfficeCanvas.tsx`, `ToolOverlay.tsx` | Main canvas element, HTML overlay for tool activity display |
+| `src/office/components/ui/` | `AgentLabels.tsx`, `ZoomControls.tsx`, `BottomToolbar.tsx`, `SettingsModal.tsx`, `DebugView.tsx`, `StoryLabels.tsx` | Agent name labels, zoom +/- buttons, bottom action bar, settings dialog, debug info panel, story context labels |
+| `src/office/fonts/` | `FSPixelSansUnicode-Regular.ttf` | Pixel font for office UI |
+
+### Infrastructure Notes
+
+- `package.json` declares `"main": "src/index.ts"` and `"types": "src/index.ts"` but **`src/index.ts` does not exist**
+- Dependencies: `react-markdown`, `react-virtuoso`, `rehype-highlight`, `remark-gfm`, `highlight.js`, `class-variance-authority`, `clsx`, `lucide-react`, `tailwind-merge`, `uuid`
+- Peer deps: `react`, `react-dom`
+- Scripts: `typecheck` runs `tsc --noEmit`
+- Zero test files, no Storybook
 
 ### CSS Variable Bridge
 
@@ -5518,7 +5709,7 @@ cd cmd/prism-electron && npm run make
 
 ---
 
-## Production Hardening (v2.4.0)
+## Production Hardening (v2.3.5)
 
 | Area | Hardening |
 |------|-----------|
