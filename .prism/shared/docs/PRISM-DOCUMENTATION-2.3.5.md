@@ -1384,6 +1384,8 @@ Shared state passed to all plugins during `Init()`:
 
 `Context.Epoch` is a critical architectural pattern. When the user switches projects (via Workspaces), `Registry.Reinit()` increments the epoch. All async `tea.Cmd` results carry the epoch at which they were dispatched. Handlers compare the message epoch against the current `Context.Epoch` — if they differ, the result is from a previous project and is silently discarded. This prevents stale file lists, story data, or Claude output from a previous project from corrupting the current view.
 
+Example: User is viewing Project A's files. An async `ListFilesCmd` was dispatched at epoch 5. Before it returns, the user switches to Project B (epoch becomes 6). When the file list result arrives with epoch 5, the handler sees `5 != 6` and discards it, preventing Project A's files from appearing in Project B's view.
+
 ### Plugin Registry
 
 The registry manages plugin lifecycle:
@@ -1526,6 +1528,50 @@ A full-screen setup wizard displayed after the splash when `.prism/` directory o
 
 Steps auto-advance when already satisfied. On completion, emits `OnboardingCompleteMsg` to transition to Home.
 
+#### UI Layout — Migration Flow
+
+When `HasLegacyDir == true` (legacy `thoughts/` directory detected), the welcome text and step descriptions change:
+
+```
+  ██▀▀█▄ ██▀▀█▄ ▀██▀ ▄██▀▀ ██▄▀▄██
+  ██▄▄█▀ ██▄▄█▀  ██  ▀██▄  ██ ▀ ██
+  ██     ██  ██ ▄██▄ ▄▄██▀ ██   ██
+
+  Legacy Project Detected
+  Found thoughts/ directory — let's migrate to .prism/
+
+  ▶  Project Directory     Detected: /Users/demo/project
+  ○  .prism/ Directory     Migrate thoughts/ → .prism/
+  ○  Claude CLI            Verify claude CLI is installed
+  ○  Stories File          Verify stories.json exists
+
+  Step 1 of 4
+
+  enter execute   j/k navigate
+```
+
+#### UI Layout — Completed State
+
+After all 4 steps finish successfully:
+
+```
+  ██▀▀█▄ ██▀▀█▄ ▀██▀ ▄██▀▀ ██▄▀▄██
+  ██▄▄█▀ ██▄▄█▀  ██  ▀██▄  ██ ▀ ██
+  ██     ██  ██ ▄██▄ ▄▄██▀ ██   ██
+
+  ✓ Setup Complete!
+  Navigating to Home...
+
+  ✓  Project Directory     Detected: /Users/demo/project
+  ✓  .prism/ Directory     Created .prism/ structure
+  ✓  Claude CLI            Found: /usr/local/bin/claude
+  ✓  Stories File          Found stories.json
+
+  Progress: 4/4 steps complete
+```
+
+Automatically transitions to Home screen after a short delay.
+
 ---
 
 ### 3. Home Screen
@@ -1609,6 +1655,20 @@ Evaluated React vs Svelte vs Solid for frontend framework...           │ (scro
   esc back   j/k scroll
 ```
 
+#### UI Layout — Empty State
+
+When no research documents exist in `.prism/shared/research/`:
+
+```
+ PRISM  > Research                                                    ← Breadcrumb
+────────────────────────────────────────────────────────────────────────
+
+  No research files found.
+  Add .md files to .prism/shared/research/
+
+  j/k navigate   enter view   esc home
+```
+
 #### Key Bindings — List Mode
 
 | Key | Action |
@@ -1631,6 +1691,37 @@ Evaluated React vs Svelte vs Solid for frontend framework...           │ (scro
 ### 5. Plans Screen
 
 Identical to Research screen but browses `.prism/shared/plans/` and adds a **decompose** command.
+
+#### UI Layout — List Mode
+
+```
+ PRISM  > Plans                                                       ← Breadcrumb
+────────────────────────────────────────────────────────────────────────
+> 2026-02-28  feature-implementation                                    ← CurrentStyle
+    Phase 1: Set up database schema and migrations                     ← DimStyle (preview)
+    Phase 2: Implement API endpoints for CRUD operations               ← DimStyle (preview)
+  2026-02-20  auth-system-redesign                                      ← PendingStyle
+  2026-02-15  performance-optimization                                  ← PendingStyle
+
+  j/k navigate   enter view   d decompose to epic   esc home
+```
+
+#### UI Layout — Viewer Mode
+
+```
+ PRISM  > Plans                                                       ← Breadcrumb
+────────────────────────────────────────────────────────────────────────
+# Feature Implementation Plan                                          │
+                                                                       │
+## Phase 1: Database Schema                                            │ viewport.Model
+- Create initial migration files                                       │ (scrollable)
+- Set up connection pooling                                            │
+                                                                       │
+## Phase 2: API Endpoints                                              │
+...                                                                    │
+────────────────────────────────────────────────────────────────────────
+  esc back   j/k scroll
+```
 
 #### Additional Key Binding
 
@@ -1693,6 +1784,168 @@ The primary operational screen. Displays real-time execution progress with 6 sub
  ▸ RUNNING               Elapsed: 2m 15s               [q]uit [p]ause [/]skip
 ```
 
+#### UI Layout — Idle State
+
+```
+╭──────────────────────────────────────────────────────────────────────────────╮
+│  user-auth (0/12)   dashboard (0/36)   notifications (0/9)   [tab] switch   │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ PRISM TUI                                          Iteration: 0/50  [?] help
+╭──────────────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│  ▀▀▄▄▀▀▄▄▀▀    '||''|.  '||''|.   '||'  .|'''.|  '||    ||'               │
+│  ▄▄▀▀▄▄▀▀▄▄     ||   ||  ||   ||   ||   ||..  '   |||  |||                │
+│  ▀▀▄▄▀▀▄▄▀▀     ||...|'  ||''|'    ||    ''|||.   |'|..'||                │
+│  ▄▄▀▀▄▄▀▀▄▄     ||       ||   |.   ||  .     '||  | '|' ||               │
+│  ▀▀▄▄▀▀▄▄▀▀    .||.     .||.  '|' .||. |'....|'  .|. | .||.              │
+│                                                                              │
+│  Plan: Feature Implementation  ░░░░░░░░░░░░░░░░░░░░░░░░░░  0/36 (0%)       │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭────────────── 40% ──────────────╮╭───────────────── 60% ────────────────────╮
+│ STORIES                         ││ CURRENT ACTIVITY                         │
+│ ────────────────────────────    ││ ─────────────────────────────────────    │
+│ ○ DEMO-001 Initialize spri...  ││                                          │
+│ ○ DEMO-002 Implement progr...  ││ Press Enter to start execution           │
+│ ○ DEMO-003 Add story compl...  ││                                          │
+│ ○ DEMO-004 Create active s...  ││                                          │
+│ ○ DEMO-005 Implement log e...  ││                                          │
+│ ○ DEMO-006 Add prism logo ...  ││                                          │
+│ ○ DEMO-007 Optimize animat...  ││                                          │
+│ ○ DEMO-008 Test all animat...  ││                                          │
+│ ○ DEMO-009 Create TipTap R...  ││                                          │
+│ ○ DEMO-010 Build FormatToo...  ││                                          │
+│ ○ DEMO-011 Implement markd...  ││                                          │
+│ ○ DEMO-012 Create NoteCard...  ││                                          │
+│   ● ○ ○ [a/s]                  ││                                          │
+╰─────────────────────────────────╯╰──────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ LOG OUTPUT                                                    [z/x scroll]  │
+│ ─────────────────────────────────────────────────────────────────────────── │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ ▸ IDLE                                                    [enter] start [q]uit
+```
+
+#### UI Layout — Paused State
+
+```
+╭────────────── 40% ──────────────╮╭───────────────── 60% ────────────────────╮
+│ STORIES                         ││ CURRENT ACTIVITY                         │
+│ ────────────────────────────    ││ ─────────────────────────────────────    │
+│ ✓ DEMO-001 Initialize spri...  ││ ▸ DEMO-005: Implement log entry...      │
+│ ✓ DEMO-002 Implement progr...  ││                                          │
+│ ✓ DEMO-003 Add story compl...  ││ Status: ⣾ Paused                        │
+│ ✓ DEMO-004 Create active s...  ││                                          │
+│ ▸ DEMO-005 Implement log e...  ││                                          │
+│ ○ DEMO-006 Add prism logo ...  ││ Recent:                                  │
+│ ○ DEMO-007 Optimize animat...  ││   Reading: .../services/auth.ts          │
+│ ○ DEMO-008 Test all animat...  ││   Bash: npm run typecheck                │
+│   ● ○ ○ [a/s]                  ││                                          │
+╰─────────────────────────────────╯╰──────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ LOG OUTPUT                                                    [z/x scroll]  │
+│ ─────────────────────────────────────────────────────────────────────────── │
+│ [14:32:05] INFO  Prism CLI v2.3.0                                          │
+│ [14:32:15] OK    DEMO-004 completed (commit: abc123)                       │
+│ [14:32:20] INFO  Starting iteration 5                                      │
+│   ● ○                                                                       │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ ⏸ PAUSED                  Elapsed: 1m 45s                    [enter] resume
+```
+
+Note: Progress bar and header panels are identical to Running state but omitted for brevity. Status bar shows `⏸ PAUSED` in amber (`#F59E0B`) with frozen elapsed time.
+
+#### UI Layout — Complete State
+
+```
+╭────────────── 40% ──────────────╮╭───────────────── 60% ────────────────────╮
+│ STORIES                         ││ CURRENT ACTIVITY                         │
+│ ────────────────────────────    ││ ─────────────────────────────────────    │
+│ ✓ DEMO-001 Initialize spri...  ││                                          │
+│ ✓ DEMO-002 Implement progr...  ││ All stories complete!                    │
+│ ✓ DEMO-003 Add story compl...  ││                                          │
+│ ✓ DEMO-004 Create active s...  ││                                          │
+│ ✓ DEMO-005 Implement log e...  ││                                          │
+│ ✓ DEMO-006 Add prism logo ...  ││                                          │
+│ ✓ DEMO-007 Optimize animat...  ││                                          │
+│ ✓ DEMO-008 Test all animat...  ││                                          │
+│ ✓ DEMO-009 Create TipTap R...  ││                                          │
+│ ✓ DEMO-010 Build FormatToo...  ││                                          │
+│ ✓ DEMO-011 Implement markd...  ││                                          │
+│ ✓ DEMO-012 Create NoteCard...  ││                                          │
+│   ● ○ ○ [a/s]                  ││                                          │
+╰─────────────────────────────────╯╰──────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ LOG OUTPUT                                                    [z/x scroll]  │
+│ ─────────────────────────────────────────────────────────────────────────── │
+│ [14:35:10] OK    DEMO-012 completed (commit: xyz789)                       │
+│ [14:35:12] OK    All stories complete                                      │
+│   ●                                                                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ ✓ COMPLETE                 Elapsed: 5m 30s                       [enter] quit
+```
+
+Note: Progress bar shows 100% filled with spectrum gradient. "All stories complete!" renders in green (`#10B981`). Status bar shows `▸ COMPLETE` in green.
+
+#### UI Layout — Error State
+
+```
+╭────────────── 40% ──────────────╮╭───────────────── 60% ────────────────────╮
+│ STORIES                         ││ CURRENT ACTIVITY                         │
+│ ────────────────────────────    ││ ─────────────────────────────────────    │
+│ ✓ DEMO-001 Initialize spri...  ││                                          │
+│ ✓ DEMO-002 Implement progr...  ││ Error occurred                           │
+│ ✓ DEMO-003 Add story compl...  ││ 3 consecutive errors on DEMO-004        │
+│ ✓ DEMO-004 Create active s...  ││                                          │
+│ ▸ DEMO-005 Implement log e...  ││                                          │
+│ ○ DEMO-006 Add prism logo ...  ││                                          │
+│   ● ○ ○ [a/s]                  ││                                          │
+╰─────────────────────────────────╯╰──────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ LOG OUTPUT                                                    [z/x scroll]  │
+│ ─────────────────────────────────────────────────────────────────────────── │
+│ [14:33:10] ERROR DEMO-005 failed: exit code 1                              │
+│ [14:33:15] INFO  Retry 2/3 (backoff: 4s)                                   │
+│ [14:33:20] ERROR DEMO-005 failed: exit code 1                              │
+│ [14:33:25] ERROR Max consecutive errors reached (3)                        │
+│   ●                                                                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ ▸ ERROR                    Elapsed: 3m 10s                       [enter] quit
+```
+
+Note: "Error occurred" renders in red (`#EF4444`). Error detail message shown in dim text below. Status bar icon `▸` in red.
+
+#### UI Layout — Max Iterations State
+
+```
+╭────────────── 40% ──────────────╮╭───────────────── 60% ────────────────────╮
+│ STORIES                         ││ CURRENT ACTIVITY                         │
+│ ────────────────────────────    ││ ─────────────────────────────────────    │
+│ ✓ DEMO-001 Initialize spri...  ││                                          │
+│ ✓ DEMO-002 Implement progr...  ││ Iteration limit reached                  │
+│ ✓ DEMO-003 Add story compl...  ││                                          │
+│ ✓ DEMO-004 Create active s...  ││                                          │
+│ ✓ DEMO-005 Implement log e...  ││                                          │
+│ ○ DEMO-006 Add prism logo ...  ││                                          │
+│ ○ DEMO-007 Optimize animat...  ││                                          │
+│   ● ○ ○ [a/s]                  ││                                          │
+╰─────────────────────────────────╯╰──────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ LOG OUTPUT                                                    [z/x scroll]  │
+│ ─────────────────────────────────────────────────────────────────────────── │
+│ [15:02:00] INFO  Starting iteration 50                                     │
+│ [15:02:30] OK    DEMO-005 completed (commit: mno345)                       │
+│ [15:02:32] WARN  Max iterations reached (50/50)                            │
+│   ●                                                                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ ⏸ PAUSED                  Elapsed: 30m 00s                       [enter] quit
+```
+
+Note: "Iteration limit reached" renders in amber (`#F59E0B`). Status bar shows `⏸ PAUSED` (MaxIterations uses same String() as Paused) in amber. Some stories remain pending.
+
 #### Panel Breakdown
 
 **Panel 1: Epic Selector** (conditional — only shown when multiple epics exist)
@@ -1700,6 +1953,7 @@ The primary operational screen. Displays real-time execution progress with 6 sub
 - Selected epic: `CurrentStyle` (bold purple)
 - Unselected: `DimStyle` (gray)
 - Format: ` name (completed/total) `
+- Execution is sequential — one epic at a time. The epic selector switches which epic's stories are displayed and executed.
 
 **Panel 2: Header**
 
@@ -1826,6 +2080,50 @@ Blame mode (`b` in preview pane):
 ╰───────────────────────────────────────────────────────────╯
 ```
 
+#### UI Layout — Filter Mode
+
+Activated with `/` in the tree pane. The tree header is replaced with a search input and the tree is filtered to matching files:
+
+```
+╭───────────── 30% ───────────────╮╭──────────────── 70% ──────────────────────╮
+│ [Filter: mod                   ]││ [main.go] [view.go] [model.go]            │
+│ ──────────────────────────────  ││ model.go [go]                             │
+│   > model.go                M   ││ ──────────────────────────────────────    │
+│   > go.mod                  M   ││   1 │ package main                        │
+│                                  ││   2 │                                      │
+│                                  ││   3 │ type Model struct {                 │
+│                                  ││   4 │   Width  int                        │
+│                                  ││   5 │   Height int                        │
+│                                  ││   6 │ }                                   │
+│                                  ││                                            │
+╰──────────────────────────────────╯╰──────────────────────────────────────────╯
+```
+
+Footer hints change to: `esc cancel search • enter apply filter`
+
+#### UI Layout — Edit Mode
+
+Activated with `e` in the preview pane. The preview content is replaced with an editable textarea:
+
+```
+╭───────────── 30% ───────────────╮╭──────────────── 70% ──────────────────────╮
+│ FILES                            ││ [main.go] [view.go] [model.go]            │
+│ ──────────────────────────────  ││ model.go [go] — EDITING                   │
+│ ▼ prism-plugin/                 ││ ──────────────────────────────────────    │
+│   ▼ cmd/                        ││ package main                              │
+│     ▼ prism-cli/                ││                                            │
+│       ▶ app/                    ││ type Model struct {                        │
+│       ▶ claude/                 ││   Width  int                               │
+│     > README.md             M   ││   Height int█                              │
+│   ▶ .prism/                     ││   Ready  bool                              │
+│   > go.mod                  M   ││ }                                          │
+│                                  ││                                            │
+╰──────────────────────────────────╯╰──────────────────────────────────────────╯
+  ctrl+s save • esc cancel edit
+```
+
+The tree pane is dimmed (inactive border). Cursor (`█`) visible in textarea. Tab bar remains at top of preview pane.
+
 #### Key Bindings
 
 **Tree Pane (left):**
@@ -1919,6 +2217,69 @@ A full-featured two-pane git integration view with staging, commit, push/pull, b
 
 Sidebar sections appear in order: Conflicts (if any), Staged, Modified, Untracked, Recent Commits. The diff pane shows unified or side-by-side diffs with syntax highlighting, word-level change detection, and dual-gutter line numbers.
 
+#### UI Layout — Commit Detail View
+
+When `Enter` is pressed on a commit in the Recent Commits section, the right pane switches from diff to commit detail:
+
+```
+╭───────────── 30% ───────────────╮╭──────────────── 70% ──────────────────────╮
+│ GIT                              ││ COMMIT DETAIL                             │
+│ ──────────────────────────────  ││ ──────────────────────────────────────    │
+│  main ↑0 ↓0                    ││ Commit: dff2646a3b1c9e7f2d8a4b6e         │
+│                                  ││ Author: John Doe <john@example.com>      │
+│ ── Staged ──────────────────    ││ Date:   2026-02-28 14:32:05              │
+│   ● model.go                    ││                                            │
+│                                  ││ minor TUI fixes                           │
+│ ── Modified ────────────────    ││                                            │
+│   ● sidebar.go                  ││ ── Changed Files ─────────────────────    │
+│                                  ││  M model.go          +12 -4              │
+│ ── Recent Commits ──────────    ││  M view.go            +3  -1              │
+│ > dff2646 minor TUI fixes       ││  A sidebar_test.go    +45 -0              │
+│   66277bc continue sidecar...   ││                                            │
+╰──────────────────────────────────╯╰──────────────────────────────────────────╯
+```
+
+#### UI Layout — Side-by-Side Diff
+
+Toggled with `v` from the diff pane. The right pane splits into old (left) and new (right) columns:
+
+```
+╭───────────── 30% ───────────────╮╭──────────────── 70% ──────────────────────╮
+│ GIT                              ││ model.go — SIDE BY SIDE                   │
+│ ──────────────────────────────  ││ ──────────────────────────────────────    │
+│  main ↑0 ↓0                    ││ OLD                  │ NEW                 │
+│                                  ││ ─────────────────── │ ──────────────────  │
+│ ── Staged ──────────────────    ││ 25  type Model st…  │ 25  type Model st…  │
+│   ● model.go                    ││ 26    Width  int     │ 26    Width  int    │
+│                                  ││                      │+27    Height int    │
+│ ── Modified ────────────────    ││                      │+28    Ready  bool   │
+│   ● sidebar.go                  ││ 27  }                │ 29  }               │
+│                                  ││                      │                     │
+│ ── Recent Commits ──────────    ││                      │                     │
+│   dff2646 minor TUI fixes       ││                      │                     │
+│   66277bc continue sidecar...   ││                      │                     │
+╰──────────────────────────────────╯╰──────────────────────────────────────────╯
+```
+
+#### UI Layout — Full-Width Diff (Sidebar Hidden)
+
+When sidebar is toggled off, the diff pane uses the full terminal width:
+
+```
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ model.go                                                                     │
+│ ──────────────────────────────────────────────────────────────────────────── │
+│ diff --git a/model.go b/model.go                                            │
+│ @@ -25,6 +25,8 @@                                                           │
+│  25  type Model struct {                                                     │
+│  26    Width  int                                                            │
+│+ 27    Height int                                                            │
+│+ 28    Ready  bool                                                           │
+│  29  }                                                                       │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+```
+
 #### Key Bindings
 
 **Sidebar (left pane):**
@@ -1954,6 +2315,8 @@ Sidebar sections appear in order: Conflicts (if any), Staged, Modified, Untracke
 
 A chat interface with conversation history browsing, message rendering, and text input. Uses the **adapter system** (`app/adapter/`) to scan AI agent conversation files from disk. Supports wide mode (sidebar + chat) and compact mode (chat only).
 
+> **Note**: Chat input currently returns placeholder responses (`plugin_agent.go:601-620`). Interactive Claude CLI integration is planned but not yet implemented. Session browsing (reading historical JSONL files) is fully functional.
+
 #### Adapter System
 
 The Agent screen uses a pluggable `Adapter` interface to discover conversation sessions:
@@ -1962,7 +2325,7 @@ The Agent screen uses a pluggable `Adapter` interface to discover conversation s
 |---------|----|-------------|--------|
 | `ClaudeAdapter` | `"claude"` | `~/.claude/projects/` | `.jsonl` per session |
 
-Each adapter implements: `ID()`, `Name()`, `Available()`, `ScanSessions()`, `LoadMessages(path)`.
+Each adapter implements: `ID()`, `Name()`, `Available()`, `ScanSessions()`, `LoadMessages(path)`. Additional adapters (Codex, Cursor, Gemini CLI, etc.) can be added by implementing the `Adapter` interface. Currently only Claude Code sessions are discovered.
 
 **Session** metadata includes: ID, Title (first user message excerpt), Path, ProjectPath, CreatedAt, UpdatedAt, MessageCount, TokenCount, Model.
 
@@ -1990,6 +2353,63 @@ The sidebar groups sessions by date (Today, Yesterday, This Week, etc.). `Claude
 ╰──────────────────────╯╰──────────────────────────────────────────────────────╯
 ```
 
+#### UI Layout — Compact Mode
+
+When `WideMode == false` or terminal width < 60 columns, the sidebar is hidden and the chat fills the full width:
+
+```
+╭──────────────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   How do I implement authentication?                                        │
+│                          ┌──────────────────────────────────────────────┐    │
+│                          │ ▎ Use OAuth2 + JWT. Here's the approach:    │    │
+│                          │ ▎                                           │    │
+│                          │ ▎ 1. Set up passport.js middleware          │    │
+│                          │ ▎ 2. Configure JWT token signing            │    │
+│                          │ ▎ 3. Add refresh token rotation             │    │
+│                          └──────────────────────────────────────────────┘    │
+│                                                                              │
+│ ┌──────────────────────────────────────────────────────────────────────────┐ │
+│ │ Type a message... (Ctrl+Enter to send)                                  │ │
+│ └──────────────────────────────────────────────────────────────────────────┘ │
+╰──────────────────────────────────────────────────────────────────────────────╯
+```
+
+#### UI Layout — Analytics View
+
+Toggle with `a`. In wide mode, the analytics panel replaces the chat pane (sidebar stays visible):
+
+```
+╭──────── 1/3 ────────╮╭─────────────── 2/3 ──────────────────────────────────╮
+│ CONVERSATIONS        ││ Usage Analytics                                      │
+│ ────────────────    ││ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   │
+│ ── Today ─────────  ││ 12 sessions  |  1,247 messages  |  Feb 4 - Feb 28   │
+│ > Fix auth bug       ││                                                      │
+│   Add dark mode      ││ Model Usage                                          │
+│ ── Yesterday ─────  ││ ──────────────────────────────────────────────────   │
+│   Refactor API       ││ Opus     ████████████████████░░░░  847,231 tokens    │
+│                      ││ Sonnet   ████████████░░░░░░░░░░░░  512,108 tokens    │
+│                      ││ Haiku    ████░░░░░░░░░░░░░░░░░░░░  128,450 tokens    │
+│                      ││                                                      │
+│                      ││ Estimated Cost                                       │
+│                      ││ ──────────────────────────────────────────────────   │
+│                      ││ Opus:   $31.78   Sonnet: $3.84   Haiku: $0.05       │
+│                      ││ Total:  $35.67                                       │
+╰──────────────────────╯╰──────────────────────────────────────────────────────╯
+```
+
+#### Analytics Mode
+
+Toggle with `a`. Shows token usage and cost breakdown by model for the loaded conversation:
+
+| Model | Input Cost | Output Cost | Per |
+|-------|-----------|-------------|-----|
+| Opus | $15.00 | $75.00 | 1M tokens |
+| Sonnet | $3.00 | $15.00 | 1M tokens |
+| Haiku | $0.25 | $1.25 | 1M tokens |
+
+Displays total tokens consumed and estimated cost. When analytics mode is active, the chat pane is replaced with the analytics panel (`plugin_agent.go:760-764`).
+
 #### Key Bindings
 
 | Key | Action |
@@ -1998,6 +2418,9 @@ The sidebar groups sessions by date (Today, Yesterday, This Week, etc.). `Claude
 | `Ctrl+Enter` | Send message |
 | `j` / `k` | Navigate conversations (sidebar) or scroll messages (chat) |
 | `Enter` | Load selected conversation |
+| `m` | Toggle Glamour/lite markdown rendering |
+| `a` | Toggle analytics view |
+| `Tab` | Toggle sidebar ↔ input focus |
 | `Esc` / `Backspace` | Focus Home |
 
 ---
@@ -2038,7 +2461,39 @@ Three-panel system health dashboard with multi-panel focus navigation, quality g
   Last refresh: 14:32:05
 ```
 
-Auto-refreshes every 5 seconds. Subscribes to `"story.completed"`, `"agent.status"`, and `"browser.verification"` EventBus events. When terminal width is narrow, panels stack vertically instead of side-by-side.
+Auto-refreshes every 5 seconds. Subscribes to `"story.completed"`, `"agent.status"`, and `"browser.verification"` EventBus events. When terminal width < 85 columns, panels stack vertically instead of side-by-side.
+
+#### UI Layout — Stacked Mode (< 85 cols)
+
+```
+╭──────────────────────────────────────────────────────────╮
+│ SYSTEM HEALTH                                            │
+│ ─────────────────────────────────────────────────────── │
+│ Goroutines: 12     Memory: 24MB / 48MB                  │
+│ GC Count: 8        GC Pause: 1.2ms                      │
+│ Status: ● Healthy                                        │
+│ ── Agents ────                                           │
+│ ● implement (feat…)   ◉ research (fix…)                 │
+╰──────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────╮
+│ EXECUTION HISTORY                                        │
+│ ─────────────────────────────────────────────────────── │
+│ ✓ STORY-001  15s  2m ago                                │
+│ ✓ STORY-002  22s  5m ago                                │
+│ ✗ STORY-003  10s  8m ago                                │
+╰──────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────╮
+│ QUALITY GATES                                            │
+│ ─────────────────────────────────────────────────────── │
+│ ● Lint       pass                                        │
+│ ● Tests      pass                                        │
+│ ● Build      pass                                        │
+╰──────────────────────────────────────────────────────────╯
+
+  Last refresh: 14:32:05 │ Panel: Health │ Tab to switch panels
+```
+
+Each panel takes full terminal width. Panel height = `(contentHeight - 2) / 3`. Focused panel has purple border (`#7C3AED`).
 
 #### Key Bindings
 
@@ -2179,6 +2634,67 @@ A multi-project workspace manager with three view modes: **Projects** (`.prism/`
 ```
 
 Cards show status icon (● active, ◉ thinking, ○ waiting, ✓ done, ⏸ paused), branch name, and agent type. Columns are rendered vertically with h/l navigation between columns and j/k within.
+
+#### UI Layout — Epics View
+
+When `Enter` is pressed on a project, the sidebar switches to show that project's epics:
+
+```
+╭───────────── 40% ───────────────╮╭──────────────── 60% ──────────────────────╮
+│ WORKSPACES › prism-plugin        ││  [Info]  Stories  Progress                 │
+│ ──────────────────────────────  ││ ──────────────────────────────────────    │
+│ > user-auth              8/12   ││ Epic: user-auth                            │
+│   dashboard             12/36   ││ Stories: 8 complete / 12 total             │
+│   notifications          0/9    ││                                            │
+│                                  ││ Path: .prism/stories/user-auth/            │
+│                                  ││                                            │
+│                                  ││                                            │
+│                                  ││                                            │
+╰──────────────────────────────────╯╰──────────────────────────────────────────╯
+```
+
+Project name shown in sidebar header. `Esc` returns to the projects list.
+
+#### UI Layout — Preview: Stories Tab
+
+When the `[Stories]` tab is active in the preview pane:
+
+```
+╭──────────────── 60% ──────────────────────╮
+│  Info  [Stories]  Progress                 │
+│ ──────────────────────────────────────    │
+│ ✓ STORY-001  Setup database schema        │
+│ ✓ STORY-002  Implement user model         │
+│ ✓ STORY-003  Add authentication API       │
+│ ✓ STORY-004  Build login page             │
+│ ● STORY-005  Create session middleware     │
+│ ○ STORY-006  Add password reset           │
+│ ○ STORY-007  Implement OAuth2             │
+│ ○ STORY-008  Add rate limiting            │
+│                                            │
+│ 4/8 complete                               │
+╰──────────────────────────────────────────╯
+```
+
+#### UI Layout — Preview: Progress Tab
+
+When the `[Progress]` tab is active in the preview pane:
+
+```
+╭──────────────── 60% ──────────────────────╮
+│  Info  Stories  [Progress]                 │
+│ ──────────────────────────────────────    │
+│ Overall: ████████████░░░░  50%            │
+│                                            │
+│ Last Updated: 2026-02-28 14:32            │
+│ Iterations Used: 12                        │
+│                                            │
+│ Recent Completions:                        │
+│   STORY-004  Build login page    (2m ago) │
+│   STORY-003  Add authentication  (8m ago) │
+│                                            │
+╰──────────────────────────────────────────╯
+```
 
 #### Key Bindings
 
@@ -2398,6 +2914,421 @@ Dialogs are layered above modals in z-order. Two dialog types:
 - Quick keys: `a` for allow, `s` for allow session, `d`/`n` for deny
 - Amber border with "Permission Required" title
 
+#### Confirmation Dialog Layout
+
+```
+╭────────────────── Confirm ──────────────────╮
+│                                              │
+│  Are you sure you want to proceed?           │
+│                                              │
+│           [ Confirm ]  [ Cancel ]            │
+│                                              │
+│  y confirm • n cancel                        │
+╰──────────────────────────────────────────────╯
+```
+
+Variant-colored border: Default (purple `#7C3AED`), Danger (red `#EF4444`), Warning (amber `#F59E0B`), Info (blue `#3B82F6`).
+
+#### Permission Dialog Layout
+
+```
+╭──────────────── Permission Required ────────────────╮
+│                                                      │
+│  Tool: Bash                                          │
+│  Command: npm run typecheck                          │
+│                                                      │
+│  ┌────────────────────────────────────────────┐      │
+│  │ $ npm run typecheck                        │      │
+│  │                                            │      │
+│  │ (scrollable preview — max 8 lines)         │      │
+│  └────────────────────────────────────────────┘      │
+│                                                      │
+│  [ Allow ]  [ Allow Session ]  [ Deny ]              │
+│                                                      │
+│  a allow • s session • d deny                        │
+╰──────────────────────────────────────────────────────╯
+```
+
+Amber border (`#F59E0B`). Preview area scrolls with `↑`/`k` when content exceeds 8 lines.
+
+### Global Overlays
+
+#### File Finder (`Ctrl+D`)
+
+Source: `file_finder.go:127-150` — `BuildModal()`, width 70.
+
+```
+╭───────────────────────── Find File ─────────────────────────╮
+│  [Type to search files...: mod                             ]│
+│                                                              │
+│  > cmd/prism-cli/app/model.go                               │
+│    cmd/prism-cli/app/model_test.go                          │
+│    cmd/prism-cli/modal/modal.go                             │
+│    go.mod                                                    │
+│                                                              │
+│  ↑/↓ navigate • enter open • esc close                      │
+╰──────────────────────────────────────────────────────────────╯
+```
+
+File cache built asynchronously via `git ls-files` (or `filepath.Walk` fallback). Fuzzy scoring: +10 per character match, +5 consecutive, +8 separator boundary, +6 camelCase, +15 filename start, -2 per gap.
+
+#### Content Search (`Ctrl+S`)
+
+Source: `content_search.go:152-188` — `BuildModal()`, width 80.
+
+```
+╭─────────────────────── Content Search ───────────────────────────╮
+│  [Search content...: handleSubmit                               ]│
+│                                                                   │
+│  > src/components/Form.tsx:42  const handleSubmit = async () =>  │
+│    src/utils/validation.ts:15  export function handleSubmit...   │
+│    src/hooks/useForm.ts:28     return { handleSubmit, errors }   │
+│    tests/form.test.ts:55       test("handleSubmit validates...   │
+│                                                                   │
+│  ↑/↓ navigate • enter open • esc close                           │
+╰──────────────────────────────────────────────────────────────────╯
+```
+
+Powered by ripgrep (`rg --json --max-count 30`). If `rg` is not installed, displays install instructions instead of search results.
+
+#### Help Modal (`?`)
+
+```
+╭──────────────────────────── Help ────────────────────────────╮
+│                                                               │
+│  GLOBAL KEYS                                                  │
+│  ──────────────────────────────────────────                  │
+│  q / Ctrl+C     Quit application                             │
+│  Ctrl+P / :     Command palette                              │
+│  Ctrl+D         File finder                                  │
+│  Ctrl+S         Content search                               │
+│  ?              Toggle this help                             │
+│  1-9            Switch to tab                                │
+│  Tab            Next tab                                      │
+│                                                               │
+│  CURRENT SCREEN                                               │
+│  ──────────────────────────────────────────                  │
+│  (context-specific keys shown here)                          │
+│                                                               │
+│  esc close                                                    │
+╰───────────────────────────────────────────────────────────────╯
+```
+
+Content is scrollable when key list exceeds available height. Shows both global and context-specific keys for the currently active screen.
+
+### Git Screen Modals
+
+#### Commit Modal (`c`)
+
+Source: `plugin_git.go:1053-1065` — `openCommitModal()`, width 60.
+
+```
+╭────────────────── Commit Changes ──────────────────╮
+│                                                      │
+│  Enter commit message:                               │
+│                                                      │
+│  ┌────────────────────────────────────────────┐      │
+│  │ fix: resolve auth timeout on retry         │      │
+│  │                                            │      │
+│  │ Increased timeout from 5s to 30s for       │      │
+│  │ OAuth token refresh.                       │      │
+│  │                                            │      │
+│  └────────────────────────────────────────────┘      │
+│                                                      │
+│         [ Commit ]  [ Cancel ]                       │
+│                                                      │
+│  tab cycle • enter confirm • esc cancel              │
+╰──────────────────────────────────────────────────────╯
+```
+
+#### Push Modal (`P`)
+
+Source: `plugin_git.go:1069-1087` — `openPushModal()`, width 50.
+
+```
+╭──────────────────── Push ────────────────────╮
+│                                               │
+│  Branch: main (2 ahead)                       │
+│                                               │
+│  [ Push ]  [ Force Push ]  [ Set Upstream ]   │
+│  [ Cancel ]                                   │
+│                                               │
+│  tab cycle • enter select • esc cancel        │
+╰───────────────────────────────────────────────╯
+```
+
+"Force Push" button uses Danger variant (red text).
+
+#### Pull / Fetch Modal (`L`)
+
+Source: `plugin_git.go:1090-1107` — `openPullModal()`, width 50.
+
+```
+╭──────────────── Pull / Fetch ────────────────╮
+│                                               │
+│  Branch: main (1 behind)                      │
+│                                               │
+│  [ Fetch ]  [ Pull ]  [ Pull (rebase) ]       │
+│  [ Cancel ]                                   │
+│                                               │
+│  tab cycle • enter select • esc cancel        │
+╰───────────────────────────────────────────────╯
+```
+
+"Pull" button uses Primary variant (highlighted).
+
+#### Branch Picker Modal (`b`)
+
+Source: `plugin_git.go:1111-1133` — `openBranchPickerModal()`, width 60, max 10 visible.
+
+```
+╭──────────────── Switch Branch ───────────────────╮
+│                                                    │
+│  Select a branch to checkout:                      │
+│                                                    │
+│  * main                                            │
+│    feature/auth-flow                               │
+│    feature/dark-mode                               │
+│    fix/timeout-issue                               │
+│    develop                                         │
+│    staging                                         │
+│                                                    │
+│        [ Checkout ]  [ Cancel ]                    │
+│                                                    │
+│  j/k navigate • enter select • esc cancel          │
+╰────────────────────────────────────────────────────╯
+```
+
+Current branch marked with `*`. List scrolls when more than 10 branches.
+
+#### Stash Menu Modal (`S`)
+
+Source: `plugin_git.go:1298-1311` — `openStashMenuModal()`, width 50.
+
+```
+╭──────────────────── Stash ───────────────────╮
+│                                               │
+│  Save or manage stashes:                      │
+│                                               │
+│  [ Stash ]  [ Stash (+untracked) ]            │
+│  [ View Stashes ]  [ Cancel ]                 │
+│                                               │
+│  tab cycle • enter select • esc cancel        │
+╰───────────────────────────────────────────────╯
+```
+
+"Stash" button uses Primary variant. "View Stashes" loads the stash list asynchronously before opening the Stash List modal.
+
+#### Stash List Modal
+
+Source: `plugin_git.go:1350-1373` — `openStashListModal()`, width 70, max 8 visible.
+
+```
+╭─────────────────────── Stash List ────────────────────────╮
+│                                                            │
+│  Select a stash and choose an action:                      │
+│                                                            │
+│  > stash@{0} (main): WIP on auth refactor                 │
+│    stash@{1} (develop): save before rebase                 │
+│    stash@{2} (main): experiment with caching               │
+│                                                            │
+│  [ Apply ]  [ Pop ]  [ Drop ]  [ Cancel ]                  │
+│                                                            │
+│  j/k navigate • enter select • esc cancel                  │
+╰────────────────────────────────────────────────────────────╯
+```
+
+"Apply" button Primary, "Drop" button Danger. List scrolls at 8+ stashes.
+
+#### Stash Drop Confirm
+
+Source: `plugin_git.go:1376-1388` — `openStashDropConfirmModal()`, width 55, Danger variant.
+
+```
+╭──────────────────── Drop Stash ──────────────────╮  [red border]
+│                                                    │
+│  Are you sure you want to drop stash@{0}?          │
+│                                                    │
+│  WIP on auth refactor                              │
+│                                                    │
+│  This action cannot be undone.                     │
+│                                                    │
+│           [ Drop ]  [ Cancel ]                     │
+│                                                    │
+╰────────────────────────────────────────────────────╯
+```
+
+Red border (`#EF4444`). "Drop" button Danger variant.
+
+#### Discard Changes Dialog (`d`)
+
+Source: `plugin_git.go:1443-1458` — `openDiscardConfirmModal()`, width 55, Danger variant.
+
+```
+╭──────────────── Discard Changes ─────────────────╮  [red border]
+│                                                    │
+│  Are you sure you want to discard changes to:      │
+│                                                    │
+│    model.go                                        │
+│                                                    │
+│  This action cannot be undone.                     │
+│                                                    │
+│          [ Discard ]  [ Cancel ]                   │
+│                                                    │
+╰────────────────────────────────────────────────────╯
+```
+
+For untracked files, text reads "delete untracked file" instead of "discard changes to".
+
+#### Git Error Modal
+
+Source: `plugin_git.go:1136-1145` — `openErrorModal()`, width 60, Danger variant.
+
+```
+╭──────────────────── Git Error ───────────────────╮  [red border]
+│                                                    │
+│  fatal: Could not read from remote repository.     │
+│                                                    │
+│  Please make sure you have the correct access      │
+│  rights and the repository exists.                 │
+│                                                    │
+│                    [ OK ]                           │
+│                                                    │
+╰────────────────────────────────────────────────────╯
+```
+
+### Workspaces Modals
+
+#### Create Worktree Modal (`n`)
+
+Source: `plugin_workspaces.go:1848-1863` — `openCreateWorktreeModal()`, width 60.
+
+```
+╭──────────────── Create Worktree ─────────────────╮
+│                                                    │
+│  Create a new git worktree with a new branch.      │
+│                                                    │
+│  Branch name:                                      │
+│  ┌──────────────────────────────────────────┐      │
+│  │ feature/my-branch                        │      │
+│  └──────────────────────────────────────────┘      │
+│                                                    │
+│          [ Create ]  [ Cancel ]                    │
+│                                                    │
+│  enter submit • tab cycle • esc cancel             │
+╰────────────────────────────────────────────────────╯
+```
+
+Input field has purple border (`#7C3AED`). Enter in the input field triggers create directly.
+
+#### Delete Worktree Dialog (`d`)
+
+Source: `plugin_workspaces.go:1866-1885` — `openDeleteWorktreeConfirm()`, width 60, Danger variant.
+
+```
+╭──────────────── Delete Worktree? ────────────────╮  [red border]
+│                                                    │
+│  This will remove the worktree at:                 │
+│  ~/Developer/prism-plugin-fix                      │
+│  Branch: fix/auth-bug                              │
+│                                                    │
+│  This action cannot be undone.                     │
+│                                                    │
+│          [ Delete ]  [ Cancel ]                    │
+│                                                    │
+╰────────────────────────────────────────────────────╯
+```
+
+Cannot delete the main worktree — the `d` key is ignored when the main worktree is selected.
+
+#### Workspaces Error Modal
+
+Source: `plugin_workspaces.go:1888-1896` — `openErrorModal()`, width 50, Danger variant.
+
+```
+╭──────────────────── Error ───────────────────╮  [red border]
+│                                               │
+│  Failed to create worktree: branch already    │
+│  exists.                                      │
+│                                               │
+│                  [ OK ]                       │
+│                                               │
+╰───────────────────────────────────────────────╯
+```
+
+### Monitor Modals
+
+#### Gate Output Modal (`o`)
+
+Source: `plugin_monitor.go:840-878` — `openGateOutputModal()`, width 80. Variant: Info (blue) for pass, Danger (red) for fail.
+
+```
+╭─────────────────── Gate Output: npm test ────────────────────────╮
+│                                                                   │
+│  npm test — PASS                                                  │
+│  Command: npm test                                                │
+│  Last run: 45s ago                                                │
+│                                                                   │
+│  > prism@2.3.0 test                                               │
+│  > jest --coverage                                                │
+│                                                                   │
+│  PASS  src/utils/validation.test.ts                               │
+│  PASS  src/components/Form.test.tsx                               │
+│  PASS  src/hooks/useAuth.test.ts                                  │
+│                                                                   │
+│  Test Suites: 3 passed, 3 total                                   │
+│  Tests:       12 passed, 12 total                                 │
+│  Coverage:    87.3%                                               │
+│                                                                   │
+│                         [ Close ]                                 │
+│                                                                   │
+╰───────────────────────────────────────────────────────────────────╯
+```
+
+Output is scrollable when it exceeds the modal height. If no output was captured, shows "(no output captured)".
+
+#### History Detail Modal (`Enter` on history entry)
+
+Source: `plugin_monitor.go:881-910` — `openHistoryDetailModal()`. Variant: Info (blue) for success, Danger (red) for error, Warning (amber) for blocked.
+
+```
+╭────────────────── Execution Detail ──────────────────╮
+│                                                       │
+│  Story:     STORY-004                                 │
+│  Name:      Build login page                         │
+│  Result:    SUCCESS                                   │
+│  Duration:  18.245s                                   │
+│  Timestamp: 2026-02-28 14:32:05                       │
+│                                                       │
+│                    [ Close ]                          │
+│                                                       │
+╰───────────────────────────────────────────────────────╯
+```
+
+### Spectrum Permission Dialog
+
+During Spectrum execution, when Claude requests tool use and `--dangerously-skip-permissions` is not set:
+
+```
+╭────────────── Permission Required ──────────────╮  [amber border]
+│                                                   │
+│  Tool: Bash                                       │
+│  Command: npm run test                            │
+│                                                   │
+│  ┌─────────────────────────────────────────┐      │
+│  │ $ npm run test                          │      │
+│  │                                         │      │
+│  │ (scrollable — ↑/k to scroll)            │      │
+│  └─────────────────────────────────────────┘      │
+│                                                   │
+│  [ Allow ]  [ Allow Session ]  [ Deny ]           │
+│                                                   │
+│  a allow • s session • d deny                     │
+╰───────────────────────────────────────────────────╯
+```
+
+Rendered via the Dialog system (`dialog/permissions.go`), layered above any active modal. Preview area scrolls when content exceeds 8 lines.
+
 ---
 
 ## User Flow Diagrams
@@ -2449,8 +3380,13 @@ Dialogs are layered above modals in z-order. Two dialog types:
 Tab / Number keys switch between all 9 tabs:
   [1]Home [2]Research [3]Plans [4]Spectrum [5]Files [6]Git [7]Agent [8]Monitor [9]Workspaces
 
-Additional full-screen overlays (not in tab order):
+Additional screens (not in number-key shortcuts):
+  Browser — accessible via Command Palette (: → "Browser Focus")
+
+Full-screen overlays (not in tab order):
   [Ctrl+P] or [:] → Command Palette
+  [Ctrl+D] → File Finder
+  [Ctrl+S] → Content Search
   [?] → Help Modal
   [c] in Git → Commit Modal
 ```
@@ -2480,6 +3416,214 @@ Monitor               → Home
 Workspaces (projects) → Home
 Workspaces (epics)    → Workspaces (projects)
 Workspaces (preview)  → Workspaces (sidebar)
+```
+
+### Within-Screen Workflows
+
+Multi-step user workflows showing how screens, modals, and state transitions connect.
+
+#### Git Commit Workflow
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────────────────┐
+│ Git Sidebar   │     │ Git Sidebar   │     │ Commit Modal             │
+│              │     │              │     │                          │
+│ (files       │ [s] │ (files       │ [c] │ Textarea: commit msg     │
+│  listed)     │────▶│  staged)     │────▶│ [Commit] [Cancel]        │
+│              │     │              │     │                          │
+└──────────────┘     └──────────────┘     └────────┬─────────────────┘
+                                                    │
+                                              [Commit]
+                                                    │
+                                                    ▼
+                                          ┌──────────────────┐
+                                          │ git commit -m... │
+                                          │ (executes async) │
+                                          └────────┬─────────┘
+                                                    │
+                                                    ▼
+                                          ┌──────────────────┐
+                                          │ Modal closes     │
+                                          │ Status refreshes │
+                                          └──────────────────┘
+```
+
+If no files are staged when `c` is pressed, the commit modal still opens (user can type message but commit will fail).
+
+#### Git Push/Pull Workflow
+
+```
+┌──────────────┐  [P]  ┌────────────────────────────────────────┐
+│ Git Sidebar   │──────▶│ Push Modal                             │
+│              │       │ Branch: main (2 ahead)                 │
+└──────────────┘       │ [Push] [Force Push] [Set Upstream]     │
+                        └──────────┬─────────────────────────────┘
+                                   │ [Push]
+                                   ▼
+                        ┌────────────────────┐
+                        │ git push origin... │──▶ Modal closes ──▶ Status refreshes
+                        └────────────────────┘
+
+┌──────────────┐  [L]  ┌────────────────────────────────────────┐
+│ Git Sidebar   │──────▶│ Pull / Fetch Modal                     │
+│              │       │ Branch: main (1 behind)                │
+└──────────────┘       │ [Fetch] [Pull] [Pull (rebase)]         │
+                        └──────────┬─────────────────────────────┘
+                                   │ [Pull]
+                                   ▼
+                        ┌────────────────────┐
+                        │ git pull origin... │──▶ Modal closes ──▶ Status refreshes
+                        └────────────────────┘
+```
+
+#### Git Stash Workflow
+
+```
+┌──────────────┐  [S]  ┌────────────────────────────────┐
+│ Git Sidebar   │──────▶│ Stash Menu                     │
+│              │       │ [Stash] [+untracked] [View] [X]│
+└──────────────┘       └───┬──────┬──────┬──────────────┘
+                           │      │      │
+                    [Stash]│      │      │[View Stashes]
+                           │      │      │
+                           ▼      │      ▼
+                 ┌──────────┐     │   ┌────────────────────────────────┐
+                 │ git stash│     │   │ Stash List Modal               │
+                 │ push     │     │   │ > stash@{0}: WIP on auth...   │
+                 │ ──▶ done │     │   │   stash@{1}: save before...   │
+                 └──────────┘     │   │ [Apply] [Pop] [Drop] [Cancel] │
+                                  │   └───┬──────┬──────┬─────────────┘
+                           [+untracked]   │      │      │
+                                  │  [Apply]  [Pop]  [Drop]
+                                  ▼       │      │      │
+                        ┌──────────┐      ▼      ▼      ▼
+                        │ stash    │   applied  popped  ┌───────────────────┐
+                        │ push -u  │                    │ Drop Confirm      │
+                        │ ──▶ done │                    │ [red border]      │
+                        └──────────┘                    │ [Drop] [Cancel]   │
+                                                        └─────┬─────────────┘
+                                                              │ [Drop]
+                                                              ▼
+                                                        git stash drop
+```
+
+#### Workspaces Worktree Lifecycle
+
+```
+┌─────────────────┐  [n]  ┌──────────────────────────┐
+│ Worktrees View   │──────▶│ Create Worktree Modal    │
+│ (sidebar list)   │       │ Branch: feature/...      │
+└─────────────────┘       │ [Create] [Cancel]        │
+       │                   └────────┬─────────────────┘
+       │                            │ [Create]
+       │                            ▼
+       │                   ┌──────────────────┐
+       │                   │ git worktree add │──▶ List refreshes
+       │                   └──────────────────┘
+       │
+       │  [d]  ┌──────────────────────────┐
+       │──────▶│ Delete Confirm Dialog    │
+       │       │ [red border]             │
+       │       │ [Delete] [Cancel]        │
+       │       └────────┬─────────────────┘
+       │                │ [Delete]
+       │                ▼
+       │       ┌───────────────────┐
+       │       │ git worktree      │──▶ List refreshes
+       │       │ remove <path>     │
+       │       └───────────────────┘
+       │
+       │  [Enter]
+       └──────────▶ cd to worktree directory
+```
+
+#### Spectrum Execution Lifecycle (User Perspective)
+
+```
+┌──────────┐  [Enter]  ┌──────────────┐         ┌─────────────────────┐
+│   IDLE    │─────────▶│   RUNNING    │────────▶│ Permission Dialog?  │
+│ "Press    │          │   ⣾ Working  │  (tool) │ [Allow] [Session]   │
+│  Enter"   │          │              │◀────────│ [Deny]              │
+└──────────┘          └──────┬───┬───┘ (allow)  └─────────────────────┘
+                              │   │
+                        (story│   │[p]
+                        done) │   │
+                              │   ▼
+                              │ ┌──────────┐  [p]  ┌──────────────┐
+                              │ │ PAUSED   │──────▶│   RUNNING    │
+                              │ │ ⏸ Paused │       │   (resume)   │
+                              │ └──────────┘       └──────────────┘
+                              │
+                              ▼
+                     ┌────────────────────┐    (all stories done)
+                     │ Story pop animation│──────────────────────▶ ┌──────────┐
+                     │ Next story starts  │                        │ COMPLETE │
+                     │ ─▶ back to RUNNING │                        │ ✓ Done   │
+                     └────────────────────┘                        │ [Enter]  │
+                                                                   │ ──▶ quit │
+                              (3 errors)                            └──────────┘
+                     ┌──────────────┐        (50 iterations)  ┌────────────────┐
+                     │    ERROR     │                          │ MAX ITERATIONS │
+                     │ ✗ Error msg  │                          │ ⏸ Limit hit    │
+                     │ [Enter] quit │                          │ [Enter] quit   │
+                     └──────────────┘                          └────────────────┘
+```
+
+#### Files Edit Workflow
+
+```
+┌──────────────┐ [Enter] ┌────────────────┐  [Tab]  ┌────────────────┐
+│ Files Tree    │────────▶│ File opens in  │────────▶│ Preview pane   │
+│ (select file) │         │ preview tab    │         │ (focused)      │
+└──────────────┘         └────────────────┘         └───────┬────────┘
+                                                            │ [e]
+                                                            ▼
+                                                   ┌────────────────┐
+                                                   │ EDIT MODE      │
+                                                   │ Textarea with  │
+                                                   │ file content   │
+                                                   │ (cursor active)│
+                                                   └───┬────────┬───┘
+                                                       │        │
+                                                [Ctrl+S]    [Esc]
+                                                       │        │
+                                                       ▼        ▼
+                                              ┌───────────┐ ┌───────────┐
+                                              │ File saved│ │ Changes   │
+                                              │ ──▶ back  │ │ discarded │
+                                              │ to preview│ │ ──▶ back  │
+                                              └───────────┘ │ to preview│
+                                                            └───────────┘
+```
+
+#### Files Search-to-Navigate Workflows
+
+```
+┌───────────────┐  [Ctrl+D]  ┌───────────────────────────────────────┐
+│ Any Screen     │───────────▶│ File Finder Overlay                   │
+│               │            │ [Filter: mod                         ]│
+└───────────────┘            │ > cmd/prism-cli/app/model.go          │
+                              │   go.mod                              │
+                              └──────────────┬────────────────────────┘
+                                             │ [Enter] select file
+                                             ▼
+                              ┌───────────────────────────────────────┐
+                              │ Navigate to Files screen              │
+                              │ Selected file opens in preview tab    │
+                              └───────────────────────────────────────┘
+
+┌───────────────┐  [Ctrl+S]  ┌───────────────────────────────────────┐
+│ Any Screen     │───────────▶│ Content Search Overlay                │
+│               │            │ [Search: handleSubmit                ]│
+└───────────────┘            │ > Form.tsx:42  const handleSubmit... │
+                              │   useForm.ts:28  return { handle...  │
+                              └──────────────┬────────────────────────┘
+                                             │ [Enter] select result
+                                             ▼
+                              ┌───────────────────────────────────────┐
+                              │ Navigate to Files screen              │
+                              │ File opens at matching line           │
+                              └───────────────────────────────────────┘
 ```
 
 ---
@@ -2851,6 +3995,8 @@ The splash screen (`splash/splash.go`) is a fully procedural animation rendered 
     }
   ]
 }
+
+> **Note**: `stories.json` is re-read from disk after each iteration via `ReloadStoriesCmd`. External edits are picked up on the next reload, but concurrent writes are not locked. The `commitHash` field is populated when `MarkStoryComplete()` receives a commit reference, but automated extraction from Claude output is not yet implemented.
 ```
 
 ### Story Status Lifecycle
@@ -3022,6 +4168,7 @@ The `OutputParser` maintains a buffer of all output and fires events on:
 
 | Scenario | Behavior |
 |----------|----------|
+| Claude CLI not in PATH | `exec.Command` fails immediately, TUI transitions to Error state with no automatic retry or PATH search fallback |
 | Claude process error | Increment `ConsecutiveErrs`, backoff = `errs × 2s`, retry |
 | 3+ consecutive errors | Transition to `StateError`, stop execution |
 | Signal: error | Immediate `StateError` |
@@ -3286,7 +4433,8 @@ When a key is pressed, it is processed in this strict order:
 | Key | State | Action |
 |-----|-------|--------|
 | `Enter` / `Space` | Idle | Start execution |
-| `Space` | Running | Pause |
+| `Space` / `p` | Running | Pause execution |
+| `p` | Paused | Resume execution |
 | `/` | Running | Skip current story |
 | `Enter` / `Space` | Paused | Resume |
 | `a` / `s` | Any | Stories page prev/next |
@@ -3341,6 +4489,9 @@ When a key is pressed, it is processed in this strict order:
 | `Ctrl+Enter` | Send message |
 | `j` / `k` | Navigate conversations (sidebar) or scroll messages (chat) |
 | `Enter` | Load selected conversation |
+| `m` | Toggle Glamour/lite markdown rendering |
+| `a` | Toggle analytics view |
+| `Tab` | Toggle sidebar ↔ input focus |
 | `Esc` | Focus Home |
 
 ### Monitor Screen
@@ -3677,6 +4828,7 @@ case plugin.PluginResizeMsg:
 | >= 80 | Footer shows quality gate counts |
 | >= 90 | Footer shows iteration counter |
 | >= 100 | Footer shows current story ID |
+| (no max) | No maximum terminal width is enforced. Panels scale proportionally at any width |
 
 ### Demo Mode
 
