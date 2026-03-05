@@ -25,8 +25,8 @@ Make tool calls, thinking blocks, agent spawns, phase changes, and signals visib
 ## Success Criteria
 
 #### Automated Verification:
-- [ ] `cd cmd/prism-cli && go build ./...` succeeds
-- [ ] `cd cmd/prism-cli && go test ./...` passes
+- [x] `cd cmd/prism-cli && go build ./...` succeeds
+- [x] `cd cmd/prism-cli && go test ./...` passes
 
 #### Manual Verification:
 - [ ] Tool calls show as `▸ ToolName input` (running) / `✓` (complete) / `✗` (error) during streaming

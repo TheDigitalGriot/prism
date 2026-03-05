@@ -232,6 +232,40 @@ func renderAgentPart(part ContentPart, contentWidth, fullWidth int, collapsed bo
 	return strings.Join(lines, "\n")
 }
 
+// RenderParts renders a slice of ContentParts into a string suitable for
+// appending below Glamour-rendered text in MarkdownMode.
+func RenderParts(parts []ContentPart, width int, collapsed bool) string {
+	if len(parts) == 0 {
+		return ""
+	}
+	barWidth := 2
+	contentWidth := width - barWidth - 2
+	if contentWidth < 20 {
+		contentWidth = 20
+	}
+	barStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#7c3aed"))
+	bgStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color("#1e1f2e")).
+		Width(width - barWidth)
+
+	addBar := func(text string) string {
+		lines := strings.Split(text, "\n")
+		var result []string
+		for _, line := range lines {
+			bar := barStyle.Render("▎")
+			padded := bgStyle.Render(" " + line)
+			result = append(result, bar+padded)
+		}
+		return strings.Join(result, "\n")
+	}
+
+	var sections []string
+	for _, part := range parts {
+		sections = append(sections, renderPart(part, contentWidth, width))
+	}
+	return addBar(strings.Join(sections, "\n"))
+}
+
 // truncatePart truncates text to fit within maxWidth visible characters.
 func truncatePart(s string, maxWidth int) string {
 	if maxWidth <= 0 {

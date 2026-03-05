@@ -133,6 +133,11 @@ type AgentPlugin struct {
 	// Error handling & resilience (Phase 18)
 	lastError       error  // Most recent fatal error (process crash, CLI not found, etc.)
 	lastUserMessage string // Last message sent (for retry)
+
+	// Enhanced status bar (Phase 3 visualization)
+	activeToolName  string      // Tool name currently running, cleared on complete
+	streamStartTime time.Time   // When current streaming started
+	lastSignal      string      // Last Spectrum signal detected
 }
 
 // newTextarea creates and configures the multi-line input textarea.
@@ -350,7 +355,16 @@ func (p *AgentPlugin) handleBusEvent(e agentbus.Event) tea.Cmd {
 		p.upsertStreamingMessage()
 		p.autoScroll()
 
+	case agentbus.EventThinkingDelta:
+		part := chat.ContentPart{
+			Type: chat.PartThinking,
+			Text: e.Text,
+		}
+		p.appendPart(part)
+		p.autoScroll()
+
 	case agentbus.EventToolCallStart:
+		p.activeToolName = e.ToolName
 		// Add a tool call part to the current message.
 		part := chat.ContentPart{
 			Type:       chat.PartToolCall,
@@ -363,6 +377,7 @@ func (p *AgentPlugin) handleBusEvent(e agentbus.Event) tea.Cmd {
 		p.autoScroll()
 
 	case agentbus.EventToolCallComplete:
+		p.activeToolName = ""
 		// Find and update the matching tool call part.
 		p.updateToolPartStatus(e.ToolID, e.ToolStatus)
 
@@ -395,10 +410,17 @@ func (p *AgentPlugin) handleBusEvent(e agentbus.Event) tea.Cmd {
 	case agentbus.EventPhaseChanged:
 		p.currentPhase = e.Phase
 
+	case agentbus.EventSignalDetected:
+		if e.Signal.Type != 0 {
+			p.lastSignal = e.Signal.Type.String()
+		}
+
 	case agentbus.EventMessageComplete:
 		// Finalize the streaming message.
 		p.streamText.Reset()
 		p.streaming = false
+		p.activeToolName = ""
+		p.lastSignal = ""
 		// Generate session title from first user message (Phase 11c).
 		if !p.titleGenerated {
 			for _, msg := range p.state.Messages {
@@ -568,16 +590,29 @@ func (p *AgentPlugin) appendPart(part chat.ContentPart) {
 }
 
 // updateToolPartStatus finds a PartToolCall with the given ToolID and updates its status.
+// Also invalidates the render cache for the affected message so the new status is visible.
 func (p *AgentPlugin) updateToolPartStatus(toolID, status string) {
 	msgs := p.state.Messages
 	for i := len(msgs) - 1; i >= 0; i-- {
 		for j := range msgs[i].Parts {
 			if msgs[i].Parts[j].ToolID == toolID {
 				msgs[i].Parts[j].ToolStatus = status
+				// Invalidate cache so the status change is re-rendered.
+				delete(p.renderCache, i)
 				return
 			}
 		}
 	}
+}
+
+// hasRunningParts returns true if any ContentPart has status "running".
+func hasRunningParts(parts []chat.ContentPart) bool {
+	for _, part := range parts {
+		if part.ToolStatus == "running" {
+			return true
+		}
+	}
+	return false
 }
 
 // autoScroll scrolls the viewport to the bottom if the user hasn't scrolled up.
@@ -714,15 +749,43 @@ func (p *AgentPlugin) renderChatColumn(width, height int) string {
 
 // renderCostIndicator returns a compact cost/status string for the separator line.
 func (p *AgentPlugin) renderCostIndicator(width int) string {
-	if !p.streaming && p.cost.TotalCost == 0 {
+	if !p.streaming && p.cost.TotalCost == 0 && p.lastSignal == "" {
 		return ""
 	}
 
 	var parts []string
+
+	// Phase label (e.g. "Research")
+	if p.currentPhase != "" {
+		phaseStyle := lipgloss.NewStyle().Foreground(styles.White).Bold(true)
+		parts = append(parts, phaseStyle.Render(p.currentPhase))
+	}
+
 	if p.streaming {
 		dot := lipgloss.NewStyle().Foreground(styles.Primary).Render("⬤")
-		parts = append(parts, dot+" streaming…")
+		streamPart := dot + " streaming…"
+		// Active tool name
+		if p.activeToolName != "" {
+			dimStyle := lipgloss.NewStyle().Foreground(styles.Dim)
+			streamPart += " " + dimStyle.Render("· "+p.activeToolName)
+		}
+		// Elapsed time
+		if !p.streamStartTime.IsZero() {
+			elapsed := time.Since(p.streamStartTime)
+			var elapsedStr string
+			if elapsed >= time.Minute {
+				m := int(elapsed.Minutes())
+				s := int(elapsed.Seconds()) % 60
+				elapsedStr = fmt.Sprintf("%dm %ds", m, s)
+			} else {
+				elapsedStr = fmt.Sprintf("%ds", int(elapsed.Seconds()))
+			}
+			dimStyle := lipgloss.NewStyle().Foreground(styles.Dim)
+			streamPart += " " + dimStyle.Render(elapsedStr)
+		}
+		parts = append(parts, streamPart)
 	}
+
 	if p.cost.InputTokens > 0 || p.cost.OutputTokens > 0 {
 		inK := fmt.Sprintf("%.1fk", float64(p.cost.InputTokens)/1000)
 		outK := fmt.Sprintf("%.1fk", float64(p.cost.OutputTokens)/1000)
@@ -730,6 +793,12 @@ func (p *AgentPlugin) renderCostIndicator(width int) string {
 	}
 	if p.cost.TotalCost > 0 {
 		parts = append(parts, fmt.Sprintf("$%.4f", p.cost.TotalCost))
+	}
+
+	// Signal badge (e.g. "spectrum-blocked")
+	if p.lastSignal != "" {
+		sigStyle := lipgloss.NewStyle().Foreground(styles.Error)
+		parts = append(parts, sigStyle.Render("["+p.lastSignal+"]"))
 	}
 
 	if len(parts) == 0 {
@@ -1183,93 +1252,13 @@ func (p *AgentPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 		}
 	}
 
-	switch key {
-	case "ctrl+b":
-		p.state.WideMode = !p.state.WideMode
-		return p, nil
-
-	case "ctrl+g":
-		// Toggle sidebar grouping: date-grouped ↔ adapter-grouped (Phase 14b)
-		p.state.GroupByAdapter = !p.state.GroupByAdapter
-		return p, nil
-
-	case "/":
-		// Activate search mode when not typing in the input (Phase 15a).
-		if !p.state.InputFocused {
-			p.state.SearchMode = true
-			p.state.SearchQuery = ""
-			p.state.SearchResult = p.state.Sessions
-			p.state.SelectedConv = 0
-			p.state.SearchInput.Reset()
-			_ = p.state.SearchInput.Focus()
-			return p, textinput.Blink
-		}
-
-	case "m":
-		// Toggle markdown rendering (A-6)
-		if !p.state.InputFocused {
-			p.state.MarkdownMode = !p.state.MarkdownMode
-			return p, nil
-		}
-
-	case "a":
-		// Toggle analytics view (A-5)
-		if !p.state.InputFocused {
-			p.state.AnalyticsMode = !p.state.AnalyticsMode
-			p.state.AnalyticsScroll = 0
-			return p, nil
-		}
-
-	case "j", "down":
-		if !p.state.InputFocused {
-			if p.state.AnalyticsMode {
-				// Scroll analytics view (A-5)
-				p.state.AnalyticsScroll++
-				return p, nil
-			}
-			// Navigate sessions in sidebar (A-2)
-			total := p.totalSessions()
-			if total > 0 && p.state.SelectedConv < total-1 {
-				p.state.SelectedConv++
-			}
-			return p, nil
-		}
-
-	case "k", "up":
-		if !p.state.InputFocused {
-			if p.state.AnalyticsMode {
-				// Scroll analytics view (A-5)
-				if p.state.AnalyticsScroll > 0 {
-					p.state.AnalyticsScroll--
-				}
-				return p, nil
-			}
-			if p.state.SelectedConv > 0 {
-				p.state.SelectedConv--
-			}
-			return p, nil
-		}
-
-	case "enter":
-		if p.state.InputFocused {
-			// Send message — Shift+Enter is handled by textarea KeyMap for newlines.
+	// When the input textarea is focused, forward all non-control keys to it
+	// so that letter hotkeys (m, a, r, j, k, /) don't swallow typed characters.
+	if p.state.InputFocused {
+		switch key {
+		case "enter":
 			return p, p.sendMessage()
-		}
-		// Sidebar: load selected session messages.
-		return p, p.loadSelectedSession()
-
-	case "tab":
-		// Toggle between sidebar and input focus
-		p.state.InputFocused = !p.state.InputFocused
-		if p.state.InputFocused {
-			_ = p.state.Input.Focus()
-		} else {
-			p.state.Input.Blur()
-		}
-		return p, nil
-
-	case "esc":
-		if p.state.InputFocused {
+		case "esc":
 			if strings.TrimSpace(p.state.Input.Value()) != "" {
 				// First Esc: clear text, stay focused.
 				p.state.Input.Reset()
@@ -1279,13 +1268,114 @@ func (p *AgentPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 			p.state.InputFocused = false
 			p.state.Input.Blur()
 			return p, nil
+		case "tab":
+			p.state.InputFocused = false
+			p.state.Input.Blur()
+			return p, nil
+		case "ctrl+c":
+			if p.streaming && p.cancelConv != nil {
+				p.cancelConv()
+				p.cancelConv = nil
+				p.streaming = false
+				p.stdinPipe = nil
+				p.streamText.Reset()
+			}
+			return p, nil
+		case "ctrl+b":
+			p.state.WideMode = !p.state.WideMode
+			return p, nil
+		case "ctrl+n":
+			p.state.Messages = []chat.Message{}
+			p.renderCache = make(map[int]string)
+			p.stdinPipe = nil
+			p.streaming = false
+			p.streamText.Reset()
+			p.resumeSessionID = ""
+			p.activeSessionID = ""
+			p.currentTitle = ""
+			p.titleGenerated = false
+			_ = p.state.Input.Focus()
+			return p, nil
+		case "ctrl+l":
+			p.state.Messages = []chat.Message{}
+			p.renderCache = make(map[int]string)
+			return p, nil
+		case "ctrl+g":
+			p.state.GroupByAdapter = !p.state.GroupByAdapter
+			return p, nil
+		default:
+			// Forward all other keys (letters, symbols, etc.) to the textarea.
+			var cmd tea.Cmd
+			p.state.Input, cmd = p.state.Input.Update(msg)
+			return p, cmd
 		}
+	}
+
+	// Input is NOT focused — handle navigation and hotkeys.
+	switch key {
+	case "ctrl+b":
+		p.state.WideMode = !p.state.WideMode
+		return p, nil
+
+	case "ctrl+g":
+		p.state.GroupByAdapter = !p.state.GroupByAdapter
+		return p, nil
+
+	case "/":
+		p.state.SearchMode = true
+		p.state.SearchQuery = ""
+		p.state.SearchResult = p.state.Sessions
+		p.state.SelectedConv = 0
+		p.state.SearchInput.Reset()
+		_ = p.state.SearchInput.Focus()
+		return p, textinput.Blink
+
+	case "m":
+		p.state.MarkdownMode = !p.state.MarkdownMode
+		return p, nil
+
+	case "a":
+		p.state.AnalyticsMode = !p.state.AnalyticsMode
+		p.state.AnalyticsScroll = 0
+		return p, nil
+
+	case "j", "down":
+		if p.state.AnalyticsMode {
+			p.state.AnalyticsScroll++
+			return p, nil
+		}
+		total := p.totalSessions()
+		if total > 0 && p.state.SelectedConv < total-1 {
+			p.state.SelectedConv++
+		}
+		return p, nil
+
+	case "k", "up":
+		if p.state.AnalyticsMode {
+			if p.state.AnalyticsScroll > 0 {
+				p.state.AnalyticsScroll--
+			}
+			return p, nil
+		}
+		if p.state.SelectedConv > 0 {
+			p.state.SelectedConv--
+		}
+		return p, nil
+
+	case "enter":
+		return p, p.loadSelectedSession()
+
+	case "tab":
+		p.state.InputFocused = true
+		_ = p.state.Input.Focus()
+		return p, nil
+
+	case "esc":
 		return p, func() tea.Msg {
 			return plugin.FocusPluginMsg{ID: "home"}
 		}
 
 	case "ctrl+n":
-		// Start a fresh conversation: clear state, do not resume.
 		p.state.Messages = []chat.Message{}
 		p.renderCache = make(map[int]string)
 		p.stdinPipe = nil
@@ -1300,15 +1390,13 @@ func (p *AgentPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 		return p, nil
 
 	case "r":
-		// Retry last message after a process crash (Phase 18d).
-		if !p.state.InputFocused && p.lastError != nil && !p.streaming && p.lastUserMessage != "" {
+		if p.lastError != nil && !p.streaming && p.lastUserMessage != "" {
 			p.lastError = nil
 			p.state.Input.SetValue(p.lastUserMessage)
 			return p, p.sendMessage()
 		}
 
 	case "ctrl+c":
-		// Abort the current streaming response (Phase 17).
 		if p.streaming && p.cancelConv != nil {
 			p.cancelConv()
 			p.cancelConv = nil
@@ -1319,17 +1407,9 @@ func (p *AgentPlugin) handleKeyPress(msg tea.KeyMsg) (plugin.Plugin, tea.Cmd) {
 		return p, nil
 
 	case "ctrl+l":
-		// Clear chat viewport (Phase 17).
 		p.state.Messages = []chat.Message{}
 		p.renderCache = make(map[int]string)
 		return p, nil
-
-	default:
-		if p.state.InputFocused {
-			var cmd tea.Cmd
-			p.state.Input, cmd = p.state.Input.Update(msg)
-			return p, cmd
-		}
 	}
 
 	return p, nil
@@ -1365,8 +1445,17 @@ func (p *AgentPlugin) renderMessages(width int) string {
 				msgRendered = renderAssistantMarkdownStreaming(msg.Content, width)
 			} else {
 				msgRendered = renderAssistantMarkdown(msg.Content, width)
-				// Cache completed messages.
-				p.renderCache[i] = msgRendered
+				// Cache only if there are no pending-status parts (all complete).
+				if !hasRunningParts(msg.Parts) {
+					p.renderCache[i] = msgRendered
+				}
+			}
+			// Append Parts (tool calls, agents, thinking) below the Glamour block.
+			if len(msg.Parts) > 0 {
+				partsRendered := chat.RenderParts(msg.Parts, width, collapsed)
+				if partsRendered != "" {
+					msgRendered = msgRendered + "\n" + partsRendered
+				}
 			}
 		} else {
 			msgRendered = chat.RenderMessage(msg, width, collapsed)
@@ -1443,6 +1532,7 @@ func (p *AgentPlugin) sendMessage() tea.Cmd {
 	})
 	p.state.Input.Reset()
 	p.streaming = true
+	p.streamStartTime = time.Now()
 	p.streamText.Reset()
 	p.lastError = nil
 	p.lastUserMessage = content

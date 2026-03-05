@@ -62,6 +62,8 @@ type ContentBlock struct {
 	ToolUseID string          `json:"id,omitempty"`
 	Name      string          `json:"name,omitempty"`
 	Input     json.RawMessage `json:"input,omitempty"`
+	Thinking  string          `json:"thinking,omitempty"`
+	Signature string          `json:"signature,omitempty"`
 }
 
 // ToolInput common fields for tool inputs

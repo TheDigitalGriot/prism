@@ -31,6 +31,7 @@ const (
 	EventProcessStarted                    // Claude CLI subprocess started
 	EventProcessExited                     // Claude CLI subprocess exited
 	EventCostUpdate                        // Token/cost information
+	EventThinkingDelta                     // Streaming thinking/reasoning block
 )
 
 // Event is the unified event type published on the Bus.

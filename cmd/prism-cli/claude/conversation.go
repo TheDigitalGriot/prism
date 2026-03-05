@@ -231,6 +231,15 @@ func BridgeStreamToBus(event *StreamEvent, bus *agentbus.Bus, sessionID string) 
 						Text:      block.Text,
 					})
 				}
+			case "thinking":
+				if block.Thinking != "" {
+					bus.Publish(agentbus.Event{
+						Type:      agentbus.EventThinkingDelta,
+						Timestamp: now,
+						SessionID: sessionID,
+						Text:      block.Thinking,
+					})
+				}
 			case "tool_use":
 				inputJSON, _ := json.Marshal(block.Input)
 				// Detect Task tool spawning subagents.
