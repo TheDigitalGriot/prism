@@ -7,6 +7,16 @@ import { SpectralBar } from "../../components/SpectralBar";
 import { COMPONENTS } from "../../constants";
 import { ComponentSelection } from "../../hooks/useInstaller";
 
+interface DetectedTool {
+  name: string;
+  version: string | null;
+  executable: string | null;
+  install_location: string | null;
+  install_method: string;
+  cli_available: boolean;
+  metadata: Record<string, string>;
+}
+
 interface ComponentState {
   id: string;
   name: string;
@@ -65,26 +75,26 @@ export function ProgressStep({ checked, installDir, onNext }: ProgressStepProps)
             addLog(`[CLI] PATH updated in HKCU\\Environment`);
           } else if (c.id === "vscode") {
             setStatus(i, "installing", "Installing VSIX into editors...");
-            const editors = await invoke<{ id: string; name: string; cmd_path: string }[]>(
-              "detect_editors"
-            );
+            const editors = await invoke<DetectedTool[]>("detect_editors");
             const vsixPath = `${installDir}\\extensions\\prism-2.5.0.vsix`;
             for (const editor of editors) {
-              addLog(`[${editor.name}] Installing extension...`);
+              const ver = editor.version ? ` v${editor.version}` : "";
+              addLog(`[${editor.name}${ver}] Installing extension...`);
             }
             await invoke("install_all_extensions", { editors, vsixPath });
             addLog(`[Extension] VSIX installed into ${editors.length} editor(s)`);
           } else if (c.id === "plugin") {
             setStatus(i, "installing", "Installing Claude plugin...");
-            const claudePath = await invoke<string | null>("detect_claude_cli");
+            const claudeTool = await invoke<DetectedTool | null>("detect_claude_code");
             const sourceDir = `${installDir}\\plugin`;
             addLog(
-              claudePath
-                ? `[Plugin] Installing via Claude CLI...`
+              claudeTool?.cli_available
+                ? `[Plugin] Installing via Claude CLI${claudeTool.version ? ` v${claudeTool.version}` : ""}...`
                 : `[Plugin] Claude CLI not found — using file-copy fallback`
             );
             await invoke("install_plugin", {
-              claudePath: claudePath ?? null,
+              claudeTool: claudeTool ?? null,
+              claudePath: null,
               sourceDir,
             });
             addLog(`[Plugin] Plugin files installed to ~/.claude/`);

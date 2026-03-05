@@ -12,6 +12,23 @@ interface PreflightItem {
   detail: string;
 }
 
+interface DetectedTool {
+  name: string;
+  version: string | null;
+  executable: string | null;
+  install_location: string | null;
+  install_method: "SystemInstall" | "UserInstall" | "SquirrelInstall" | "NpmGlobal" | "Unknown";
+  cli_available: boolean;
+  metadata: Record<string, string>;
+}
+
+const INSTALL_METHOD_LABELS: Record<string, string> = {
+  SystemInstall: "System install",
+  UserInstall: "User install",
+  SquirrelInstall: "Squirrel auto-update",
+  NpmGlobal: "npm global",
+};
+
 interface PreflightStepProps {
   onBack: () => void;
   onNext: () => void;
@@ -72,15 +89,19 @@ export function PreflightStep({ onBack, onNext }: PreflightStepProps) {
 
       // Editor detection
       try {
-        const editors = await invoke<
-          { id: string; name: string; path: string; cmd_path: string }[]
-        >("detect_editors");
+        const editors = await invoke<DetectedTool[]>("detect_editors");
         for (const editor of editors) {
+          const ver = editor.version ? ` v${editor.version}` : "";
+          const method = INSTALL_METHOD_LABELS[editor.install_method] || "";
+          const detail = [
+            editor.install_location,
+            method ? `(${method})` : "",
+          ].filter(Boolean).join(" ");
           results.push({
-            id: `editor_${editor.id}`,
-            label: `${editor.name} detected`,
+            id: `editor_${editor.metadata.id || editor.name}`,
+            label: `${editor.name}${ver} found`,
             status: "pass",
-            detail: editor.path,
+            detail,
           });
         }
         if (editors.length === 0) {
@@ -100,20 +121,31 @@ export function PreflightStep({ onBack, onNext }: PreflightStepProps) {
         });
       }
 
-      // Claude CLI detection
+      // Claude Code detection
       try {
-        const claudePath = await invoke<string | null>("detect_claude_cli");
-        if (claudePath) {
+        const claude = await invoke<DetectedTool | null>("detect_claude_code");
+        if (claude) {
+          const ver = claude.version ? ` v${claude.version}` : "";
+          const method = INSTALL_METHOD_LABELS[claude.install_method] || "";
           results.push({
             id: "claude",
-            label: "Claude CLI detected",
+            label: `Claude Code${ver} found`,
             status: "pass",
-            detail: claudePath,
+            detail: method ? `(${method})` : (claude.executable || "Detected"),
           });
+          // Node.js availability warning
+          if (claude.metadata.node_available === "false") {
+            results.push({
+              id: "node_warning",
+              label: "Node.js not available",
+              status: "warn",
+              detail: "Claude Code requires Node.js — it may not work without it",
+            });
+          }
         } else {
           results.push({
             id: "claude",
-            label: "Claude CLI detected",
+            label: "Claude Code",
             status: "warn",
             detail: "Not found — Claude plugin will use file-copy fallback",
           });
@@ -121,7 +153,7 @@ export function PreflightStep({ onBack, onNext }: PreflightStepProps) {
       } catch {
         results.push({
           id: "claude",
-          label: "Claude CLI detected",
+          label: "Claude Code",
           status: "warn",
           detail: "Not found — Claude plugin will use file-copy fallback",
         });

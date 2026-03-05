@@ -1,4 +1,4 @@
-use crate::detect::EditorInfo;
+use crate::detect::DetectedTool;
 use serde::Serialize;
 use std::process::Command;
 
@@ -17,19 +17,52 @@ pub struct AllExtensionsResult {
     pub total_attempted: usize,
 }
 
+/// Get the CLI command path from a DetectedTool.
+/// Prefers metadata["cli_path"], falls back to executable path.
+fn get_cli_path(editor: &DetectedTool) -> Option<String> {
+    editor
+        .metadata
+        .get("cli_path")
+        .cloned()
+        .or_else(|| {
+            editor
+                .executable
+                .as_ref()
+                .map(|p| p.to_string_lossy().to_string())
+        })
+}
+
 /// Install a VSIX extension into a single editor.
-fn install_vsix_single(editor: &EditorInfo, vsix_path: &str) -> ExtensionInstallResult {
-    let result = run_editor_command(&editor.cmd_path, vsix_path);
+fn install_vsix_single(editor: &DetectedTool, vsix_path: &str) -> ExtensionInstallResult {
+    let cli_path = match get_cli_path(editor) {
+        Some(path) => path,
+        None => {
+            return ExtensionInstallResult {
+                editor: editor.name.clone(),
+                success: false,
+                exit_code: -1,
+                output: "No CLI path available for this editor".to_string(),
+            }
+        }
+    };
+
+    let result = run_editor_command(&cli_path, vsix_path);
+
+    let version_str = editor
+        .version
+        .as_deref()
+        .map(|v| format!(" v{}", v))
+        .unwrap_or_default();
 
     match result {
         Ok((code, output)) => ExtensionInstallResult {
-            editor: editor.name.clone(),
+            editor: format!("{}{}", editor.name, version_str),
             success: code == 0,
             exit_code: code,
             output,
         },
         Err(e) => ExtensionInstallResult {
-            editor: editor.name.clone(),
+            editor: format!("{}{}", editor.name, version_str),
             success: false,
             exit_code: -1,
             output: e,
@@ -89,7 +122,7 @@ fn run_editor_command(_cmd_path: &str, _vsix_path: &str) -> Result<(i32, String)
 /// Install VSIX extension into all detected editors.
 #[tauri::command]
 pub fn install_all_extensions(
-    editors: Vec<EditorInfo>,
+    editors: Vec<DetectedTool>,
     vsix_path: String,
 ) -> AllExtensionsResult {
     let mut results = Vec::new();

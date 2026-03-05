@@ -5,6 +5,16 @@ import { MAC } from "../../theme/colors";
 import { COMPONENTS } from "../../constants";
 import { ComponentSelection } from "../../hooks/useInstaller";
 
+interface DetectedTool {
+  name: string;
+  version: string | null;
+  executable: string | null;
+  install_location: string | null;
+  install_method: string;
+  cli_available: boolean;
+  metadata: Record<string, string>;
+}
+
 interface ComponentState {
   id: string;
   name: string;
@@ -55,19 +65,19 @@ export function InstallingStep({ checked, installDir, onDone }: InstallingStepPr
             await invoke("install_cli", { installDir });
             addLog("  ✓ Copied to ~/.prism/bin/prism-cli");
           } else if (c.id === "vscode") {
-            const editors = await invoke<{ id: string; name: string; cmd_path: string }[]>(
-              "detect_editors"
-            );
+            const editors = await invoke<DetectedTool[]>("detect_editors");
             const vsixPath = `${installDir}/extensions/prism-2.5.0.vsix`;
             await invoke("install_all_extensions", { editors, vsixPath });
             for (const e of editors) {
-              addLog(`  ✓ ${e.name} extension installed`);
+              const ver = e.version ? ` v${e.version}` : "";
+              addLog(`  ✓ ${e.name}${ver} extension installed`);
             }
           } else if (c.id === "plugin") {
-            const claudePath = await invoke<string | null>("detect_claude_cli");
+            const claudeTool = await invoke<DetectedTool | null>("detect_claude_code");
             const sourceDir = `${installDir}/plugin`;
             await invoke("install_plugin", {
-              claudePath: claudePath ?? null,
+              claudeTool: claudeTool ?? null,
+              claudePath: null,
               sourceDir,
             });
             addLog("  ✓ Commands + agents copied to ~/.claude/");

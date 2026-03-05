@@ -40,6 +40,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             detect::detect_editors,
             detect::detect_claude_cli,
+            detect::detect_claude_code,
+            detect::detect_all_tools,
             detect::detect_existing_prism,
             detect::detect_os_info,
             detect::detect_disk_space,

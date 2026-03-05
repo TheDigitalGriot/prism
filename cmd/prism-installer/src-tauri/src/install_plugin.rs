@@ -1,3 +1,4 @@
+use crate::detect::DetectedTool;
 use serde::Serialize;
 use std::fs;
 use std::path::PathBuf;
@@ -127,13 +128,26 @@ fn home_dir() -> Option<PathBuf> {
 }
 
 /// Install Claude plugin: try CLI first, fall back to file copy.
+/// Accepts either a DetectedTool (preferred) or legacy claude_path string.
 #[tauri::command]
 pub fn install_plugin(
+    claude_tool: Option<DetectedTool>,
     claude_path: Option<String>,
     source_dir: String,
 ) -> PluginInstallResult {
-    // Try CLI install if Claude path is provided
-    if let Some(ref path) = claude_path {
+    // Extract the CLI path from DetectedTool or legacy string
+    let effective_path = claude_tool
+        .as_ref()
+        .and_then(|tool| {
+            tool.executable
+                .as_ref()
+                .map(|p| p.to_string_lossy().to_string())
+                .or_else(|| tool.metadata.get("cli_path").cloned())
+        })
+        .or(claude_path);
+
+    // Try CLI install if Claude path is available
+    if let Some(ref path) = effective_path {
         match install_plugin_via_cli(path) {
             Ok(msg) => {
                 return PluginInstallResult {
@@ -176,6 +190,7 @@ mod tests {
     #[test]
     fn test_install_plugin_no_claude_nonexistent_source() {
         let result = install_plugin(
+            None,
             None,
             "/nonexistent/path/that/should/not/exist".to_string(),
         );

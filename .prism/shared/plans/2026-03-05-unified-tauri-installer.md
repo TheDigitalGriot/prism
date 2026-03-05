@@ -500,7 +500,7 @@ npm run tauri dev  # Full flow: Welcome → Components → Directory → Preflig
 1. [x] Create `.github/workflows/prism-installer-release.yml`:
    - **Triggers**: `push tags v*` + `workflow_dispatch`
    - **Job 1: prepare** (ubuntu-latest): CLI binaries (Windows amd64, macOS amd64+arm64), VSIX, plugin files
-   - **Job 2: build-windows** (windows-latest): Stage resources, `npm run tauri build -- --bundles nsis`
+   - **Job 2: build-windows** (windows-latest): Stage resources, `npm run tauri build` (standalone .exe — no NSIS wrapper, `targets: []` in tauri.conf.json)
    - **Job 3: build-macos** (macos-latest): Stage resources, `npm run tauri build -- --bundles dmg`
    - **Job 4: release**: Upload both platform artifacts to GitHub Release
 2. [x] CLI binary staged into `src-tauri/resources/bin/` via CI
@@ -552,12 +552,12 @@ grep -r "2.5.0" cmd/prism-installer/package.json cmd/prism-installer/src-tauri/t
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|------------|--------|------------|
-| Tauri WebView2 not installed on target Windows machine | Medium | High | Use `webviewInstallMode: "embedBootstrapper"` in `tauri.conf.json` to auto-install WebView2 |
+| Tauri WebView2 not installed on target Windows machine | Low | High | `webviewInstallMode: "skip"` — WebView2 ships with Windows 10 1803+ and all Windows 11. Pre-1803 machines are unsupported. |
 | macOS Gatekeeper blocks unsigned installer | High | Medium | For dev/testing, use `spctl --master-disable` or ad-hoc signing. Code signing is separate effort |
 | Custom title bar breaks window dragging | Low | Medium | Use `data-tauri-drag-region` attribute + `tauri-plugin-decorum` for native-feeling chrome |
 | Registry PATH manipulation corrupts existing PATH | Medium | High | Read current PATH, parse entries, append only if absent (idempotent). Never overwrite — always append |
 | `cmd.exe /c` quoting issues for VSIX install | Medium | Medium | Known from NSIS experience — use proper escaping. Test with paths containing spaces |
-| Tauri NSIS bundler conflicts with custom uninstaller logic | Low | Medium | Test Tauri's built-in NSIS uninstaller first; only add custom registry logic if needed |
+| Tauri NSIS bundler conflicts with custom uninstaller logic | N/A | N/A | **Resolved** — NSIS bundler removed (`targets: []`). App is standalone .exe with custom uninstall logic in `uninstall.rs`. |
 | Cross-platform CSS differences in WebView | Medium | Low | Use platform detection hook to apply platform-specific styles; test on both OS |
 
 ## Edge Cases
