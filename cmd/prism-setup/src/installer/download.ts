@@ -23,7 +23,7 @@ export async function downloadFile(options: {
       }
 
       const req = https.get(requestUrl, {
-        headers: { 'User-Agent': 'prism-setup/2.4.3' },
+        headers: { 'User-Agent': 'prism-setup/2.4.4' },
         timeout: 30000,
       }, (res) => {
         // Follow redirects (GitHub Releases redirect to CDN)
