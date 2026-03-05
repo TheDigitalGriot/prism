@@ -1,4 +1,4 @@
-name: Build Prism Setup Wizard
+name: Build Prism Setup Installer
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to build (e.g., 2.4.1)'
+        description: 'Version to build (e.g., 2.4.2)'
         required: true
 
 jobs:
@@ -23,71 +23,89 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Build prism-cli binaries
-        run: cd cmd/prism-cli && make build-all
-
-      - name: Copy binaries to resources
+      - name: Build prism-cli for Windows
         run: |
-          mkdir -p cmd/prism-setup/resources/binaries
-          cp cmd/prism-cli/bin/prism-cli-* cmd/prism-setup/resources/binaries/
+          cd cmd/prism-cli
+          GOOS=windows GOARCH=amd64 go build \
+            -ldflags "-X main.version=${VERSION}" \
+            -o bin/prism-cli-windows-amd64.exe .
+        env:
+          VERSION: ${{ github.ref_name || github.event.inputs.version }}
 
       - name: Build VSIX extension
         run: |
           cd cmd/prism-vscode
           npm ci
-          npx @vscode/vsce package --out ../prism-setup/resources/extensions/prism.vsix
+          mkdir -p ../prism-setup/resources/extensions
+          npx @vscode/vsce package \
+            --no-dependencies \
+            --baseContentUrl https://github.com/TheDigitalGriot/prism-plugin/tree/main/cmd/prism-vscode \
+            --baseImagesUrl https://github.com/TheDigitalGriot/prism-plugin/raw/main/cmd/prism-vscode \
+            --out ../prism-setup/resources/extensions/prism.vsix
         continue-on-error: true
 
-      - name: Copy Claude plugin files
+      - name: Copy plugin files
         run: |
           mkdir -p cmd/prism-setup/resources/plugin
-          cp -r .claude-plugin cmd/prism-setup/resources/plugin/
           cp -r commands cmd/prism-setup/resources/plugin/
           cp -r agents cmd/prism-setup/resources/plugin/
-          cp -r skills cmd/prism-setup/resources/plugin/
 
       - uses: actions/upload-artifact@v4
         with:
-          name: setup-resources
-          path: cmd/prism-setup/resources/
+          name: nsis-resources
+          path: |
+            cmd/prism-cli/bin/prism-cli-windows-amd64.exe
+            cmd/prism-setup/resources/
 
-  build:
+  build-nsis:
     needs: prepare
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            platform: win32
-          - os: macos-latest
-            platform: darwin
-          - os: ubuntu-latest
-            platform: linux
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
       - uses: actions/download-artifact@v4
         with:
-          name: setup-resources
-          path: cmd/prism-setup/resources/
+          name: nsis-resources
+          path: .
 
-      - name: Install dependencies
-        run: cd cmd/prism-setup && npm ci
+      - name: Install NSIS and plugins
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y nsis nsis-pluginapi
 
-      - name: Build installer
-        run: cd cmd/prism-setup && npm run make
+          # EnVar plugin for PATH manipulation
+          curl -fsSL \
+            https://github.com/GsNSIS/EnVar/releases/latest/download/EnVar-Plugin.zip \
+            -o /tmp/envar.zip
+          unzip -o /tmp/envar.zip -d /tmp/envar
+          sudo cp /tmp/envar/Plugins/x86-unicode/EnVar.dll \
+            /usr/share/nsis/Plugins/x86-unicode/
+
+          # NScurl plugin for HTTPS downloads
+          curl -fsSL \
+            https://github.com/negrutiu/nsis-nscurl/releases/latest/download/NScurl.zip \
+            -o /tmp/nscurl.zip
+          unzip -o /tmp/nscurl.zip -d /tmp/nscurl
+          sudo cp /tmp/nscurl/Plugins/x86-unicode/NScurl.dll \
+            /usr/share/nsis/Plugins/x86-unicode/
+
+      - name: Compile NSIS installer
+        run: |
+          VERSION="${{ github.ref_name }}"
+          if [ -z "$VERSION" ] || [[ "$VERSION" == refs/* ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          VERSION="${VERSION#v}"
+          cd installer
+          makensis -V4 -DVERSION="${VERSION}" prism-setup.nsi
 
       - uses: actions/upload-artifact@v4
         with:
-          name: prism-setup-${{ matrix.platform }}
-          path: cmd/prism-setup/out/make/**/*
+          name: prism-setup-windows
+          path: installer/Prism-Setup-*.exe
 
   release:
-    needs: build
+    needs: build-nsis
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
@@ -95,10 +113,10 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          merge-multiple: true
+          name: prism-setup-windows
           path: installers/
 
       - uses: softprops/action-gh-release@v2
         with:
-          files: installers/**/*
+          files: installers/*.exe
           generate_release_notes: true

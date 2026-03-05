@@ -18,59 +18,43 @@ Ask the user:
 
 ### 2. Read Current Version
 
-Source of truth: `.claude-plugin/plugin.json` field `"version"`.
+Source of truth: `VERSION` file at repository root.
 
 ```bash
-# Verify all Tier 1 files are in sync before proceeding
+cat VERSION
 ```
 
-Read all 8 Tier 1 files and confirm they share the same version. If mismatched, warn the user and ask how to proceed. Known drift-prone files:
-- `cmd/prism-cli/app/footer.go` — hardcoded `"vX.Y.Z"` string in TUI powerline footer
-- `packages/prism-core/src/shared/PrismState.ts` — `DEFAULT_PRISM_STATE.version`
-- `packages/prism-ui/src/context/PrismStateContext.tsx` — `DEFAULT_STATE.version`
+### 3. Bump Version Across All Files
 
-### 3. Calculate New Version
+Run the centralized bump script:
 
-Parse `MAJOR.MINOR.PATCH` from current version. Apply bump type:
-- **patch**: `MAJOR.MINOR.(PATCH+1)`
-- **minor**: `MAJOR.(MINOR+1).0`
-- **major**: `(MAJOR+1).0.0`
+```bash
+python scripts/bump-version.py <major|minor|patch> --root .
+```
 
-### 4. Update Tier 1 — Core Version Files
+This automatically updates all 14 version locations:
+- `VERSION` (root source of truth)
+- `.claude-plugin/plugin.json`
+- `.claude-plugin/marketplace.json`
+- `cmd/prism-cli/main.go`
+- `cmd/prism-cli/app/footer.go`
+- `cmd/prism-vscode/package.json`
+- `cmd/prism-electron/package.json`
+- `cmd/prism-setup/package.json`
+- `packages/prism-core/src/shared/PrismState.ts`
+- `packages/prism-ui/src/context/PrismStateContext.tsx`
+- `cmd/prism-setup/src/main.ts`
+- `cmd/prism-setup/src/screens/WelcomeScreen.tsx`
+- `cmd/prism-setup/src/installer/download.ts`
+- `cmd/prism-setup/src/installer/version.ts`
 
-Use the **Edit tool** for each file. Match the exact old version string and replace with new.
+Verify the script output shows all files updated. If any are skipped (file missing), note it but continue.
 
-| # | File | What to Edit |
-|---|------|-------------|
-| 1 | `.claude-plugin/plugin.json` | `"version": "OLD"` → `"version": "NEW"` |
-| 2 | `.claude-plugin/marketplace.json` | `"version": "OLD"` → `"version": "NEW"` |
-| 3 | `cmd/prism-cli/main.go:19` | `var version = "OLD"` → `var version = "NEW"` |
-| 4 | `cmd/prism-vscode/package.json` | `"version": "OLD"` → `"version": "NEW"` |
-| 5 | `cmd/prism-electron/package.json` | `"version": "OLD"` → `"version": "NEW"` |
-| 6 | `cmd/prism-cli/app/footer.go:165` | `"vOLD"` → `"vNEW"` (hardcoded TUI footer powerline segment) |
-| 7 | `packages/prism-core/src/shared/PrismState.ts:85` | `version: "OLD"` → `version: "NEW"` (in `DEFAULT_PRISM_STATE`) |
-| 8 | `packages/prism-ui/src/context/PrismStateContext.tsx:152` | `version: "OLD"` → `version: "NEW"` (in `DEFAULT_STATE`) |
+### 4. Update Changelogs
 
-All 8 edits can run in parallel since they are independent files.
+Prepend a new section after the header in each changelog:
 
-**Important**: Files 6-8 have historically drifted. Always verify their current values before editing — they may not match the expected OLD version. Use the actual string found in each file.
-
-### Where Version Is Displayed to Users
-
-| App | Location | Source |
-|-----|----------|--------|
-| **CLI** | TUI powerline footer (bottom-right) | `footer.go:165` hardcoded string |
-| **CLI** | `--version` flag output | `main.go:19` via Cobra |
-| **Electron** | BottomStatusBar (24px strip, bottom-left) | `PrismState.ts:85` → `usePrismState().version` |
-| **VSCode** | Panel StatusBar (22px strip, right side) | Controller state `version` field via `initialState` message |
-| **VSCode** | Extensions panel (managed by VS Code) | `package.json` `"version"` field |
-
-### 5. Update Tier 2 — Changelogs
-
-Prepend a new section after the header in each changelog. Use the Edit tool to insert after the existing header content.
-
-**Root `CHANGELOG.md`** — prepend after the "Keep a Changelog" header line:
-
+**Root `CHANGELOG.md`**:
 ```markdown
 ## [NEW] - YYYY-MM-DD
 
@@ -78,8 +62,7 @@ Prepend a new section after the header in each changelog. Use the Edit tool to i
 - {user's release summary}
 ```
 
-**`cmd/prism-vscode/CHANGELOG.md`** — prepend after existing header:
-
+**`cmd/prism-vscode/CHANGELOG.md`**:
 ```markdown
 ## [NEW] — YYYY-MM-DD
 
@@ -87,39 +70,15 @@ Prepend a new section after the header in each changelog. Use the Edit tool to i
 - {user's release summary}
 ```
 
-Note the em-dash (—) in the VSCode changelog vs hyphen (-) in the root changelog.
-
-### 6. Update Tier 3 — Documentation
-
-Find the current documentation file:
+### 5. Update Documentation (if exists)
 
 ```bash
 ls .prism/shared/docs/PRISM-DOCUMENTATION-*.md
 ```
 
-Then:
+If found, rename and update internal version references.
 
-1. **Read** the documentation file
-2. **Rename** using `git mv`:
-   ```bash
-   git mv ".prism/shared/docs/PRISM-DOCUMENTATION-{OLD}.md" ".prism/shared/docs/PRISM-DOCUMENTATION-{NEW}.md"
-   ```
-3. **Update internal version references** using Edit tool with `replace_all: true`:
-   - Replace all occurrences of the old version string with the new version inside the renamed file
-   - The documentation contains ~20 version references in titles, headers, JSON examples, CLI output examples, and version tables
-
-### 7. Update Tier 4 — Packages (Optional)
-
-Only if user opted in during Step 1:
-
-| File | Edit |
-|------|------|
-| `packages/prism-core/package.json` | `"version": "OLD"` → `"version": "NEW"` |
-| `packages/prism-ui/package.json` | `"version": "OLD"` → `"version": "NEW"` |
-
-These packages may use independent versioning (currently `0.1.0`). Ask the user whether to set them to the main version or bump independently.
-
-### 8. Build CLI Binaries
+### 6. Build CLI Binaries
 
 ```bash
 cd cmd/prism-cli && make build-all
@@ -129,37 +88,11 @@ This cross-compiles for: windows/amd64, darwin/amd64, darwin/arm64, linux/amd64,
 
 Verify build succeeds. If it fails, stop and report the error.
 
-### 9. Summary and Review
+### 7. Summary and Review
 
-Display a table of all changes made:
+Display the bump script output and changelog updates. Ask user to confirm before committing.
 
-```
-Release: vOLD → vNEW
-
-Tier 1 — Core versions:
-  ✓ .claude-plugin/plugin.json
-  ✓ .claude-plugin/marketplace.json
-  ✓ cmd/prism-cli/main.go
-  ✓ cmd/prism-vscode/package.json
-  ✓ cmd/prism-electron/package.json
-  ✓ cmd/prism-cli/app/footer.go (TUI footer)
-  ✓ packages/prism-core/src/shared/PrismState.ts (DEFAULT_PRISM_STATE)
-  ✓ packages/prism-ui/src/context/PrismStateContext.tsx (DEFAULT_STATE)
-
-Tier 2 — Changelogs:
-  ✓ CHANGELOG.md
-  ✓ cmd/prism-vscode/CHANGELOG.md
-
-Tier 3 — Documentation:
-  ✓ .prism/shared/docs/PRISM-DOCUMENTATION-{NEW}.md (renamed + updated)
-
-Build:
-  ✓ CLI binaries built (5 platforms)
-```
-
-Ask user to confirm before committing.
-
-### 10. Commit and Tag
+### 8. Commit and Tag
 
 ```bash
 git add -A
@@ -167,7 +100,7 @@ git commit -m "vNEW - {release summary}"
 git tag "vNEW"
 ```
 
-### 11. Push (Optional)
+### 9. Push (Optional)
 
 Ask user if they want to push:
 
