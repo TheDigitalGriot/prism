@@ -1,0 +1,104 @@
+name: Build Prism Setup Wizard
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (e.g., 2.4.1)'
+        required: true
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build prism-cli binaries
+        run: cd cmd/prism-cli && make build-all
+
+      - name: Copy binaries to resources
+        run: |
+          mkdir -p cmd/prism-setup/resources/binaries
+          cp cmd/prism-cli/bin/prism-cli-* cmd/prism-setup/resources/binaries/
+
+      - name: Build VSIX extension
+        run: |
+          cd cmd/prism-vscode
+          npm ci
+          npx @vscode/vsce package --out ../prism-setup/resources/extensions/prism.vsix
+        continue-on-error: true
+
+      - name: Copy Claude plugin files
+        run: |
+          mkdir -p cmd/prism-setup/resources/plugin
+          cp -r .claude-plugin cmd/prism-setup/resources/plugin/
+          cp -r commands cmd/prism-setup/resources/plugin/
+          cp -r agents cmd/prism-setup/resources/plugin/
+          cp -r skills cmd/prism-setup/resources/plugin/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: setup-resources
+          path: cmd/prism-setup/resources/
+
+  build:
+    needs: prepare
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            platform: win32
+          - os: macos-latest
+            platform: darwin
+          - os: ubuntu-latest
+            platform: linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: setup-resources
+          path: cmd/prism-setup/resources/
+
+      - name: Install dependencies
+        run: cd cmd/prism-setup && npm ci
+
+      - name: Build installer
+        run: cd cmd/prism-setup && npm run make
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prism-setup-${{ matrix.platform }}
+          path: cmd/prism-setup/out/make/**/*
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: installers/
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: installers/**/*
+          generate_release_notes: true

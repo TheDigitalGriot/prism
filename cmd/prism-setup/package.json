@@ -1,8 +1,8 @@
 {
-  "name": "prism-electron",
-  "productName": "Prism",
+  "name": "prism-setup",
+  "productName": "Prism Setup",
   "version": "2.4.2",
-  "description": "Prism — structured 4-phase AI development workflow",
+  "description": "Unified installer for the Prism development ecosystem",
   "main": ".vite/build/main.js",
   "private": true,
   "scripts": {
@@ -21,23 +21,21 @@
   "devDependencies": {
     "@electron-forge/cli": "^7.11.1",
     "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-dmg": "^7.11.1",
     "@electron-forge/maker-rpm": "^7.11.1",
-    "@electron-forge/maker-squirrel": "^7.11.1",
     "@electron-forge/maker-zip": "^7.11.1",
     "@electron-forge/plugin-auto-unpack-natives": "^7.11.1",
     "@electron-forge/plugin-fuses": "^7.11.1",
     "@electron-forge/plugin-vite": "^7.11.1",
     "@electron/fuses": "^1.8.0",
-    "@tailwindcss/vite": "^4.2.1",
-    "@types/electron-squirrel-startup": "^1.0.2",
-    "@types/node": "^20.0.0",
+    "@tailwindcss/vite": "^4.0.0",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
-    "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vitejs/plugin-react": "^5.1.2",
     "electron": "40.0.0",
+    "electron-forge-maker-nsis": "^26.0.0",
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.32.0",
     "tailwindcss": "^4.2.1",
@@ -45,10 +43,11 @@
     "vite": "^6.0.0"
   },
   "dependencies": {
-    "chokidar": "^3.6.0",
-    "electron-squirrel-startup": "^1.0.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.511.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "uuid": "^9.0.0"
+    "tailwind-merge": "^3.3.0"
   }
 }

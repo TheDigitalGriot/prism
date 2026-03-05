@@ -1,0 +1,64 @@
+[data-platform="setup"] {
+  /* Typography */
+  --prism-font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --prism-font-mono: ui-monospace, 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --prism-font-size: 13px;
+  --prism-font-code: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* Backgrounds */
+  --prism-bg: #0f1419;
+  --prism-bg-panel: #0d1117;
+  --prism-bg-editor: #111920;
+  --prism-bg-hover: rgba(255, 255, 255, 0.04);
+  --prism-bg-active: rgba(255, 255, 255, 0.08);
+  --prism-bg-input: #1a2332;
+  --prism-bg-dropdown: #1a2332;
+  --prism-bg-button: #0e639c;
+  --prism-bg-button-hover: #1177bb;
+  --prism-bg-button-secondary: #2d2e4a;
+  --prism-bg-surface: #141b22;
+  --prism-bg-rail: #111920;
+
+  /* Foregrounds / Text */
+  --prism-fg: #c9d1d9;
+  --prism-fg-muted: #6e7a87;
+  --prism-fg-disabled: #4a5568;
+  --prism-fg-active: #ffffff;
+  --prism-fg-button: #ffffff;
+  --prism-fg-editor: #e2e8f0;
+  --prism-fg-link: #60a5fa;
+  --prism-fg-link-hover: #93c5fd;
+  --prism-text-dim: #4a5568;
+
+  /* Borders */
+  --prism-border: #1e2d3d;
+  --prism-border-focus: #3b82f6;
+  --prism-border-input: transparent;
+  --prism-border-active: #2a3f54;
+  --prism-widget-border: #1e2d3d;
+
+  /* Status colors */
+  --prism-success: #4ade80;
+  --prism-warning: #fbbf24;
+  --prism-error: #f87171;
+  --prism-info: #60a5fa;
+
+  /* Spectral phase colors */
+  --prism-blue: #3b82f6;
+  --prism-teal: #14b8a6;
+  --prism-green: #22c55e;
+  --prism-amber: #f59e0b;
+  --prism-purple: #7c3aed;
+
+  /* Scrollbar */
+  --prism-scrollbar: rgba(110, 122, 135, 0.4);
+  --prism-scrollbar-hover: rgba(110, 122, 135, 0.7);
+
+  /* Badge */
+  --prism-bg-badge: #1e2d3d;
+
+  /* Radius */
+  --prism-radius: 4px;
+  --prism-radius-md: 6px;
+  --prism-radius-lg: 8px;
+}
