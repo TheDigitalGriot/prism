@@ -1,4 +1,9 @@
-name: Build Prism Setup Installer
+# =============================================================================
+# DEPRECATED — This NSIS installer workflow is superseded by the Tauri installer
+# workflow at .github/workflows/prism-installer-release.yml
+# Kept for rollback purposes. See: .prism/shared/plans/2026-03-05-unified-tauri-installer.md
+# =============================================================================
+name: Build Prism Setup Installer (DEPRECATED)
 
 on:
   push:

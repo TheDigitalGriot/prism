@@ -1,7 +1,7 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EditorInfo {
     pub id: String,
     pub name: String,

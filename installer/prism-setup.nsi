@@ -1,4 +1,10 @@
 ; =============================================================================
+; DEPRECATED — This NSIS installer is superseded by the Tauri installer
+; at cmd/prism-installer/. Kept for reference and rollback purposes.
+; See: .prism/shared/plans/2026-03-05-unified-tauri-installer.md
+; =============================================================================
+
+; =============================================================================
 ;  Prism Setup — Native NSIS Installer
 ;  Version: ${VERSION} (passed via makensis -DVERSION=x.y.z)
 ;

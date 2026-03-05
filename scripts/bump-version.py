@@ -92,7 +92,11 @@ def main():
         root / ".claude-plugin" / "marketplace.json",
         root / "cmd" / "prism-vscode" / "package.json",
         root / "cmd" / "prism-electron" / "package.json",
-        root / "cmd" / "prism-setup" / "package.json",
+        # Tauri installer (new — supersedes prism-setup)
+        root / "cmd" / "prism-installer" / "package.json",
+        root / "cmd" / "prism-installer" / "src-tauri" / "tauri.conf.json",
+        # Deprecated: cmd/prism-setup — kept for rollback but no longer bumped
+        # root / "cmd" / "prism-setup" / "package.json",
     ]
 
     # Text files: straight find-and-replace of old → new
@@ -101,10 +105,11 @@ def main():
         root / "cmd" / "prism-cli" / "app" / "footer.go",
         root / "packages" / "prism-core" / "src" / "shared" / "PrismState.ts",
         root / "packages" / "prism-ui" / "src" / "context" / "PrismStateContext.tsx",
-        root / "cmd" / "prism-setup" / "src" / "main.ts",
-        root / "cmd" / "prism-setup" / "src" / "screens" / "WelcomeScreen.tsx",
-        root / "cmd" / "prism-setup" / "src" / "installer" / "download.ts",
-        root / "cmd" / "prism-setup" / "src" / "installer" / "version.ts",
+        # Deprecated: cmd/prism-setup — kept for rollback but no longer bumped
+        # root / "cmd" / "prism-setup" / "src" / "main.ts",
+        # root / "cmd" / "prism-setup" / "src" / "screens" / "WelcomeScreen.tsx",
+        # root / "cmd" / "prism-setup" / "src" / "installer" / "download.ts",
+        # root / "cmd" / "prism-setup" / "src" / "installer" / "version.ts",
     ]
 
     updated = []

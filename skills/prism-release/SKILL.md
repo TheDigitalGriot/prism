@@ -1,6 +1,6 @@
 ---
 name: prism-release
-description: Create a versioned release of prism-plugin. Bumps semantic version across all 14 version files, builds CLI binaries + VSIX + Electron + NSIS installer, commits, tags, pushes, and creates a GitHub release with all assets. Use when the user says "release", "bump version", "new version", "cut a release", "prism-release", or wants to publish a new version.
+description: Create a versioned release of prism-plugin. Bumps semantic version across all version files, builds CLI binaries + VSIX + Electron + Tauri installer (Windows .exe + macOS .dmg), commits, tags, pushes, and creates a GitHub release with all assets. Use when the user says "release", "bump version", "new version", "cut a release", "prism-release", or wants to publish a new version.
 ---
 
 # Prism Release
@@ -31,7 +31,7 @@ cat VERSION
 python scripts/bump-version.py <major|minor|patch> --root .
 ```
 
-This updates all 14 version locations (VERSION, plugin.json, marketplace.json, main.go, footer.go, 4 package.json files, PrismState.ts, PrismStateContext.tsx, and 3 setup files). Verify the output shows all files updated.
+This updates version locations including: VERSION, plugin.json, marketplace.json, main.go, footer.go, package.json files (prism-vscode, prism-electron, prism-installer), tauri.conf.json, PrismState.ts, PrismStateContext.tsx. Verify the output shows all files updated.
 
 ### Step 3: Build all artifacts
 
@@ -75,22 +75,27 @@ cd cmd/prism-electron && npm run make
 
 Verify: `ls cmd/prism-electron/out/make/squirrel.windows/x64/` shows `Prism-{VERSION} Setup.exe`.
 
-#### 3e. Compile NSIS installer
+#### 3e. Build Tauri installer (Windows + macOS)
 
+The Tauri installer is built via CI. Trigger the workflow:
+
+```bash
+gh workflow run prism-installer-release.yml -f version={NEW_VERSION}
+```
+
+This builds both `Prism-Setup-{VERSION}.exe` (Windows NSIS) and `Prism-Setup-{VERSION}.dmg` (macOS) via GitHub Actions.
+
+**Legacy NSIS** (deprecated, kept for rollback):
 ```bash
 makensis -V4 -DVERSION={NEW_VERSION} installer/prism-setup.nsi
 ```
-
-If `makensis` is not in PATH, try: `"/c/Program Files (x86)/NSIS/makensis.exe"`
-
-Verify: `ls installer/Prism-Setup-{NEW_VERSION}.exe`
 
 ### Step 4: Commit and tag
 
 ```bash
 git add VERSION .claude-plugin/ cmd/prism-cli/main.go cmd/prism-cli/app/footer.go \
   cmd/prism-vscode/package.json cmd/prism-electron/package.json \
-  cmd/prism-setup/package.json cmd/prism-setup/src/ \
+  cmd/prism-installer/package.json cmd/prism-installer/src-tauri/tauri.conf.json \
   packages/prism-core/src/shared/PrismState.ts \
   packages/prism-ui/src/context/PrismStateContext.tsx \
   installer/ scripts/
@@ -120,10 +125,13 @@ gh release create v{NEW_VERSION} \
   --notes "Release notes here"
 ```
 
-The release should include 7 assets:
+The release should include 8 assets:
 - 5 CLI binaries (all platforms)
 - 1 Electron desktop app installer (`Prism-{VERSION}.Setup.exe`)
-- 1 NSIS all-in-one installer (`Prism-Setup-{VERSION}.exe`)
+- 1 Tauri Windows installer (`Prism-Setup-{VERSION}.exe`) — built by CI
+- 1 Tauri macOS installer (`Prism-Setup-{VERSION}.dmg`) — built by CI
+
+> **Note**: The legacy NSIS installer (`installer/`) is deprecated but kept for rollback. The new Tauri installer supersedes it.
 
 ### Step 7: Report results
 

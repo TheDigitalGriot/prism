@@ -1,43 +1,43 @@
-import { useEffect, useState } from "react";
-
-type Platform = "windows" | "macos" | "unknown";
-
-function usePlatform(): Platform {
-  const [platform, setPlatform] = useState<Platform>("unknown");
-
-  useEffect(() => {
-    import("@tauri-apps/plugin-os").then(({ platform: getPlatform }) => {
-      const os = getPlatform();
-      if (os === "windows") setPlatform("windows");
-      else if (os === "macos") setPlatform("macos");
-      else setPlatform("unknown");
-    });
-  }, []);
-
-  return platform;
-}
+import { usePlatform } from "./hooks/usePlatform";
+import { WindowsInstaller } from "./screens/windows/index";
+import { MacInstaller } from "./screens/macos/index";
 
 export default function App() {
   const platform = usePlatform();
 
+  if (platform === "windows") return <WindowsInstaller />;
+  if (platform === "macos") return <MacInstaller />;
+
+  // Loading state while detecting platform
   return (
-    <div className="h-screen w-screen bg-[#0F172A] text-[#F1F5F9] flex items-center justify-center select-none">
-      <div className="text-center">
-        <h1
-          className="text-3xl font-bold mb-2"
+    <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#0F172A",
+        fontFamily: "'Segoe UI', sans-serif",
+      }}
+    >
+      <div style={{ textAlign: "center" }}>
+        <div
           style={{
-            background: "linear-gradient(90deg, #4A9EFF, #2DD4BF, #4ADE80)",
+            fontSize: 28,
+            fontWeight: 700,
+            letterSpacing: -1,
+            background:
+              "linear-gradient(90deg, #4A9EFF, #2DD4BF, #4ADE80)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
+            marginBottom: 8,
           }}
         >
           PRISM
-        </h1>
-        <p className="text-sm text-[#64748B]">
-          {platform === "unknown"
-            ? "Detecting platform..."
-            : `Installer loading for ${platform}...`}
-        </p>
+        </div>
+        <div style={{ color: "#64748B", fontSize: 12 }}>
+          Detecting platform...
+        </div>
       </div>
     </div>
   );

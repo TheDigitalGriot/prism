@@ -7,6 +7,8 @@ node_modules/
 # Build artifacts
 bin/
 cmd/prism-cli/bin/
+# Tauri installer resources (populated at CI time)
+cmd/prism-installer/src-tauri/resources/
 cmd/prism-cli/prism-cli
 cmd/prism-cli/prism-cli.exe
 *.exe

@@ -1,7 +1,7 @@
 {
   "name": "prism-installer",
   "productName": "Prism Setup",
-  "version": "2.4.6",
+  "version": "2.4.7",
   "description": "Prism installer — unified setup wizard for Windows and macOS",
   "private": true,
   "scripts": {
@@ -14,14 +14,15 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^2.5.0",
+    "@tauri-apps/plugin-dialog": "^2.6.0",
     "@tauri-apps/plugin-os": "^2.2.1",
     "@tauri-apps/plugin-shell": "^2.2.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.5.0",
     "@tailwindcss/vite": "^4.1.4",
+    "@tauri-apps/cli": "^2.5.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",

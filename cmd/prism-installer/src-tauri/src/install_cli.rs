@@ -77,6 +77,12 @@ pub fn install_cli(source_path: String, install_dir: String) -> InstallResult {
                 message: format!("CLI installed but registry write failed: {}", e),
             };
         }
+        // Register in Add/Remove Programs
+        let exe_path = std::env::current_exe()
+            .ok()
+            .and_then(|p| p.to_str().map(|s| s.to_string()))
+            .unwrap_or_default();
+        crate::uninstall::register_uninstaller(&install_dir, &version, &exe_path);
     }
 
     InstallResult {
