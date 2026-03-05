@@ -13,5 +13,4 @@ cmd/prism-cli/prism-cli
 cmd/prism-cli/prism-cli.exe
 *.exe
 
-# Go
-cmd/prism-cli/go.sum
+# Go build cache (go.sum is committed for reproducible CI builds)

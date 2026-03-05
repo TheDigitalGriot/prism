@@ -6,8 +6,9 @@
 name: Build Prism Setup Installer (DEPRECATED)
 
 on:
-  push:
-    tags: ['v*']
+  # Tag trigger removed — this workflow is deprecated
+  # push:
+  #   tags: ['v*']
   workflow_dispatch:
     inputs:
       version:

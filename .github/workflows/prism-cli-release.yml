@@ -39,6 +39,9 @@ jobs:
         with:
           go-version: '1.22'
 
+      - name: Ensure go.sum is up to date
+        run: cd cmd/prism-cli && go mod tidy
+
       - name: Build
         env:
           GOOS: ${{ matrix.goos }}

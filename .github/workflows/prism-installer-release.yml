@@ -16,6 +16,8 @@ jobs:
   # ─── Job 1: Build CLI binaries, VSIX, and plugin files ───────────────────────
   prepare:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -35,6 +37,9 @@ jobs:
             VERSION="${{ github.event.inputs.version }}"
           fi
           echo "version=${VERSION#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure go.sum is up to date
+        run: cd cmd/prism-cli && go mod tidy
 
       - name: Build prism-cli for Windows (amd64)
         run: |
