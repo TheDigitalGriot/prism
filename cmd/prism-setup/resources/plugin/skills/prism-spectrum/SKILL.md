@@ -48,6 +48,19 @@ Parse the stories and identify:
 - Pending stories (status: "pending" or "in_progress")
 - Blocked stories (has blockedBy that isn't complete)
 
+### 1b. Load Epic + Story Context
+
+After loading state files, extract contextual intelligence:
+
+1. Read `epic.decisions`, `epic.risks`, `epic.outOfScope`, `epic.references`
+   — these are the human-approved architectural decisions. Follow them.
+2. Read current story's `context.why` — understand WHY this story exists
+3. Read `context.risks` — be aware of known pitfalls
+4. Read `context.patterns` — follow referenced implementation patterns
+5. Read `context.edgeCases` — handle these explicitly
+
+If epic or context fields are absent, proceed with current behavior (implement from steps only).
+
 ### 2. Check Completion
 
 If no incomplete stories remain:
@@ -103,7 +116,7 @@ Follow Prism implementation patterns:
 
 ### 6. Run Quality Gates
 
-Execute ALL verification commands from `plan.qualityGates`:
+Execute ALL verification commands from `epic.qualityGates`:
 
 ```bash
 # Default gates (adjust based on project)

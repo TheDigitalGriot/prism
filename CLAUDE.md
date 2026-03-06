@@ -80,12 +80,19 @@ Initialize with: `python skills/prism/scripts/init_prism.py`
 
 ```json
 {
-  "plan": { "name": "...", "source": "path/to/plan.md", "qualityGates": ["npm test"] },
+  "epic": {
+    "name": "...", "source": "path/to/plan.md", "qualityGates": ["npm test"],
+    "decisions": ["..."], "references": ["..."], "outOfScope": ["..."], "risks": ["..."]
+  },
   "stories": [{
     "id": "STORY-001", "title": "...", "description": "...",
     "priority": 1, "status": "pending|in_progress|complete",
     "blockedBy": null, "files": [{"path": "...", "action": "create|modify|delete"}],
-    "steps": [{"description": "...", "done": false}]
+    "steps": [{"description": "...", "done": false}],
+    "context": {
+      "why": "...", "risks": ["..."], "edgeCases": ["..."],
+      "patterns": ["..."], "graphTargets": ["qualified::name#Function"]
+    }
   }]
 }
 ```
@@ -106,6 +113,19 @@ Key packages:
 - `domain/` — Story parsing, progress tracking, signal detection
 - `claude/` — Claude runner integration
 - `prism/` — 3D prism renderer using FauxGL
+
+## Code Intelligence (codebase-memory-mcp)
+
+This project uses codebase-memory-mcp for structural code analysis. When available:
+
+- **ALWAYS prefer graph tools over Glob/Grep for structural questions**
+- Run `index_repository` at the start of research and after implementation phases
+- Use `trace_call_path` before modifying any function to verify blast radius
+- Use `search_graph(max_degree=0, exclude_entry_points=true)` to check for dead code
+- Use `get_graph_schema` for quick project orientation
+- Fall back to Grep/Glob only for text content (strings, comments, config values)
+
+Graph queries cost ~500 tokens. File-by-file exploration costs ~80,000 tokens. Always use the graph first.
 
 ## File Naming Conventions
 

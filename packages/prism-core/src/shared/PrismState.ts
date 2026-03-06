@@ -1,5 +1,5 @@
 import { WorkflowPhase } from "./types"
-import type { Story, Plan } from "../prism/types"
+import type { Story, Epic } from "../prism/types"
 import type { WorkflowContext } from "../core/controller/prism/workflow"
 import type { SpectrumState } from "../core/controller/prism/spectrum"
 import type { PrismChatMessage } from "../core/api/types"
@@ -31,7 +31,7 @@ export interface PrismExtensionState {
   // Stories (loaded from stories.json)
   // -------------------------------------------------------------------------
   stories: Story[]
-  plan: Plan | undefined
+  epic: Epic | undefined
   completedCount: number
   remainingCount: number
 
@@ -91,7 +91,7 @@ export const DEFAULT_PRISM_STATE: PrismExtensionState = {
   workflowPhase: WorkflowPhase.Idle,
   workflowContext: {},
   stories: [],
-  plan: undefined,
+  epic: undefined,
   completedCount: 0,
   remainingCount: 0,
   chatMessages: [],

@@ -95,7 +95,7 @@ export interface PrismStory {
   commitHash?: string
 }
 
-export interface PrismPlan {
+export interface PrismEpic {
   name: string
   source: string
   qualityGates: string[]
@@ -117,7 +117,7 @@ export interface PrismExtensionState {
   planningModel: string
   // Stories
   stories: PrismStory[]
-  plan: PrismPlan | undefined
+  epic: PrismEpic | undefined
   completedCount: number
   remainingCount: number
   // Chat
@@ -159,7 +159,7 @@ const DEFAULT_STATE: PrismExtensionState = {
   defaultModel: "sonnet",
   planningModel: "opus",
   stories: [],
-  plan: undefined,
+  epic: undefined,
   completedCount: 0,
   remainingCount: 0,
   chatMessages: [],

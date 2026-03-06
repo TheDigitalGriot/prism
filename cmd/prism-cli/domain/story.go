@@ -9,30 +9,44 @@ import (
 
 // StoriesFile represents the root structure of stories.json
 type StoriesFile struct {
-	Plan    Plan    `json:"plan"`
+	Epic    Epic    `json:"epic"`
 	Stories []Story `json:"stories"`
 }
 
-// Plan contains metadata and configuration for the execution
-type Plan struct {
+// Epic contains metadata and configuration for the execution
+type Epic struct {
 	Name         string   `json:"name"`
 	Source       string   `json:"source"`
 	CreatedAt    string   `json:"createdAt"`
 	QualityGates []string `json:"qualityGates"`
+	Decisions    []string `json:"decisions,omitempty"`
+	References   []string `json:"references,omitempty"`
+	OutOfScope   []string `json:"outOfScope,omitempty"`
+	Risks        []string `json:"risks,omitempty"`
+}
+
+// StoryContext captures the design rationale and safety information for a story
+type StoryContext struct {
+	Why          string   `json:"why,omitempty"`
+	Risks        []string `json:"risks,omitempty"`
+	EdgeCases    []string `json:"edgeCases,omitempty"`
+	Patterns     []string `json:"patterns,omitempty"`
+	GraphTargets []string `json:"graphTargets,omitempty"`
 }
 
 // Story represents a single executable story
 type Story struct {
-	ID          string   `json:"id"`
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	Priority    int      `json:"priority"`
-	Status      string   `json:"status"` // pending, in_progress, complete
-	BlockedBy   *string  `json:"blockedBy"`
-	Files       []File   `json:"files"`
-	Steps       []Step   `json:"steps"`
-	CompletedAt *string  `json:"completedAt,omitempty"`
-	CommitHash  *string  `json:"commitHash,omitempty"`
+	ID          string        `json:"id"`
+	Title       string        `json:"title"`
+	Description string        `json:"description"`
+	Priority    int           `json:"priority"`
+	Status      string        `json:"status"` // pending, in_progress, complete
+	BlockedBy   *string       `json:"blockedBy"`
+	Files       []File        `json:"files"`
+	Steps       []Step        `json:"steps"`
+	Context     *StoryContext `json:"context,omitempty"`
+	CompletedAt *string       `json:"completedAt,omitempty"`
+	CommitHash  *string       `json:"commitHash,omitempty"`
 }
 
 // File identifies a file to be created/modified

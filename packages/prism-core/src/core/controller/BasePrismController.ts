@@ -585,7 +585,7 @@ export abstract class BasePrismController extends EventEmitter {
       const sf = await this.storiesManager.load(storiesPath)
       await this.updateState({
         stories: sf.stories,
-        plan: sf.plan,
+        epic: sf.epic,
         completedCount: this.storiesManager.completedCount(),
         remainingCount: this.storiesManager.remainingCount(),
       })
@@ -794,8 +794,8 @@ export abstract class BasePrismController extends EventEmitter {
 
     const progressFile = ProgressFile.fromStoriesPath(storiesPath)
     void progressFile.exists().then(async (exists) => {
-      if (!exists && this._state.plan) {
-        await progressFile.initialize(this._state.plan.name).catch(() => {/* ignore */})
+      if (!exists && this._state.epic) {
+        await progressFile.initialize(this._state.epic.name).catch(() => {/* ignore */})
       }
     })
     this._spectrumRunner.setProgressFile(progressFile)

@@ -191,7 +191,7 @@ Upon approval:
 **Create `.prism/stories/stories.json`**:
 ```json
 {
-  "plan": {
+  "epic": {
     "name": "[Plan title]",
     "source": "[path to plan]",
     "createdAt": "[ISO timestamp]",
@@ -204,7 +204,7 @@ Upon approval:
 **Create `.prism/shared/spectrum/progress.md`**:
 ```markdown
 ---
-plan: [Plan title]
+epic: [Plan title]
 startedAt: [ISO timestamp]
 lastUpdated: [ISO timestamp]
 ---

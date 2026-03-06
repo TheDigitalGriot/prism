@@ -120,10 +120,10 @@ export class ProgressFile {
    * Create a new progress file with YAML frontmatter.
    * Creates parent directories as needed.
    */
-  async initialize(planName: string): Promise<void> {
+  async initialize(epicName: string): Promise<void> {
     const now = new Date().toISOString()
     const content = `---
-plan: ${planName}
+epic: ${epicName}
 startedAt: ${now}
 lastUpdated: ${now}
 ---

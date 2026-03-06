@@ -33,7 +33,7 @@ func LoadStoriesCmd(path string) tea.Cmd {
 		}
 
 		return InitCompleteMsg{
-			PlanName: sf.Plan.Name,
+			PlanName: sf.Epic.Name,
 			Stories:  stories,
 		}
 	}
@@ -59,7 +59,7 @@ func ReloadStoriesCmd(path string) tea.Cmd {
 		}
 
 		return StoriesReloadedMsg{
-			PlanName: sf.Plan.Name,
+			PlanName: sf.Epic.Name,
 			Stories:  stories,
 		}
 	}
@@ -255,7 +255,7 @@ func DecomposePlanCmd(prismDir, planPath string) tea.Cmd {
 
 		// Create minimal stories.json scaffold
 		scaffold := fmt.Sprintf(`{
-  "plan": {
+  "epic": {
     "name": "%s",
     "source": "%s",
     "createdAt": "%s",

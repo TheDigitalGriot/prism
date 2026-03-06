@@ -103,22 +103,22 @@ count_total() {
     jq '.stories | length' "$STORIES_FILE"
 }
 
-# Get plan name
-get_plan_name() {
-    jq -r '.plan.name // "Unknown Plan"' "$STORIES_FILE"
+# Get epic name
+get_epic_name() {
+    jq -r '.epic.name // "Unknown Epic"' "$STORIES_FILE"
 }
 
 # Initialize progress file if needed
 init_progress() {
     if [[ ! -f "$PROGRESS_FILE" ]]; then
-        local plan_name
-        plan_name=$(get_plan_name)
+        local epic_name
+        epic_name=$(get_epic_name)
         local progress_dir
         progress_dir=$(dirname "$PROGRESS_FILE")
         mkdir -p "$progress_dir"
         cat > "$PROGRESS_FILE" << EOF
 ---
-plan: $plan_name
+epic: $epic_name
 startedAt: $(date -Iseconds)
 lastUpdated: $(date -Iseconds)
 ---
@@ -213,15 +213,15 @@ main() {
     check_prerequisites
     init_progress
 
-    local plan_name
-    plan_name=$(get_plan_name)
+    local epic_name
+    epic_name=$(get_epic_name)
 
     local total
     total=$(count_total)
 
     log "Starting Spectrum iterative execution"
     log "Project: $PROJECT_DIR"
-    log "Plan: $plan_name"
+    log "Epic: $epic_name"
     log "Stories file: $STORIES_FILE"
     log "Total stories: $total"
     log "Max iterations: $MAX_ITERATIONS"

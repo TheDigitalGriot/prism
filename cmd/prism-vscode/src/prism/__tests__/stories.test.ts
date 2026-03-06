@@ -82,7 +82,7 @@ describe("isBlocked", () => {
 describe("getNextStory", () => {
   test("returns lowest-priority non-blocked pending story", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [
         makeStory("STORY-001", 1, "complete"),
         makeStory("STORY-002", 2, "pending", "STORY-001"), // unblocked (001 complete)
@@ -98,7 +98,7 @@ describe("getNextStory", () => {
 
   test("returns null when all stories are complete", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [
         makeStory("STORY-001", 1, "complete"),
         makeStory("STORY-002", 2, "complete"),
@@ -109,7 +109,7 @@ describe("getNextStory", () => {
 
   test("returns null when remaining stories are all blocked", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [
         makeStory("STORY-001", 1, "pending"),
         makeStory("STORY-002", 2, "pending", "STORY-001"), // blocked
@@ -122,7 +122,7 @@ describe("getNextStory", () => {
 
   test("returns null for empty stories list", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [],
     }
     expect(getNextStory(sf)).toBeNull()
@@ -130,7 +130,7 @@ describe("getNextStory", () => {
 
   test("sorts by priority when multiple candidates exist", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [
         makeStory("STORY-010", 10, "pending"),
         makeStory("STORY-003", 3, "pending"),
@@ -149,7 +149,7 @@ describe("getNextStory", () => {
 describe("allComplete", () => {
   test("returns false when stories are incomplete", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [
         makeStory("STORY-001", 1, "complete"),
         makeStory("STORY-002", 2, "pending"),
@@ -160,7 +160,7 @@ describe("allComplete", () => {
 
   test("returns true when all stories are complete", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [
         makeStory("STORY-001", 1, "complete"),
         makeStory("STORY-002", 2, "complete"),
@@ -171,7 +171,7 @@ describe("allComplete", () => {
 
   test("returns true for empty stories list", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [],
     }
     expect(allComplete(sf)).toBe(true)
@@ -181,7 +181,7 @@ describe("allComplete", () => {
 describe("completedCount", () => {
   test("counts only complete stories", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [
         makeStory("STORY-001", 1, "complete"),
         makeStory("STORY-002", 2, "complete"),
@@ -196,7 +196,7 @@ describe("completedCount", () => {
 describe("remainingCount", () => {
   test("counts non-complete stories", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [
         makeStory("STORY-001", 1, "complete"),
         makeStory("STORY-002", 2, "pending"),
@@ -214,7 +214,7 @@ describe("remainingCount", () => {
 describe("markStoryComplete", () => {
   test("sets status to complete and marks all steps done", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [
         {
           id: "STORY-001",
@@ -241,7 +241,7 @@ describe("markStoryComplete", () => {
 
   test("no-ops when story ID not found", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [makeStory("STORY-001", 1, "pending")],
     }
     markStoryComplete(sf, "STORY-999", "abc123")
@@ -252,7 +252,7 @@ describe("markStoryComplete", () => {
 describe("markStoryInProgress", () => {
   test("sets status to in_progress", () => {
     const sf: StoriesFile = {
-      plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
       stories: [makeStory("STORY-001", 1, "pending")],
     }
     markStoryInProgress(sf, "STORY-001")
@@ -262,7 +262,7 @@ describe("markStoryInProgress", () => {
 
 describe("getStoryByID", () => {
   const sf: StoriesFile = {
-    plan: { name: "Test Plan", source: "plan.md", qualityGates: [] },
+    epic: { name: "Test Plan", source: "plan.md", qualityGates: [] },
     stories: [makeStory("STORY-001", 1, "pending"), makeStory("STORY-002", 2, "complete")],
   }
 
@@ -285,13 +285,13 @@ const fsMock = fs as jest.Mocked<typeof fs>
 describe("loadStoriesFile", () => {
   test("parses a valid stories.json", async () => {
     const fixture: StoriesFile = {
-      plan: { name: "My Plan", source: "plan.md", qualityGates: ["npm test"] },
+      epic: { name: "My Plan", source: "plan.md", qualityGates: ["npm test"] },
       stories: [makeStory("STORY-001", 1, "pending")],
     }
     ;(fsMock.readFile as jest.Mock).mockResolvedValue(JSON.stringify(fixture))
 
     const result = await loadStoriesFile("/some/stories.json")
-    expect(result.plan.name).toBe("My Plan")
+    expect(result.epic.name).toBe("My Plan")
     expect(result.stories).toHaveLength(1)
     expect(result.stories[0].id).toBe("STORY-001")
   })
@@ -307,7 +307,7 @@ describe("saveStoriesFile", () => {
     ;(fsMock.writeFile as jest.Mock).mockResolvedValue(undefined)
 
     const sf: StoriesFile = {
-      plan: { name: "My Plan", source: "plan.md", qualityGates: [] },
+      epic: { name: "My Plan", source: "plan.md", qualityGates: [] },
       stories: [makeStory("STORY-001", 1, "pending")],
     }
 

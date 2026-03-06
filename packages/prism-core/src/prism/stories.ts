@@ -1,8 +1,8 @@
 import * as fs from "fs/promises"
-import type { Plan, StoryFile, Step, Story, StoriesFile } from "@prism-core/prism/types"
+import type { Epic, StoryContext, StoryFile, Step, Story, StoriesFile } from "@prism-core/prism/types"
 
 // Re-export types for consumers of this module
-export type { Plan, StoryFile, Step, Story, StoriesFile }
+export type { Epic, StoryContext, StoryFile, Step, Story, StoriesFile }
 
 // ---------------------------------------------------------------------------
 // Dependency resolution

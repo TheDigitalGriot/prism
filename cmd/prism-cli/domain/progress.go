@@ -47,9 +47,9 @@ func (pf *ProgressFile) Exists() bool {
 }
 
 // Initialize creates a new progress file with YAML frontmatter
-func (pf *ProgressFile) Initialize(planName string) error {
+func (pf *ProgressFile) Initialize(epicName string) error {
 	content := fmt.Sprintf(`---
-plan: %s
+epic: %s
 startedAt: %s
 lastUpdated: %s
 ---
@@ -62,7 +62,7 @@ lastUpdated: %s
 
 ---
 
-`, planName, time.Now().Format(time.RFC3339), time.Now().Format(time.RFC3339))
+`, epicName, time.Now().Format(time.RFC3339), time.Now().Format(time.RFC3339))
 
 	// Ensure parent directory exists (for epic-scoped paths)
 	if err := os.MkdirAll(filepath.Dir(pf.Path), 0755); err != nil {

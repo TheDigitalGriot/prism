@@ -33,7 +33,7 @@ var validStatuses = map[string]bool{
 
 func sampleStoriesJSON() string {
 	return `{
-  "plan": {
+  "epic": {
     "name": "Test Plan",
     "source": "test",
     "qualityGates": ["echo ok"]
@@ -203,17 +203,17 @@ func TestExtendedOptionalFieldsParsed(t *testing.T) {
 	}
 }
 
-func TestExtendedPlanFieldParsed(t *testing.T) {
+func TestExtendedEpicFieldParsed(t *testing.T) {
 	sf := loadExtendedStories(t, sampleStoriesJSON())
 
-	if sf.Plan.Name == "" {
-		t.Error("plan name should not be empty")
+	if sf.Epic.Name == "" {
+		t.Error("epic name should not be empty")
 	}
-	if sf.Plan.Source == "" {
-		t.Error("plan source should not be empty")
+	if sf.Epic.Source == "" {
+		t.Error("epic source should not be empty")
 	}
-	if len(sf.Plan.QualityGates) == 0 {
-		t.Error("plan should have at least one quality gate")
+	if len(sf.Epic.QualityGates) == 0 {
+		t.Error("epic should have at least one quality gate")
 	}
 }
 
@@ -349,7 +349,7 @@ func TestExtendedLoadFromDisk(t *testing.T) {
 
 func TestExtendedEmptyStoriesFile(t *testing.T) {
 	var sf StoriesFile
-	err := json.Unmarshal([]byte(`{"plan":{"name":"empty"},"stories":[]}`), &sf)
+	err := json.Unmarshal([]byte(`{"epic":{"name":"empty"},"stories":[]}`), &sf)
 	if err != nil {
 		t.Fatalf("should parse empty stories array: %v", err)
 	}

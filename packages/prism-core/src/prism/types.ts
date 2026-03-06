@@ -3,12 +3,25 @@
  * Shared between prism-core (PrismState) and prism-vscode (stories.ts, stories-tree.ts).
  */
 
-/** Metadata and configuration for a Spectrum execution plan. */
-export interface Plan {
+/** Metadata and configuration for a Spectrum execution epic. */
+export interface Epic {
   name: string
   source: string
   createdAt?: string
   qualityGates: string[]
+  decisions?: string[]
+  references?: string[]
+  outOfScope?: string[]
+  risks?: string[]
+}
+
+/** Design rationale and safety information for a story. */
+export interface StoryContext {
+  why?: string
+  risks?: string[]
+  edgeCases?: string[]
+  patterns?: string[]
+  graphTargets?: string[]
 }
 
 /** A file that a story creates, modifies, or deletes. */
@@ -34,12 +47,13 @@ export interface Story {
   blockedBy: string | null
   files: StoryFile[]
   steps: Step[]
+  context?: StoryContext
   completedAt?: string
   commitHash?: string
 }
 
 /** Root structure of stories.json. */
 export interface StoriesFile {
-  plan: Plan
+  epic: Epic
   stories: Story[]
 }

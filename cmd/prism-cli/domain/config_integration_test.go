@@ -51,7 +51,7 @@ func createTempProject(t *testing.T) string {
 
 	// Seed stories.json
 	storiesJSON := `{
-  "plan": {"name": "Test", "source": "test", "qualityGates": []},
+  "epic": {"name": "Test", "source": "test", "qualityGates": []},
   "stories": [
     {"id": "STORY-001", "title": "Setup auth middleware", "description": "", "priority": 1, "status": "pending", "blockedBy": null, "files": [], "steps": []},
     {"id": "STORY-002", "title": "Add OAuth flow",       "description": "", "priority": 2, "status": "complete", "blockedBy": null, "files": [], "steps": []},

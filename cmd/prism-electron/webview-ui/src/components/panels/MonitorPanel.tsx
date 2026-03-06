@@ -26,7 +26,7 @@ interface GateResult {
 
 export const MonitorPanel: React.FC = () => {
   const state = usePrismState()
-  const { spectrum, stories, plan } = state
+  const { spectrum, stories, epic } = state
 
   const isRunning = spectrum.executionState === "running"
   const statusLabel = isRunning ? "Prism: Running" : "Prism: Idle"
@@ -72,8 +72,8 @@ export const MonitorPanel: React.FC = () => {
   }
 
   const runAllGates = () => {
-    if (!plan?.qualityGates) return
-    for (const gate of plan.qualityGates) {
+    if (!epic?.qualityGates) return
+    for (const gate of epic.qualityGates) {
       void runGate(gate)
     }
   }
@@ -172,12 +172,12 @@ export const MonitorPanel: React.FC = () => {
         title="Quality Gates"
         defaultOpen={false}
         badge={
-          plan?.qualityGates?.length
-            ? `${Object.values(gateStates).filter((g) => g.status === "pass").length}/${plan.qualityGates.length}`
+          epic?.qualityGates?.length
+            ? `${Object.values(gateStates).filter((g) => g.status === "pass").length}/${epic.qualityGates.length}`
             : undefined
         }
       >
-        {plan?.qualityGates && plan.qualityGates.length > 0 ? (
+        {epic?.qualityGates && epic.qualityGates.length > 0 ? (
           <div style={{ padding: "4px 12px", display: "flex", flexDirection: "column", gap: 4 }}>
             {/* Run All button */}
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 4 }}>
@@ -198,7 +198,7 @@ export const MonitorPanel: React.FC = () => {
               </button>
             </div>
 
-            {plan.qualityGates.map((gate, i) => {
+            {epic.qualityGates.map((gate, i) => {
               const gs = gateStates[gate]
               const isExpanded = expandedGates.has(gate)
               const hasOutput = gs?.output && gs.output.trim().length > 0

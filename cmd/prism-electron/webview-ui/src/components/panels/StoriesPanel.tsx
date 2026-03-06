@@ -107,7 +107,7 @@ export const StoriesPanel: React.FC = () => {
   const state = usePrismState()
   const layout = useLayout()
 
-  const { stories, workflowPhase, plan, completedCount } = state
+  const { stories, workflowPhase, epic, completedCount } = state
   const total = stories.length
 
   const [research, setResearch] = useState<ResearchItem[]>([])
@@ -191,7 +191,7 @@ export const StoriesPanel: React.FC = () => {
             </span>
           </div>
           <PhaseProgressBar completedCount={completedCount} totalCount={total} />
-          {plan && (
+          {epic && (
             <div
               style={{
                 fontSize: 10.5,
@@ -201,7 +201,7 @@ export const StoriesPanel: React.FC = () => {
                 whiteSpace: "nowrap",
               }}
             >
-              {plan.name}
+              {epic.name}
             </div>
           )}
         </div>
