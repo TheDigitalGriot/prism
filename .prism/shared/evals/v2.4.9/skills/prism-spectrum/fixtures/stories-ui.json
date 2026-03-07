@@ -1,0 +1,38 @@
+{
+  "epic": {
+    "name": "Eval Test: Browser Verification in Spectrum",
+    "source": ".prism/shared/evals/v2.4.9/skills/prism-spectrum/evals.json",
+    "qualityGates": ["echo 'typecheck: OK'", "echo 'lint: OK'"],
+    "decisions": [
+      "UI changes trigger browser verification via playwright-cli",
+      "If playwright-cli unavailable, skip with note in progress.md"
+    ],
+    "references": ["CLAUDE.md"],
+    "outOfScope": ["Actual UI redesign"],
+    "risks": ["playwright-cli likely not installed — browser verification should be skipped gracefully"]
+  },
+  "stories": [
+    {
+      "id": "EVAL-UI-001",
+      "title": "Add eval test comment to Sidebar.tsx",
+      "description": "Add a comment to the Sidebar component indicating browser verification was attempted",
+      "priority": 1,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [
+        {"path": "prism-eval/src/components/layout/Sidebar.tsx", "action": "modify"}
+      ],
+      "steps": [
+        {"description": "Read Sidebar.tsx fully", "done": false},
+        {"description": "Add comment: // EVAL-UI-001: Browser verification eval test", "done": false},
+        {"description": "Attempt browser verification since .tsx file was modified", "done": false}
+      ],
+      "context": {
+        "why": "Verify that v2.4.9 browser verification (Step 6b) is attempted for UI file changes",
+        "risks": ["playwright-cli not installed"],
+        "edgeCases": ["Dev server may not start if dependencies not installed"],
+        "patterns": ["Check file extensions: .tsx, .jsx, .vue, .svelte, .html, .css"]
+      }
+    }
+  ]
+}

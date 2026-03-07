@@ -1,0 +1,42 @@
+{
+  "epic": {
+    "name": "Eval Test: Graph Verification in Spectrum",
+    "source": ".prism/shared/evals/v2.4.9/skills/prism-spectrum/evals.json",
+    "qualityGates": ["echo 'typecheck: OK'", "echo 'lint: OK'"],
+    "decisions": [
+      "Use graph tools for blast radius analysis before modifying functions",
+      "Log graph deltas in progress.md"
+    ],
+    "references": ["CLAUDE.md"],
+    "outOfScope": ["Actual refactoring"],
+    "risks": ["codebase-memory-mcp may not be available — graph steps should be skipped silently"]
+  },
+  "stories": [
+    {
+      "id": "EVAL-GRAPH-001",
+      "title": "Add eval test comment to EvalDataService.ts",
+      "description": "Add a comment to EvalDataService indicating graph verification was performed",
+      "priority": 1,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [
+        {"path": "prism-eval/src/services/EvalDataService.ts", "action": "modify"}
+      ],
+      "steps": [
+        {"description": "Run index_repository to ensure graph is current", "done": false},
+        {"description": "Run trace_call_path for loadWorkspace to check blast radius", "done": false},
+        {"description": "Read EvalDataService.ts fully", "done": false},
+        {"description": "Add comment: // EVAL-GRAPH-001: Graph verification eval test", "done": false},
+        {"description": "Run index_repository after changes", "done": false},
+        {"description": "Run search_graph for dead code check", "done": false}
+      ],
+      "context": {
+        "why": "Verify that v2.4.9 graph verification (Step 1c) runs before and after implementation",
+        "risks": ["codebase-memory-mcp may not be installed"],
+        "edgeCases": ["Graph server unavailable — should skip silently"],
+        "patterns": ["Graph-first strategy from CLAUDE.md"],
+        "graphTargets": ["EvalDataService#loadWorkspace", "EvalDataService#loadEvalsJson"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "epic": {
+    "name": "Eval Test: Basic Spectrum Execution",
+    "source": ".prism/shared/evals/v2.4.9/skills/prism-spectrum/evals.json",
+    "qualityGates": ["echo 'typecheck: OK'", "echo 'lint: OK'"],
+    "decisions": [
+      "Use existing file patterns — do not introduce new conventions",
+      "Keep changes minimal and focused"
+    ],
+    "references": ["CLAUDE.md"],
+    "outOfScope": ["New features", "Refactoring existing code"],
+    "risks": ["Test fixture — changes will be reverted after eval"]
+  },
+  "stories": [
+    {
+      "id": "EVAL-001",
+      "title": "Add eval test comment to mock-data.ts",
+      "description": "Add a comment block at the top of the mock-data file indicating it was touched by an eval run",
+      "priority": 1,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [
+        {"path": "prism-eval/src/data/mock-data.ts", "action": "modify"}
+      ],
+      "steps": [
+        {"description": "Read mock-data.ts fully", "done": false},
+        {"description": "Add a comment block at the top: // EVAL-001: Spectrum eval test run", "done": false}
+      ],
+      "context": {
+        "why": "Verify that Spectrum reads epic context (decisions, risks, outOfScope) before implementing",
+        "risks": ["File may not exist if prism-eval was not built"],
+        "edgeCases": ["Empty file", "File already has the comment"],
+        "patterns": ["Follow existing comment style in the file"]
+      }
+    },
+    {
+      "id": "EVAL-002",
+      "title": "Add eval test comment to types/index.ts",
+      "description": "Add a comment block at the top of the types file indicating it was touched by an eval run",
+      "priority": 2,
+      "status": "pending",
+      "blockedBy": "EVAL-001",
+      "files": [
+        {"path": "prism-eval/src/types/index.ts", "action": "modify"}
+      ],
+      "steps": [
+        {"description": "Read types/index.ts fully", "done": false},
+        {"description": "Add a comment block at the top: // EVAL-002: Spectrum eval test run", "done": false}
+      ],
+      "context": {
+        "why": "Verify blocked-by logic and sequential execution",
+        "risks": [],
+        "edgeCases": ["EVAL-001 not complete yet — should be skipped"],
+        "patterns": []
+      }
+    }
+  ]
+}
