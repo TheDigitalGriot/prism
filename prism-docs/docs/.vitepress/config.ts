@@ -89,6 +89,7 @@ export default defineConfig({
               { text: 'Git Screen', link: '/cli/screens/git' },
               { text: 'Agent Screen', link: '/cli/screens/agent' },
               { text: 'Monitor Screen', link: '/cli/screens/monitor' },
+              { text: 'Browser Screen', link: '/cli/screens/browser' },
               { text: 'Workspaces Screen', link: '/cli/screens/workspaces' },
             ],
           },

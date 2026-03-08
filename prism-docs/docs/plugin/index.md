@@ -12,10 +12,10 @@ The Prism Claude Code plugin is the foundation that underpins every platform —
 
 The Prism plugin registers with Claude Code through a conventional directory layout that is automatically discovered at startup. It provides:
 
-- **25 commands** — User-invocable operations via `/command-name` (3,729 lines)
-- **10 agents** — Specialized subprocesses spawned via `Task(subagent_type="agent-name")` (1,365 lines)
-- **11 skills** — Auto-activating workflow orchestrators with trigger patterns (1,823 lines)
-- **4 scripts** — Shell and Python automation (947 lines)
+- **25 commands** — User-invocable operations via `/command-name` (4,023 lines)
+- **11 agents** — Specialized subprocesses spawned via `Task(subagent_type="agent-name")` (1,491 lines)
+- **14 skills** — Auto-activating workflow orchestrators with trigger patterns (2,496 lines)
+- **5 scripts** — Shell and Python automation (921 lines)
 - **No hooks or MCP servers** — The plugin relies entirely on prompt engineering, not runtime hooks
 
 ## What Makes It Different

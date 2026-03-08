@@ -16,3 +16,6 @@ cmd/prism-cli/prism-cli.exe
 # Go build cache (go.sum is committed for reproducible CI builds)
 # Prism local artifacts (not committed)
 .prism/local/
+
+# Visual regression diffs (ephemeral, regenerated on each run)
+.prism/shared/validation/diffs/

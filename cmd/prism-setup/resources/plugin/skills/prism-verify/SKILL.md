@@ -25,8 +25,9 @@ Visual verification closes the loop between code generation and user experience.
 | Agent | Model | Tools | Purpose |
 |-------|-------|-------|---------|
 | `browser-verifier` | Haiku | Bash | Execute playwright-cli commands and return structured JSON results |
+| `visual-regression-grader` | Sonnet | Read, Glob, Grep | Judge visual regression diffs — verdict: regression/intentional/inconclusive |
 
-Invoke via: `Task(subagent_type="browser-verifier")`
+Invoke via: `Task(subagent_type="browser-verifier")` or `Task(subagent_type="visual-regression-grader")`
 
 ## Workflow
 
@@ -81,6 +82,37 @@ Checks: screenshot, console-errors"
 ```
 
 Collect the JSON verification result.
+
+### 5.5. Visual Regression (if baselines exist)
+
+After the browser-verifier agent returns, check for visual regression baselines:
+
+```bash
+ls .prism/shared/validation/baselines/{story-id}/*.png 2>/dev/null
+```
+
+If baselines exist for the current story/context:
+
+1. For each baseline PNG in `.prism/shared/validation/baselines/{story-id}/`:
+   ```bash
+   bash scripts/visual-regression.sh {target-url} \
+     .prism/shared/validation/baselines/{story-id} {baseline-name} \
+     --viewport {viewport-from-filename}
+   ```
+2. Parse the JSON output from each run
+3. If any diff exceeds threshold (`passed: false`), spawn the grader:
+   ```
+   Task(subagent_type="visual-regression-grader")
+   "Diff JSON: {JSON output from visual-regression.sh}
+   Diff image: {diff_path}
+   Story: {story-id}, modifies: {files list}
+   Plan criteria: {manual verification criteria if available}"
+   ```
+4. Include visual regression results in the verification output (see `verification-template.md` for schema)
+
+If no baselines exist, skip silently — visual regression is optional.
+
+See [references/visual-regression-patterns.md](references/visual-regression-patterns.md) for threshold tuning, multi-viewport strategies, and baseline management.
 
 ### 6. Write Results
 

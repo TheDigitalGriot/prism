@@ -1,6 +1,6 @@
 ---
 title: packages/prism-ui
-description: Shared React component library — views, components, office canvas engine, and CSS variable bridge.
+description: Shared React components and canvas office engine
 outline: [2, 3]
 ---
 

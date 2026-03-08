@@ -83,6 +83,21 @@ Spawn the `browser-verifier` agent with instructions:
 
 Collect the JSON result from the agent.
 
+### Step 2.5: Visual Regression (if baselines exist)
+
+After the browser-verifier agent returns, check for visual regression baselines:
+
+```bash
+ls .prism/shared/validation/baselines/{story-id}/*.png 2>/dev/null
+```
+
+If baselines exist:
+1. Run `scripts/visual-regression.sh` for each baseline against the live URL
+2. If any diff exceeds threshold, spawn `visual-regression-grader` agent with the diff JSON and story context
+3. Add visual regression results to the checks array in the verification report
+
+If no baselines exist or `playwright-cli` is not installed, skip gracefully.
+
 ### Step 3: Generate Report
 
 Write `verification-result.json` to `.prism/local/verifications/{date}-{context}/`:

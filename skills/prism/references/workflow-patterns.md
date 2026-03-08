@@ -269,3 +269,48 @@ SPECTRUM_VERBOSE=true ./scripts/spectrum.sh
 # Specify custom stories file
 ./scripts/spectrum.sh path/to/stories.json
 ```
+
+## Visual Regression Loop
+
+Continuous visual regression testing during UI implementation using `/loop`.
+
+### Core Concept
+
+Run `visual-regression.sh` on a timer during active development to catch regressions as they happen — before the Validate phase.
+
+### Setup
+
+1. Create baselines before starting implementation:
+   ```bash
+   bash scripts/visual-regression.sh http://localhost:5173 \
+     .prism/shared/validation/baselines/STORY-001 homepage
+   ```
+
+2. Start the continuous loop:
+   ```
+   /loop 5m "Run visual-regression.sh for all baselines in
+   .prism/shared/validation/baselines/STORY-001/. Start dev server if
+   not running. Write results to .prism/shared/validation/diffs/. If
+   regressions detected, append to progress.md."
+   ```
+
+### Integration Points
+
+| Phase | How Visual Regression Fits |
+|-------|--------------------------|
+| Implement | `/loop` for real-time feedback during coding |
+| Verify | Auto-runs after browser-verifier (step 5.5) |
+| Validate | Tier 1.5 gate between automated and manual criteria |
+| Spectrum | Auto-triggered for stories modifying UI files (step 5c) |
+
+### When to Use
+
+| Scenario | Use Visual Regression? |
+|----------|----------------------|
+| UI component changes | Yes — create baselines per component |
+| CSS/layout refactoring | Yes — multi-viewport baselines |
+| Backend-only changes | No — no visual impact expected |
+| New pages (no baseline yet) | Run once to create baseline, then yes |
+| Theme/dark mode work | Yes — separate baselines per variant |
+
+See `skills/prism-verify/references/visual-regression-patterns.md` for threshold tuning, multi-viewport patterns, and anti-flake strategies.

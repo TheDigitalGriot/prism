@@ -54,6 +54,7 @@ Used for straightforward execution, routing, and integration tasks that don't re
 | `prism-debug` | Skill | Debug agent coordination |
 | `prism-spectrum` | Skill | Single-story execution with signal protocol |
 | `prism-verify` | Skill | Browser verification orchestration |
+| `prism-eval` | Skill | Eval runner — parallel agents, grading, benchmarking |
 
 ## Haiku — Fast Lookups & Simple Operations
 
@@ -67,6 +68,7 @@ Used for tasks that are fast, focused, and don't require nuanced judgment.
 | `state-investigator` | Agent | Environment checks — straightforward |
 | `git-investigator` | Agent | Git log analysis — structured data |
 | `browser-verifier` | Agent | Playwright command execution — procedural |
+| `graph-navigator` | Agent | Knowledge graph queries — structural lookups |
 | `commit` | Command | Git commit — minimal judgment needed |
 | `worktree` | Command | Git worktree creation — procedural |
 | `review-setup` | Command | Branch checkout — procedural |

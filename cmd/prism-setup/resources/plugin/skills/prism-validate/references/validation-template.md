@@ -123,6 +123,15 @@ $ curl -X POST localhost:3000/auth/refresh -d '{"token":"..."}'
 | Types check | `npm run typecheck` | ✅ No errors |
 | Build succeeds | `npm run build` | ✅ Built in 12s |
 
+### Visual Regression
+
+| Page | Baseline | Change % | Threshold | Verdict | Diff |
+|------|----------|----------|-----------|---------|------|
+| login-page | `.prism/shared/validation/baselines/auth/login-page.png` | 0.3% | 1% | ✅ pass | N/A |
+| dashboard | `.prism/shared/validation/baselines/auth/dashboard.png` | 4.8% | 1% | ❌ regression | `.prism/shared/validation/diffs/2026-03-08/dashboard-diff.png` |
+
+*Visual regression skipped: no baselines found* — if no baselines exist for any story in the plan.
+
 ### Manual Criteria
 
 | Criterion | Verified By | Result |

@@ -51,26 +51,27 @@ prism-plugin/                              # Repository root
 │   ├── log-investigator.md                # 106 lines — haiku
 │   ├── state-investigator.md              # 121 lines — haiku
 │   ├── git-investigator.md                # 140 lines — haiku
-│   └── browser-verifier.md               #  92 lines — haiku
+│   ├── browser-verifier.md               #  92 lines — haiku
+│   └── graph-navigator.md                #  95 lines — haiku (knowledge graph queries)
 │
 ├── skills/                                # 14 auto-discovered skills (2,344 lines total)
 │   ├── prism/
-│   │   ├── SKILL.md                       # 275 lines — sonnet (master orchestrator)
+│   │   ├── SKILL.md                       # 276 lines — sonnet (master orchestrator)
 │   │   ├── references/workflow-patterns.md
 │   │   └── scripts/init_prism.py          # 178 lines
 │   ├── prism-research/
-│   │   ├── SKILL.md                       # 113 lines — sonnet
+│   │   ├── SKILL.md                       # 121 lines — sonnet
 │   │   └── references/{exploration-patterns,research-template}.md
 │   ├── prism-plan/
 │   │   ├── SKILL.md                       # 126 lines — opus
 │   │   └── references/plan-template.md
 │   ├── prism-implement/SKILL.md           # 122 lines — sonnet
 │   ├── prism-validate/
-│   │   ├── SKILL.md                       #  94 lines — sonnet
+│   │   ├── SKILL.md                       # 108 lines — sonnet
 │   │   └── references/validation-template.md
 │   ├── prism-iterate/SKILL.md             # 103 lines — opus
 │   ├── prism-spectrum/
-│   │   ├── SKILL.md                       # 254 lines — sonnet (manifest-aware)
+│   │   ├── SKILL.md                       # 406 lines — sonnet (manifest-aware)
 │   │   └── references/
 │   │       ├── story-manifest-schema.md   # Per-requirement tracking schema
 │   │       └── contracts-convention.md    # Cross-domain contract convention
@@ -79,7 +80,14 @@ prism-plugin/                              # Repository root
 │   │   ├── SKILL.md                       # 125 lines — sonnet
 │   │   └── references/{verification-template,verification-patterns}.md
 │   ├── prism-prd/SKILL.md                 # 122 lines — opus
-│   └── prism-visual-docs/SKILL.md         # 146 lines — opus
+│   ├── prism-visual-docs/SKILL.md         # 146 lines — opus
+│   ├── prism-release/SKILL.md             # 245 lines — full release pipeline
+│   ├── prism-eval/
+│   │   ├── SKILL.md                       # 237 lines — sonnet (eval runner)
+│   │   └── references/eval-schemas.md
+│   └── prism-docs-update/
+│       ├── SKILL.md                       # 138 lines — VitePress docs syncer
+│       └── references/section-mapping.md
 │
 ├── scripts/                               # Automation scripts (979 lines total)
 │   ├── spectrum.sh                        # 518 lines — autonomous execution loop

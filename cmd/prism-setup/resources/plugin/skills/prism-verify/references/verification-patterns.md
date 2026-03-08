@@ -57,6 +57,47 @@ playwright-cli session-close "$SESSION"
 
 The snapshot captures the DOM structure — compare across runs to detect regressions.
 
+### Visual Regression Check
+
+Compare a live page against a stored pixel baseline using `visual-regression.sh`:
+
+```bash
+# Run visual regression for a single page
+bash scripts/visual-regression.sh http://localhost:5173 \
+  .prism/shared/validation/baselines/STORY-001 homepage
+
+# Multi-viewport regression check
+bash scripts/visual-regression.sh http://localhost:5173 \
+  .prism/shared/validation/baselines/STORY-001 homepage-desktop
+bash scripts/visual-regression.sh http://localhost:5173 \
+  .prism/shared/validation/baselines/STORY-001 homepage-mobile --viewport 375x812
+```
+
+The script outputs JSON to stdout:
+```json
+{
+  "name": "homepage",
+  "change_pct": 0.003,
+  "threshold": 0.01,
+  "passed": true,
+  "new_baseline": false
+}
+```
+
+**When to spawn the grader**: Only when `change_pct > threshold` (the script exits 1). Spawn the `visual-regression-grader` agent with the diff JSON, diff image path, and story context:
+
+```
+Task(subagent_type="visual-regression-grader")
+"Diff JSON: {paste JSON output}
+Diff image: {diff_path from JSON}
+Story: {story ID}, modifies: {list of files}
+Plan criteria: {manual verification criteria}"
+```
+
+**Updating baselines**: Delete the old baseline PNG, re-run the script. It creates a new baseline and exits 0 with `"new_baseline": true`.
+
+See [visual-regression-patterns.md](visual-regression-patterns.md) for threshold tuning and multi-viewport strategies.
+
 ### Network Failure Detection
 
 Check for failed API calls or missing resources:

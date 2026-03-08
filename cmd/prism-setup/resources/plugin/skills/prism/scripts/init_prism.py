@@ -32,6 +32,7 @@ def init_prism(base_path: str = ".") -> None:
         ".prism/shared/docs",
         ".prism/shared/contracts",
         ".prism/shared/validation/baselines",
+        ".prism/shared/validation/diffs",
         ".prism/local/ref",
         ".prism/local/docs",
     ]

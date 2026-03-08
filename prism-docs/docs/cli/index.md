@@ -16,6 +16,8 @@ Prism CLI is a Go 1.23 terminal user interface that provides real-time monitorin
 - **Procedural splash screen**: Icosahedron mesh, beam particles, spectral wave field, and ANSI true-color rendering
 - **3D animated prism logo**: FauxGL software rasterizer with half-block Unicode encoding
 - **Spring physics animations**: Harmonica-driven progress bars, story pop effects, log slide-ins
+- **Interactive agent chat**: Real-time streaming with thinking block visualization and tool activity spinners
+- **Enhanced status bar**: Live tool name, token counts, elapsed time, and Spectrum signal display
 - **Signal-based workflow control**: XML protocol for Continue, Retry, Blocked, Error, Complete
 - **Multi-epic support**: Tab-based epic switching with independent story sets
 - **App shell**: Powerline tab bar, context-aware sidebar, two-tier status footer
@@ -34,7 +36,7 @@ Prism CLI is a Go 1.23 terminal user interface that provides real-time monitorin
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                        Prism CLI v2.3.0                             │
+│                        Prism CLI v2.4.9                             │
 ├──────────────┬──────────────┬──────────────┬────────────┬───────────┤
 │  Bubble Tea  │   Lipgloss   │  Harmonica   │  FauxGL    │  Termenv  │
 │  TUI         │   Styling    │  Spring      │  3D        │  Terminal │

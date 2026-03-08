@@ -47,6 +47,51 @@ Reference for `verification-result.json` schema and human-readable summary forma
 | `console` | Checks for JavaScript console errors |
 | `snapshot` | DOM structure assertion (for regression) |
 | `network` | Checks for failed network requests |
+| `visual-regression` | Pixel-level comparison against stored baseline |
+
+### Visual Regression Check Fields
+
+When a `visual-regression` check is included, it contains additional fields:
+
+```json
+{
+  "type": "visual-regression",
+  "status": "pass",
+  "artifactPath": ".prism/shared/validation/diffs/2026-03-08/login-form-diff.png",
+  "details": "0.3% change (threshold: 1%)",
+  "baseline_path": ".prism/shared/validation/baselines/STORY-001/login-form.png",
+  "diff_path": null,
+  "change_pct": 0.003,
+  "threshold": 0.01,
+  "new_baseline": false,
+  "verdict": null,
+  "grader_output": null
+}
+```
+
+When the grader agent is invoked (change exceeds threshold):
+
+```json
+{
+  "type": "visual-regression",
+  "status": "fail",
+  "artifactPath": ".prism/shared/validation/diffs/2026-03-08/login-form-diff.png",
+  "details": "5.2% change exceeds 1% threshold — grader verdict: regression",
+  "baseline_path": ".prism/shared/validation/baselines/STORY-001/login-form.png",
+  "diff_path": ".prism/shared/validation/diffs/2026-03-08/login-form-diff.png",
+  "change_pct": 0.052,
+  "threshold": 0.01,
+  "new_baseline": false,
+  "verdict": "regression",
+  "grader_output": {
+    "verdict": "regression",
+    "confidence": 0.85,
+    "evidence": "...",
+    "recommendation": "revert",
+    "affected_elements": ["submit button", "form padding"]
+  }
+}
+```
 
 ## Human-Readable Summary Template
 

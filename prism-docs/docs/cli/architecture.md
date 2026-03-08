@@ -198,9 +198,10 @@ stories.json           Claude CLI              Terminal Detection
 │  KeyMsg ──▶ Priority chain → Plugin delegate       │
 │  default ──▶ Broadcast to all plugins              │
 │                                                    │
-│  Plugin Registry manages 10 plugins:               │
+│  Plugin Registry manages 11 plugins:               │
 │  Home, Research, Plans, Spectrum, Files,           │
-│  Git, Agent, Monitor, Workspaces, Onboarding       │
+│  Git, Agent, Monitor, Browser, Workspaces,         │
+│  Onboarding                                        │
 └────────────────────┬───────────────────────────────┘
                      │
                      ▼

@@ -1,6 +1,6 @@
 ---
 title: packages/prism-core
-description: Platform-agnostic business logic — zero vscode/electron imports. Contents, infrastructure notes, and key patterns.
+description: Platform-agnostic business logic shared between VS Code and Electron
 outline: [2, 3]
 ---
 

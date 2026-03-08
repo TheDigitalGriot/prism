@@ -64,6 +64,37 @@ claude CLI (child process)
                               └─────────────────┘
 ```
 
+### Event Types (v2.4.1)
+
+The streaming pipeline produces typed events via `agentbus/events.go`:
+
+| Event | Source | Description |
+|-------|--------|-------------|
+| `EventTextDelta` | `stream_event` | Incremental text content from Claude |
+| `EventThinkingDelta` | `"thinking"` content block | Extended thinking/reasoning content |
+| `EventToolCallStart` | `tool_use` content block | Tool invocation begins (name, input) |
+| `EventToolCallComplete` | `tool_result` | Tool execution finished (output, status) |
+| `EventAgentSpawnStart` | `Task` tool use | Subagent spawned (ID, name, type) |
+| `EventAgentSpawnFinish` | Agent task completion | Subagent finished (result, status) |
+| `EventSignalDetected` | Signal parser | Spectrum signal found in output |
+
+### ContentBlock Extensions (v2.4.1)
+
+`claude/events.go` `ContentBlock` struct now includes:
+
+```go
+type ContentBlock struct {
+    Type      string `json:"type"`       // "text", "tool_use", "tool_result", "thinking"
+    Text      string `json:"text"`
+    ID        string `json:"id"`
+    Name      string `json:"name"`
+    Input     any    `json:"input"`
+    Content   string `json:"content"`
+    Thinking  string `json:"thinking"`   // NEW: Extended thinking content
+    Signature string `json:"signature"`  // NEW: Thinking signature/metadata
+}
+```
+
 ## Tool Activity Formatting
 
 | Tool | Display Format | Example |

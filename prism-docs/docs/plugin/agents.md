@@ -33,6 +33,12 @@ Agents live at `agents/` and are spawned via `Task(subagent_type="agent-name")`.
 |---|-------|------|-------|-------|-------|------|
 | 10 | `browser-verifier` | `browser-verifier.md` | 92 | **haiku** | Bash | Executes playwright-cli commands, returns structured JSON verification results. |
 
+## Code Intelligence Agent (v2.5.0)
+
+| # | Agent | File | Lines | Model | Tools | Role |
+|---|-------|------|-------|-------|-------|------|
+| 11 | `graph-navigator` | `graph-navigator.md` | 95 | **haiku** | codebase-memory-mcp (11 graph tools) | Queries the codebase knowledge graph for structural analysis — functions, call chains, dependencies, dead code, blast radius. Never reads files directly; uses graph tools exclusively. |
+
 ## Agent Frontmatter Format
 
 ```markdown

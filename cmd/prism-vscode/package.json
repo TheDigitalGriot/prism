@@ -2,7 +2,7 @@
   "name": "prism",
   "displayName": "Prism",
   "description": "Prism 4-phase development workflow: Research → Plan → Implement → Validate",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "publisher": "prism",
   "private": true,
   "engines": {

@@ -38,6 +38,15 @@ prism-implement
 
 prism-spectrum
   └── /prism-debug (on quality gate failure — auto-retry)
+
+prism-release
+  └── (no commands — direct Bash execution for build/tag/push/release)
+
+prism-eval
+  └── (spawns parallel eval runner agents, then grader agents)
+
+prism-docs-update
+  └── (spawns parallel agents to compare and update VitePress pages)
 ```
 
 ## Skills → Agents (Parallel Spawning)

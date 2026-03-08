@@ -51,6 +51,38 @@ For each phase in plan:
 |-----------|--------|
 | User can [action] | Needs verification |
 
+### 3a. Tier 1.5: Visual Regression Gate
+
+If baselines exist in `.prism/shared/validation/baselines/` for any story in the plan:
+
+1. Start the dev server (same pattern as prism-verify: read `package.json`, detect command and port, poll for readiness with 30s timeout)
+2. For each baseline directory matching a story/phase in the plan:
+   ```bash
+   ls .prism/shared/validation/baselines/{story-id}/*.png 2>/dev/null
+   ```
+3. For each baseline found, run:
+   ```bash
+   bash scripts/visual-regression.sh {url} \
+     .prism/shared/validation/baselines/{story-id} {baseline-name}
+   ```
+4. If any diff exceeds threshold, spawn `visual-regression-grader` agent:
+   ```
+   Task(subagent_type="visual-regression-grader")
+   "Diff JSON: {JSON output}
+   Diff image: {diff_path}
+   Story: {story-id}, modifies: {files}
+   Plan criteria: {manual verification criteria}"
+   ```
+5. Record results in the validation report under "### Visual Regression"
+6. A grader verdict of `regression` counts as a **validation failure**
+7. Kill the dev server after all checks complete
+
+If no baselines exist, skip with note: "Visual regression skipped: no baselines found".
+
+If `playwright-cli` is not installed, skip with note: "Visual regression skipped: playwright-cli not installed".
+
+If visual regression fails, consider running `/prism-verify` for interactive investigation before marking the plan as incomplete.
+
 ### 3b. Structural Validation (if codebase-memory-mcp available)
 
 Run graph-based verification to catch issues tests might miss:

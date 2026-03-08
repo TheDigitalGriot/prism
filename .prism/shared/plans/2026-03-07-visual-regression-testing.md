@@ -4,7 +4,7 @@ author: Claude
 repository: prism-plugin
 branch: feat/visual-regression
 ticket: N/A
-status: draft
+status: complete
 research: .prism/shared/research/2026-03-07-prism-v250-gap-analysis.md
 ---
 
@@ -48,18 +48,18 @@ research: .prism/shared/research/2026-03-07-prism-v250-gap-analysis.md
 | `scripts/visual-regression.sh` | Core visual regression script (~120 lines) |
 
 **Steps**:
-1. [ ] Create `scripts/visual-regression.sh` with the following interface:
+1. [x] Create `scripts/visual-regression.sh` with the following interface:
    ```bash
    # Usage: visual-regression.sh <url> <baseline-dir> <name> [--threshold 0.01] [--viewport 1280x720]
    # Output: JSON to stdout with fields: name, url, baseline_path, screenshot_path, diff_path, change_pct, threshold, passed
    # Exit: 0 if passed (change_pct <= threshold or new baseline), 1 if failed (change_pct > threshold)
    ```
-2. [ ] Implement prerequisite check — verify `playwright-cli` is installed, exit with clear error if not
-3. [ ] Implement screenshot capture — use `playwright-cli screenshot <url> --output <path>` with configurable viewport
-4. [ ] Implement baseline check — if no baseline exists at `<baseline-dir>/<name>.png`, save current screenshot as baseline and exit 0 with `"new_baseline": true` in JSON
-5. [ ] Implement pixel diff — use `playwright-cli` PDF comparison or call `npx pixelmatch` to compare current vs baseline. Output diff image to `<baseline-dir>/../diffs/<date>/<name>-diff.png`
-6. [ ] Implement threshold check — calculate `change_pct` (changed pixels / total pixels). Compare against `--threshold` (default 0.01 = 1%). Output JSON result to stdout.
-7. [ ] Add `set -euo pipefail`, proper temp file cleanup in a `trap EXIT`, and clear error messages for each failure mode
+2. [x] Implement prerequisite check — verify `playwright-cli` is installed, exit with clear error if not
+3. [x] Implement screenshot capture — use `playwright-cli screenshot <url> --output <path>` with configurable viewport
+4. [x] Implement baseline check — if no baseline exists at `<baseline-dir>/<name>.png`, save current screenshot as baseline and exit 0 with `"new_baseline": true` in JSON
+5. [x] Implement pixel diff — use `playwright-cli` PDF comparison or call `npx pixelmatch` to compare current vs baseline. Output diff image to `<baseline-dir>/../diffs/<date>/<name>-diff.png`
+6. [x] Implement threshold check — calculate `change_pct` (changed pixels / total pixels). Compare against `--threshold` (default 0.01 = 1%). Output JSON result to stdout.
+7. [x] Add `set -euo pipefail`, proper temp file cleanup in a `trap EXIT`, and clear error messages for each failure mode
 
 **Verification**:
 ```bash
@@ -72,7 +72,7 @@ bash scripts/visual-regression.sh http://localhost:5173 .prism/shared/validation
 # Should output JSON with change_pct: 0, passed: true
 ```
 
-**Checkpoint**: Phase 1 complete
+**Checkpoint**: [x] Phase 1 complete
 
 ---
 
@@ -91,8 +91,8 @@ bash scripts/visual-regression.sh http://localhost:5173 .prism/shared/validation
 | `skills/prism-verify/references/visual-regression-patterns.md` | Documentation: baseline management, naming conventions, threshold tuning, multi-viewport patterns |
 
 **Steps**:
-1. [ ] Verify `init_prism.py` creates `shared/validation/baselines/` and `shared/validation/diffs/` (may already exist from accuracy-context-upgrade Phase 5). If not, add them.
-2. [ ] Create `visual-regression-patterns.md` documenting:
+1. [x] Verify `init_prism.py` creates `shared/validation/baselines/` and `shared/validation/diffs/` (may already exist from accuracy-context-upgrade Phase 5). If not, add them.
+2. [x] Create `visual-regression-patterns.md` documenting:
    - Directory structure:
      ```
      .prism/shared/validation/
@@ -112,7 +112,7 @@ bash scripts/visual-regression.sh http://localhost:5173 .prism/shared/validation
    - Multi-viewport patterns: desktop (1280x720), tablet (768x1024), mobile (375x812)
    - Threshold tuning guidance: 0.001 for pixel-perfect, 0.01 for layout stability, 0.05 for rough check
    - Baseline update workflow: delete old baseline, re-run to create new one
-3. [ ] Add `.prism/shared/validation/diffs/` to `.gitignore` (diffs are ephemeral; baselines are committed)
+3. [x] Add `.prism/shared/validation/diffs/` to `.gitignore` (diffs are ephemeral; baselines are committed)
 
 **Verification**:
 ```bash
@@ -121,7 +121,7 @@ ls .prism/shared/validation/baselines/  # Should exist
 ls .prism/shared/validation/diffs/      # Should exist
 ```
 
-**Checkpoint**: Phase 2 complete
+**Checkpoint**: [x] Phase 2 complete
 
 ---
 
@@ -135,7 +135,7 @@ ls .prism/shared/validation/diffs/      # Should exist
 | `agents/visual-regression-grader.md` | Sonnet agent that judges diff results against story context |
 
 **Steps**:
-1. [ ] Create `agents/visual-regression-grader.md` with YAML frontmatter:
+1. [x] Create `agents/visual-regression-grader.md` with YAML frontmatter:
    ```yaml
    ---
    name: visual-regression-grader
@@ -144,8 +144,8 @@ ls .prism/shared/validation/diffs/      # Should exist
    model: sonnet
    ---
    ```
-2. [ ] Define the agent's input contract — it receives: diff JSON from `visual-regression.sh`, the diff image path, the story context (story ID, description, files modified), and the plan's Manual Verification criteria
-3. [ ] Define the agent's output contract — structured JSON:
+2. [x] Define the agent's input contract — it receives: diff JSON from `visual-regression.sh`, the diff image path, the story context (story ID, description, files modified), and the plan's Manual Verification criteria
+3. [x] Define the agent's output contract — structured JSON:
    ```json
    {
      "verdict": "regression|intentional|inconclusive",
@@ -155,8 +155,8 @@ ls .prism/shared/validation/diffs/      # Should exist
      "affected_elements": ["list of UI elements that changed"]
    }
    ```
-4. [ ] Add behavioral constraints: read the diff image (multimodal), compare against the story's expected changes, check if modified files include CSS/layout/component files that would explain visual changes
-5. [ ] Add the "documentarian, not critic" constraint — report findings factually
+4. [x] Add behavioral constraints: read the diff image (multimodal), compare against the story's expected changes, check if modified files include CSS/layout/component files that would explain visual changes
+5. [x] Add the "documentarian, not critic" constraint — report findings factually
 
 **Verification**:
 ```bash
@@ -164,7 +164,7 @@ ls .prism/shared/validation/diffs/      # Should exist
 head -6 agents/visual-regression-grader.md  # Should show --- block with name, description, tools, model
 ```
 
-**Checkpoint**: Phase 3 complete
+**Checkpoint**: [x] Phase 3 complete
 
 ---
 
@@ -181,18 +181,18 @@ head -6 agents/visual-regression-grader.md  # Should show --- block with name, d
 | `commands/prism-verify.md` | Add visual regression step to the command workflow |
 
 **Steps**:
-1. [ ] Update `verification-template.md` (lines 43-49) — add `visual-regression` to check types table:
+1. [x] Update `verification-template.md` (lines 43-49) — add `visual-regression` to check types table:
    ```
    | visual-regression | Pixel-level comparison against stored baseline |
    ```
    Add fields to the JSON schema (lines 8-30): `baseline_path`, `diff_path`, `change_pct`, `threshold`, `verdict`, `grader_output`
-2. [ ] Update `verification-patterns.md` — add a "Visual Regression" recipe section after the DOM snapshot section (after line 58):
+2. [x] Update `verification-patterns.md` — add a "Visual Regression" recipe section after the DOM snapshot section (after line 58):
    - How to run `visual-regression.sh` from a skill
    - How to interpret the JSON output
    - When to spawn `visual-regression-grader` (only when `change_pct > threshold`)
    - How to update baselines
-3. [ ] Update `prism-verify/SKILL.md` — add a step after screenshot capture (after line 86): "If baselines exist in `.prism/shared/validation/baselines/` for the current story/context, run `scripts/visual-regression.sh` for each baseline. If any diff exceeds threshold, spawn `visual-regression-grader` agent to judge. Include results in the verification output."
-4. [ ] Update `commands/prism-verify.md` — add the same visual regression step to the command workflow (after line 83, after browser-verifier agent returns)
+3. [x] Update `prism-verify/SKILL.md` — add a step after screenshot capture (after line 86): "If baselines exist in `.prism/shared/validation/baselines/` for the current story/context, run `scripts/visual-regression.sh` for each baseline. If any diff exceeds threshold, spawn `visual-regression-grader` agent to judge. Include results in the verification output."
+4. [x] Update `commands/prism-verify.md` — add the same visual regression step to the command workflow (after line 83, after browser-verifier agent returns)
 
 **Verification**:
 ```bash
@@ -200,7 +200,7 @@ head -6 agents/visual-regression-grader.md  # Should show --- block with name, d
 # Verify the verification-result.json includes visual-regression check type
 ```
 
-**Checkpoint**: Phase 4 complete
+**Checkpoint**: [x] Phase 4 complete
 
 ---
 
@@ -215,7 +215,7 @@ head -6 agents/visual-regression-grader.md  # Should show --- block with name, d
 | `skills/prism-validate/references/validation-template.md` | Add "Visual Regression" section to the report template between Automated and Manual criteria (lines 124-127) |
 
 **Steps**:
-1. [ ] Update `prism-validate/SKILL.md` — after running automated verification commands (line 48), add:
+1. [x] Update `prism-validate/SKILL.md` — after running automated verification commands (line 48), add:
    ```
    ### Tier 1.5: Visual Regression Gate
    If baselines exist in `.prism/shared/validation/baselines/` for any story in the plan:
@@ -225,14 +225,14 @@ head -6 agents/visual-regression-grader.md  # Should show --- block with name, d
    4. Record results in the validation report
    5. A verdict of "regression" counts as a validation failure
    ```
-2. [ ] Update `validation-template.md` — add a "Visual Regression" section between Automated Criteria (line 124) and Manual Criteria (line 127):
+2. [x] Update `validation-template.md` — add a "Visual Regression" section between Automated Criteria (line 124) and Manual Criteria (line 127):
    ```markdown
    ### Visual Regression
    | Page | Baseline | Change % | Threshold | Verdict | Diff |
    |------|----------|----------|-----------|---------|------|
    | login-page | .prism/shared/validation/baselines/auth/login-page.png | 0.3% | 1% | pass | N/A |
    ```
-3. [ ] Add a connection note: "If visual regression fails, consider running `/prism-verify` for interactive investigation before marking the plan as incomplete."
+3. [x] Add a connection note: "If visual regression fails, consider running `/prism-verify` for interactive investigation before marking the plan as incomplete."
 
 **Verification**:
 ```bash
@@ -240,7 +240,7 @@ head -6 agents/visual-regression-grader.md  # Should show --- block with name, d
 # Verify the validation report includes a Visual Regression section
 ```
 
-**Checkpoint**: Phase 5 complete
+**Checkpoint**: [x] Phase 5 complete
 
 ---
 
@@ -254,11 +254,11 @@ head -6 agents/visual-regression-grader.md  # Should show --- block with name, d
 | `skills/prism-spectrum/SKILL.md` | After quality gates pass (implementation section), add: if story modifies UI files (`.tsx`, `.jsx`, `.css`, `.scss`, `.html`), run `visual-regression.sh` against baselines. Record results in `story-manifest.json` if it exists. |
 
 **Steps**:
-1. [ ] Add UI file detection heuristic to `prism-spectrum` — after quality gates pass, check if any files in the story's `files` array have UI extensions (`.tsx`, `.jsx`, `.vue`, `.svelte`, `.css`, `.scss`, `.html`, `.svg`)
-2. [ ] If UI files detected and baselines exist: start dev server, run `visual-regression.sh` for each baseline in the story's baseline directory (`.prism/shared/validation/baselines/<story-id>/`)
-3. [ ] If diff exceeds threshold: spawn `visual-regression-grader` agent. If verdict is `regression`, record in `progress.md` and emit `<spectrum-retry>` signal with reason. If verdict is `intentional`, update the baseline automatically.
-4. [ ] If story manifest exists (`story-manifest.json`): update the relevant requirement's `passes` field based on visual regression result
-5. [ ] Keep visual regression optional — if no baselines exist or `playwright-cli` is not installed, skip gracefully (log, don't fail)
+1. [x] Add UI file detection heuristic to `prism-spectrum` — after quality gates pass, check if any files in the story's `files` array have UI extensions (`.tsx`, `.jsx`, `.vue`, `.svelte`, `.css`, `.scss`, `.html`, `.svg`)
+2. [x] If UI files detected and baselines exist: start dev server, run `visual-regression.sh` for each baseline in the story's baseline directory (`.prism/shared/validation/baselines/<story-id>/`)
+3. [x] If diff exceeds threshold: spawn `visual-regression-grader` agent. If verdict is `regression`, record in `progress.md` and emit `<spectrum-retry>` signal with reason. If verdict is `intentional`, update the baseline automatically.
+4. [x] If story manifest exists (`story-manifest.json`): update the relevant requirement's `passes` field based on visual regression result
+5. [x] Keep visual regression optional — if no baselines exist or `playwright-cli` is not installed, skip gracefully (log, don't fail)
 
 **Verification**:
 ```bash
@@ -268,7 +268,7 @@ head -6 agents/visual-regression-grader.md  # Should show --- block with name, d
 # Check progress.md for visual regression results
 ```
 
-**Checkpoint**: Phase 6 complete
+**Checkpoint**: [x] Phase 6 complete
 
 ---
 
@@ -283,7 +283,7 @@ head -6 agents/visual-regression-grader.md  # Should show --- block with name, d
 | `skills/prism/references/workflow-patterns.md` | Add visual regression loop as a workflow pattern |
 
 **Steps**:
-1. [ ] Add `/loop` pattern to `visual-regression-patterns.md`:
+1. [x] Add `/loop` pattern to `visual-regression-patterns.md`:
    ```
    ## Continuous Validation with /loop
 
@@ -297,8 +297,8 @@ head -6 agents/visual-regression-grader.md  # Should show --- block with name, d
    This provides near-real-time feedback on visual regressions during
    implementation without waiting for the Validate phase.
    ```
-2. [ ] Add workflow pattern to `workflow-patterns.md` — "Visual Regression Loop" alongside existing patterns (ticket lifecycle, worktree isolation, etc.)
-3. [ ] Document the scheduled task variant for weekly full regression:
+2. [x] Add workflow pattern to `workflow-patterns.md` — "Visual Regression Loop" alongside existing patterns (ticket lifecycle, worktree isolation, etc.)
+3. [x] Document the scheduled task variant for weekly full regression:
    ```yaml
    # ~/.claude/scheduled-tasks/visual-regression-weekly/SKILL.md
    frequency: weekly
@@ -315,7 +315,7 @@ head -6 agents/visual-regression-grader.md  # Should show --- block with name, d
 # Run /loop with the documented command during a UI implementation session
 ```
 
-**Checkpoint**: Phase 7 complete
+**Checkpoint**: [x] Phase 7 complete
 
 ---
 
@@ -378,16 +378,25 @@ Each phase is independent:
 
 | Phase | Status | Started | Completed | Notes |
 |-------|--------|---------|-----------|-------|
-| Phase 1: visual-regression.sh | Not started | | | |
-| Phase 2: Baseline storage | Not started | | | |
-| Phase 3: Grader agent | Not started | | | |
-| Phase 4: Wire into prism-verify | Not started | | | |
-| Phase 5: Wire into prism-validate | Not started | | | |
-| Phase 6: Wire into prism-spectrum | Not started | | | |
-| Phase 7: /loop documentation | Not started | | | |
+| Phase 1: visual-regression.sh | Complete | 2026-03-08 | 2026-03-08 | ~170 lines. Uses playwright-cli for capture, npx pixelmatch for diff, awk for threshold math. JSON output to stdout, diagnostics to stderr. |
+| Phase 2: Baseline storage | Complete | 2026-03-08 | 2026-03-08 | Added diffs/ to init_prism.py. Created visual-regression-patterns.md reference. Added diffs/ to .gitignore. baselines/ already existed. |
+| Phase 3: Grader agent | Complete | 2026-03-08 | 2026-03-08 | Sonnet agent with input/output contracts, 5-step analysis workflow, confidence scoring, edge case handling. Follows documentarian-not-critic constraint. |
+| Phase 4: Wire into prism-verify | Complete | 2026-03-08 | 2026-03-08 | Added visual-regression check type + fields to template. Added recipe to patterns. Added step 5.5 to SKILL.md + step 2.5 to command. Added grader to agents table. |
+| Phase 5: Wire into prism-validate | Complete | 2026-03-08 | 2026-03-08 | Added step 3a (Tier 1.5 gate) to SKILL.md. Added Visual Regression table to validation-template.md between Automated and Manual criteria. |
+| Phase 6: Wire into prism-spectrum | Complete | 2026-03-08 | 2026-03-08 | Added step 5c with UI file detection, baseline check, grader integration, auto-baseline update for intentional changes, spectrum-retry signal for regressions, manifest update, graceful skip. |
+| Phase 7: /loop documentation | Complete | 2026-03-08 | 2026-03-08 | Added /loop section + scheduled task to visual-regression-patterns.md. Added Visual Regression Loop pattern to workflow-patterns.md. |
 
 ---
 
 ## Session Notes
 
-[Space for implementation notes, discoveries, blockers]
+### Session 2026-03-08
+- Completed all 7 phases in a single session
+- Phase 1: visual-regression.sh (~170 lines) — playwright-cli + pixelmatch + awk
+- Phase 2: Added diffs/ to init_prism.py, baselines/ already existed, created visual-regression-patterns.md
+- Phase 3: visual-regression-grader agent (Sonnet, Read/Glob/Grep, documentarian constraint)
+- Phase 4: Wired into prism-verify (SKILL.md step 5.5, command step 2.5, template, patterns)
+- Phase 5: Wired into prism-validate (Tier 1.5 gate step 3a, validation-template table)
+- Phase 6: Wired into prism-spectrum (step 5c with auto-baseline update for intentional changes)
+- Phase 7: /loop docs + workflow pattern + scheduled task variant
+- No blockers encountered. Story manifest integration (Phase 6 step 5) is conditional on accuracy-context-upgrade Phase 5.
