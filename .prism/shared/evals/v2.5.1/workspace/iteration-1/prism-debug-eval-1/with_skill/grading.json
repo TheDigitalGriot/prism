@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "log-investigator agent is spawned to check for build error logs",
+      "passed": true,
+      "evidence": "## Step 2: Investigation Agents (Parallel)"
+    },
+    {
+      "text": "state-investigator agent is spawned to check config and imports",
+      "passed": true,
+      "evidence": "## Step 2: Investigation Agents (Parallel)"
+    },
+    {
+      "text": "git-investigator agent is spawned to analyze recent file moves",
+      "passed": true,
+      "evidence": "## Step 2: Investigation Agents (Parallel)"
+    },
+    {
+      "text": "All three agents are spawned in parallel (not sequentially)",
+      "passed": true,
+      "evidence": "## Step 2: Investigation Agents (Parallel)"
+    },
+    {
+      "text": "Output follows the structured debug report format (Problem Statement, Error Analysis, Investigation Findings, Root Cause Hypothesis, Suggested Fix Approach, Files to Examine)",
+      "passed": true,
+      "evidence": "- No build output logs cached on disk"
+    },
+    {
+      "text": "No files are modified during investigation (read-only rule)",
+      "passed": true,
+      "evidence": "**Issue Description**: TypeScript build failing with \"Cannot find module\" errors after files were moved around."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

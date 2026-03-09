@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Creates snapshot directory at .prism/shared/evals/v2.6.0-snapshot/",
+      "passed": false,
+      "evidence": "Only 2/7 key terms found: ['creates', 'snapshot', 'directory', 'prism', 'shared']"
+    },
+    {
+      "text": "Copies skills/, agents/, commands/, and scripts/ into the snapshot directory",
+      "passed": true,
+      "evidence": "python scripts/bump-version.py minor --root ."
+    },
+    {
+      "text": "Verifies the snapshot by listing contents and counting items",
+      "passed": false,
+      "evidence": "Only 0/6 key terms found: ['verifies', 'snapshot', 'listing', 'contents', 'counting']"
+    },
+    {
+      "text": "Finds the previous snapshot to use as baseline for diffing",
+      "passed": false,
+      "evidence": "Only 1/5 key terms found: ['finds', 'previous', 'snapshot', 'baseline', 'diffing']"
+    },
+    {
+      "text": "Generates evals.json files for each skill under .prism/shared/evals/v2.6.0/skills/<name>/",
+      "passed": true,
+      "evidence": "# Prism Release \u2014 Old Skill (v2.4.8) Transcript"
+    },
+    {
+      "text": "Adds eval files to the release commit with git add and amend",
+      "passed": true,
+      "evidence": "# Prism Release \u2014 Old Skill (v2.4.8) Transcript"
+    },
+    {
+      "text": "Re-tags after amending the commit",
+      "passed": true,
+      "evidence": "**Mode**: Simulated (no actual commits, tags, pushes, or file modifications)"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 3,
+    "total": 7,
+    "pass_rate": 0.57
+  }
+}

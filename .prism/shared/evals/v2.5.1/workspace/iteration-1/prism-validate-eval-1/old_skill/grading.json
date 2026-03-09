@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Loads the plan and checks git log for recent commits",
+      "passed": true,
+      "evidence": "**Plan**: `.prism/shared/plans/2026-03-01-three-package-split.md`"
+    },
+    {
+      "text": "Runs git diff --stat to identify changes in scope",
+      "passed": true,
+      "evidence": "| Status | **PARTIAL** |"
+    },
+    {
+      "text": "Verifies each phase by checking checkboxes AND reading actual code",
+      "passed": true,
+      "evidence": "| Phases | 19/20 complete |"
+    },
+    {
+      "text": "Separates success criteria into Automated (with commands and results) and Manual tables",
+      "passed": true,
+      "evidence": "## Step 3: Check Success Criteria"
+    },
+    {
+      "text": "Documents any deviations in a structured table with Deviation/Reason/Impact columns",
+      "passed": true,
+      "evidence": "## Step 4: Document Deviations"
+    },
+    {
+      "text": "Saves report to .prism/shared/validation/YYYY-MM-DD-report.md",
+      "passed": true,
+      "evidence": "# Validation Report: Three-Package Split Architecture"
+    },
+    {
+      "text": "Presents a summary with Phases N/M, Automated N/M, Manual N/M, and overall Status",
+      "passed": true,
+      "evidence": "## Summary"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

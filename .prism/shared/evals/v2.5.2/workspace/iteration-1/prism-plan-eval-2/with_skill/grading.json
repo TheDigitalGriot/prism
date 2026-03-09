@@ -1,0 +1,11 @@
+{
+  "expectations": [
+    {"text": "Plan is saved to .prism/shared/plans/YYYY-MM-DD-feature.md", "passed": false, "evidence": "Note at end says 'Plan was NOT actually saved to .prism/shared/plans/ since this is a simulation.' Path mentioned: .prism/shared/plans/2026-03-08-test-results-dashboard.md but not actually saved."},
+    {"text": "Success criteria are split into Automated Verification and Manual Verification sections", "passed": true, "evidence": "Plan has 'Automated Verification' (go test, go build, golangci-lint) and 'Manual Verification' (6 manual checks) as separate sections."},
+    {"text": "Each phase includes specific file paths and verification commands", "passed": true, "evidence": "All 6 phases include file tables with specific paths and Verification sections with bash commands (e.g., 'cd cmd/prism-cli && go test ./domain/ -run TestParse -v')."},
+    {"text": "A 'What We Are NOT Doing' scope section is included", "passed": true, "evidence": "'Out of Scope' section lists 5 excluded items: code coverage, test history, non-Go runners, debugging, parallel test management."},
+    {"text": "Risks and mitigations section is present", "passed": true, "evidence": "'Risks & Mitigations' table with 4 risks including likelihood, impact, and mitigation columns."},
+    {"text": "TodoWrite is used to track phases", "passed": false, "evidence": "No mention of TodoWrite being used anywhere in the transcript. Plan has a Progress Log table but TodoWrite tool was not invoked."}
+  ],
+  "summary": {"passed": 4, "failed": 2, "total": 6, "pass_rate": 0.67}
+}

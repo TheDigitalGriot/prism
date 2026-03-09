@@ -1,0 +1,18 @@
+{
+  "skill": "prism-plan",
+  "eval_id": 1,
+  "dimension": "regression",
+  "prompt": "Create a plan for adding WebSocket support to this project. There is existing research at .prism/shared/research/2026-03-07-websocket-research.md.",
+  "expected_output": "Interactive planning flow that loads research context before presenting understanding",
+  "expectations": [
+    "prism-analyzer agent is spawned to extract decisions, constraints, and patterns from the research document",
+    "Understanding is presented to the user BEFORE writing the full plan (interactive rule)",
+    "User confirmation is requested before proceeding to full plan",
+    "Plan is NOT written in one shot -- structure approval is requested first"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

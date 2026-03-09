@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Response references the workflow selection table (R->P->I->V for unfamiliar, P->I->V for known, etc.)",
+      "passed": true,
+      "evidence": "Per the skill's \"Starting the Workflow\" section, the first action is to check `.prism/` for existing artifacts related to the topic. I simulated spawning a `prism-locator` agent:"
+    },
+    {
+      "text": "Each recommended phase includes its output artifact path (e.g., .prism/shared/research/YYYY-MM-DD-topic.md)",
+      "passed": true,
+      "evidence": "# Prism Skill Evaluation \u2014 OLD v2.4.8 Baseline"
+    },
+    {
+      "text": "Debug and Validate phases are mentioned as part of the full workflow",
+      "passed": true,
+      "evidence": "\"I want to refactor the command routing in this plugin. Walk me through what Prism phases I should use and in what order.\""
+    },
+    {
+      "text": "Context management thresholds are referenced if session is long",
+      "passed": false,
+      "evidence": "Only 0/6 key terms found: ['context', 'management', 'thresholds', 'referenced', 'session']"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  }
+}

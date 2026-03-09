@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "New VitePress pages include frontmatter with title, description, outline",
+      "passed": true,
+      "evidence": "**Target**: `prism-docs/docs/` (VitePress site)"
+    },
+    {
+      "text": "Config.ts sidebar update is proposed but requires explicit approval",
+      "passed": true,
+      "evidence": "# Prism Docs Update \u2014 Eval Transcript (v2.4.8 Baseline)"
+    },
+    {
+      "text": "Verification step counts headings and checks line counts",
+      "passed": true,
+      "evidence": "## Step 0: Identify Source File"
+    },
+    {
+      "text": "Final summary reports pages updated, lines added, new pages created, and config changes",
+      "passed": true,
+      "evidence": "- Loop diagram updated from 9-step to 12-step (added: `validate_schema()`, `acquire_lock()`, `select_next_story()` as explicit jq-based steps, `update_story_status()`, `append_progress()`, `release_lo"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

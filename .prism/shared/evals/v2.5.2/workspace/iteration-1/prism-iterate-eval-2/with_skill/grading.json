@@ -1,0 +1,10 @@
+{
+  "expectations": [
+    {"text": "Does not immediately rewrite the plan based on vague feedback", "passed": true, "evidence": "Step 2: Identifies the feedback as vague and asks clarifying questions instead of making changes. No plan modifications made."},
+    {"text": "Asks clarifying questions (which sidebar, what does horizontal mean, scope of change)", "passed": true, "evidence": "Three clarifying questions: 1) Which plan and sidebar, 2) What does vertical to horizontal mean (3 options), 3) What problem are you trying to solve."},
+    {"text": "Follows the 'Be Skeptical' philosophy — questions vague feedback and verifies feasibility", "passed": true, "evidence": "Step 2 explicitly states: 'Per the prism-iterate philosophy: Be Skeptical — Don't blindly accept changes; question vague feedback; verify feasibility.'"},
+    {"text": "Follows the 'Be Interactive' philosophy — confirms understanding before making changes", "passed": true, "evidence": "Step 2 notes ambiguity on multiple dimensions and asks for clarification before any plan changes."},
+    {"text": "Only proceeds with plan changes after getting clear answers", "passed": true, "evidence": "Step 2: 'Before making any plan changes, the following questions MUST be resolved.' No plan changes are made in the transcript."}
+  ],
+  "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}
+}

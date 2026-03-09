@@ -1,0 +1,17 @@
+{
+  "skill": "prism-prd",
+  "eval_id": 3,
+  "dimension": "behavioral_compliance",
+  "prompt": "Generate a lightweight PRD for a simple landing page builder MVP",
+  "expected_output": "A lightweight PRD focused on core sections only, respecting the depth calibration guidance for startup/MVP level",
+  "expectations": [
+    "PRD depth matches lightweight/MVP calibration \u00e2\u20ac\u201d not enterprise-level exhaustive detail",
+    "Quality gates are checked: problem statement, target user, features, feasibility, scope, metrics, risks, open questions",
+    "TodoWrite is used to track PRD items"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

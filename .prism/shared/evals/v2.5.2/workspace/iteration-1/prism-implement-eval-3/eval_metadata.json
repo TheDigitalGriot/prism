@@ -1,0 +1,16 @@
+{
+  "skill": "prism-implement",
+  "eval_id": 3,
+  "dimension": "regression",
+  "prompt": "Resume implementation. The plan has phases 1-5 with phases 1-3 already checked off. Continue from where we left off.",
+  "expected_output": "Detects that phases 1-3 are complete and resumes from Phase 4, loading the correct files and following the workflow.",
+  "expectations": [
+    "Reads the plan and detects existing checkmarks for phases 1-3",
+    "Identifies Phase 4 as the next phase to implement",
+    "Does not re-implement phases 1-3",
+    "Loads TodoWrite with remaining phases 4-5",
+    "Reads all files in Phase 4 before making changes"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

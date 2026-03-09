@@ -1,0 +1,18 @@
+{
+  "skill": "prism-docs-update",
+  "eval_id": 1,
+  "dimension": "output_quality",
+  "prompt": "Update the prism docs site from the latest PRISM-DOCUMENTATION file",
+  "expected_output": "Skill identifies the latest PRISM-DOCUMENTATION-*.md file, reads the section mapping, compares sections against VitePress pages, presents a change summary, and waits for approval before modifying any files",
+  "expectations": [
+    "Section mapping reference is read before any analysis",
+    "A change summary is presented listing new, updated, and removed sections",
+    "User approval is requested before any file modifications",
+    "VitePress frontmatter is preserved in all updated pages"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

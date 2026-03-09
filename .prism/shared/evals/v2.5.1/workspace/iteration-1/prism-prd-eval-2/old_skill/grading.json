@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Skill checks for existing research/documentation before starting",
+      "passed": true,
+      "evidence": "# Prism PRD Skill (v2.4.8) \u2014 Evaluation Output"
+    },
+    {
+      "text": "The /generate_prd command is invoked",
+      "passed": true,
+      "evidence": "## Step 2: Invoke `/generate_prd` Command"
+    },
+    {
+      "text": "Output is saved to .prism/shared/plans/ directory with correct naming convention",
+      "passed": true,
+      "evidence": "# Prism PRD Skill (v2.4.8) \u2014 Evaluation Output"
+    },
+    {
+      "text": "Next steps include /prism-research and /prism-plan options",
+      "passed": true,
+      "evidence": "# Prism PRD Skill (v2.4.8) \u2014 Evaluation Output"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

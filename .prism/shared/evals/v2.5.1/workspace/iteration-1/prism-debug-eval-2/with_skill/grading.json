@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Error analysis section parses test failure output (failing test names, assertion errors, file locations)",
+      "passed": true,
+      "evidence": "## Error Analysis"
+    },
+    {
+      "text": "Root cause hypothesis is clearly stated as a hypothesis, not a certainty",
+      "passed": true,
+      "evidence": "**Note**: The project is a Claude Code plugin (markdown-based). There is no root `package.json` and no `npm test` script at the project root. The `npm test` command referenced by the user likely refer"
+    },
+    {
+      "text": "Suggested fix approach includes numbered steps (at least 2 alternatives)",
+      "passed": true,
+      "evidence": "6. **`agents/prism-analyzer.md`** \u2014 Added new principle #3 \"Documentarian, Not Critic\", renumbered existing #3 to #4"
+    },
+    {
+      "text": "Files to Examine section lists specific file:line references",
+      "passed": true,
+      "evidence": "**Files changed in v2.5.1 commit that could affect tests**:"
+    },
+    {
+      "text": "git-investigator checks the last commit for regression-causing changes",
+      "passed": true,
+      "evidence": "# Debug Report: npm test Failing with 3 Test Failures After Last Commit"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Loads the plan and checks git log for recent commits",
+      "passed": true,
+      "evidence": "Validate the implementation of the three-package-split plan at `.prism/shared/plans/2026-03-01-three-package-split.md`. All 20 phases should be complete."
+    },
+    {
+      "text": "Runs git diff --stat to identify changes in scope",
+      "passed": false,
+      "evidence": "Only 2/6 key terms found: ['runs', 'diff', 'stat', 'identify', 'changes']"
+    },
+    {
+      "text": "Verifies each phase by checking checkboxes AND reading actual code",
+      "passed": true,
+      "evidence": "Validate the implementation of the three-package-split plan at `.prism/shared/plans/2026-03-01-three-package-split.md`. All 20 phases should be complete."
+    },
+    {
+      "text": "Separates success criteria into Automated (with commands and results) and Manual tables",
+      "passed": true,
+      "evidence": "## Step 3: Check Success Criteria"
+    },
+    {
+      "text": "Documents any deviations in a structured table with Deviation/Reason/Impact columns",
+      "passed": true,
+      "evidence": "- `cd cmd/prism-electron && npm run make`: PASS (Squirrel distributable for win32/x64)"
+    },
+    {
+      "text": "Saves report to .prism/shared/validation/YYYY-MM-DD-report.md",
+      "passed": true,
+      "evidence": "# Prism Validate Transcript"
+    },
+    {
+      "text": "Presents a summary with Phases N/M, Automated N/M, Manual N/M, and overall Status",
+      "passed": true,
+      "evidence": "**Plan said**: Create root `package.json` with npm workspaces, upgrade Electron TypeScript to ^5.4.5, Vite to ^6.0.0, add `strict: true`."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 1,
+    "total": 7,
+    "pass_rate": 0.86
+  }
+}

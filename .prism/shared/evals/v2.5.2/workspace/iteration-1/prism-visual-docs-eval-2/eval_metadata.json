@@ -1,0 +1,15 @@
+{
+  "skill": "prism-visual-docs",
+  "eval_id": 2,
+  "dimension": "behavioral_compliance",
+  "prompt": "Design low-fidelity wireframes for our dashboard MVP, we also need a tech spec",
+  "expected_output": "Skill respects low-fidelity depth calibration, generates both user flows and tech spec via respective commands, saves both documents, and tracks progress with TodoWrite",
+  "expectations": [
+    "Depth calibration matches low-fidelity/MVP \u00e2\u20ac\u201d focuses on key flows only",
+    "/generate_tech_spec command is also invoked for the tech spec request",
+    "Both USER-FLOWS.md and TECHNICAL-SPEC.md files are saved to .prism/shared/plans/",
+    "TodoWrite tracks visual doc items (personas, flows, inventory, wireframes, components, breakpoints)"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

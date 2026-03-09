@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Design options (Option A, Option B, etc.) are presented with pros and cons",
+      "passed": true,
+      "evidence": "**Conclusion for context loading**: Since no research document exists and the user said \"I'm not sure about the approach yet,\" the skill workflow dictates we proceed to **Step 2: Present Understanding"
+    },
+    {
+      "text": "User is asked to choose an approach before plan is written",
+      "passed": true,
+      "evidence": "# Prism Plan Skill Evaluation \u2014 SQLite to PostgreSQL Migration"
+    },
+    {
+      "text": "Questions are asked to resolve unknowns rather than assuming",
+      "passed": true,
+      "evidence": "**Questions** (must resolve before planning):"
+    },
+    {
+      "text": "Plan includes migration and rollback considerations (Be Practical philosophy)",
+      "passed": true,
+      "evidence": "# Prism Plan Skill Evaluation \u2014 SQLite to PostgreSQL Migration"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

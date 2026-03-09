@@ -1,0 +1,14 @@
+{
+  "skill": "prism",
+  "eval_id": 3,
+  "dimension": "regression",
+  "prompt": "Fix this one-line typo in the README. Use Prism.",
+  "expected_output": "Prism recognizes this as a trivial fix and recommends direct implementation without full workflow",
+  "expectations": [
+    "Trivial fix path is selected (direct implementation, no Research or Plan phases)",
+    "No unnecessary agent spawning for a simple change",
+    "The workflow selection table's '<20 lines' rule is applied correctly"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

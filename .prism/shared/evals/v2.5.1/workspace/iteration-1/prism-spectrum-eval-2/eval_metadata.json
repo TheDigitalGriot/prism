@@ -1,0 +1,20 @@
+{
+  "skill": "prism-spectrum",
+  "eval_id": 2,
+  "dimension": "behavioral_compliance",
+  "prompt": "Execute the next story from .prism/shared/evals/v2.4.9/skills/prism-spectrum/fixtures/stories-graph-targets.json. Progress file: .prism/shared/evals/v2.4.9/skills/prism-spectrum/fixtures/progress.md",
+  "expected_output": "Story execution with graph verification before and after implementation",
+  "expectations": [
+    "index_repository is called before implementation (Step 1c)",
+    "trace_call_path is called for functions listed in story.context.graphTargets",
+    "Blast radius is checked against caller count before proceeding",
+    "index_repository is called again after implementation to capture changes",
+    "search_graph with max_degree=0, exclude_entry_points=true is run for dead code check",
+    "Graph delta is logged in progress.md entry (nodes added/removed)"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

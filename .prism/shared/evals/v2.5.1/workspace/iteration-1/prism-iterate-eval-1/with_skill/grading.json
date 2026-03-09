@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Reads the full plan before making any changes",
+      "passed": true,
+      "evidence": "**Trigger**: Validation report found broken import path in Phase 5 of three-package-split plan"
+    },
+    {
+      "text": "Presents a structured 'Iteration Needed' block with Trigger, Current State, Changes Required, and Impact",
+      "passed": true,
+      "evidence": "- **User feedback**: Requests iteration to fix the broken import path."
+    },
+    {
+      "text": "Adds an Iteration Log entry to the plan with date, reason, and specific changes",
+      "passed": true,
+      "evidence": "- **User feedback**: Requests iteration to fix the broken import path."
+    },
+    {
+      "text": "Does NOT delete existing plan content \u00e2\u20ac\u201d uses strikethrough or annotations to preserve history",
+      "passed": false,
+      "evidence": "Only 3/9 key terms found: ['delete', 'existing', 'plan', 'content', 'uses']"
+    },
+    {
+      "text": "Gets user approval before resuming implementation",
+      "passed": true,
+      "evidence": "- **User feedback**: Requests iteration to fix the broken import path."
+    },
+    {
+      "text": "Resumes from the affected phase, not from the beginning",
+      "passed": true,
+      "evidence": "**Trigger**: Validation report found broken import path in Phase 5 of three-package-split plan"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.83
+  }
+}

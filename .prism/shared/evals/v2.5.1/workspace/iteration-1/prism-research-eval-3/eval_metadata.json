@@ -1,0 +1,23 @@
+{
+  "skill": "prism-research",
+  "eval_id": 3,
+  "dimension": "behavioral_compliance",
+  "prompt": "Understand how the Spectrum autonomous execution workflow works in this project. Research the spectrum.sh script and prism-spectrum skill.",
+  "expected_output": "Research document covering the Spectrum loop, signals, and state management",
+  "expectations": [
+    "Mentioned files (spectrum.sh, SKILL.md) are read FULLY before spawning agents (Rule: Read files first)",
+    "Document describes the signal protocol (spectrum-continue, spectrum-retry, spectrum-blocked, spectrum-error, promise COMPLETE)",
+    "Document describes stories.json state management",
+    "Document describes fresh-context-per-iteration principle",
+    "No recommendations for how to improve the workflow appear",
+    "All agents complete before synthesis (Rule: Wait for completion)"
+  ],
+  "files": [
+    "scripts/spectrum.sh",
+    "skills/prism-spectrum/SKILL.md"
+  ],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

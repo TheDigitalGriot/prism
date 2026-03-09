@@ -1,0 +1,17 @@
+{
+  "skill": "prism-validate",
+  "eval_id": 3,
+  "dimension": "behavioral_compliance",
+  "prompt": "Validate the implementation. The codebase-memory-mcp is NOT available in this session.",
+  "expected_output": "Validation report skips structural validation with a note explaining why.",
+  "expectations": [
+    "Does not attempt to call graph tools when codebase-memory-mcp is unavailable",
+    "Includes a note: 'Structural validation skipped: graph not indexed' or equivalent",
+    "Still completes all other validation steps (phases, automated, manual, deviations)"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

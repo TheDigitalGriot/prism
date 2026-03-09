@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "log-investigator agent is spawned to check for build error logs",
+      "passed": true,
+      "evidence": "Content matches expectation pattern"
+    },
+    {
+      "text": "state-investigator agent is spawned to check config and imports",
+      "passed": true,
+      "evidence": "## Problem Statement"
+    },
+    {
+      "text": "git-investigator agent is spawned to analyze recent file moves",
+      "passed": true,
+      "evidence": "Content matches expectation pattern"
+    },
+    {
+      "text": "All three agents are spawned in parallel (not sequentially)",
+      "passed": false,
+      "evidence": "Only 1/5 key terms found: ['three', 'agents', 'spawned', 'parallel', 'sequentially']"
+    },
+    {
+      "text": "Output follows the structured debug report format (Problem Statement, Error Analysis, Investigation Findings, Root Cause Hypothesis, Suggested Fix Approach, Files to Examine)",
+      "passed": true,
+      "evidence": "- No captured error output available; diagnosis based on configuration analysis"
+    },
+    {
+      "text": "No files are modified during investigation (read-only rule)",
+      "passed": true,
+      "evidence": "TypeScript build is failing with \"Cannot find module\" errors after files were reorganized. The codebase underwent a major refactoring where shared source files were extracted from `cmd/prism-vscode/sr"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.83
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "prism-analyzer agent is spawned to extract decisions, constraints, and patterns from the research document",
+      "passed": true,
+      "evidence": "# Prism Plan Eval \u2014 v2.4.8 Baseline Execution"
+    },
+    {
+      "text": "Understanding is presented to the user BEFORE writing the full plan (interactive rule)",
+      "passed": true,
+      "evidence": "**Result**: FILE DOES NOT EXIST. The research document referenced in the task was not found on disk. Per the v2.4.8 skill, the prerequisite states: \"Research exists in `.prism/shared/research/` OR Suf"
+    },
+    {
+      "text": "User confirmation is requested before proceeding to full plan",
+      "passed": true,
+      "evidence": "Per the v2.4.8 skill, I would present understanding and **wait for user confirmation** before proceeding. Below is what would be presented:"
+    },
+    {
+      "text": "Plan is NOT written in one shot -- structure approval is requested first",
+      "passed": true,
+      "evidence": "# Prism Plan Eval \u2014 v2.4.8 Baseline Execution"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

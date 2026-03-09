@@ -1,0 +1,19 @@
+{
+  "skill": "prism-implement",
+  "eval_id": 2,
+  "dimension": "regression",
+  "prompt": "Continue implementing the plan. Phase 3 specifies creating src/utils/helpers.ts but the directory structure is different than expected \u00e2\u20ac\u201d there is no src/utils/ directory, only src/lib/.",
+  "expected_output": "A mismatch report is presented showing plan said vs found, with options A/B/C for the user to choose how to proceed. No silent deviation.",
+  "expectations": [
+    "Detects the mismatch between plan and reality",
+    "Presents a structured mismatch report with Plan said / Found / Impact sections",
+    "Offers at least two options (adapt approach, update plan, or stop and discuss)",
+    "Does NOT silently create src/utils/ or deviate from the plan without user input",
+    "Waits for user decision before continuing"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

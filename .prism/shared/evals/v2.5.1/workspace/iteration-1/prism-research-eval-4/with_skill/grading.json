@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "prism-locator agent is used to check for existing research",
+      "passed": true,
+      "evidence": "repository: prism-plugin"
+    },
+    {
+      "text": "Output is saved to .prism/shared/research/ directory",
+      "passed": true,
+      "evidence": "repository: prism-plugin"
+    },
+    {
+      "text": "Document includes file:line references to SKILL.md files",
+      "passed": true,
+      "evidence": "Prism uses a convention-based skill discovery system built on Claude Code's native plugin architecture. Each skill is a `SKILL.md` file inside `skills/<name>/` with YAML frontmatter containing `name`,"
+    },
+    {
+      "text": "codebase-locator agent is spawned to find skill files",
+      "passed": true,
+      "evidence": "| `commands/research_codebase.md` | Command-level research entry point |"
+    },
+    {
+      "text": "Research template sections are all present (Summary, Files Discovered, etc.)",
+      "passed": true,
+      "evidence": "researcher: Claude"
+    },
+    {
+      "text": "TodoWrite is used to track open questions if any arise",
+      "passed": true,
+      "evidence": "**Also used in**:"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

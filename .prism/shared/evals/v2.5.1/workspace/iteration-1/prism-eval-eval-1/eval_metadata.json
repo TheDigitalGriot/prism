@@ -1,0 +1,26 @@
+{
+  "skill": "prism-eval",
+  "eval_id": 1,
+  "dimension": "output_quality",
+  "prompt": "Run evals for v2.5.0. There are eval cases defined for prism-implement and prism-validate.",
+  "expected_output": "Discovers evals.json files for both skills, creates iteration workspace, spawns parallel eval runs, grades outputs against expectations, builds benchmark.json, generates eval-viewer.html, and presents a results summary table.",
+  "expectations": [
+    "Globs for all evals.json files under .prism/shared/evals/v2.5.0/",
+    "Creates workspace directory with correct iteration number",
+    "Spawns eval runs in parallel using Agent with run_in_background=true",
+    "Captures timing data (total_tokens, duration_ms) as each agent completes",
+    "Grades each output against its expectations from evals.json",
+    "Writes grading.json with passed/failed counts and evidence for each assertion",
+    "Builds benchmark.json with metadata, runs, and run_summary",
+    "Generates eval-viewer.html and opens it in the browser",
+    "Presents a results summary with pass rates per eval case"
+  ],
+  "files": [
+    ".prism/shared/evals/v2.5.0/skills/prism-implement/evals.json",
+    ".prism/shared/evals/v2.5.0/skills/prism-validate/evals.json"
+  ],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

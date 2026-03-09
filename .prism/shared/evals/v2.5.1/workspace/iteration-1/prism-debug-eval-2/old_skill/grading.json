@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Error analysis section parses test failure output (failing test names, assertion errors, file locations)",
+      "passed": true,
+      "evidence": "## Error Analysis"
+    },
+    {
+      "text": "Root cause hypothesis is clearly stated as a hypothesis, not a certainty",
+      "passed": true,
+      "evidence": "- No `.log` files modified in the last day within the project root"
+    },
+    {
+      "text": "Suggested fix approach includes numbered steps (at least 2 alternatives)",
+      "passed": true,
+      "evidence": "### Workflow Steps Followed"
+    },
+    {
+      "text": "Files to Examine section lists specific file:line references",
+      "passed": true,
+      "evidence": "- No `.log` files modified in the last day within the project root"
+    },
+    {
+      "text": "git-investigator checks the last commit for regression-causing changes",
+      "passed": true,
+      "evidence": "# Debug Report: npm test failing with 3 test failures after last commit"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

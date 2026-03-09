@@ -1,0 +1,9 @@
+{
+  "expectations": [
+    {"text": "Design options (Option A, Option B, etc.) are presented with pros and cons", "passed": true, "evidence": "Step 3 presents 3 options (A: Abstraction Layer First, B: Direct Swap, C: ORM Adoption) each with Pros and Cons sections."},
+    {"text": "User is asked to choose an approach before plan is written", "passed": true, "evidence": "Step 3 ends with 'Which approach would you prefer?' and 'WAITS for user to select an approach. Does not proceed until choice is made.'"},
+    {"text": "Questions are asked to resolve unknowns rather than assuming", "passed": true, "evidence": "Step 2 asks 3 questions: target deployment environment, acceptable downtime window, and SQLite-specific features in use."},
+    {"text": "Plan includes migration and rollback considerations (Be Practical philosophy)", "passed": true, "evidence": "Plan includes 'Phase 5: Data Migration Tooling' with scripts and validation, plus a 'Rollback Plan' section with 'Set DB_TYPE=sqlite in environment to instantly switch back.'"}
+  ],
+  "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0}
+}

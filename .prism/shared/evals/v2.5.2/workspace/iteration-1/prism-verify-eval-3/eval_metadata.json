@@ -1,0 +1,15 @@
+{
+  "skill": "prism-verify",
+  "eval_id": 3,
+  "dimension": "regression",
+  "prompt": "Verify the UI looks correct",
+  "expected_output": "If playwright-cli is not installed, skill warns gracefully and skips without erroring. If installed, full verification flow executes with headless mode by default.",
+  "expectations": [
+    "Graceful skip when playwright-cli is not installed \u00e2\u20ac\u201d warning message, no error",
+    "Headless mode is used by default (no --headed flag)",
+    "Artifacts are stored in .prism/local/ (gitignored, never committed)",
+    "Session naming follows verify-{story-id} or verify-{timestamp} convention"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

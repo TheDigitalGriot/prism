@@ -1,0 +1,18 @@
+{
+  "skill": "prism-prd",
+  "eval_id": 1,
+  "dimension": "output_quality",
+  "prompt": "Create a PRD for a task management app with kanban boards and team collaboration features",
+  "expected_output": "A complete PRD saved to .prism/shared/plans/ with DATE-task-management-PRD.md naming, covering problem statement, target users, feature list with priorities, technical requirements, risks, and success metrics",
+  "expectations": [
+    "PRD file is created at .prism/shared/plans/YYYY-MM-DD-*-PRD.md",
+    "Document contains sections: Problem Statement, Target Users, Features, Technical Requirements, Risks, Success Metrics",
+    "Features are prioritized (P0/P1/P2 or MoSCoW)",
+    "Companion document options are offered after PRD generation"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

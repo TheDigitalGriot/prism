@@ -1,0 +1,20 @@
+{
+  "skill": "prism-research",
+  "eval_id": 2,
+  "dimension": "behavioral_compliance",
+  "prompt": "Research the agent spawning architecture in this codebase. How do skills invoke agents via the Task tool?",
+  "expected_output": "Research document produced using graph-navigator agent and parallel agent spawning",
+  "expectations": [
+    "graph-navigator agent is spawned for structural orientation (Step 1b)",
+    "prism-locator agent is spawned to check existing research",
+    "codebase-locator and/or codebase-analyzer agents are spawned",
+    "Multiple agents are spawned in parallel where independent",
+    "No improvement suggestions appear (documentarian, not critic)",
+    "Research output references structural relationships between skills and agents"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

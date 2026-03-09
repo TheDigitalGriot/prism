@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "stories.json is read to understand STORY-005 context",
+      "passed": true,
+      "evidence": "- The quality gate `npm run build` (defined in `stories.json` epic.qualityGates) is the failing gate"
+    },
+    {
+      "text": "progress.md is read for recent history",
+      "passed": true,
+      "evidence": "- Progress.md shows STORY-005 completed successfully in iteration 5, but this debug is for a retry scenario where typecheck failed"
+    },
+    {
+      "text": "Output follows the Spectrum debug progress entry format (Timestamp, Quality Gate Failed, Error Output, Investigation Findings, Root Cause, Suggested Fix)",
+      "passed": true,
+      "evidence": "During Spectrum iteration 5, STORY-005 (\"Build appearance settings panel with live theme preview\") failed the `npm run build` quality gate with TypeScript type errors. The story created three new file"
+    },
+    {
+      "text": "Findings are formatted for appending to progress.md",
+      "passed": true,
+      "evidence": "### Investigation Findings"
+    },
+    {
+      "text": "Typecheck error locations (file:line) are parsed and listed",
+      "passed": true,
+      "evidence": "## Debug Report: STORY-005 Typecheck Quality Gate Failure"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

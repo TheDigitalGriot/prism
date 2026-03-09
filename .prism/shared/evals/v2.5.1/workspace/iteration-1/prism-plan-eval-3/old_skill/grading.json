@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Design options (Option A, Option B, etc.) are presented with pros and cons",
+      "passed": true,
+      "evidence": "### Step 3: Design Options"
+    },
+    {
+      "text": "User is asked to choose an approach before plan is written",
+      "passed": true,
+      "evidence": "# Prism Plan Eval \u2014 v2.4.8 (BASELINE) Skill Execution"
+    },
+    {
+      "text": "Questions are asked to resolve unknowns rather than assuming",
+      "passed": true,
+      "evidence": "**What the skill instructs**: Present understanding to the user in a structured format (Goal, Key Files, Patterns, Constraints, Questions) and **wait for user confirmation**."
+    },
+    {
+      "text": "Plan includes migration and rollback considerations (Be Practical philosophy)",
+      "passed": true,
+      "evidence": "# Prism Plan Eval \u2014 v2.4.8 (BASELINE) Skill Execution"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

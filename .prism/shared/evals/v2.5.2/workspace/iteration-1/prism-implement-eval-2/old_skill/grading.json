@@ -1,0 +1,10 @@
+{
+  "expectations": [
+    {"text": "Detects the mismatch between plan and reality", "passed": true, "evidence": "Step 3: 'This is a mismatch between what the plan specifies and what the codebase actually contains.'"},
+    {"text": "Presents a structured mismatch report with Plan said / Found / Impact sections", "passed": true, "evidence": "Mismatch report has all three: 'Plan said: Create src/utils/helpers.ts', 'Found: There is no src/utils/ directory', 'Impact: Creating src/utils/ would introduce an inconsistent directory structure'"},
+    {"text": "Offers at least two options (adapt approach, update plan, or stop and discuss)", "passed": true, "evidence": "Three options: A) Adapt to src/lib/helpers.ts, B) Update plan to use src/lib/helpers.ts, C) Stop and discuss"},
+    {"text": "Does NOT silently create src/utils/ or deviate from the plan without user input", "passed": true, "evidence": "'No files were modified. No code was written. No silent deviation occurred.'"},
+    {"text": "Waits for user decision before continuing", "passed": true, "evidence": "Steps 4-6 'NOT REACHED because the mismatch was detected during Step 2/3 and execution was halted pending user input.'"}
+  ],
+  "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}
+}

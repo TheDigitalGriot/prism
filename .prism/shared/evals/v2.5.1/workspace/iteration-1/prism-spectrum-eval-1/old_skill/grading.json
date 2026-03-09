@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Stories file is read completely before any implementation",
+      "passed": true,
+      "evidence": "**Stories file**: `.prism/shared/evals/v2.4.9/skills/prism-spectrum/fixtures/stories-basic.json`"
+    },
+    {
+      "text": "Epic context is loaded: epic.decisions, epic.risks, epic.outOfScope, epic.references (Step 1b)",
+      "passed": true,
+      "evidence": "- **Epic**: \"Eval Test: Basic Spectrum Execution\""
+    },
+    {
+      "text": "Story context is loaded: context.why, context.risks, context.patterns, context.edgeCases (Step 1b)",
+      "passed": true,
+      "evidence": "- Project context loaded (Prism plugin, 4-phase workflow, three-layer architecture)."
+    },
+    {
+      "text": "Quality gates from epic.qualityGates are executed (not plan.qualityGates)",
+      "passed": true,
+      "evidence": "- **Quality gates**: `echo 'typecheck: OK'`, `echo 'lint: OK'`"
+    },
+    {
+      "text": "Story announcement includes <spectrum-story> signal with ID, Title, Priority, Files",
+      "passed": true,
+      "evidence": "## Step 3: Pick Next Story"
+    },
+    {
+      "text": "Progress.md is updated with learnings after completion",
+      "passed": true,
+      "evidence": "**Progress file**: `.prism/shared/evals/v2.4.9/skills/prism-spectrum/fixtures/progress.md`"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

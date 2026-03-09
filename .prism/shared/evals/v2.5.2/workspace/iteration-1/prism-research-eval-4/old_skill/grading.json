@@ -1,0 +1,11 @@
+{
+  "expectations": [
+    {"text": "prism-locator agent is used to check for existing research", "passed": true, "evidence": "Section 2 routing mechanism: 'The meta-skill instructs Claude to first spawn a prism-locator agent to check .prism/ for existing artifacts'. Also Pattern 2 shows Task(subagent_type=\"prism-locator\")."},
+    {"text": "Output is saved to .prism/shared/research/ directory", "passed": false, "evidence": "Output is in eval outputs directory (old_skill/outputs/research.md). No explicit mention of saving to .prism/shared/research/."},
+    {"text": "Document includes file:line references to SKILL.md files", "passed": true, "evidence": "Code References include: 'skills/prism/SKILL.md:1-5', 'skills/prism/SKILL.md:15-27', 'skills/prism/SKILL.md:38-44', 'skills/prism-research/SKILL.md:1-5', etc."},
+    {"text": "codebase-locator agent is spawned to find skill files", "passed": false, "evidence": "No mention of spawning codebase-locator agent in this research. The document describes codebase-locator as an available agent but doesn't show it being used."},
+    {"text": "Research template sections are all present (Summary, Files Discovered, etc.)", "passed": true, "evidence": "All sections present: Research Question, Summary, Files Discovered, Component Analysis, Patterns Found, Historical Context, Architecture Notes, Open Questions, Code References."},
+    {"text": "TodoWrite is used to track open questions if any arise", "passed": false, "evidence": "Open Questions section lists 4 questions as markdown checkboxes but no mention of TodoWrite tool being used."}
+  ],
+  "summary": {"passed": 3, "failed": 3, "total": 6, "pass_rate": 0.5}
+}

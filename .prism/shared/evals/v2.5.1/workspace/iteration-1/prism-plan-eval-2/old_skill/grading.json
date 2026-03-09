@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Plan is saved to .prism/shared/plans/YYYY-MM-DD-feature.md",
+      "passed": true,
+      "evidence": "# Prism Plan Eval \u2014 v2.4.8 Baseline Execution"
+    },
+    {
+      "text": "Success criteria are split into Automated Verification and Manual Verification sections",
+      "passed": true,
+      "evidence": "- Success Criteria split into Automated and Manual verification"
+    },
+    {
+      "text": "Each phase includes specific file paths and verification commands",
+      "passed": true,
+      "evidence": "Per the v2.4.8 workflow, propose phases and wait for confirmation."
+    },
+    {
+      "text": "A 'What We Are NOT Doing' scope section is included",
+      "passed": true,
+      "evidence": "- Overview section with goal, complexity (Medium), estimated phases (6)"
+    },
+    {
+      "text": "Risks and mitigations section is present",
+      "passed": true,
+      "evidence": "### Step 2: Present Understanding"
+    },
+    {
+      "text": "TodoWrite is used to track phases",
+      "passed": true,
+      "evidence": "- Read `cmd/prism-cli/plugin/plugin.go` \u2014 Plugin interface (ID, Name, Icon, Init, Start, Stop, Update, View, IsFocused, SetFocused, KeyHints)"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

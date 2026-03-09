@@ -1,0 +1,18 @@
+{
+  "skill": "prism",
+  "eval_id": 1,
+  "dimension": "regression",
+  "prompt": "I need to add a new authentication system to this project. Help me figure out the right approach using the Prism workflow.",
+  "expected_output": "Prism meta-skill activates and routes to the correct starting phase based on existing .prism/ artifacts",
+  "expectations": [
+    "prism-locator agent is spawned to check for existing research/plans in .prism/",
+    "Workflow selection logic is applied (R->P->I->V for unfamiliar work, or abbreviated if artifacts exist)",
+    "The correct phase skill is recommended or invoked based on findings",
+    "If .prism/ directory does not exist, init_prism.py is suggested"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

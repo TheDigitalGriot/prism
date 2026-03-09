@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "New VitePress pages include frontmatter with title, description, outline",
+      "passed": true,
+      "evidence": "- Part I: Plugin Architecture (13 pages)"
+    },
+    {
+      "text": "Config.ts sidebar update is proposed but requires explicit approval",
+      "passed": false,
+      "evidence": "Only 2/7 key terms found: ['config', 'sidebar', 'update', 'proposed', 'requires']"
+    },
+    {
+      "text": "Verification step counts headings and checks line counts",
+      "passed": true,
+      "evidence": "## Step 0: Identify Source File"
+    },
+    {
+      "text": "Final summary reports pages updated, lines added, new pages created, and config changes",
+      "passed": true,
+      "evidence": "## Documentation Update Summary"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  }
+}

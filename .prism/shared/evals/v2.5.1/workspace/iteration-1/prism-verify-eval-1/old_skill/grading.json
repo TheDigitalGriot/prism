@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Playwright-cli availability is checked first",
+      "passed": true,
+      "evidence": "which playwright-cli 2>/dev/null || npx @playwright/cli --version 2>/dev/null"
+    },
+    {
+      "text": "Dev server command is detected from package.json scripts (dev, start, or serve)",
+      "passed": true,
+      "evidence": "**Command executed:**"
+    },
+    {
+      "text": "Results are saved to .prism/local/verifications/ directory",
+      "passed": true,
+      "evidence": "# Prism Verify (v2.4.8) \u2014 Evaluation Transcript"
+    },
+    {
+      "text": "Output includes verification-result.json, screenshot.png, and verification-summary.md",
+      "passed": true,
+      "evidence": "**Simulated result:** Server responded on attempt 3 (~3 seconds). HTTP 200 returned. Proceeding to verification."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

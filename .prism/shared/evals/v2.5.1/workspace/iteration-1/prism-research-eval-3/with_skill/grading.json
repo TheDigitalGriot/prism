@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Mentioned files (spectrum.sh, SKILL.md) are read FULLY before spawning agents (Rule: Read files first)",
+      "passed": true,
+      "evidence": "topic: Spectrum Autonomous Execution Workflow"
+    },
+    {
+      "text": "Document describes the signal protocol (spectrum-continue, spectrum-retry, spectrum-blocked, spectrum-error, promise COMPLETE)",
+      "passed": true,
+      "evidence": "Spectrum is an autonomous loop system for executing large feature implementations as a sequence of small, atomic stories. The bash script `spectrum.sh` acts as the outer orchestrator: it selects the n"
+    },
+    {
+      "text": "Document describes stories.json state management",
+      "passed": true,
+      "evidence": "Spectrum is an autonomous loop system for executing large feature implementations as a sequence of small, atomic stories. The bash script `spectrum.sh` acts as the outer orchestrator: it selects the n"
+    },
+    {
+      "text": "Document describes fresh-context-per-iteration principle",
+      "passed": true,
+      "evidence": "Spectrum is an autonomous loop system for executing large feature implementations as a sequence of small, atomic stories. The bash script `spectrum.sh` acts as the outer orchestrator: it selects the n"
+    },
+    {
+      "text": "No recommendations for how to improve the workflow appear",
+      "passed": true,
+      "evidence": "topic: Spectrum Autonomous Execution Workflow"
+    },
+    {
+      "text": "All agents complete before synthesis (Rule: Wait for completion)",
+      "passed": false,
+      "evidence": "Only 2/6 key terms found: ['agents', 'complete', 'synthesis', 'rule', 'wait']"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.83
+  }
+}

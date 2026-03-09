@@ -1,0 +1,15 @@
+{
+  "skill": "prism-visual-docs",
+  "eval_id": 1,
+  "dimension": "output_quality",
+  "prompt": "Create user flows and wireframes for the e-commerce checkout experience based on our PRD",
+  "expected_output": "Skill locates the PRD via prism-locator, reads it fully, invokes /generate_user_flows with the PRD path, generates user personas, ASCII flow diagrams, wireframes, component library, and responsive specs, then saves to .prism/shared/plans/",
+  "expectations": [
+    "PRD is located and read fully before generating visual docs",
+    "/generate_user_flows command is invoked with the PRD file path",
+    "Output saved to .prism/shared/plans/YYYY-MM-DD-*-USER-FLOWS.md",
+    "Next workflow steps are offered including /prism-plan and /prism-implement"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

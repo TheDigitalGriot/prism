@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Graceful skip when playwright-cli is not installed \u00e2\u20ac\u201d warning message, no error",
+      "passed": true,
+      "evidence": "- Multiple web UIs exist in this repo; the skill would need user input or a heuristic to pick which one to verify when the task is ambiguous."
+    },
+    {
+      "text": "Headless mode is used by default (no --headed flag)",
+      "passed": false,
+      "evidence": "Only 2/6 key terms found: ['headless', 'mode', 'used', 'default', 'headed']"
+    },
+    {
+      "text": "Artifacts are stored in .prism/local/ (gitignored, never committed)",
+      "passed": true,
+      "evidence": "# Prism Verify Skill Execution Transcript"
+    },
+    {
+      "text": "Session naming follows verify-{story-id} or verify-{timestamp} convention",
+      "passed": true,
+      "evidence": "# Prism Verify Skill Execution Transcript"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  }
+}

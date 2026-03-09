@@ -1,0 +1,19 @@
+{
+  "skill": "prism-iterate",
+  "eval_id": 2,
+  "dimension": "regression",
+  "prompt": "The user says 'the sidebar layout needs to change from vertical to horizontal'. Iterate on the plan to accommodate this vague feedback.",
+  "expected_output": "Questions the vague feedback before making changes. Asks clarifying questions about which sidebar, what horizontal means in context, and impact on other phases.",
+  "expectations": [
+    "Does not immediately rewrite the plan based on vague feedback",
+    "Asks clarifying questions (which sidebar, what does horizontal mean, scope of change)",
+    "Follows the 'Be Skeptical' philosophy \u00e2\u20ac\u201d questions vague feedback and verifies feasibility",
+    "Follows the 'Be Interactive' philosophy \u00e2\u20ac\u201d confirms understanding before making changes",
+    "Only proceeds with plan changes after getting clear answers"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

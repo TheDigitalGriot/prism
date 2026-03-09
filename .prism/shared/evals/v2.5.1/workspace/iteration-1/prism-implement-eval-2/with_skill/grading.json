@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Detects the mismatch between plan and reality",
+      "passed": true,
+      "evidence": "**Task**: \"Continue implementing the plan. Phase 3 specifies creating src/utils/helpers.ts but the directory structure is different than expected \u2014 there is no src/utils/ directory, only src/lib/.\""
+    },
+    {
+      "text": "Presents a structured mismatch report with Plan said / Found / Impact sections",
+      "passed": true,
+      "evidence": "**Task**: \"Continue implementing the plan. Phase 3 specifies creating src/utils/helpers.ts but the directory structure is different than expected \u2014 there is no src/utils/ directory, only src/lib/.\""
+    },
+    {
+      "text": "Offers at least two options (adapt approach, update plan, or stop and discuss)",
+      "passed": true,
+      "evidence": "- Rule #1: \"Follow the plan \u2014 Adapt but preserve intent\""
+    },
+    {
+      "text": "Does NOT silently create src/utils/ or deviate from the plan without user input",
+      "passed": true,
+      "evidence": "**Task**: \"Continue implementing the plan. Phase 3 specifies creating src/utils/helpers.ts but the directory structure is different than expected \u2014 there is no src/utils/ directory, only src/lib/.\""
+    },
+    {
+      "text": "Waits for user decision before continuing",
+      "passed": true,
+      "evidence": "## Step 4: STOP \u2014 Awaiting User Decision"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "expectations": [
+    {"text": "Mentioned files (spectrum.sh, SKILL.md) are read FULLY before spawning agents (Rule: Read files first)", "passed": true, "evidence": "Workflow Steps: 'Read mentioned files first (Step 0): Read scripts/spectrum.sh and skills/prism-spectrum/SKILL.md fully before analysis.'"},
+    {"text": "Document describes the signal protocol (spectrum-continue, spectrum-retry, spectrum-blocked, spectrum-error, promise COMPLETE)", "passed": true, "evidence": "Section 5 'Signal Protocol' has a full table listing all 5 signals with their meanings and spectrum.sh actions."},
+    {"text": "Document describes stories.json state management", "passed": true, "evidence": "Section 6 'stories.json Schema' describes the full structure including epic and stories arrays with status fields."},
+    {"text": "Document describes fresh-context-per-iteration principle", "passed": true, "evidence": "'Fresh Context Pattern' section: 'Each iteration spawns a completely fresh Claude session via claude --print. No context carries between sessions.'"},
+    {"text": "No recommendations for how to improve the workflow appear", "passed": true, "evidence": "Document only describes what exists. Architecture Notes section states facts without suggestions. No improvement recommendations found."},
+    {"text": "All agents complete before synthesis (Rule: Wait for completion)", "passed": true, "evidence": "Workflow steps show sequential analysis: locate, then analyze, then find patterns, then save. No premature synthesis before agent steps complete."}
+  ],
+  "summary": {"passed": 6, "failed": 0, "total": 6, "pass_rate": 1.0}
+}

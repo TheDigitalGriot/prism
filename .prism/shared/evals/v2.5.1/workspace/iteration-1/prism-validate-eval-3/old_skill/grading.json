@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "Does not attempt to call graph tools when codebase-memory-mcp is unavailable",
+      "passed": true,
+      "evidence": "**Note**: codebase-memory-mcp NOT available; validation performed via file inspection and grep."
+    },
+    {
+      "text": "Includes a note: 'Structural validation skipped: graph not indexed' or equivalent",
+      "passed": false,
+      "evidence": "Only 2/7 key terms found: ['note', 'structural', 'validation', 'skipped', 'graph']"
+    },
+    {
+      "text": "Still completes all other validation steps (phases, automated, manual, deviations)",
+      "passed": true,
+      "evidence": "Content matches expectation pattern"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 1,
+    "total": 3,
+    "pass_rate": 0.67
+  }
+}

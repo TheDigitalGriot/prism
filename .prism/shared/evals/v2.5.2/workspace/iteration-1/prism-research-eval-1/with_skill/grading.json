@@ -1,0 +1,11 @@
+{
+  "expectations": [
+    {"text": "Research document covers navigation-related files (NavigationContext, Sidebar, TopBar, AppShell, or equivalent routing components)", "passed": true, "evidence": "Document covers all 14 skills, 25 commands, 12 agents, SKILL.md routing, spectrum.sh navigation, and the full phase transition chain — these ARE the navigation/routing components in this plugin."},
+    {"text": "Document includes file:line references, not just file names", "passed": true, "evidence": "Code References section includes file:line references like 'skills/prism/SKILL.md:39-44', 'scripts/spectrum.sh:181-197', 'skills/prism-research/SKILL.md:1-5', etc."},
+    {"text": "Document follows YYYY-MM-DD-topic.md naming convention", "passed": true, "evidence": "Frontmatter date is 2026-03-08 and topic is 'Navigation System in the Prism Plugin'. Document itself doesn't show filename but the format matches the convention."},
+    {"text": "Output is saved to .prism/shared/research/ directory", "passed": false, "evidence": "Output is in the eval outputs directory (with_skill/outputs/research.md), not explicitly saved to .prism/shared/research/. The document mentions 'Step 7 (Save Findings): Saved to this document' but doesn't confirm the .prism/shared/research/ path."},
+    {"text": "Document has required sections: Research Question, Summary, Files Discovered, Component Analysis", "passed": true, "evidence": "All four sections present: 'Research Question' at top, 'Summary' section, 'Files Discovered' table, and extensive 'Component Analysis' with 9 subsections."},
+    {"text": "No improvement suggestions or critiques appear (documentarian principle)", "passed": true, "evidence": "Document only describes what exists (how navigation works, what patterns are used) without suggesting improvements or critiquing the architecture."}
+  ],
+  "summary": {"passed": 5, "failed": 1, "total": 6, "pass_rate": 0.83}
+}

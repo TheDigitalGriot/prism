@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "PRD depth matches lightweight/MVP calibration \u00e2\u20ac\u201d not enterprise-level exhaustive detail",
+      "passed": true,
+      "evidence": "**Depth:** Lightweight (MVP)"
+    },
+    {
+      "text": "Quality gates are checked: problem statement, target user, features, feasibility, scope, metrics, risks, open questions",
+      "passed": true,
+      "evidence": "| Low template quality hurts adoption | Medium | High | Hire a designer for initial 8 templates; user-test before launch |"
+    },
+    {
+      "text": "TodoWrite is used to track PRD items",
+      "passed": true,
+      "evidence": "A simple, no-code landing page builder that enables solo founders, marketers, and small teams to publish conversion-focused landing pages in minutes \u2014 without hiring a developer or learning a design t"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  }
+}

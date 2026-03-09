@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Loads the plan file and identifies current phase status before making changes",
+      "passed": true,
+      "evidence": "**Task**: \"Implement the plan at .prism/shared/plans/2026-03-01-three-package-split.md starting from Phase 1. The plan has 20 phases total.\""
+    },
+    {
+      "text": "Reads ALL files listed in Phase 1 before modifying anything",
+      "passed": true,
+      "evidence": "**Task**: \"Implement the plan at .prism/shared/plans/2026-03-01-three-package-split.md starting from Phase 1. The plan has 20 phases total.\""
+    },
+    {
+      "text": "Marks each step checkbox as completed: - [x]",
+      "passed": true,
+      "evidence": "## Step 1: Load Plan (Skill Workflow \u00a71)"
+    },
+    {
+      "text": "Runs verification commands specified in the plan",
+      "passed": true,
+      "evidence": "| Phase | Checkpoint Marked? | Automated Verification |"
+    },
+    {
+      "text": "Marks the phase checkpoint as complete",
+      "passed": true,
+      "evidence": "**Task**: \"Implement the plan at .prism/shared/plans/2026-03-01-three-package-split.md starting from Phase 1. The plan has 20 phases total.\""
+    },
+    {
+      "text": "Presents a Phase 1 Complete summary with changes, verification status, and next phase",
+      "passed": true,
+      "evidence": "**Task**: \"Implement the plan at .prism/shared/plans/2026-03-01-three-package-split.md starting from Phase 1. The plan has 20 phases total.\""
+    },
+    {
+      "text": "Stops and waits for user approval before proceeding to Phase 2",
+      "passed": true,
+      "evidence": "- Add `claude` CLI not-found detection with user-friendly error"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

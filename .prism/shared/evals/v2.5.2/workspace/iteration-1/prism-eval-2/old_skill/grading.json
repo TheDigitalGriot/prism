@@ -1,0 +1,9 @@
+{
+  "expectations": [
+    {"text": "Response references the workflow selection table (R->P->I->V for unfamiliar, P->I->V for known, etc.)", "passed": true, "evidence": "Step 2 reproduces the full workflow selection table with all 4 scenarios and selects 'Full R -> P -> I -> V'."},
+    {"text": "Each recommended phase includes its output artifact path (e.g., .prism/shared/research/YYYY-MM-DD-topic.md)", "passed": true, "evidence": "Phase 1: '.prism/shared/research/2026-03-08-command-routing.md', Phase 2: '.prism/shared/plans/2026-03-08-command-routing-refactor.md', Phase 4: '.prism/shared/validation/2026-03-08-command-routing-report.md'"},
+    {"text": "Debug and Validate phases are mentioned as part of the full workflow", "passed": true, "evidence": "Phase 4 covers Validate in detail. Step 4 mentions '/prism-debug': 'If quality gates fail during implementation, this spawns investigation agents to diagnose issues.'"},
+    {"text": "Context management thresholds are referenced if session is long", "passed": false, "evidence": "No mention of context management thresholds anywhere in the transcript."}
+  ],
+  "summary": {"passed": 3, "failed": 1, "total": 4, "pass_rate": 0.75}
+}

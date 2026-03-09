@@ -1,0 +1,17 @@
+{
+  "skill": "prism-research",
+  "eval_id": 1,
+  "dimension": "output_quality",
+  "prompt": "Research the navigation system in this codebase and document how it works. This project is a Claude Code plugin with skills, agents, and commands.",
+  "expected_output": "Comprehensive research document following the prism-research template with file:line references",
+  "expectations": [
+    "Research document covers navigation-related files (NavigationContext, Sidebar, TopBar, AppShell, or equivalent routing components)",
+    "Document includes file:line references, not just file names",
+    "Document follows YYYY-MM-DD-topic.md naming convention",
+    "Output is saved to .prism/shared/research/ directory",
+    "Document has required sections: Research Question, Summary, Files Discovered, Component Analysis",
+    "No improvement suggestions or critiques appear (documentarian principle)"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

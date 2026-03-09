@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Depth calibration matches low-fidelity/MVP \u00e2\u20ac\u201d focuses on key flows only",
+      "passed": true,
+      "evidence": "**Result:** No explicit PRD was provided by the user. No PRD file was found that directly matches \"dashboard MVP.\" Related files exist (e.g., `2026-03-07-prism-eval-admin-dashboard.md`) but no canonic"
+    },
+    {
+      "text": "/generate_tech_spec command is also invoked for the tech spec request",
+      "passed": true,
+      "evidence": "**Task:** \"Design low-fidelity wireframes for our dashboard MVP, we also need a tech spec\""
+    },
+    {
+      "text": "Both USER-FLOWS.md and TECHNICAL-SPEC.md files are saved to .prism/shared/plans/",
+      "passed": true,
+      "evidence": "**Result:** No explicit PRD was provided by the user. No PRD file was found that directly matches \"dashboard MVP.\" Related files exist (e.g., `2026-03-07-prism-eval-admin-dashboard.md`) but no canonic"
+    },
+    {
+      "text": "TodoWrite tracks visual doc items (personas, flows, inventory, wireframes, components, breakpoints)",
+      "passed": true,
+      "evidence": "# Prism Visual Docs Evaluation \u2014 OLD Skill (v2.4.8)"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

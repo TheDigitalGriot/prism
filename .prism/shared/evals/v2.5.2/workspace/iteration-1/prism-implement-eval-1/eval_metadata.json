@@ -1,0 +1,18 @@
+{
+  "skill": "prism-implement",
+  "eval_id": 1,
+  "dimension": "output_quality",
+  "prompt": "Implement the plan at .prism/shared/plans/2026-03-01-three-package-split.md starting from Phase 1. The plan has 20 phases total.",
+  "expected_output": "Phase 1 is implemented with verification run, checkpoint marked complete, and a stop-and-confirm message asking for approval before Phase 2.",
+  "expectations": [
+    "Loads the plan file and identifies current phase status before making changes",
+    "Reads ALL files listed in Phase 1 before modifying anything",
+    "Marks each step checkbox as completed: - [x]",
+    "Runs verification commands specified in the plan",
+    "Marks the phase checkpoint as complete",
+    "Presents a Phase 1 Complete summary with changes, verification status, and next phase",
+    "Stops and waits for user approval before proceeding to Phase 2"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

@@ -1,0 +1,23 @@
+{
+  "skill": "prism-release",
+  "eval_id": 2,
+  "dimension": "behavioral_compliance",
+  "prompt": "Release a new minor version. The current version is 2.5.0. I want a minor bump.",
+  "expected_output": "After building and pushing, creates an eval snapshot at .prism/shared/evals/v2.6.0-snapshot/ by copying skills/, agents/, commands/, and scripts/. Then generates evals.json files for each skill.",
+  "expectations": [
+    "Creates snapshot directory at .prism/shared/evals/v2.6.0-snapshot/",
+    "Copies skills/, agents/, commands/, and scripts/ into the snapshot directory",
+    "Verifies the snapshot by listing contents and counting items",
+    "Finds the previous snapshot to use as baseline for diffing",
+    "Generates evals.json files for each skill under .prism/shared/evals/v2.6.0/skills/<name>/",
+    "Adds eval files to the release commit with git add and amend",
+    "Re-tags after amending the commit"
+  ],
+  "files": [
+    "VERSION"
+  ],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

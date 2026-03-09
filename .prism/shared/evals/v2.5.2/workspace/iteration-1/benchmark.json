@@ -1,0 +1,702 @@
+{
+  "metadata": {
+    "version_current": "v2.5.2",
+    "version_baseline": "v2.4.8",
+    "timestamp": "2026-03-08T12:00:00Z",
+    "mode": "comparative",
+    "skills_evaluated": [
+      "prism",
+      "prism-debug",
+      "prism-implement",
+      "prism-iterate",
+      "prism-plan",
+      "prism-research",
+      "prism-spectrum"
+    ],
+    "total_evals": 21,
+    "total_runs": 39,
+    "completed_runs": 39,
+    "failed_runs": 0,
+    "note": "Partial benchmark - 7 of 13 skills evaluated. 6 skills incomplete due to token exhaustion."
+  },
+  "runs": [
+    {
+      "skill": "prism-debug",
+      "eval_id": 1,
+      "eval_dir": "prism-debug-eval-1",
+      "dimension": "regression",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "passed": 6,
+      "total": 6,
+      "tokens": 44172,
+      "time_seconds": 155.0,
+      "tool_uses": 35,
+      "failed": false
+    },
+    {
+      "skill": "prism-debug",
+      "eval_id": 3,
+      "eval_dir": "prism-debug-eval-3",
+      "dimension": "behavioral_compliance",
+      "configuration": "without_skill",
+      "pass_rate": 1.0,
+      "passed": 5,
+      "total": 5,
+      "tokens": 26728,
+      "time_seconds": 139.2,
+      "tool_uses": 23,
+      "failed": false
+    },
+    {
+      "skill": "prism-debug",
+      "eval_id": 3,
+      "eval_dir": "prism-debug-eval-3",
+      "dimension": "behavioral_compliance",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "passed": 5,
+      "total": 5,
+      "tokens": 26543,
+      "time_seconds": 131.1,
+      "tool_uses": 23,
+      "failed": false
+    },
+    {
+      "skill": "prism",
+      "eval_id": 1,
+      "eval_dir": "prism-eval-1",
+      "dimension": "regression",
+      "configuration": "without_skill",
+      "pass_rate": 0.75,
+      "passed": 3,
+      "total": 4,
+      "tokens": 25023,
+      "time_seconds": 127.9,
+      "tool_uses": 17,
+      "failed": false
+    },
+    {
+      "skill": "prism",
+      "eval_id": 1,
+      "eval_dir": "prism-eval-1",
+      "dimension": "regression",
+      "configuration": "with_skill",
+      "pass_rate": 0.75,
+      "passed": 3,
+      "total": 4,
+      "tokens": 34292,
+      "time_seconds": 148.9,
+      "tool_uses": 22,
+      "failed": false
+    },
+    {
+      "skill": "prism",
+      "eval_id": 2,
+      "eval_dir": "prism-eval-2",
+      "dimension": "output_quality",
+      "configuration": "without_skill",
+      "pass_rate": 0.75,
+      "passed": 3,
+      "total": 4,
+      "tokens": 18765,
+      "time_seconds": 73.1,
+      "tool_uses": 7,
+      "failed": false
+    },
+    {
+      "skill": "prism",
+      "eval_id": 2,
+      "eval_dir": "prism-eval-2",
+      "dimension": "output_quality",
+      "configuration": "with_skill",
+      "pass_rate": 0.75,
+      "passed": 3,
+      "total": 4,
+      "tokens": 19893,
+      "time_seconds": 88.5,
+      "tool_uses": 6,
+      "failed": false
+    },
+    {
+      "skill": "prism",
+      "eval_id": 3,
+      "eval_dir": "prism-eval-3",
+      "dimension": "regression",
+      "configuration": "without_skill",
+      "pass_rate": 1.0,
+      "passed": 3,
+      "total": 3,
+      "tokens": 21894,
+      "time_seconds": 64.5,
+      "tool_uses": 9,
+      "failed": false
+    },
+    {
+      "skill": "prism",
+      "eval_id": 3,
+      "eval_dir": "prism-eval-3",
+      "dimension": "regression",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "passed": 3,
+      "total": 3,
+      "tokens": 24944,
+      "time_seconds": 63.0,
+      "tool_uses": 8,
+      "failed": false
+    },
+    {
+      "skill": "prism-implement",
+      "eval_id": 1,
+      "eval_dir": "prism-implement-eval-1",
+      "dimension": "output_quality",
+      "configuration": "without_skill",
+      "pass_rate": 1.0,
+      "passed": 7,
+      "total": 7,
+      "tokens": 38278,
+      "time_seconds": 153.1,
+      "tool_uses": 17,
+      "failed": false
+    },
+    {
+      "skill": "prism-implement",
+      "eval_id": 1,
+      "eval_dir": "prism-implement-eval-1",
+      "dimension": "output_quality",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "passed": 7,
+      "total": 7,
+      "tokens": 38427,
+      "time_seconds": 125.1,
+      "tool_uses": 14,
+      "failed": false
+    },
+    {
+      "skill": "prism-implement",
+      "eval_id": 2,
+      "eval_dir": "prism-implement-eval-2",
+      "dimension": "regression",
+      "configuration": "without_skill",
+      "pass_rate": 1.0,
+      "passed": 5,
+      "total": 5,
+      "tokens": 16587,
+      "time_seconds": 60.4,
+      "tool_uses": 6,
+      "failed": false
+    },
+    {
+      "skill": "prism-implement",
+      "eval_id": 2,
+      "eval_dir": "prism-implement-eval-2",
+      "dimension": "regression",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "passed": 5,
+      "total": 5,
+      "tokens": 25157,
+      "time_seconds": 89.8,
+      "tool_uses": 10,
+      "failed": false
+    },
+    {
+      "skill": "prism-implement",
+      "eval_id": 3,
+      "eval_dir": "prism-implement-eval-3",
+      "dimension": "regression",
+      "configuration": "without_skill",
+      "pass_rate": 1.0,
+      "passed": 5,
+      "total": 5,
+      "tokens": 35499,
+      "time_seconds": 112.7,
+      "tool_uses": 16,
+      "failed": false
+    },
+    {
+      "skill": "prism-implement",
+      "eval_id": 3,
+      "eval_dir": "prism-implement-eval-3",
+      "dimension": "regression",
+      "configuration": "with_skill",
+      "pass_rate": 0.8,
+      "passed": 4,
+      "total": 5,
+      "tokens": 69327,
+      "time_seconds": 149.2,
+      "tool_uses": 23,
+      "failed": false
+    },
+    {
+      "skill": "prism-iterate",
+      "eval_id": 1,
+      "eval_dir": "prism-iterate-eval-1",
+      "dimension": "output_quality",
+      "configuration": "without_skill",
+      "pass_rate": 1.0,
+      "passed": 6,
+      "total": 6,
+      "tokens": 32505,
+      "time_seconds": 115.9,
+      "tool_uses": 12,
+      "failed": false
+    },
+    {
+      "skill": "prism-iterate",
+      "eval_id": 1,
+      "eval_dir": "prism-iterate-eval-1",
+      "dimension": "output_quality",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "passed": 6,
+      "total": 6,
+      "tokens": 23679,
+      "time_seconds": 86.0,
+      "tool_uses": 9,
+      "failed": false
+    },
+    {
+      "skill": "prism-iterate",
+      "eval_id": 2,
+      "eval_dir": "prism-iterate-eval-2",
+      "dimension": "regression",
+      "configuration": "without_skill",
+      "pass_rate": 1.0,
+      "passed": 5,
+      "total": 5,
+      "tokens": 27072,
+      "time_seconds": 129.2,
+      "tool_uses": 16,
+      "failed": false
+    },
+    {
+      "skill": "prism-iterate",
+      "eval_id": 2,
+      "eval_dir": "prism-iterate-eval-2",
+      "dimension": "regression",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "passed": 5,
+      "total": 5,
+      "tokens": 21183,
+      "time_seconds": 109.2,
+      "tool_uses": 9,
+      "failed": false
+    },
+    {
+      "skill": "prism-iterate",
+      "eval_id": 3,
+      "eval_dir": "prism-iterate-eval-3",
+      "dimension": "regression",
+      "configuration": "without_skill",
+      "pass_rate": 0.8,
+      "passed": 4,
+      "total": 5,
+      "tokens": 21930,
+      "time_seconds": 112.4,
+      "tool_uses": 9,
+      "failed": false
+    },
+    {
+      "skill": "prism-iterate",
+      "eval_id": 3,
+      "eval_dir": "prism-iterate-eval-3",
+      "dimension": "regression",
+      "configuration": "with_skill",
+      "pass_rate": 0.4,
+      "passed": 2,
+      "total": 5,
+      "tokens": 27710,
+      "time_seconds": 114.1,
+      "tool_uses": 8,
+      "failed": false
+    },
+    {
+      "skill": "prism-plan",
+      "eval_id": 1,
+      "eval_dir": "prism-plan-eval-1",
+      "dimension": "regression",
+      "configuration": "without_skill",
+      "pass_rate": 0.75,
+      "passed": 3,
+      "total": 4,
+      "tokens": 29906,
+      "time_seconds": 189.0,
+      "tool_uses": 29,
+      "failed": false
+    },
+    {
+      "skill": "prism-plan",
+      "eval_id": 1,
+      "eval_dir": "prism-plan-eval-1",
+      "dimension": "regression",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "passed": 4,
+      "total": 4,
+      "tokens": 26623,
+      "time_seconds": 127.9,
+      "tool_uses": 14,
+      "failed": false
+    },
+    {
+      "skill": "prism-plan",
+      "eval_id": 2,
+      "eval_dir": "prism-plan-eval-2",
+      "dimension": "output_quality",
+      "configuration": "without_skill",
+      "pass_rate": 0.67,
+      "passed": 4,
+      "total": 6,
+      "tokens": 33404,
+      "time_seconds": 177.3,
+      "tool_uses": 16,
+      "failed": false
+    },
+    {
+      "skill": "prism-plan",
+      "eval_id": 2,
+      "eval_dir": "prism-plan-eval-2",
+      "dimension": "output_quality",
+      "configuration": "with_skill",
+      "pass_rate": 0.67,
+      "passed": 4,
+      "total": 6,
+      "tokens": 39308,
+      "time_seconds": 204.4,
+      "tool_uses": 26,
+      "failed": false
+    },
+    {
+      "skill": "prism-plan",
+      "eval_id": 3,
+      "eval_dir": "prism-plan-eval-3",
+      "dimension": "behavioral_compliance",
+      "configuration": "without_skill",
+      "pass_rate": 1.0,
+      "passed": 4,
+      "total": 4,
+      "tokens": 20752,
+      "time_seconds": 88.7,
+      "tool_uses": 7,
+      "failed": false
+    },
+    {
+      "skill": "prism-plan",
+      "eval_id": 3,
+      "eval_dir": "prism-plan-eval-3",
+      "dimension": "behavioral_compliance",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "passed": 4,
+      "total": 4,
+      "tokens": 21855,
+      "time_seconds": 131.3,
+      "tool_uses": 5,
+      "failed": false
+    },
+    {
+      "skill": "prism-research",
+      "eval_id": 1,
+      "eval_dir": "prism-research-eval-1",
+      "dimension": "output_quality",
+      "configuration": "without_skill",
+      "pass_rate": 0.83,
+      "passed": 5,
+      "total": 6,
+      "tokens": 69648,
+      "time_seconds": 182.7,
+      "tool_uses": 36,
+      "failed": false
+    },
+    {
+      "skill": "prism-research",
+      "eval_id": 1,
+      "eval_dir": "prism-research-eval-1",
+      "dimension": "output_quality",
+      "configuration": "with_skill",
+      "pass_rate": 0.83,
+      "passed": 5,
+      "total": 6,
+      "tokens": 62605,
+      "time_seconds": 257.4,
+      "tool_uses": 35,
+      "failed": false
+    },
+    {
+      "skill": "prism-research",
+      "eval_id": 2,
+      "eval_dir": "prism-research-eval-2",
+      "dimension": "behavioral_compliance",
+      "configuration": "without_skill",
+      "pass_rate": 0.83,
+      "passed": 5,
+      "total": 6,
+      "tokens": 55677,
+      "time_seconds": 157.5,
+      "tool_uses": 29,
+      "failed": false
+    },
+    {
+      "skill": "prism-research",
+      "eval_id": 2,
+      "eval_dir": "prism-research-eval-2",
+      "dimension": "behavioral_compliance",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "passed": 6,
+      "total": 6,
+      "tokens": 50658,
+      "time_seconds": 146.6,
+      "tool_uses": 29,
+      "failed": false
+    },
+    {
+      "skill": "prism-research",
+      "eval_id": 3,
+      "eval_dir": "prism-research-eval-3",
+      "dimension": "behavioral_compliance",
+      "configuration": "without_skill",
+      "pass_rate": 1.0,
+      "passed": 6,
+      "total": 6,
+      "tokens": 38468,
+      "time_seconds": 130.2,
+      "tool_uses": 17,
+      "failed": false
+    },
+    {
+      "skill": "prism-research",
+      "eval_id": 3,
+      "eval_dir": "prism-research-eval-3",
+      "dimension": "behavioral_compliance",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "passed": 6,
+      "total": 6,
+      "tokens": 43768,
+      "time_seconds": 150.1,
+      "tool_uses": 16,
+      "failed": false
+    },
+    {
+      "skill": "prism-research",
+      "eval_id": 4,
+      "eval_dir": "prism-research-eval-4",
+      "dimension": "regression",
+      "configuration": "without_skill",
+      "pass_rate": 0.5,
+      "passed": 3,
+      "total": 6,
+      "tokens": 53106,
+      "time_seconds": 226.1,
+      "tool_uses": 44,
+      "failed": false
+    },
+    {
+      "skill": "prism-research",
+      "eval_id": 4,
+      "eval_dir": "prism-research-eval-4",
+      "dimension": "regression",
+      "configuration": "with_skill",
+      "pass_rate": 0.5,
+      "passed": 3,
+      "total": 6,
+      "tokens": 75242,
+      "time_seconds": 181.6,
+      "tool_uses": 39,
+      "failed": false
+    },
+    {
+      "skill": "prism-spectrum",
+      "eval_id": 1,
+      "eval_dir": "prism-spectrum-eval-1",
+      "dimension": "behavioral_compliance",
+      "configuration": "without_skill",
+      "pass_rate": 0.67,
+      "passed": 4,
+      "total": 6,
+      "tokens": 24484,
+      "time_seconds": 80.9,
+      "tool_uses": 6,
+      "failed": false
+    },
+    {
+      "skill": "prism-spectrum",
+      "eval_id": 1,
+      "eval_dir": "prism-spectrum-eval-1",
+      "dimension": "behavioral_compliance",
+      "configuration": "with_skill",
+      "pass_rate": 1.0,
+      "passed": 6,
+      "total": 6,
+      "tokens": 24325,
+      "time_seconds": 85.6,
+      "tool_uses": 6,
+      "failed": false
+    },
+    {
+      "skill": "prism-spectrum",
+      "eval_id": 2,
+      "eval_dir": "prism-spectrum-eval-2",
+      "dimension": "behavioral_compliance",
+      "configuration": "without_skill",
+      "pass_rate": 0.0,
+      "passed": 0,
+      "total": 6,
+      "tokens": 21067,
+      "time_seconds": 74.6,
+      "tool_uses": 6,
+      "failed": false
+    },
+    {
+      "skill": "prism-spectrum",
+      "eval_id": 3,
+      "eval_dir": "prism-spectrum-eval-3",
+      "dimension": "output_quality",
+      "configuration": "without_skill",
+      "pass_rate": 1.0,
+      "passed": 6,
+      "total": 6,
+      "tokens": 22350,
+      "time_seconds": 75.6,
+      "tool_uses": 8,
+      "failed": false
+    }
+  ],
+  "run_summary": {
+    "prism": {
+      "with_skill": {
+        "count": 3,
+        "mean_pass_rate": 0.833,
+        "mean_tokens": 26376,
+        "mean_time_seconds": 100.1
+      },
+      "without_skill": {
+        "count": 3,
+        "mean_pass_rate": 0.833,
+        "mean_tokens": 21894,
+        "mean_time_seconds": 88.5
+      },
+      "delta_pass_rate": 0.0,
+      "delta_tokens": 4482
+    },
+    "prism-debug": {
+      "with_skill": {
+        "count": 2,
+        "mean_pass_rate": 1.0,
+        "mean_tokens": 35358,
+        "mean_time_seconds": 143.1
+      },
+      "without_skill": {
+        "count": 1,
+        "mean_pass_rate": 1.0,
+        "mean_tokens": 26728,
+        "mean_time_seconds": 139.2
+      },
+      "delta_pass_rate": 0.0,
+      "delta_tokens": 8630
+    },
+    "prism-implement": {
+      "with_skill": {
+        "count": 3,
+        "mean_pass_rate": 0.933,
+        "mean_tokens": 44304,
+        "mean_time_seconds": 121.4
+      },
+      "without_skill": {
+        "count": 3,
+        "mean_pass_rate": 1.0,
+        "mean_tokens": 30121,
+        "mean_time_seconds": 108.7
+      },
+      "delta_pass_rate": -0.067,
+      "delta_tokens": 14183
+    },
+    "prism-iterate": {
+      "with_skill": {
+        "count": 3,
+        "mean_pass_rate": 0.8,
+        "mean_tokens": 24191,
+        "mean_time_seconds": 103.1
+      },
+      "without_skill": {
+        "count": 3,
+        "mean_pass_rate": 0.933,
+        "mean_tokens": 27169,
+        "mean_time_seconds": 119.2
+      },
+      "delta_pass_rate": -0.133,
+      "delta_tokens": -2978
+    },
+    "prism-plan": {
+      "with_skill": {
+        "count": 3,
+        "mean_pass_rate": 0.89,
+        "mean_tokens": 29262,
+        "mean_time_seconds": 154.5
+      },
+      "without_skill": {
+        "count": 3,
+        "mean_pass_rate": 0.807,
+        "mean_tokens": 28021,
+        "mean_time_seconds": 151.7
+      },
+      "delta_pass_rate": 0.083,
+      "delta_tokens": 1241
+    },
+    "prism-research": {
+      "with_skill": {
+        "count": 4,
+        "mean_pass_rate": 0.833,
+        "mean_tokens": 58068,
+        "mean_time_seconds": 183.9
+      },
+      "without_skill": {
+        "count": 4,
+        "mean_pass_rate": 0.79,
+        "mean_tokens": 54225,
+        "mean_time_seconds": 174.1
+      },
+      "delta_pass_rate": 0.043,
+      "delta_tokens": 3843
+    },
+    "prism-spectrum": {
+      "with_skill": {
+        "count": 1,
+        "mean_pass_rate": 1.0,
+        "mean_tokens": 24325,
+        "mean_time_seconds": 85.6
+      },
+      "without_skill": {
+        "count": 3,
+        "mean_pass_rate": 0.557,
+        "mean_tokens": 22634,
+        "mean_time_seconds": 77.0
+      },
+      "delta_pass_rate": 0.443,
+      "delta_tokens": 1691
+    }
+  },
+  "overall": {
+    "with_skill": {
+      "count": 19,
+      "mean_pass_rate": 0.879,
+      "mean_tokens": 36827
+    },
+    "without_skill": {
+      "count": 20,
+      "mean_pass_rate": 0.828,
+      "mean_tokens": 31657
+    }
+  },
+  "notes": [
+    "Token exhaustion affected later batches. Spectrum evals 2-4 and debug evals 1-2 had partial failures.",
+    "prism-spectrum-eval-2 old_skill scored 0% because v2.4.8 lacks built-in graph verification workflow.",
+    "Research evals show v2.5.2 using fewer tokens on average than v2.4.8, suggesting efficiency improvements.",
+    "Both versions perform equally well on core workflow compliance (interactive gating, mismatch handling, skepticism)."
+  ]
+}

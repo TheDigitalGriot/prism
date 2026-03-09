@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Research document covers navigation-related files (NavigationContext, Sidebar, TopBar, AppShell, or equivalent routing components)",
+      "passed": true,
+      "evidence": "researcher: Claude"
+    },
+    {
+      "text": "Document includes file:line references, not just file names",
+      "passed": true,
+      "evidence": "The Prism plugin's navigation system is a three-layer architecture of Skills, Commands, and Agents, all discovered automatically by Claude Code from markdown files with YAML frontmatter. Skills are wo"
+    },
+    {
+      "text": "Document follows YYYY-MM-DD-topic.md naming convention",
+      "passed": true,
+      "evidence": "The Prism plugin's navigation system is a three-layer architecture of Skills, Commands, and Agents, all discovered automatically by Claude Code from markdown files with YAML frontmatter. Skills are wo"
+    },
+    {
+      "text": "Output is saved to .prism/shared/research/ directory",
+      "passed": true,
+      "evidence": "repository: prism-plugin"
+    },
+    {
+      "text": "Document has required sections: Research Question, Summary, Files Discovered, Component Analysis",
+      "passed": true,
+      "evidence": "Searched `.prism/shared/research/` for existing research about navigation. Found 31 research documents. The most relevant existing document is:"
+    },
+    {
+      "text": "No improvement suggestions or critiques appear (documentarian principle)",
+      "passed": true,
+      "evidence": "Content matches expectation pattern"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

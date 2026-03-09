@@ -1,0 +1,9 @@
+{
+  "expectations": [
+    {"text": "prism-analyzer agent is spawned to extract decisions, constraints, and patterns from the research document", "passed": true, "evidence": "Step 1: 'Simulated agent spawn: Task(subagent_type=\"prism-analyzer\") \"Analyze .prism/shared/research/2026-03-07-websocket-research.md. Extract decisions, constraints, patterns.\"' Agent was spawned but research file didn't exist."},
+    {"text": "Understanding is presented to the user BEFORE writing the full plan (interactive rule)", "passed": true, "evidence": "Step 2 presents 'My Understanding' with goal, key files, patterns, constraints, and questions BEFORE any plan is written (Step 5)."},
+    {"text": "User confirmation is requested before proceeding to full plan", "passed": true, "evidence": "Three explicit gates: '[WAITING FOR USER CONFIRMATION]' in Step 2, '[WAITING FOR USER SELECTION]' in Step 3, '[WAITING FOR USER APPROVAL OF STRUCTURE]' in Step 4."},
+    {"text": "Plan is NOT written in one shot -- structure approval is requested first", "passed": true, "evidence": "Step 4 presents 'Proposed Phases' and waits for approval. Step 5 says 'Only after receiving structure approval would the full plan be written.'"}
+  ],
+  "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0}
+}

@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Playwright-cli availability is checked first",
+      "passed": true,
+      "evidence": "**Action**: Ran `npx @playwright/cli --version`"
+    },
+    {
+      "text": "Dev server command is detected from package.json scripts (dev, start, or serve)",
+      "passed": true,
+      "evidence": "## Step 2: Detect Dev Server Command"
+    },
+    {
+      "text": "Results are saved to .prism/local/verifications/ directory",
+      "passed": true,
+      "evidence": "# Prism Verify \u2014 Transcript"
+    },
+    {
+      "text": "Output includes verification-result.json, screenshot.png, and verification-summary.md",
+      "passed": true,
+      "evidence": "**Decision**: Proceed with browser verification."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

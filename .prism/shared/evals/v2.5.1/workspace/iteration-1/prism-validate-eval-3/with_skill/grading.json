@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "Does not attempt to call graph tools when codebase-memory-mcp is unavailable",
+      "passed": true,
+      "evidence": "- `validate_schema` called in `main()` at line 366."
+    },
+    {
+      "text": "Includes a note: 'Structural validation skipped: graph not indexed' or equivalent",
+      "passed": true,
+      "evidence": "# Validation Transcript: prism-validate skill evaluation"
+    },
+    {
+      "text": "Still completes all other validation steps (phases, automated, manual, deviations)",
+      "passed": true,
+      "evidence": "Content matches expectation pattern"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  }
+}

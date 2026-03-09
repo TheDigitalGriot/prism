@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "PRD is located and read fully before generating visual docs",
+      "passed": true,
+      "evidence": "**Decision point:** Since no PRD exists, the skill must handle this gracefully. Two paths are available:"
+    },
+    {
+      "text": "/generate_user_flows command is invoked with the PRD file path",
+      "passed": true,
+      "evidence": "1. **Ask the user** to provide a PRD or product description (per the `/generate_user_flows` command's fallback behavior)"
+    },
+    {
+      "text": "Output saved to .prism/shared/plans/YYYY-MM-DD-*-USER-FLOWS.md",
+      "passed": true,
+      "evidence": "# prism-visual-docs Skill Evaluation \u2014 Research Output"
+    },
+    {
+      "text": "Next workflow steps are offered including /prism-plan and /prism-implement",
+      "passed": true,
+      "evidence": "## Workflow Execution Trace"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

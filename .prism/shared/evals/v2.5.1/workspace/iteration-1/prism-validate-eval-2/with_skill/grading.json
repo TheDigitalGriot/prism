@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Includes a '## Structural Validation Results' section in the report",
+      "passed": true,
+      "evidence": "- PASS: `init_prism.py` includes `shared/contracts` (line 33) and `shared/validation/baselines` (line 34)"
+    },
+    {
+      "text": "Runs search_graph with max_degree=0 and exclude_entry_points=true to check for dead code",
+      "passed": true,
+      "evidence": "Structural validation skipped: graph tools (codebase-memory-mcp) not indexed/available in this session. The `search_graph`, `trace_call_path`, and `index_repository` tools were searched for but not fo"
+    },
+    {
+      "text": "Uses trace_call_path for modified functions to verify dependency integrity",
+      "passed": true,
+      "evidence": "## Step 2: Verify Each Phase"
+    },
+    {
+      "text": "Checks for boundary violations using search_graph with relationship=CALLS",
+      "passed": false,
+      "evidence": "Only 2/7 key terms found: ['checks', 'boundary', 'violations', 'using', 'search_graph']"
+    },
+    {
+      "text": "Reports results of each structural check in a table format",
+      "passed": true,
+      "evidence": "- PASS: `skills/prism-spectrum/SKILL.md` lines 103-104 consume manifests: \"Check for a manifest file... implement one requirement at a time\""
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  }
+}

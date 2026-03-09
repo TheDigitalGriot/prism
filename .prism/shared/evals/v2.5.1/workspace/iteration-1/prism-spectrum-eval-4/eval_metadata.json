@@ -1,0 +1,21 @@
+{
+  "skill": "prism-spectrum",
+  "eval_id": 4,
+  "dimension": "regression",
+  "prompt": "Execute the next story from .prism/shared/evals/v2.4.9/skills/prism-spectrum/fixtures/stories-basic.json. Progress file: .prism/shared/evals/v2.4.9/skills/prism-spectrum/fixtures/progress.md",
+  "expected_output": "Story execution preserving all v2.4.8 core behaviors",
+  "expectations": [
+    "All state files are loaded fresh (stories.json, progress.md, CLAUDE.md)",
+    "Exactly one story is executed per invocation",
+    "All files in story.files are read BEFORE making changes",
+    "Quality gates are run before committing",
+    "Commit is atomic: one story = one commit",
+    "stories.json is updated with status: complete, completedAt, commitHash",
+    "Error handling uses correct signals (spectrum-retry for gate failures, spectrum-blocked for unclear requirements)"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

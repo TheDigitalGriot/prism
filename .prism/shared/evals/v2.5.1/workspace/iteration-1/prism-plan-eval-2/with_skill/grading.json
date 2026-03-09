@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Plan is saved to .prism/shared/plans/YYYY-MM-DD-feature.md",
+      "passed": true,
+      "evidence": "# Prism Plan Skill Evaluation: Real-Time Test Results Dashboard Screen"
+    },
+    {
+      "text": "Success criteria are split into Automated Verification and Manual Verification sections",
+      "passed": true,
+      "evidence": "## Success Criteria"
+    },
+    {
+      "text": "Each phase includes specific file paths and verification commands",
+      "passed": true,
+      "evidence": "- The CLI uses a **plugin architecture** where each screen implements the `plugin.Plugin` interface"
+    },
+    {
+      "text": "A 'What We Are NOT Doing' scope section is included",
+      "passed": true,
+      "evidence": "### Step 1: Load Context (Skill Workflow Section 1)"
+    },
+    {
+      "text": "Risks and mitigations section is present",
+      "passed": true,
+      "evidence": "### Step 1: Load Context (Skill Workflow Section 1)"
+    },
+    {
+      "text": "TodoWrite is used to track phases",
+      "passed": true,
+      "evidence": "**Skill Used**: `prism-plan` (skills/prism-plan/SKILL.md)"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

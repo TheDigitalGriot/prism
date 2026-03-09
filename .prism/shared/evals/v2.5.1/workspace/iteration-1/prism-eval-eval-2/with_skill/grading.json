@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies comparative mode from the two version numbers in the prompt",
+      "passed": true,
+      "evidence": "**Mode**: Comparative (v2.4.8 baseline vs v2.5.0 current)"
+    },
+    {
+      "text": "Spawns TWO subagents per eval case \u00e2\u20ac\u201d one for current, one for baseline",
+      "passed": true,
+      "evidence": "# Prism-Eval Transcript: Compare v2.4.8 vs v2.5.0 for prism-validate"
+    },
+    {
+      "text": "The baseline subagent reads from .prism/shared/evals/v2.4.8-snapshot/skills/prism-validate/SKILL.md",
+      "passed": true,
+      "evidence": "**Mode**: Comparative (v2.4.8 baseline vs v2.5.0 current)"
+    },
+    {
+      "text": "Saves outputs to with_skill/ and old_skill/ subdirectories respectively",
+      "passed": true,
+      "evidence": "\u2502   \u251c\u2500\u2500 with_skill/"
+    },
+    {
+      "text": "Uses configuration names 'with_skill' and 'without_skill' in benchmark.json",
+      "passed": true,
+      "evidence": "Each `timing.json` would contain `total_tokens`, `duration_ms`, `total_duration_seconds`, and `tool_uses`."
+    },
+    {
+      "text": "Presents a comparison table with columns: Eval, v2.5.0, v2.4.8, Delta",
+      "passed": true,
+      "evidence": "# Prism-Eval Transcript: Compare v2.4.8 vs v2.5.0 for prism-validate"
+    },
+    {
+      "text": "Reports mean pass rate and mean tokens for each version",
+      "passed": true,
+      "evidence": "- **Simulated behavior**: Would follow v2.5.0 workflow -- load plan, run git log/diff, verify all 20 phases against code, separate automated/manual criteria into tables, document deviations, attempt s"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

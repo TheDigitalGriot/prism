@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Provided URL http://localhost:3000 is used directly",
+      "passed": true,
+      "evidence": "**Task**: \"Run browser verification on my React app at http://localhost:3000\""
+    },
+    {
+      "text": "Browser-verifier agent is spawned with correct session naming",
+      "passed": true,
+      "evidence": "**Task**: \"Run browser verification on my React app at http://localhost:3000\""
+    },
+    {
+      "text": "Cleanup runs even if verification fails \u00e2\u20ac\u201d session closed and dev server killed",
+      "passed": true,
+      "evidence": "### Step 8: Cleanup"
+    },
+    {
+      "text": "Verification failure is treated as a signal, not a hard blocker",
+      "passed": true,
+      "evidence": "**Task**: \"Run browser verification on my React app at http://localhost:3000\""
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

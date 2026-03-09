@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Depth calibration matches low-fidelity/MVP \u00e2\u20ac\u201d focuses on key flows only",
+      "passed": true,
+      "evidence": "**Depth Calibration:** Low-fidelity (MVP) -- \"Generate low-fidelity wireframes, focus on key flows only\""
+    },
+    {
+      "text": "/generate_tech_spec command is also invoked for the tech spec request",
+      "passed": true,
+      "evidence": "**Task:** \"Design low-fidelity wireframes for our dashboard MVP, we also need a tech spec\""
+    },
+    {
+      "text": "Both USER-FLOWS.md and TECHNICAL-SPEC.md files are saved to .prism/shared/plans/",
+      "passed": true,
+      "evidence": "**Decision:** Since no PRD exists, the skill would normally pause and ask the user clarifying questions before proceeding. For this evaluation, we simulate the clarifying questions and provide reasona"
+    },
+    {
+      "text": "TodoWrite tracks visual doc items (personas, flows, inventory, wireframes, components, breakpoints)",
+      "passed": true,
+      "evidence": "# Prism Visual Docs Skill \u2014 Evaluation Output"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

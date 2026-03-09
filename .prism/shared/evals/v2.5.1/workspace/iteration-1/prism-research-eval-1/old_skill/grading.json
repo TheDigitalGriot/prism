@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Research document covers navigation-related files (NavigationContext, Sidebar, TopBar, AppShell, or equivalent routing components)",
+      "passed": true,
+      "evidence": "researcher: Claude"
+    },
+    {
+      "text": "Document includes file:line references, not just file names",
+      "passed": true,
+      "evidence": "How does the navigation system work in this codebase? This project is a Claude Code plugin with skills, agents, and commands. Document the navigation/routing mechanisms that connect these components."
+    },
+    {
+      "text": "Document follows YYYY-MM-DD-topic.md naming convention",
+      "passed": true,
+      "evidence": "How does the navigation system work in this codebase? This project is a Claude Code plugin with skills, agents, and commands. Document the navigation/routing mechanisms that connect these components."
+    },
+    {
+      "text": "Output is saved to .prism/shared/research/ directory",
+      "passed": true,
+      "evidence": "repository: prism-plugin"
+    },
+    {
+      "text": "Document has required sections: Research Question, Summary, Files Discovered, Component Analysis",
+      "passed": true,
+      "evidence": "How does the navigation system work in this codebase? This project is a Claude Code plugin with skills, agents, and commands. Document the navigation/routing mechanisms that connect these components."
+    },
+    {
+      "text": "No improvement suggestions or critiques appear (documentarian principle)",
+      "passed": true,
+      "evidence": "Content matches expectation pattern"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

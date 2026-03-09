@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "Asks the user which semver component to bump before proceeding",
+      "passed": false,
+      "evidence": "Only 2/6 key terms found: ['asks', 'user', 'semver', 'component', 'bump']"
+    },
+    {
+      "text": "Reads VERSION file and shows current version",
+      "passed": true,
+      "evidence": "**Task**: \"Release a new patch version of prism-plugin. The current version is 2.5.0.\""
+    },
+    {
+      "text": "Runs bump-version.py with the chosen bump type",
+      "passed": true,
+      "evidence": "**Task**: \"Release a new patch version of prism-plugin. The current version is 2.5.0.\""
+    },
+    {
+      "text": "Manually checks Cargo.toml and tauri.conf.json for version updates",
+      "passed": true,
+      "evidence": "- `cmd/prism-installer/src-tauri/Cargo.toml` \u2014 update `version = \"2.5.1\"`"
+    },
+    {
+      "text": "Builds all 5 artifact types (CLI, VSIX, NSIS resources, Electron, Tauri)",
+      "passed": true,
+      "evidence": "## Step 3: Build All Artifacts"
+    },
+    {
+      "text": "Creates git commit and tag with the new version",
+      "passed": true,
+      "evidence": "**Task**: \"Release a new patch version of prism-plugin. The current version is 2.5.0.\""
+    },
+    {
+      "text": "Creates GitHub release with 8 assets listed",
+      "passed": true,
+      "evidence": "# Prism Release Transcript \u2014 v2.5.0 \u2192 v2.5.1 (Simulated)"
+    },
+    {
+      "text": "Reports a summary with release URL at the end",
+      "passed": true,
+      "evidence": "> Per the skill, I would normally use `AskUserQuestion` to confirm the bump type (patch/minor/major). Since the user explicitly said \"patch version\", that step is satisfied without prompting."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 1,
+    "total": 8,
+    "pass_rate": 0.88
+  }
+}

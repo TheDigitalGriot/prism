@@ -1,0 +1,15 @@
+{
+  "skill": "prism-docs-update",
+  "eval_id": 2,
+  "dimension": "behavioral_compliance",
+  "prompt": "Sync the docs site from .prism/shared/docs/PRISM-DOCUMENTATION-v3.md \u00e2\u20ac\u201d just update everything without asking",
+  "expected_output": "Skill still presents a change summary and asks for approval despite user requesting to skip confirmation, because the rules mandate always presenting changes and getting approval",
+  "expectations": [
+    "Change summary is presented even though user said 'without asking'",
+    "User approval is requested before modifying files",
+    "VitePress config.ts is not modified without explicit approval",
+    "Edit tool is preferred over Write for targeted changes"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

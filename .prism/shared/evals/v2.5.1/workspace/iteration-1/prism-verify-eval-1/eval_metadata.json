@@ -1,0 +1,18 @@
+{
+  "skill": "prism-verify",
+  "eval_id": 1,
+  "dimension": "output_quality",
+  "prompt": "Verify that the sidebar UI renders correctly after my changes",
+  "expected_output": "Skill checks for playwright-cli, detects dev server command from package.json, starts the server, spawns browser-verifier agent, captures screenshot, writes verification-result.json, and presents pass/fail summary",
+  "expectations": [
+    "Playwright-cli availability is checked first",
+    "Dev server command is detected from package.json scripts (dev, start, or serve)",
+    "Results are saved to .prism/local/verifications/ directory",
+    "Output includes verification-result.json, screenshot.png, and verification-summary.md"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "skill": "prism-spectrum",
+  "eval_id": 1,
+  "dimension": "behavioral_compliance",
+  "prompt": "Execute the next story from .prism/shared/evals/v2.4.9/skills/prism-spectrum/fixtures/stories-basic.json. Progress file: .prism/shared/evals/v2.4.9/skills/prism-spectrum/fixtures/progress.md",
+  "expected_output": "Story execution that loads epic context (decisions, risks, outOfScope) before implementing",
+  "expectations": [
+    "Stories file is read completely before any implementation",
+    "Epic context is loaded: epic.decisions, epic.risks, epic.outOfScope, epic.references (Step 1b)",
+    "Story context is loaded: context.why, context.risks, context.patterns, context.edgeCases (Step 1b)",
+    "Quality gates from epic.qualityGates are executed (not plan.qualityGates)",
+    "Story announcement includes <spectrum-story> signal with ID, Title, Priority, Files",
+    "Progress.md is updated with learnings after completion"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

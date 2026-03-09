@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Globs for evals.json files and finds none",
+      "passed": true,
+      "evidence": "**Eval prompt**: \"Run evals for v2.5.0 but no evals.json files exist for any skill yet.\""
+    },
+    {
+      "text": "Tells the user that no eval cases exist for v2.5.0",
+      "passed": true,
+      "evidence": "Determined mode from user prompt:"
+    },
+    {
+      "text": "Offers to help create eval cases for specific skills",
+      "passed": true,
+      "evidence": "Per the skill workflow: \"If no eval cases exist, tell the user and offer to help write them.\""
+    },
+    {
+      "text": "Does NOT fabricate eval cases or run empty evaluations",
+      "passed": true,
+      "evidence": "# Prism Eval Transcript \u2014 Eval Case 3"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

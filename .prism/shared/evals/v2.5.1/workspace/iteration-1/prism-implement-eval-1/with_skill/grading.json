@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Loads the plan file and identifies current phase status before making changes",
+      "passed": true,
+      "evidence": "**Task**: \"Implement the plan at `.prism/shared/plans/2026-03-01-three-package-split.md` starting from Phase 1. The plan has 20 phases total.\""
+    },
+    {
+      "text": "Reads ALL files listed in Phase 1 before modifying anything",
+      "passed": true,
+      "evidence": "**Task**: \"Implement the plan at `.prism/shared/plans/2026-03-01-three-package-split.md` starting from Phase 1. The plan has 20 phases total.\""
+    },
+    {
+      "text": "Marks each step checkbox as completed: - [x]",
+      "passed": true,
+      "evidence": "## Step 1: Load Plan (Skill Workflow Step 1)"
+    },
+    {
+      "text": "Runs verification commands specified in the plan",
+      "passed": true,
+      "evidence": "- **Phases 1-6**: Automated verification checkboxes marked `[x]`, but NO explicit `**Checkpoint**` line present in the plan document. No Session Notes for phases 1-6 either."
+    },
+    {
+      "text": "Marks the phase checkpoint as complete",
+      "passed": true,
+      "evidence": "**Task**: \"Implement the plan at `.prism/shared/plans/2026-03-01-three-package-split.md` starting from Phase 1. The plan has 20 phases total.\""
+    },
+    {
+      "text": "Presents a Phase 1 Complete summary with changes, verification status, and next phase",
+      "passed": true,
+      "evidence": "**Task**: \"Implement the plan at `.prism/shared/plans/2026-03-01-three-package-split.md` starting from Phase 1. The plan has 20 phases total.\""
+    },
+    {
+      "text": "Stops and waits for user approval before proceeding to Phase 2",
+      "passed": true,
+      "evidence": "Manual verification (not executed by skill \u2014 user responsibility):"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

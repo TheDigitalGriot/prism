@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Reads the full plan before making any changes",
+      "passed": true,
+      "evidence": "**Task**: Fix broken import path in Phase 5 of three-package-split plan"
+    },
+    {
+      "text": "Presents a structured 'Iteration Needed' block with Trigger, Current State, Changes Required, and Impact",
+      "passed": true,
+      "evidence": "### Step 2: Identify Changes Needed"
+    },
+    {
+      "text": "Adds an Iteration Log entry to the plan with date, reason, and specific changes",
+      "passed": true,
+      "evidence": "## Iteration Needed"
+    },
+    {
+      "text": "Does NOT delete existing plan content \u00e2\u20ac\u201d uses strikethrough or annotations to preserve history",
+      "passed": true,
+      "evidence": "**Task**: Fix broken import path in Phase 5 of three-package-split plan"
+    },
+    {
+      "text": "Gets user approval before resuming implementation",
+      "passed": true,
+      "evidence": "- **User feedback**: The validation report found that Phase 5 references `@prism-core/utils` but the actual module exports from `@prism-core/lib`."
+    },
+    {
+      "text": "Resumes from the affected phase, not from the beginning",
+      "passed": true,
+      "evidence": "**Task**: Fix broken import path in Phase 5 of three-package-split plan"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Section mapping reference is read before any analysis",
+      "passed": true,
+      "evidence": "## Step 1: Read Section Mapping"
+    },
+    {
+      "text": "A change summary is presented listing new, updated, and removed sections",
+      "passed": true,
+      "evidence": "## Step 2: Analyze Changes"
+    },
+    {
+      "text": "User approval is requested before any file modifications",
+      "passed": true,
+      "evidence": "| Never modify config without approval | Simulated \u2014 documented change, would wait for approval |"
+    },
+    {
+      "text": "VitePress frontmatter is preserved in all updated pages",
+      "passed": true,
+      "evidence": "Read `skills/prism-docs-update/references/section-mapping.md` \u2014 contains 5 parts mapping ~65 monolithic doc sections to VitePress page paths. Key mapping tables cover:"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Does not immediately rewrite the plan based on vague feedback",
+      "passed": true,
+      "evidence": "**Task**: \"The user says 'the sidebar layout needs to change from vertical to horizontal'. Iterate on the plan to accommodate this vague feedback.\""
+    },
+    {
+      "text": "Asks clarifying questions (which sidebar, what does horizontal mean, scope of change)",
+      "passed": true,
+      "evidence": "**Task**: \"The user says 'the sidebar layout needs to change from vertical to horizontal'. Iterate on the plan to accommodate this vague feedback.\""
+    },
+    {
+      "text": "Follows the 'Be Skeptical' philosophy \u00e2\u20ac\u201d questions vague feedback and verifies feasibility",
+      "passed": true,
+      "evidence": "**Task**: \"The user says 'the sidebar layout needs to change from vertical to horizontal'. Iterate on the plan to accommodate this vague feedback.\""
+    },
+    {
+      "text": "Follows the 'Be Interactive' philosophy \u00e2\u20ac\u201d confirms understanding before making changes",
+      "passed": true,
+      "evidence": "Before making any changes, the skill's philosophy requires being **skeptical** and **interactive**. This feedback is vague in several critical ways:"
+    },
+    {
+      "text": "Only proceeds with plan changes after getting clear answers",
+      "passed": false,
+      "evidence": "Only 2/6 key terms found: ['proceeds', 'plan', 'changes', 'getting', 'clear']"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  }
+}

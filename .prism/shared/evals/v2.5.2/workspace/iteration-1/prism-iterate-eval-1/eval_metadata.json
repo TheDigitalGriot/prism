@@ -1,0 +1,17 @@
+{
+  "skill": "prism-iterate",
+  "eval_id": 1,
+  "dimension": "output_quality",
+  "prompt": "The validation report found that Phase 5 of the three-package-split plan has a broken import path. The plan says to import from @prism-core/utils but the actual module exports from @prism-core/lib. Iterate on the plan to fix this.",
+  "expected_output": "Presents an Iteration Needed summary identifying the trigger, current state, changes required, and impact. Updates the plan with an iteration log entry. Resumes implementation from the corrected phase.",
+  "expectations": [
+    "Reads the full plan before making any changes",
+    "Presents a structured 'Iteration Needed' block with Trigger, Current State, Changes Required, and Impact",
+    "Adds an Iteration Log entry to the plan with date, reason, and specific changes",
+    "Does NOT delete existing plan content \u00e2\u20ac\u201d uses strikethrough or annotations to preserve history",
+    "Gets user approval before resuming implementation",
+    "Resumes from the affected phase, not from the beginning"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "prism-locator agent is spawned to check for existing research/plans in .prism/",
+      "passed": true,
+      "evidence": "# Prism Eval \u2014 Old Skill (v2.4.8) Research Output"
+    },
+    {
+      "text": "Workflow selection logic is applied (R->P->I->V for unfamiliar work, or abbreviated if artifacts exist)",
+      "passed": true,
+      "evidence": "**Task**: \"I need to add a new authentication system to this project. Help me figure out the right approach using the Prism workflow.\""
+    },
+    {
+      "text": "The correct phase skill is recommended or invoked based on findings",
+      "passed": true,
+      "evidence": "# Prism Eval \u2014 Old Skill (v2.4.8) Research Output"
+    },
+    {
+      "text": "If .prism/ directory does not exist, init_prism.py is suggested",
+      "passed": true,
+      "evidence": "# Prism Eval \u2014 Old Skill (v2.4.8) Research Output"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

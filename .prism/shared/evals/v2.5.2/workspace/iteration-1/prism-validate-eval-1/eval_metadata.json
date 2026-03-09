@@ -1,0 +1,18 @@
+{
+  "skill": "prism-validate",
+  "eval_id": 1,
+  "dimension": "output_quality",
+  "prompt": "Validate the implementation of the three-package-split plan at .prism/shared/plans/2026-03-01-three-package-split.md. All 20 phases should be complete.",
+  "expected_output": "A validation report saved to .prism/shared/validation/ with phase completion counts, automated test results, manual verification items, deviations table, and a PASS/FAIL/PARTIAL status.",
+  "expectations": [
+    "Loads the plan and checks git log for recent commits",
+    "Runs git diff --stat to identify changes in scope",
+    "Verifies each phase by checking checkboxes AND reading actual code",
+    "Separates success criteria into Automated (with commands and results) and Manual tables",
+    "Documents any deviations in a structured table with Deviation/Reason/Impact columns",
+    "Saves report to .prism/shared/validation/YYYY-MM-DD-report.md",
+    "Presents a summary with Phases N/M, Automated N/M, Manual N/M, and overall Status"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

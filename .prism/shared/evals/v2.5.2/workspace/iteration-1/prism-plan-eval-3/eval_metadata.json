@@ -1,0 +1,15 @@
+{
+  "skill": "prism-plan",
+  "eval_id": 3,
+  "dimension": "behavioral_compliance",
+  "prompt": "I need a plan to migrate our database from SQLite to PostgreSQL. I'm not sure about the approach yet.",
+  "expected_output": "Multiple design options are presented with pros/cons before committing to a plan",
+  "expectations": [
+    "Design options (Option A, Option B, etc.) are presented with pros and cons",
+    "User is asked to choose an approach before plan is written",
+    "Questions are asked to resolve unknowns rather than assuming",
+    "Plan includes migration and rollback considerations (Be Practical philosophy)"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

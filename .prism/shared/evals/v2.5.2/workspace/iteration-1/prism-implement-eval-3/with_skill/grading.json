@@ -1,0 +1,10 @@
+{
+  "expectations": [
+    {"text": "Reads the plan and detects existing checkmarks for phases 1-3", "passed": true, "evidence": "Step 1: Lists all 5 phases with status. 'Phase 1: Shared Layout Foundation — [x] Complete', 'Phase 2: Diff Parser — [x] Complete', 'Phase 3: Git Plugin Refactor — [x] Complete'."},
+    {"text": "Identifies Phase 4 as the next phase to implement", "passed": true, "evidence": "Step 1: 'Resume point identified: Phase 4 — Workspaces Plugin Upgrade.'"},
+    {"text": "Does not re-implement phases 1-3", "passed": true, "evidence": "Proceeds directly to Phase 4 implementation in Step 3. No re-implementation of earlier phases."},
+    {"text": "Loads TodoWrite with remaining phases 4-5", "passed": false, "evidence": "Step 1 notes: 'The skill also says Load phases into TodoWrite — this step was noted but TodoWrite was not invoked (simulation constraint).' TodoWrite was not actually used."},
+    {"text": "Reads all files in Phase 4 before making changes", "passed": true, "evidence": "Step 2: 'Per the skill, Before changes, read ALL files in current phase.' Lists plugin_workspaces.go with specific line numbers."}
+  ],
+  "summary": {"passed": 4, "failed": 1, "total": 5, "pass_rate": 0.8}
+}

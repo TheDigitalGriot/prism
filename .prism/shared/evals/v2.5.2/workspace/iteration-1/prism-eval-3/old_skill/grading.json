@@ -1,0 +1,8 @@
+{
+  "expectations": [
+    {"text": "Trivial fix path is selected (direct implementation, no Research or Plan phases)", "passed": true, "evidence": "Step 2: 'Selected workflow path: Direct implementation (no Research, no Plan, no Validate phases needed).'"},
+    {"text": "No unnecessary agent spawning for a simple change", "passed": true, "evidence": "Step 3: 'No agents spawned.' Summary: 'Agents spawned: None (correct)'."},
+    {"text": "The workflow selection table's '<20 lines' rule is applied correctly", "passed": true, "evidence": "Step 2: 'This is a trivial fix — a single-line typo correction in a README file. It is well under the 20-line threshold.'"}
+  ],
+  "summary": {"passed": 3, "failed": 0, "total": 3, "pass_rate": 1.0}
+}

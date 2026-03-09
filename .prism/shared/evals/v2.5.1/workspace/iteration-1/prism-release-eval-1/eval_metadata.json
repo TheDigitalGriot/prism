@@ -1,0 +1,24 @@
+{
+  "skill": "prism-release",
+  "eval_id": 1,
+  "dimension": "output_quality",
+  "prompt": "Release a new patch version of prism-plugin. The current version is 2.5.0.",
+  "expected_output": "Follows the full 9-step release pipeline: asks bump type, bumps version to 2.5.1, builds all artifacts (CLI, VSIX, Electron, Tauri, NSIS), commits, tags, pushes, creates GitHub release with 8 assets, creates eval snapshot, generates eval cases, and reports results.",
+  "expectations": [
+    "Asks the user which semver component to bump before proceeding",
+    "Reads VERSION file and shows current version",
+    "Runs bump-version.py with the chosen bump type",
+    "Manually checks Cargo.toml and tauri.conf.json for version updates",
+    "Builds all 5 artifact types (CLI, VSIX, NSIS resources, Electron, Tauri)",
+    "Creates git commit and tag with the new version",
+    "Creates GitHub release with 8 assets listed",
+    "Reports a summary with release URL at the end"
+  ],
+  "files": [
+    "VERSION"
+  ],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "graph-navigator agent is spawned for structural orientation (Step 1b)",
+      "passed": true,
+      "evidence": "topic: \"Agent Spawning Architecture \u2014 How Skills Invoke Agents via the Task Tool\""
+    },
+    {
+      "text": "prism-locator agent is spawned to check existing research",
+      "passed": true,
+      "evidence": "repository: prism-plugin"
+    },
+    {
+      "text": "codebase-locator and/or codebase-analyzer agents are spawned",
+      "passed": true,
+      "evidence": "topic: \"Agent Spawning Architecture \u2014 How Skills Invoke Agents via the Task Tool\""
+    },
+    {
+      "text": "Multiple agents are spawned in parallel where independent",
+      "passed": true,
+      "evidence": "topic: \"Agent Spawning Architecture \u2014 How Skills Invoke Agents via the Task Tool\""
+    },
+    {
+      "text": "No improvement suggestions appear (documentarian, not critic)",
+      "passed": true,
+      "evidence": "The skill body defines a workflow with numbered steps. Agent invocations appear as code blocks showing the `Task()` call syntax."
+    },
+    {
+      "text": "Research output references structural relationships between skills and agents",
+      "passed": true,
+      "evidence": "researcher: Claude"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "expectations": [
+    {"text": "Design options (Option A, Option B, etc.) are presented with pros and cons", "passed": true, "evidence": "Step 3 presents 4 options (A: Direct Query Rewrite, B: ORM/Query Builder, C: Compatibility Layer, D: Schema-First with pgloader) each with Pros and Cons."},
+    {"text": "User is asked to choose an approach before plan is written", "passed": true, "evidence": "Step 3 ends with 'Which approach would you prefer? Or would you like to discuss trade-offs further?' Workflow correctly blocks at Step 4 waiting for user selection."},
+    {"text": "Questions are asked to resolve unknowns rather than assuming", "passed": true, "evidence": "Step 2 asks 6 questions covering which part uses SQLite, schema details, migration drivers, ORM existence, deployment environment, and downtime requirements."},
+    {"text": "Plan includes migration and rollback considerations (Be Practical philosophy)", "passed": true, "evidence": "Step 4 proposed phases include 'Phase 5: Data Migration' and 'Phase 7: Cutover & Rollback Plan'. Though full plan was not reached, rollback is explicitly part of the structure."}
+  ],
+  "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0}
+}

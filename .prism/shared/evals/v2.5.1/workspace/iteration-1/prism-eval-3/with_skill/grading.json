@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "Trivial fix path is selected (direct implementation, no Research or Plan phases)",
+      "passed": true,
+      "evidence": "# Prism Eval 3 \u2014 Trivial Fix Workflow Selection"
+    },
+    {
+      "text": "No unnecessary agent spawning for a simple change",
+      "passed": true,
+      "evidence": "| Simple change, clear scope | I->V (skip Research + Plan) |"
+    },
+    {
+      "text": "The workflow selection table's '<20 lines' rule is applied correctly",
+      "passed": true,
+      "evidence": "# Prism Eval 3 \u2014 Trivial Fix Workflow Selection"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  }
+}

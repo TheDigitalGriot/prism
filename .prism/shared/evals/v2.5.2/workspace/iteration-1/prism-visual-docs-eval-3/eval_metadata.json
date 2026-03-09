@@ -1,0 +1,14 @@
+{
+  "skill": "prism-visual-docs",
+  "eval_id": 3,
+  "dimension": "regression",
+  "prompt": "Map out the user journeys for our mobile app",
+  "expected_output": "Skill triggers correctly, follows the full 6-step workflow, and quality gates are checked before marking complete",
+  "expectations": [
+    "Quality gates verified: personas, flows (5-10), screen inventory, wireframes, component library, responsive breakpoints, accessibility, states (empty/loading/error/success)",
+    "Companion document options offered (tech spec, pricing)",
+    "prism-locator agent is spawned to find relevant PRD"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

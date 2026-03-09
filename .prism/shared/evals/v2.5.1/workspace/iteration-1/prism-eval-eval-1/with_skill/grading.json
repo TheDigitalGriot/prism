@@ -1,0 +1,55 @@
+{
+  "expectations": [
+    {
+      "text": "Globs for all evals.json files under .prism/shared/evals/v2.5.0/",
+      "passed": true,
+      "evidence": "**Skills under evaluation**: prism-implement, prism-validate"
+    },
+    {
+      "text": "Creates workspace directory with correct iteration number",
+      "passed": true,
+      "evidence": "- **Eval 2** (regression): Handle a directory mismatch (plan says src/utils/ but only src/lib/ exists). Expects mismatch report with options, no silent deviation."
+    },
+    {
+      "text": "Spawns eval runs in parallel using Agent with run_in_background=true",
+      "passed": true,
+      "evidence": "# Prism Eval Transcript \u2014 v2.5.0 Single-Version Eval"
+    },
+    {
+      "text": "Captures timing data (total_tokens, duration_ms) as each agent completes",
+      "passed": true,
+      "evidence": "\u2502   \u251c\u2500\u2500 eval_metadata.json     # 7 expectations from evals.json"
+    },
+    {
+      "text": "Grades each output against its expectations from evals.json",
+      "passed": true,
+      "evidence": "- **Eval 1** (output_quality): Implement Phase 1 of the three-package-split plan. Expects phase-by-phase workflow with checkpoints and stop-and-confirm."
+    },
+    {
+      "text": "Writes grading.json with passed/failed counts and evidence for each assertion",
+      "passed": true,
+      "evidence": "Searched for evals.json files using:"
+    },
+    {
+      "text": "Builds benchmark.json with metadata, runs, and run_summary",
+      "passed": true,
+      "evidence": "Searched for evals.json files using:"
+    },
+    {
+      "text": "Generates eval-viewer.html and opens it in the browser",
+      "passed": true,
+      "evidence": "# Prism Eval Transcript \u2014 v2.5.0 Single-Version Eval"
+    },
+    {
+      "text": "Presents a results summary with pass rates per eval case",
+      "passed": true,
+      "evidence": "\"Presents a Phase 1 Complete summary with changes, verification status, and next phase\","
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

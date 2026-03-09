@@ -1,0 +1,9 @@
+{
+  "expectations": [
+    {"text": "prism-analyzer agent is spawned to extract decisions, constraints, and patterns from the research document", "passed": false, "evidence": "Step 1: 'Instead of spawning the prism-analyzer agent (since there is no research doc to analyze), I manually investigated the codebase.' Agent was NOT spawned even as a simulation."},
+    {"text": "Understanding is presented to the user BEFORE writing the full plan (interactive rule)", "passed": true, "evidence": "Step 2 presents 'My Understanding' with goal, key files, patterns, constraints, and questions BEFORE the plan is written (Step 5)."},
+    {"text": "User confirmation is requested before proceeding to full plan", "passed": true, "evidence": "Three simulated wait points: after Step 2, Step 3, and Step 4. '[SIMULATED: Would wait for user response here before proceeding]'"},
+    {"text": "Plan is NOT written in one shot -- structure approval is requested first", "passed": true, "evidence": "Step 4 presents 'Proposed Phases' and simulates waiting for user approval. Step 5 only writes the plan after 'Simulated user response: Looks good, write the full plan.'"}
+  ],
+  "summary": {"passed": 3, "failed": 1, "total": 4, "pass_rate": 0.75}
+}

@@ -1,0 +1,24 @@
+{
+  "skill": "prism-eval",
+  "eval_id": 2,
+  "dimension": "output_quality",
+  "prompt": "Compare v2.4.8 vs v2.5.0 for the prism-validate skill.",
+  "expected_output": "Runs each eval case twice \u00e2\u20ac\u201d once with the v2.5.0 SKILL.md and once with the v2.4.8-snapshot SKILL.md. Produces a side-by-side comparison showing pass rate deltas and token usage differences.",
+  "expectations": [
+    "Identifies comparative mode from the two version numbers in the prompt",
+    "Spawns TWO subagents per eval case \u00e2\u20ac\u201d one for current, one for baseline",
+    "The baseline subagent reads from .prism/shared/evals/v2.4.8-snapshot/skills/prism-validate/SKILL.md",
+    "Saves outputs to with_skill/ and old_skill/ subdirectories respectively",
+    "Uses configuration names 'with_skill' and 'without_skill' in benchmark.json",
+    "Presents a comparison table with columns: Eval, v2.5.0, v2.4.8, Delta",
+    "Reports mean pass rate and mean tokens for each version"
+  ],
+  "files": [
+    ".prism/shared/evals/v2.5.0/skills/prism-validate/evals.json",
+    ".prism/shared/evals/v2.4.8-snapshot/skills/prism-validate/SKILL.md"
+  ],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

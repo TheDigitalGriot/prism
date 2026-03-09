@@ -1,0 +1,11 @@
+{
+  "expectations": [
+    {"text": "Plan is saved to .prism/shared/plans/YYYY-MM-DD-feature.md", "passed": false, "evidence": "Note says 'Since this is an eval simulation, the plan is documented here rather than saved to the plans directory. No source files are modified.'"},
+    {"text": "Success criteria are split into Automated Verification and Manual Verification sections", "passed": true, "evidence": "Plan has 'Automated (CI/Scripts)' (make test, make lint, go vet, go build) and 'Manual Verification' (7 manual checks) as separate sections."},
+    {"text": "Each phase includes specific file paths and verification commands", "passed": true, "evidence": "All 5 phases include file tables with specific paths and Verification sections with bash commands."},
+    {"text": "A 'What We Are NOT Doing' scope section is included", "passed": true, "evidence": "'Out of Scope' section lists 6 excluded items: non-Go frameworks, file-watcher, coverage, history, custom commands, CI integration."},
+    {"text": "Risks and mitigations section is present", "passed": true, "evidence": "'Risks & Mitigations' table with 5 risks including likelihood, impact, and mitigation columns."},
+    {"text": "TodoWrite is used to track phases", "passed": false, "evidence": "Skill Execution Notes mention 'The skill references TodoWrite in Step 5 but does not provide detailed instructions on how to use it.' TodoWrite was not actually used."}
+  ],
+  "summary": {"passed": 4, "failed": 2, "total": 6, "pass_rate": 0.67}
+}

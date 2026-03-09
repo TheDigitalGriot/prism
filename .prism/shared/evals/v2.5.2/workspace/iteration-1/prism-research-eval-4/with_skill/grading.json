@@ -1,0 +1,11 @@
+{
+  "expectations": [
+    {"text": "prism-locator agent is used to check for existing research", "passed": true, "evidence": "Pattern section: 'Existing Work Check as Router' at skills/prism/SKILL.md:48-61 shows 'Task(subagent_type=\"prism-locator\")'. The skill clearly references using prism-locator."},
+    {"text": "Output is saved to .prism/shared/research/ directory", "passed": false, "evidence": "Output is in eval outputs directory (with_skill/outputs/research.md). No explicit mention of saving to .prism/shared/research/."},
+    {"text": "Document includes file:line references to SKILL.md files", "passed": true, "evidence": "Code References table includes: 'skills/prism/SKILL.md:3', 'skills/prism/SKILL.md:17-27', 'skills/prism/SKILL.md:39-44', 'skills/prism-research/SKILL.md:1-5', etc."},
+    {"text": "codebase-locator agent is spawned to find skill files", "passed": false, "evidence": "No explicit mention of spawning codebase-locator agent in the workflow steps. The document references it as an available agent but doesn't show it being used in this research."},
+    {"text": "Research template sections are all present (Summary, Files Discovered, etc.)", "passed": true, "evidence": "All sections present: Research Question, Summary, Files Discovered, Component Analysis, Patterns Found, Architecture Notes, Open Questions, Code References."},
+    {"text": "TodoWrite is used to track open questions if any arise", "passed": false, "evidence": "Open Questions section lists 3 questions as markdown checkboxes but no mention of TodoWrite tool being used."}
+  ],
+  "summary": {"passed": 3, "failed": 3, "total": 6, "pass_rate": 0.5}
+}

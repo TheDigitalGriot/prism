@@ -1,0 +1,18 @@
+{
+  "skill": "prism-eval",
+  "eval_id": 3,
+  "dimension": "output_quality",
+  "prompt": "Run evals for v2.5.0 but no evals.json files exist for any skill yet.",
+  "expected_output": "Reports that no eval cases were found and offers to help write them.",
+  "expectations": [
+    "Globs for evals.json files and finds none",
+    "Tells the user that no eval cases exist for v2.5.0",
+    "Offers to help create eval cases for specific skills",
+    "Does NOT fabricate eval cases or run empty evaluations"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

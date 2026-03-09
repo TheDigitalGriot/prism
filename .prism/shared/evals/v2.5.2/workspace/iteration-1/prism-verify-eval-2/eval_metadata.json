@@ -1,0 +1,15 @@
+{
+  "skill": "prism-verify",
+  "eval_id": 2,
+  "dimension": "behavioral_compliance",
+  "prompt": "Run browser verification on my React app at http://localhost:3000",
+  "expected_output": "Skill uses the provided URL directly instead of detecting from package.json, spawns browser-verifier agent, and always cleans up sessions and processes on completion",
+  "expectations": [
+    "Provided URL http://localhost:3000 is used directly",
+    "Browser-verifier agent is spawned with correct session naming",
+    "Cleanup runs even if verification fails \u00e2\u20ac\u201d session closed and dev server killed",
+    "Verification failure is treated as a signal, not a hard blocker"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

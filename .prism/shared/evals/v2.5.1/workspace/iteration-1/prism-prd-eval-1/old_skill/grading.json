@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "PRD file is created at .prism/shared/plans/YYYY-MM-DD-*-PRD.md",
+      "passed": true,
+      "evidence": "# Prism PRD Skill (v2.4.8) \u2014 Evaluation Output"
+    },
+    {
+      "text": "Document contains sections: Problem Statement, Target Users, Features, Technical Requirements, Risks, Success Metrics",
+      "passed": true,
+      "evidence": "1. What specific problem does this solve beyond existing tools like Trello, Jira, or Asana?"
+    },
+    {
+      "text": "Features are prioritized (P0/P1/P2 or MoSCoW)",
+      "passed": false,
+      "evidence": "Only 1/3 key terms found: ['features', 'prioritized', 'moscow']"
+    },
+    {
+      "text": "Companion document options are offered after PRD generation",
+      "passed": true,
+      "evidence": "Simulated spawning `Task(subagent_type=\"prism-locator\")` to find existing research or documentation about task management apps, kanban boards, or team collaboration."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  }
+}

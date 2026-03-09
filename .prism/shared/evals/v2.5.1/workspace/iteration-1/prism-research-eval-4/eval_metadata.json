@@ -1,0 +1,20 @@
+{
+  "skill": "prism-research",
+  "eval_id": 4,
+  "dimension": "regression",
+  "prompt": "Map out the skill discovery and routing system in this plugin. How does the prism meta-skill route to phase-specific skills?",
+  "expected_output": "Research document covering skill YAML frontmatter, trigger matching, and the prism meta-router",
+  "expectations": [
+    "prism-locator agent is used to check for existing research",
+    "Output is saved to .prism/shared/research/ directory",
+    "Document includes file:line references to SKILL.md files",
+    "codebase-locator agent is spawned to find skill files",
+    "Research template sections are all present (Summary, Files Discovered, etc.)",
+    "TodoWrite is used to track open questions if any arise"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

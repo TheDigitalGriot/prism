@@ -1,0 +1,19 @@
+{
+  "skill": "prism-debug",
+  "eval_id": 2,
+  "dimension": "output_quality",
+  "prompt": "Debug this: npm test is failing with 3 test failures after the last commit. The tests were passing before.",
+  "expected_output": "Debug report with actionable root cause hypothesis and specific fix suggestions",
+  "expectations": [
+    "Error analysis section parses test failure output (failing test names, assertion errors, file locations)",
+    "Root cause hypothesis is clearly stated as a hypothesis, not a certainty",
+    "Suggested fix approach includes numbered steps (at least 2 alternatives)",
+    "Files to Examine section lists specific file:line references",
+    "git-investigator checks the last commit for regression-causing changes"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

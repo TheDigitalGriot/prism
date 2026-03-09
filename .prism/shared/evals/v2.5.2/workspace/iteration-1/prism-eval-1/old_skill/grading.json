@@ -1,0 +1,9 @@
+{
+  "expectations": [
+    {"text": "prism-locator agent is spawned to check for existing research/plans in .prism/", "passed": true, "evidence": "Step 2: 'Simulated spawning prism-locator agent to find existing research, plans, or work related to authentication.' Searched .prism/shared/research/ and .prism/shared/plans/."},
+    {"text": "Workflow selection logic is applied (R->P->I->V for unfamiliar work, or abbreviated if artifacts exist)", "passed": true, "evidence": "Step 1: 'This is a new feature (authentication system) and requires understanding what already exists. Selected full R->P->I->V workflow.'"},
+    {"text": "The correct phase skill is recommended or invoked based on findings", "passed": true, "evidence": "Step 2: 'Nothing exists -> Start with Research'. Proceeds to Research phase in Step 3, then pauses at Plan phase awaiting user input."},
+    {"text": "If .prism/ directory does not exist, init_prism.py is suggested", "passed": false, "evidence": "No mention of init_prism.py or handling the case where .prism/ doesn't exist. Transcript assumes .prism/ exists."}
+  ],
+  "summary": {"passed": 3, "failed": 1, "total": 4, "pass_rate": 0.75}
+}

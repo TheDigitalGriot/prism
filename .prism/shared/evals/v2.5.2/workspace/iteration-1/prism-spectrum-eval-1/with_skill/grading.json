@@ -1,0 +1,11 @@
+{
+  "expectations": [
+    {"text": "Stories file is read completely before any implementation", "passed": true, "evidence": "Step 1a reads stories-basic.json fully (2 stories, completion status, blocked relationships) before Step 4 implementation begins."},
+    {"text": "Epic context is loaded: epic.decisions, epic.risks, epic.outOfScope, epic.references (Step 1b)", "passed": true, "evidence": "Step 1b 'Epic context extracted' lists all four: decisions (2 items), risks (1 item), outOfScope (2 items), references (['CLAUDE.md'])."},
+    {"text": "Story context is loaded: context.why, context.risks, context.patterns, context.edgeCases (Step 1b)", "passed": true, "evidence": "Step 1b 'Story EVAL-001 context extracted' lists all four: why, risks, edgeCases, patterns with their values."},
+    {"text": "Quality gates from epic.qualityGates are executed (not plan.qualityGates)", "passed": true, "evidence": "Step 5 runs 'echo typecheck: OK' and 'echo lint: OK' from epic.qualityGates. No plan.qualityGates reference."},
+    {"text": "Story announcement includes <spectrum-story> signal with ID, Title, Priority, Files", "passed": true, "evidence": "Step 3 outputs '<spectrum-story>' tag containing ID: EVAL-001, Title: Add eval test comment to mock-data.ts, Priority: 1, Files: prism-eval/src/data/mock-data.ts (modify)."},
+    {"text": "Progress.md is updated with learnings after completion", "passed": true, "evidence": "Step 7 shows simulated progress.md update with 'Learnings' section containing 3 items about mock-data.ts patterns and epic decisions."}
+  ],
+  "summary": {"passed": 6, "failed": 0, "total": 6, "pass_rate": 1.0}
+}

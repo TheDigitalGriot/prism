@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Spawns research subagents (codebase-locator, codebase-analyzer) to understand the ORM setup",
+      "passed": true,
+      "evidence": "**Research consideration**: The skill says \"Only spawn research tasks if changes require new technical understanding.\" The task requires \"understanding the existing ORM setup.\" I searched the codebase"
+    },
+    {
+      "text": "Adds Phase 7.5 to the plan without disrupting completed phases",
+      "passed": true,
+      "evidence": "**Task**: \"Iterate on the plan. Phase 7 needs a new sub-phase 7.5 to handle database migration that was discovered during implementation. The new phase requires understanding the existing ORM setup.\""
+    },
+    {
+      "text": "Updates TodoWrite to reflect the new phase",
+      "passed": true,
+      "evidence": "5. **TodoWrite rule** \u2014 Rule 4 says \"Update TodoWrite\" but the workflow steps don't include a TodoWrite step, creating a disconnect between rules and workflow"
+    },
+    {
+      "text": "Maintains the separation of automated vs manual success criteria",
+      "passed": true,
+      "evidence": "- Success criteria changes: Add automated verification that migrations run idempotently"
+    },
+    {
+      "text": "Leaves no unresolved questions in the updated plan",
+      "passed": true,
+      "evidence": "**Task**: \"Iterate on the plan. Phase 7 needs a new sub-phase 7.5 to handle database migration that was discovered during implementation. The new phase requires understanding the existing ORM setup.\""
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

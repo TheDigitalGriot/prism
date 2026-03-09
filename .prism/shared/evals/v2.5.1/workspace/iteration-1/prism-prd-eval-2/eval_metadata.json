@@ -1,0 +1,18 @@
+{
+  "skill": "prism-prd",
+  "eval_id": 2,
+  "dimension": "regression",
+  "prompt": "I have an idea for a mobile fitness tracking app. Can you help me document the product requirements?",
+  "expected_output": "Skill triggers correctly, checks for existing context via prism-locator agent, invokes /generate_prd command, saves output to .prism/shared/plans/, and offers next workflow steps",
+  "expectations": [
+    "Skill checks for existing research/documentation before starting",
+    "The /generate_prd command is invoked",
+    "Output is saved to .prism/shared/plans/ directory with correct naming convention",
+    "Next steps include /prism-research and /prism-plan options"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

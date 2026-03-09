@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Reads the plan and detects existing checkmarks for phases 1-3",
+      "passed": true,
+      "evidence": "**Task**: \"Resume implementation. The plan has phases 1-5 with phases 1-3 already checked off. Continue from where we left off.\""
+    },
+    {
+      "text": "Identifies Phase 4 as the next phase to implement",
+      "passed": true,
+      "evidence": "# Prism Implement Skill Evaluation Transcript"
+    },
+    {
+      "text": "Does not re-implement phases 1-3",
+      "passed": true,
+      "evidence": "# Prism Implement Skill Evaluation Transcript"
+    },
+    {
+      "text": "Loads TodoWrite with remaining phases 4-5",
+      "passed": false,
+      "evidence": "Only 1/4 key terms found: ['loads', 'todowrite', 'remaining', 'phases']"
+    },
+    {
+      "text": "Reads all files in Phase 4 before making changes",
+      "passed": true,
+      "evidence": "**Task**: \"Resume implementation. The plan has phases 1-5 with phases 1-3 already checked off. Continue from where we left off.\""
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  }
+}

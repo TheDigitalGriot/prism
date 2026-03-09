@@ -1,0 +1,16 @@
+{
+  "skill": "prism-validate",
+  "eval_id": 2,
+  "dimension": "behavioral_compliance",
+  "prompt": "Validate the implementation. The codebase-memory-mcp graph tools are available.",
+  "expected_output": "Validation report includes a Structural Validation Results section with dead code check, dependency integrity, and boundary violation checks using graph tools.",
+  "expectations": [
+    "Includes a '## Structural Validation Results' section in the report",
+    "Runs search_graph with max_degree=0 and exclude_entry_points=true to check for dead code",
+    "Uses trace_call_path for modified functions to verify dependency integrity",
+    "Checks for boundary violations using search_graph with relationship=CALLS",
+    "Reports results of each structural check in a table format"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

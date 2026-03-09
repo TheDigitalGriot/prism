@@ -1,0 +1,15 @@
+{
+  "skill": "prism-docs-update",
+  "eval_id": 3,
+  "dimension": "regression",
+  "prompt": "Update prism docs from PRISM-DOCUMENTATION-v2.md. There are new sections about the Spectrum runner.",
+  "expected_output": "New sections are handled correctly \u00e2\u20ac\u201d new .md files created with proper frontmatter, config.ts update proposed with approval, and verification step counts headings and lines",
+  "expectations": [
+    "New VitePress pages include frontmatter with title, description, outline",
+    "Config.ts sidebar update is proposed but requires explicit approval",
+    "Verification step counts headings and checks line counts",
+    "Final summary reports pages updated, lines added, new pages created, and config changes"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}

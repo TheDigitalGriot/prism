@@ -1,0 +1,19 @@
+{
+  "skill": "prism-debug",
+  "eval_id": 3,
+  "dimension": "behavioral_compliance",
+  "prompt": "A Spectrum quality gate failed during STORY-005 execution. The typecheck gate returned errors. Debug the failure for the next retry iteration.",
+  "expected_output": "Debug investigation formatted for Spectrum integration with progress.md-compatible output",
+  "expectations": [
+    "stories.json is read to understand STORY-005 context",
+    "progress.md is read for recent history",
+    "Output follows the Spectrum debug progress entry format (Timestamp, Quality Gate Failed, Error Output, Investigation Findings, Root Cause, Suggested Fix)",
+    "Findings are formatted for appending to progress.md",
+    "Typecheck error locations (file:line) are parsed and listed"
+  ],
+  "files": [],
+  "versions": {
+    "current": "v2.5.1",
+    "baseline": "v2.4.8"
+  }
+}

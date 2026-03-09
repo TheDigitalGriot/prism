@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Section mapping reference is read before any analysis",
+      "passed": true,
+      "evidence": "## Step 1: Read Section Mapping"
+    },
+    {
+      "text": "A change summary is presented listing new, updated, and removed sections",
+      "passed": true,
+      "evidence": "## Step 2: Analyze Changes (v2.5.0 \u2192 v2.5.1)"
+    },
+    {
+      "text": "User approval is requested before any file modifications",
+      "passed": true,
+      "evidence": "## Step 3: Report Changes (Simulated User Presentation)"
+    },
+    {
+      "text": "VitePress frontmatter is preserved in all updated pages",
+      "passed": true,
+      "evidence": "| Part | Sections | VitePress Pages |"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Change summary is presented even though user said 'without asking'",
+      "passed": true,
+      "evidence": "## Step 2: Analyze Changes"
+    },
+    {
+      "text": "User approval is requested before modifying files",
+      "passed": true,
+      "evidence": "The user referenced `PRISM-DOCUMENTATION-v3.md`, but this file does not exist. Scanned `.prism/shared/docs/` and found the following versions:"
+    },
+    {
+      "text": "VitePress config.ts is not modified without explicit approval",
+      "passed": true,
+      "evidence": "| Part | Sections Mapped | VitePress Directory |"
+    },
+    {
+      "text": "Edit tool is preferred over Write for targeted changes",
+      "passed": true,
+      "evidence": "### 4.1 \u2014 `plugin/index.md` (Edit)"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

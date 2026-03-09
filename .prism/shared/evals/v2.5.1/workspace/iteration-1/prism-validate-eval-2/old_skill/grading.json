@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Includes a '## Structural Validation Results' section in the report",
+      "passed": true,
+      "evidence": "- [x] `prism-analyzer.md` \u2014 \"Documentarian, Not Critic\" section added at line 24-25 with factual description constraint. Exact text: \"When analyzing research documents, describe findings factually. Do"
+    },
+    {
+      "text": "Runs search_graph with max_degree=0 and exclude_entry_points=true to check for dead code",
+      "passed": false,
+      "evidence": "Only 3/8 key terms found: ['runs', 'search_graph', 'max_degree', 'exclude_entry_points', 'true']"
+    },
+    {
+      "text": "Uses trace_call_path for modified functions to verify dependency integrity",
+      "passed": false,
+      "evidence": "Only 2/7 key terms found: ['uses', 'trace_call_path', 'modified', 'functions', 'verify']"
+    },
+    {
+      "text": "Checks for boundary violations using search_graph with relationship=CALLS",
+      "passed": false,
+      "evidence": "Only 2/7 key terms found: ['checks', 'boundary', 'violations', 'using', 'search_graph']"
+    },
+    {
+      "text": "Reports results of each structural check in a table format",
+      "passed": false,
+      "evidence": "Only 2/6 key terms found: ['reports', 'results', 'structural', 'check', 'table']"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 4,
+    "total": 5,
+    "pass_rate": 0.2
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "skill": "prism-iterate",
+  "eval_id": 3,
+  "dimension": "regression",
+  "prompt": "Iterate on the plan. Phase 7 needs a new sub-phase 7.5 to handle database migration that was discovered during implementation. The new phase requires understanding the existing ORM setup.",
+  "expected_output": "Spawns research agents to understand the ORM setup before adding Phase 7.5 to the plan. Updates success criteria if needed.",
+  "expectations": [
+    "Spawns research subagents (codebase-locator, codebase-analyzer) to understand the ORM setup",
+    "Adds Phase 7.5 to the plan without disrupting completed phases",
+    "Updates TodoWrite to reflect the new phase",
+    "Maintains the separation of automated vs manual success criteria",
+    "Leaves no unresolved questions in the updated plan"
+  ],
+  "version_current": "v2.5.2",
+  "version_baseline": "v2.4.8"
+}
