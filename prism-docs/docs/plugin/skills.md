@@ -1,6 +1,6 @@
 ---
 title: Skills Reference
-description: All 17 Prism skills — auto-discovered workflow orchestrators with YAML frontmatter trigger patterns.
+description: All 18 Prism skills — auto-discovered workflow orchestrators with YAML frontmatter trigger patterns.
 outline: [2, 3]
 ---
 
@@ -43,13 +43,21 @@ Skills live at `skills/*/SKILL.md` and are auto-discovered workflow orchestrator
 
 **`prism-finish`** presents 4 structured options: merge locally, push and create PR, keep as-is, or discard (requires confirmation).
 
+### Setup & Utility Skills (v3.0.3)
+
+| # | Skill | Lines | Model | Trigger Patterns |
+|---|-------|-------|-------|-----------------|
+| 15 | `prism-init` | 53 | **haiku** | "init prism", "set up prism", "initialize prism", "create .prism folder" |
+
+**`prism-init`** wraps `init_prism.py` to initialize the `.prism/` directory structure in any project. Creates 15 directories including `designs/` (Figma/Pencil.dev files) and `assets/` (AI-generated images, videos, 3D models), updates `.gitignore`, and optionally adds a Prism section to `CLAUDE.md`.
+
 ### Release, Eval & Docs Skills (v2.5.0)
 
 | # | Skill | Lines | Model | Trigger Patterns |
 |---|-------|-------|-------|-----------------|
-| 15 | `prism-release` | 245 | — | "release", "bump version", "new version", "cut a release" |
-| 16 | `prism-eval` | 237 | **sonnet** | "run evals", "compare versions", "benchmark skills", "evaluate v2.5.0", "regression check" |
-| 17 | `prism-docs-update` | 138 | — | "update prism docs", "sync docs site", "update documentation site" |
+| 16 | `prism-release` | 245 | — | "release", "bump version", "new version", "cut a release" |
+| 17 | `prism-eval` | 237 | **sonnet** | "run evals", "compare versions", "benchmark skills", "evaluate v2.5.0", "regression check" |
+| 18 | `prism-docs-update` | 138 | — | "update prism docs", "sync docs site", "update documentation site" |
 
 ## Skill Subdirectory Contents
 
@@ -62,7 +70,9 @@ skills/
 │   ├── references/
 │   │   └── workflow-patterns.md         # Reusable workflow pattern library
 │   └── scripts/
-│       └── init_prism.py                # 178 lines — .prism/ directory initializer
+│       └── init_prism.py                # 185 lines — .prism/ directory initializer
+├── prism-init/
+│   └── SKILL.md                         # 53 lines — haiku (project init, wraps init_prism.py)
 ├── prism-research/
 │   ├── SKILL.md                         # 121 lines
 │   └── references/

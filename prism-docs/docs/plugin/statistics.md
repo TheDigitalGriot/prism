@@ -6,30 +6,30 @@ outline: [2, 3]
 
 # Plugin Statistics
 
-## Component Counts
+## Component Counts <small>(v3.0.3)</small>
 
-| Category | Files | Total Lines |
-|----------|-------|-------------|
-| Plugin manifests | 2 | 28 |
-| Commands | 25 | 4,051 |
-| Agents | 14 | ~1,750 |
-| Skills (SKILL.md) | 17 | ~2,700 |
-| Skill references | 19 | ~2,500 |
-| Scripts | 11 | ~2,400 |
-| CLAUDE.md | 1 | 115 |
-| Hooks | 7 events | ~40 |
-| MCP servers | 2 | — |
-| **Plugin total** | **~97** | **~13,700** |
+| Category | Files | Total Lines | Change from v3.0.2 |
+|----------|-------|-------------|---------------------|
+| Plugin manifests | 2 | 28 | — |
+| Commands | 25 | 4,051 | — |
+| Agents | 14 | ~1,750 | — |
+| Skills (SKILL.md) | 18 | ~2,750 | +1 (prism-init) |
+| Skill references | 19 | ~2,500 | — |
+| Scripts | 11 | ~2,400 | init_prism.py +7 lines (designs/, assets/) |
+| CLAUDE.md | 1 | 115 | — |
+| Hooks | 7 events | ~40 | — |
+| MCP servers | 2 | — | — |
+| **Plugin total** | **~99** | **~13,800** | +1 skill, +2 .prism/ dirs |
 
-## Model Assignment Distribution
+## Model Assignment Distribution <small>(v3.0.3)</small>
 
 | Model | Components | Typical Cost | Use Case |
 |-------|------------|-------------|----------|
 | **Opus** | 16 assignments | Highest | Deep analysis, planning, document generation |
 | **Sonnet** | 26 assignments | Medium | General execution, routing, coordination |
-| **Haiku** | 11 assignments | Lowest | Fast lookups, simple operations, file scanning |
+| **Haiku** | 12 assignments | Lowest | Fast lookups, simple operations, file scanning, project init |
 
-**Dynamic Model Selection (v3.0.1):** Skills can override agent default models at dispatch time based on task complexity. See `skills/prism-spectrum/references/model-selection.md`.
+**Dynamic Model Selection (v3.0.3):** Skills can override agent default models at dispatch time based on task complexity. See `skills/prism-spectrum/references/model-selection.md`.
 
 ## Largest Components
 

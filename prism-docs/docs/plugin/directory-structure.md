@@ -57,11 +57,13 @@ prism-plugin/                              # Repository root
 │   ├── spec-reviewer.md                  #  ~70 lines — sonnet (v3.0.1)
 │   └── quality-reviewer.md              #  ~75 lines — sonnet (v3.0.1)
 │
-├── skills/                                # 14 auto-discovered skills (2,344 lines total)
+├── skills/                                # 18 auto-discovered skills (~2,400 lines total)
 │   ├── prism/
 │   │   ├── SKILL.md                       # 276 lines — sonnet (master orchestrator)
 │   │   ├── references/workflow-patterns.md
-│   │   └── scripts/init_prism.py          # 178 lines
+│   │   └── scripts/init_prism.py          # 185 lines
+│   ├── prism-init/
+│   │   └── SKILL.md                       # 53 lines — haiku (project init)
 │   ├── prism-research/
 │   │   ├── SKILL.md                       # 121 lines — sonnet
 │   │   └── references/{exploration-patterns,research-template}.md
@@ -117,6 +119,8 @@ prism-plugin/                              # Repository root
 └── .prism/                                # Workflow artifacts directory
     ├── stories/                           # stories.json + per-story manifests
     ├── shared/                            # Committed: research, plans, validation
-    │   └── contracts/                     # Cross-domain interface contracts
+    │   ├── contracts/                     # Cross-domain interface contracts
+    │   ├── designs/                       # Figma / Pencil.dev design files
+    │   └── assets/                        # AI-generated images, videos, 3D models
     └── local/                             # Gitignored: per-developer artifacts
 ```

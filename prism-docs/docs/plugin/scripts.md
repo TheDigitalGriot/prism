@@ -76,13 +76,16 @@ Native PowerShell installer for Windows:
 - Configures PATH in PowerShell `$PROFILE`
 - Same auto/source/download method pattern as bash version
 
-## `skills/prism/scripts/init_prism.py` (178 lines)
+## `skills/prism/scripts/init_prism.py` (185 lines)
 
 Initializes the `.prism/` directory structure in any project:
-- Creates 13 directories: `stories/`, `shared/{research,plans,validation,handoffs,prs,spectrum,ref,docs,contracts}`, `shared/validation/baselines/`, `local/{ref,docs}`
+- Creates 15 directories: `stories/`, `shared/{research,plans,validation,handoffs,prs,spectrum,ref,docs,contracts,designs,assets}`, `shared/validation/baselines/`, `local/{ref,docs}`
+  - `shared/designs/` — Figma / Pencil.dev design files
+  - `shared/assets/` — AI-generated images, videos, 3D models
 - Adds `.prism/local/` to `.gitignore`
 - Creates `README.md` in `.prism/shared/`
 - Optionally adds Prism section to `CLAUDE.md`
+- Wrapped by the `/prism-init` skill (v3.0.3)
 
 ### Hook Scripts (v3.0.1)
 

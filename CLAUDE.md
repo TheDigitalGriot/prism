@@ -87,12 +87,14 @@ For large features (10+ stories):
 │   ├── handoffs/         # Session handoff documents
 │   ├── prs/              # PR descriptions
 │   ├── spectrum/         # progress.md (accumulated learnings)
+│   ├── designs/          # Figma / Pencil.dev design files
+│   ├── assets/           # AI-generated images, videos, 3D models
 │   ├── ref/              # Reference materials
 │   └── docs/             # Project documentation
 └── local/                # Gitignored, per-developer artifacts
 ```
 
-Initialize with: `python skills/prism/scripts/init_prism.py`
+Initialize with: `/prism-init` (or `python skills/prism/scripts/init_prism.py`)
 
 ## stories.json Schema
 
