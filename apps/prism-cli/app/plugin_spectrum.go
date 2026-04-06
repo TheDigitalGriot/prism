@@ -311,6 +311,7 @@ func (p *SpectrumPlugin) Update(msg tea.Msg) (plugin.Plugin, tea.Cmd) {
 		signalMsg := SignalDetectedMsg{
 			Type:    convertSignalType(signal.Type),
 			Content: signal.Content,
+			Reason:  signal.Reason,
 			StoryID: p.currentStoryID,
 		}
 
@@ -850,6 +851,15 @@ func (p *SpectrumPlugin) handleSignal(msg SignalDetectedMsg) (plugin.Plugin, tea
 
 	case SignalBlocked:
 		p.addLog(LogWarning, "Story blocked: "+msg.Content)
+		return p, tea.Tick(time.Duration(p.ctx.Pause)*time.Second, func(t time.Time) tea.Msg {
+			return StartNextIterationMsg{}
+		})
+
+	case SignalNeedsContext:
+		p.addLog(LogWarning, "Story needs additional context — moving to next story")
+		if msg.Reason != "" {
+			p.addLog(LogWarning, "Questions: "+msg.Reason)
+		}
 		return p, tea.Tick(time.Duration(p.ctx.Pause)*time.Second, func(t time.Time) tea.Msg {
 			return StartNextIterationMsg{}
 		})

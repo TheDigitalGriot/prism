@@ -48,12 +48,14 @@ const (
 	SignalRetry
 	SignalBlocked
 	SignalError
+	SignalNeedsContext
 )
 
 // SignalDetectedMsg when a signal is found in output
 type SignalDetectedMsg struct {
 	Type    SignalType
 	Content string
+	Reason  string
 	StoryID string
 }
 

@@ -102,6 +102,7 @@ func ParseSignalFromOutput(output string, currentStoryID string) SignalDetectedM
 	return SignalDetectedMsg{
 		Type:    convertSignalType(signal.Type),
 		Content: signal.Content,
+		Reason:  signal.Reason,
 		StoryID: currentStoryID,
 	}
 }
@@ -119,6 +120,8 @@ func convertSignalType(dt domain.SignalType) SignalType {
 		return SignalBlocked
 	case domain.SignalError:
 		return SignalError
+	case domain.SignalNeedsContext:
+		return SignalNeedsContext
 	default:
 		return SignalNone
 	}
