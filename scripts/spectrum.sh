@@ -330,6 +330,15 @@ check_signals() {
         return 0  # Complete
     fi
 
+    # Check for continue with concerns (must come before generic continue check)
+    if echo "$output" | grep -q '<spectrum-continue>' && echo "$output" | grep -q '<concerns>'; then
+        local concerns
+        concerns=$(echo "$output" | sed -n '/<concerns>/,/<\/concerns>/p' | grep '^ *-' || echo "No specific concerns")
+        warn "Story completed with concerns:"
+        echo "$concerns"
+        return 1  # Continue to next story — concerns are logged in progress.md
+    fi
+
     # Check for continue
     if echo "$output" | grep -q '<spectrum-continue>'; then
         return 1  # Continue
@@ -353,23 +362,14 @@ check_signals() {
         return 3  # Error
     fi
 
-  # New: needs-context signal — treat as blocked, record questions
-  if echo "$output" | grep -q '<spectrum-needs-context>'; then
-    local questions
-    questions=$(echo "$output" | sed -n '/<spectrum-needs-context>/,/<\/spectrum-needs-context>/p' | grep '^ *-' || echo "No specific questions provided")
-    warn "Story needs additional context:"
-    echo "$questions"
-    return 1  # Same as blocked — try next story
-  fi
-
-  # New: concerns signal — log concerns but treat as continue
-  if echo "$output" | grep -q '<spectrum-continue>' && echo "$output" | grep -q '<concerns>'; then
-    local concerns
-    concerns=$(echo "$output" | sed -n '/<concerns>/,/<\/concerns>/p' | grep '^ *-' || echo "No specific concerns")
-    warn "Story completed with concerns:"
-    echo "$concerns"
-    return 0  # Treat as success — concerns are logged in progress.md
-  fi
+    # New: needs-context signal — treat as blocked, record questions
+    if echo "$output" | grep -q '<spectrum-needs-context>'; then
+        local questions
+        questions=$(echo "$output" | sed -n '/<spectrum-needs-context>/,/<\/spectrum-needs-context>/p' | grep '^ *-' || echo "No specific questions provided")
+        warn "Story needs additional context:"
+        echo "$questions"
+        return 1  # Same as blocked — try next story
+    fi
 
     # No explicit signal - warn and treat as retry (not silent continue)
     local output_bytes
