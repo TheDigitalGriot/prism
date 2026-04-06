@@ -19,14 +19,14 @@ echo ""
 echo "=== [1/3] Building prism-cli binaries ==="
 mkdir -p "$RESOURCES_DIR/binaries"
 
-if [ -f "$REPO_ROOT/cmd/prism-cli/Makefile" ]; then
-  cd "$REPO_ROOT/cmd/prism-cli"
+if [ -f "$REPO_ROOT/apps/prism-cli/Makefile" ]; then
+  cd "$REPO_ROOT/apps/prism-cli"
   make build-all
   cp bin/prism-cli-* "$RESOURCES_DIR/binaries/" 2>/dev/null || {
     echo "WARNING: No prism-cli binaries found in bin/. Run 'make build-all' manually."
   }
 else
-  echo "WARNING: cmd/prism-cli/Makefile not found. Skipping binary build."
+  echo "WARNING: apps/prism-cli/Makefile not found. Skipping binary build."
   echo "         Place binaries manually in $RESOURCES_DIR/binaries/"
 fi
 
@@ -38,8 +38,8 @@ echo ""
 echo "=== [2/3] Building VSCode extension ==="
 mkdir -p "$RESOURCES_DIR/extensions"
 
-if [ -f "$REPO_ROOT/cmd/prism-vscode/package.json" ]; then
-  cd "$REPO_ROOT/cmd/prism-vscode"
+if [ -f "$REPO_ROOT/apps/prism-vscode/package.json" ]; then
+  cd "$REPO_ROOT/apps/prism-vscode"
 
   # Install deps if needed
   if [ ! -d "node_modules" ]; then
@@ -59,7 +59,7 @@ if [ -f "$REPO_ROOT/cmd/prism-vscode/package.json" ]; then
     }
   fi
 else
-  echo "WARNING: cmd/prism-vscode/package.json not found. Skipping VSIX build."
+  echo "WARNING: apps/prism-vscode/package.json not found. Skipping VSIX build."
   echo "         Place prism.vsix manually in $RESOURCES_DIR/extensions/"
 fi
 

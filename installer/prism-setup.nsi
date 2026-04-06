@@ -1,6 +1,6 @@
 ; =============================================================================
 ; DEPRECATED — This NSIS installer is superseded by the Tauri installer
-; at cmd/prism-installer/. Kept for reference and rollback purposes.
+; at apps/prism-installer/. Kept for reference and rollback purposes.
 ; See: .prism/shared/plans/2026-03-05-unified-tauri-installer.md
 ; =============================================================================
 
@@ -27,7 +27,7 @@ SetCompressor /SOLID lzma
 !endif
 
 !ifndef RESOURCES_DIR
-  !define RESOURCES_DIR "..\cmd\prism-setup\resources"
+  !define RESOURCES_DIR "..\apps\prism-setup\resources"
 !endif
 
 !define PRODUCT_NAME      "Prism"
