@@ -13,7 +13,7 @@ func TestFuzzyScore_ExactMatch(t *testing.T) {
 
 func TestFuzzyScore_SubsequenceMatch(t *testing.T) {
 	// "mgo" should match "model.go" (m...g...o)
-	score := fuzzyScore("mgo", "cmd/prism-cli/app/model.go")
+	score := fuzzyScore("mgo", "apps/prism-cli/app/model.go")
 	if score <= 0 {
 		t.Errorf("subsequence 'mgo' should match 'model.go', got score %d", score)
 	}
@@ -45,7 +45,7 @@ func TestFuzzyScore_Ranking(t *testing.T) {
 
 func TestFuzzyScore_FilenameBias(t *testing.T) {
 	// Matching at the start of filename should score higher
-	scoreFilename := fuzzyScore("mod", "cmd/app/model.go")
+	scoreFilename := fuzzyScore("mod", "apps/app/model.go")
 	scorePath := fuzzyScore("mod", "model/config/app.go")
 
 	// Both should match
@@ -59,10 +59,10 @@ func TestFuzzyScore_FilenameBias(t *testing.T) {
 
 func TestFileFinder_Filter(t *testing.T) {
 	cache := []string{
-		"cmd/prism-cli/app/model.go",
-		"cmd/prism-cli/app/update.go",
-		"cmd/prism-cli/app/views.go",
-		"cmd/prism-cli/main.go",
+		"apps/prism-cli/app/model.go",
+		"apps/prism-cli/app/update.go",
+		"apps/prism-cli/app/views.go",
+		"apps/prism-cli/main.go",
 		"README.md",
 	}
 
@@ -77,7 +77,7 @@ func TestFileFinder_Filter(t *testing.T) {
 	ff.Filter("model")
 	found := false
 	for _, m := range ff.filtered {
-		if m.RelPath == "cmd/prism-cli/app/model.go" {
+		if m.RelPath == "apps/prism-cli/app/model.go" {
 			found = true
 			break
 		}

@@ -16,7 +16,7 @@ import (
 // types (Story, StoriesFile) instead of stub types.
 //
 // Run:
-//   cd cmd/prism-cli && go test ./domain/ -v -run Extended
+//   cd apps/prism-cli && go test ./domain/ -v -run Extended
 // ============================================================================
 
 // --- Valid statuses --------------------------------------------------------

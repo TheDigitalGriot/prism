@@ -429,9 +429,9 @@ func NewDemoModel(prismStyle string) Model {
 						{Name: "stories", Path: "/demo/.prism/stories", IsDir: true, Depth: 2},
 					}},
 					{Name: "cmd", Path: "/demo/cmd", IsDir: true, Expanded: true, Depth: 1, Children: []*FileNode{
-						{Name: "prism-cli", Path: "/demo/cmd/prism-cli", IsDir: true, Expanded: false, Depth: 2, Children: []*FileNode{
-							{Name: "app", Path: "/demo/cmd/prism-cli/app", IsDir: true, Depth: 3},
-							{Name: "main.go", Path: "/demo/cmd/prism-cli/main.go", IsDir: false, Depth: 3},
+						{Name: "prism-cli", Path: "/demo/apps/prism-cli", IsDir: true, Expanded: false, Depth: 2, Children: []*FileNode{
+							{Name: "app", Path: "/demo/apps/prism-cli/app", IsDir: true, Depth: 3},
+							{Name: "main.go", Path: "/demo/apps/prism-cli/main.go", IsDir: false, Depth: 3},
 						}},
 					}},
 					{Name: "README.md", Path: "/demo/README.md", IsDir: false, Depth: 1},
@@ -446,15 +446,15 @@ func NewDemoModel(prismStyle string) Model {
 			gp.state.Ahead = 3
 			gp.state.Behind = 1
 			gp.state.StagedFiles = []GitFileStatus{
-				{Path: "cmd/prism-cli/app/plugin_files.go", Status: "staged"},
-				{Path: "cmd/prism-cli/app/plugin_git.go", Status: "staged"},
+				{Path: "apps/prism-cli/app/plugin_files.go", Status: "staged"},
+				{Path: "apps/prism-cli/app/plugin_git.go", Status: "staged"},
 			}
 			gp.state.ModifiedFiles = []GitFileStatus{
-				{Path: "cmd/prism-cli/app/model.go", Status: "modified"},
-				{Path: "cmd/prism-cli/app/update.go", Status: "modified"},
+				{Path: "apps/prism-cli/app/model.go", Status: "modified"},
+				{Path: "apps/prism-cli/app/update.go", Status: "modified"},
 			}
 			gp.state.UntrackedFiles = []GitFileStatus{
-				{Path: "cmd/prism-cli/app/plugin_monitor.go", Status: "untracked"},
+				{Path: "apps/prism-cli/app/plugin_monitor.go", Status: "untracked"},
 			}
 		}
 		if ap, ok := p.(*AgentPlugin); ok {
@@ -471,13 +471,13 @@ func NewDemoModel(prismStyle string) Model {
 				{
 					Type:    chat.MessageTypeTool,
 					ToolID:  "Read",
-					Content: "Reading: cmd/prism-cli/plugin/plugin.go",
+					Content: "Reading: apps/prism-cli/plugin/plugin.go",
 					Status:  "complete",
 				},
 				{
 					Type:    chat.MessageTypeTool,
 					ToolID:  "Read",
-					Content: "Reading: cmd/prism-cli/app/plugin_home.go",
+					Content: "Reading: apps/prism-cli/app/plugin_home.go",
 					Status:  "complete",
 				},
 				{
@@ -487,7 +487,7 @@ func NewDemoModel(prismStyle string) Model {
 				{
 					Type:    chat.MessageTypeTool,
 					ToolID:  "Write",
-					Content: "Creating: cmd/prism-cli/app/chat/renderer.go",
+					Content: "Creating: apps/prism-cli/app/chat/renderer.go",
 					Status:  "running",
 				},
 			}

@@ -22,10 +22,10 @@ import (
 // - State is plugin-local (cursor, selection, etc.), not top-level
 //
 // Run:
-//   cd cmd/prism-cli && go test ./app/ -v -run Integration
+//   cd apps/prism-cli && go test ./app/ -v -run Integration
 //
 // Benchmarks:
-//   cd cmd/prism-cli && go test ./app/ -bench=BenchmarkIntegration -benchmem
+//   cd apps/prism-cli && go test ./app/ -bench=BenchmarkIntegration -benchmem
 // ============================================================================
 
 // --- Helpers ---------------------------------------------------------------

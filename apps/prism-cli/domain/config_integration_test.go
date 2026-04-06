@@ -15,7 +15,7 @@ import (
 // domain package since there is no separate config package.
 //
 // Run:
-//   cd cmd/prism-cli && go test ./domain/ -v -run Config
+//   cd apps/prism-cli && go test ./domain/ -v -run Config
 // ============================================================================
 
 // --- Path constants --------------------------------------------------------

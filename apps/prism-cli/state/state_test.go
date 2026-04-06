@@ -52,7 +52,7 @@ func TestSaveAndLoad(t *testing.T) {
 		ActivePlugin: "files",
 		Files: FilesPersistedState{
 			OpenTabs:     []string{"main.go", "go.mod"},
-			ExpandedDirs: []string{"cmd/", "pkg/"},
+			ExpandedDirs: []string{"apps/", "pkg/"},
 			SidebarWidth: 35,
 		},
 		Git: GitPersistedState{
