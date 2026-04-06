@@ -1361,6 +1361,9 @@ Say "help me build [feature]" to trigger the full workflow.
 | /prism-plan           | Create implementation plan       |
 | /prism-implement      | Execute approved plan            |
 | /prism-validate       | Verify against plan              |
+| /prism-brainstorm     | Interactive design brainstorming with visual companion |
+| /prism-design         | Design phase — architectural decisions before planning |
+| /prism-finish         | Branch completion — merge, PR, keep, or discard |
 
 ## License
 
