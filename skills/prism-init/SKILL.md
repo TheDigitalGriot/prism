@@ -1,6 +1,6 @@
 ---
 name: prism-init
-description: Initialize the .prism/ directory structure in the current project. Creates shared folders for research, plans, validation, designs, assets, and more. Use when starting a new project with Prism or when the user says "init prism", "set up prism", "initialize prism", "create .prism folder".
+description: Initialize the .prism/ directory structure in the current project. Creates shared folders for brainstorms, research, plans, validation, designs, assets, and more. Use when starting a new project with Prism or when the user says "init prism", "set up prism", "initialize prism", "create .prism folder".
 model: haiku
 ---
 
@@ -32,6 +32,7 @@ python "${CLAUDE_PLUGIN_ROOT}/skills/prism/scripts/init_prism.py" .
 .prism/
 ├── stories/              # Task definitions (stories.json)
 ├── shared/
+│   ├── brainstorms/      # Brainstorm decision ledgers (YYYY-MM-DD-topic.md)
 │   ├── research/         # Codebase research (YYYY-MM-DD-topic.md)
 │   ├── plans/            # Implementation plans (YYYY-MM-DD-feature.md)
 │   ├── validation/       # Validation reports + baselines + diffs
@@ -39,7 +40,7 @@ python "${CLAUDE_PLUGIN_ROOT}/skills/prism/scripts/init_prism.py" .
 │   ├── prs/              # PR descriptions
 │   ├── spectrum/         # Spectrum execution state (progress.md)
 │   ├── contracts/        # Cross-domain interface contracts
-│   ├── designs/          # Figma / Pencil.dev design files
+│   ├── designs/          # Figma / Pencil.dev design files (.md sidecar + .pen)
 │   ├── assets/           # AI-generated images, videos, 3D models
 │   ├── ref/              # Reference materials
 │   └── docs/             # Project documentation

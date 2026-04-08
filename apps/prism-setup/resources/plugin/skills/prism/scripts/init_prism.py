@@ -22,6 +22,7 @@ def init_prism(base_path: str = ".") -> None:
     # Directory structure
     directories = [
         ".prism/stories",
+        ".prism/shared/brainstorms",
         ".prism/shared/research",
         ".prism/shared/plans",
         ".prism/shared/validation",
@@ -53,15 +54,15 @@ def init_prism(base_path: str = ".") -> None:
     gitignore_entry = ".prism/local/"
 
     if gitignore_path.exists():
-        content = gitignore_path.read_text()
+        content = gitignore_path.read_text(encoding="utf-8")
         if gitignore_entry not in content:
-            with open(gitignore_path, "a") as f:
+            with open(gitignore_path, "a", encoding="utf-8") as f:
                 f.write(f"\n# Prism local artifacts (not committed)\n{gitignore_entry}\n")
             print(f"  [+] Added {gitignore_entry} to .gitignore")
         else:
             print(f"  [-] {gitignore_entry} already in .gitignore")
     else:
-        gitignore_path.write_text(f"# Prism local artifacts (not committed)\n{gitignore_entry}\n")
+        gitignore_path.write_text(f"# Prism local artifacts (not committed)\n{gitignore_entry}\n", encoding="utf-8")
         print(f"  [+] Created .gitignore with {gitignore_entry}")
 
     # Create README in .prism/shared
@@ -78,6 +79,7 @@ to the repository and shared with the team.
 .prism/
 ├── stories/           # Task definitions (stories.json)
 ├── shared/
+│   ├── brainstorms/   # Brainstorm decision ledgers (YYYY-MM-DD-topic.md)
 │   ├── research/      # Codebase research (YYYY-MM-DD-topic.md)
 │   ├── plans/         # Implementation plans (YYYY-MM-DD-feature.md)
 │   ├── validation/    # Validation reports (YYYY-MM-DD-report.md)
@@ -85,7 +87,7 @@ to the repository and shared with the team.
 │   ├── prs/           # PR descriptions
 │   ├── spectrum/      # Spectrum execution state (progress.md)
 │   ├── contracts/     # Cross-domain interface contracts
-│   ├── designs/       # Figma / Pencil.dev design files
+│   ├── designs/       # Figma / Pencil.dev design files (.md sidecar + .pen)
 │   ├── assets/        # AI-generated images, videos, 3D models
 │   ├── ref/           # Reference materials
 │   └── docs/          # Project documentation
@@ -112,7 +114,7 @@ Use ISO date prefix for chronological ordering:
 - `/prism-implement` - Start implementation phase
 - `/prism-validate` - Start validation phase
 - `/prism-spectrum` - Autonomous story execution
-""")
+""", encoding="utf-8")
         print("  [+] Created .prism/shared/README.md")
 
     # Check for CLAUDE.md and offer to update
@@ -137,9 +139,9 @@ Prism locations:
 """
 
     if claude_md_path.exists():
-        content = claude_md_path.read_text()
+        content = claude_md_path.read_text(encoding="utf-8")
         if "Prism" not in content:
-            with open(claude_md_path, "a") as f:
+            with open(claude_md_path, "a", encoding="utf-8") as f:
                 f.write(prism_section)
             print("  [+] Added Prism section to CLAUDE.md")
         else:
@@ -153,7 +155,7 @@ Prism locations:
 [Brief description of the project]
 
 {prism_section}
-""")
+""", encoding="utf-8")
         print("  [+] Created CLAUDE.md with Prism section")
 
     print()
@@ -163,13 +165,14 @@ Prism locations:
     print("   .prism/")
     print("   +-- stories/          # Task definitions (stories.json)")
     print("   +-- shared/")
+    print("   |   +-- brainstorms/  # Brainstorm decision ledgers")
     print("   |   +-- research/     # Codebase research docs")
     print("   |   +-- plans/        # Implementation plans")
     print("   |   +-- validation/   # Validation reports")
     print("   |   +-- spectrum/     # Execution state (progress.md)")
     print("   |   +-- contracts/    # Cross-domain interface contracts")
-    print("   |   +-- designs/     # Figma / Pencil.dev design files")
-    print("   |   +-- assets/      # AI-generated images, videos, 3D models")
+    print("   |   +-- designs/      # Figma / Pencil.dev design files")
+    print("   |   +-- assets/       # AI-generated images, videos, 3D models")
     print("   |   +-- ref/          # Reference materials")
     print("   |   +-- docs/         # Project documentation")
     print("   +-- local/            # Personal notes (gitignored)")

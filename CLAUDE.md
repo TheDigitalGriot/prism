@@ -81,13 +81,15 @@ For large features (10+ stories):
 .prism/
 ├── stories/              # stories.json (or <epic>/stories.json)
 ├── shared/               # Committed to repo
+│   ├── brainstorms/      # Brainstorm decision ledgers (YYYY-MM-DD-topic.md)
 │   ├── research/         # YYYY-MM-DD-topic.md
 │   ├── plans/            # YYYY-MM-DD-feature.md
 │   ├── validation/       # YYYY-MM-DD-report.md
 │   ├── handoffs/         # Session handoff documents
 │   ├── prs/              # PR descriptions
 │   ├── spectrum/         # progress.md (accumulated learnings)
-│   ├── designs/          # Figma / Pencil.dev design files
+│   ├── contracts/        # Cross-domain interface contracts
+│   ├── designs/          # Figma / Pencil.dev design files (.md sidecar + .pen)
 │   ├── assets/           # AI-generated images, videos, 3D models
 │   ├── ref/              # Reference materials
 │   └── docs/             # Project documentation
