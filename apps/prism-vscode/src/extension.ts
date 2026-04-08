@@ -5,6 +5,7 @@ import { ResearchTreeDataProvider } from "./providers/research-tree"
 import { PlansTreeDataProvider } from "./providers/plans-tree"
 import { StoriesTreeDataProvider } from "./providers/stories-tree"
 import { WorkflowStatusBar } from "./providers/workflow-status"
+import { BrainstormViewerWatcher } from "./prism/brainstormViewerWatcher"
 
 let _provider: VscodeWebviewProvider | undefined
 let _panelProvider: PrismPanelProvider | undefined
@@ -332,8 +333,23 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(
     vscode.workspace.onDidChangeWorkspaceFolders(async () => {
       await controller._detectPrismDir()
+      restartBrainstormViewerWatcher()
     }),
   )
+
+  // ---------------------------------------------------------------------------
+  // Brainstorm viewer auto-open (Phase A of brainstorm-redesign)
+  // Watches `.prism/local/brainstorm/<session>/state/open-viewer` trigger files
+  // and opens the URL in Simple Browser when they appear.
+  // ---------------------------------------------------------------------------
+  const brainstormViewerWatcher = new BrainstormViewerWatcher()
+  context.subscriptions.push(brainstormViewerWatcher)
+
+  function restartBrainstormViewerWatcher(): void {
+    const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
+    if (root) brainstormViewerWatcher.start(root)
+  }
+  restartBrainstormViewerWatcher()
 
   console.log(`[Prism] Extension activated in ${Date.now() - startTime}ms`)
 }

@@ -4,5 +4,17 @@
   "version": "3.0.3",
   "author": {
     "name": "Prism Team"
-  }
+  },
+  "mcpServers": {
+    "brainstorm-channel": {
+      "type": "stdio",
+      "command": "bun",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/skills/prism-brainstorm/scripts/brainstorm-channel.ts"
+      ]
+    }
+  },
+  "channels": [
+    { "server": "brainstorm-channel" }
+  ]
 }
