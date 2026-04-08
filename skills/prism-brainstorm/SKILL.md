@@ -11,7 +11,7 @@ Interactive design exploration with optional browser-based visual companion for 
 <HARD-GATE>
 Do NOT invoke any implementation skill, write any code, scaffold any project, or take any
 implementation action until you have presented a design and the user has approved it.
-Brainstorming produces a design document, not code.
+Brainstorming produces a decision ledger, not code.
 </HARD-GATE>
 
 ## Workflow
@@ -21,10 +21,10 @@ Brainstorming produces a design document, not code.
 - [ ] 3. **Ask clarifying questions** — One at a time, wait for answers
 - [ ] 4. **Propose 2-3 approaches** — With trade-offs for each
 - [ ] 5. **Present design in sections** — Get user approval after each section
-- [ ] 6. **Write decision ledger** — Save to `.prism/shared/brainstorms/YYYY-MM-DD-<topic>.md` (NOT `plans/` — brainstorm is upstream of design, see corrected skill graph in `prism-design/SKILL.md`)
+- [ ] 6. **Write decision ledger** — Save to `.prism/shared/brainstorms/YYYY-MM-DD-<topic>.md` (NOT `plans/` — brainstorm is upstream of design)
 - [ ] 7. **Self-review** — Check for TODOs, contradictions, missing requirements
 - [ ] 8. **User reviews spec** — Present the saved file for review
-- [ ] 9. **Transition** — Offer `/prism-plan` to create implementation plan from the design
+- [ ] 9. **Transition** — Offer `/prism-design` (if architecture needed) or `/prism-plan` (direct to implementation)
 
 ## Visual Companion
 
@@ -36,88 +36,17 @@ This offer MUST be its own message. Do not combine it with clarifying questions.
 
 If accepted, load `visual-companion.md` for the full integration guide.
 
-## Fidelity Engine
+### Fidelity Engine
 
-When the visual companion is running, every screen Claude renders has a **fidelity level** that signals how polished the mockup should look. The companion's frame template defines three levels via a `data-fidelity` attribute on the body (or any fragment root):
+When the visual companion is running, every rendered screen has a **fidelity level** (`lo` / `mid` / `hi`) set via a `data-fidelity` attribute. This governs how polished mockups look — from wireframe energy (lo) through structured (mid) to full griotwave glass (hi). A classifier (`decide` / `clarify` / `park`) decides how user messages advance the level, with slash-command overrides (`/lo` `/mid` `/hi`) and carry-forward rules.
 
-| Level | Vocabulary | What it looks like | When |
-|---|---|---|---|
-| `lo` | sketch | dashed borders, desaturated, no glass blur, no bloom — wireframe energy | early questions, throwaway exploration |
-| `mid` | structured | solid borders, light blur, no bloom — functional but unpolished | once direction is forming |
-| `hi` | polished | full griotwave glass — backdrop blur, ember bloom, neural-blue accents | confirmed picks, ceremonial final render |
+**Load [references/fidelity-engine.md](references/fidelity-engine.md) when you're about to render a screen** — it has the full level table, classifier rules, slash overrides, carry-forward, final-hi ceremonial rule, and HTML usage examples.
 
-CSS variables `--fidelity-blur`, `--fidelity-shadow`, `--fidelity-bloom`, `--fidelity-border-style`, `--fidelity-saturation`, `--fidelity-opacity` are reshaped by `[data-fidelity="lo|mid|hi"]` selectors in `frame-template.html`. New components reference these instead of hard-coding effects.
+### Drawer State
 
-### Classifier — every user message is one of:
+The visual companion's right-side drawer renders from `$STATE_DIR/decisions.json`. When you classify a message as `decide` or `park`, write the file directly via the Write tool — the server watches the file and broadcasts a `state-update` to the browser in real time.
 
-- **decide** → user committed to a pick. Advance to the next question. Render the next screen at the carry-forward fidelity (or `lo` if no carry-forward yet). **Append the pick to `decisions[]` in `state/decisions.json`** (Drawer renders this — see below).
-- **clarify** → user wants more detail or comparison on the *current* question. Re-render the current screen one fidelity level higher (`lo` → `mid` → `hi` → stays `hi`).
-- **park** → user (or you, when a side concern surfaces mid-flow) wants to defer this question without answering it. **Append to `parked[]` in `state/decisions.json`** with a back-pointer to the question it branched from. Carry on with the original question. Parked items are NOT unanswered — they are deferred on purpose, and the final design doc carries them as "Deferred Concerns".
-
-The user signals **park** with phrases like *"park this"*, *"defer that"*, *"come back to it later"*, or any explicit call-out. You may also park on your own when a clarifying side-thread is clearly out-of-scope for the current question — but say so explicitly so the user can override.
-
-### Slash-command override
-
-The user can jump fidelity at any point with an explicit command. These take precedence over the classifier for the next render only:
-
-- `/lo` — render the next screen at `lo`
-- `/mid` — render the next screen at `mid`
-- `/hi` — render the next screen at `hi`
-
-After the override fires, carry-forward resumes from the override level.
-
-### Carry-forward rule
-
-Fidelity persists across questions. If you escalated Q2 to `mid`, Q3 starts at `mid` automatically. Downshifting is explicit (slash command or a fresh `decide` after a long lull).
-
-### Final-hi ceremonial rule
-
-The **last** decision-confirm screen before the design document is **always** rendered at `hi`, regardless of the carry-forward state. This is the ceremonial render — the finished prototype the user signs off on. Do not skip it.
-
-### How to set fidelity in HTML
-
-Set `data-fidelity` on the root element of the fragment Claude writes to `$SCREEN_DIR`:
-
-```html
-<div data-fidelity="lo" class="options">
-  <div class="option" data-choice="A">...</div>
-  <div class="option" data-choice="B">...</div>
-</div>
-```
-
-For full documents, set it on `<body data-fidelity="hi">`. The CSS cascade does the rest — components automatically pick up the level via the `--fidelity-*` variables.
-
-## Drawer State — `state/decisions.json`
-
-The visual companion's right-side drawer renders from a single state file: `$STATE_DIR/decisions.json`. Whenever you classify a user message as `decide` or `park`, write the file directly via the Write tool. The brainstorm server watches the file and broadcasts a `state-update` message to the browser, which re-renders the drawer in real time. **No round-trip through the user is needed.**
-
-### Schema
-
-```json
-{
-  "decisions": [
-    { "q": "Q1", "label": "Re-skin fidelity", "choice": "B", "summary": "Hybrid (inlined + regen script)" }
-  ],
-  "parked": [
-    { "fromQ": "Q2", "label": "/hi mid-stream priority", "concern": "Classifier vs command override is unspecified", "revisit": "during Q2 implementation" }
-  ]
-}
-```
-
-- `decisions[].q` — short ID like `Q1`, `Q2`, `Q3` (track question order)
-- `decisions[].label` — one-line summary of what was being decided
-- `decisions[].choice` — letter or short identifier of the pick
-- `decisions[].summary` — one-line description of the chosen option
-- `parked[].fromQ` — the question this concern branched off (back-pointer)
-- `parked[].label` — short title of the parked concern
-- `parked[].concern` — one-sentence description
-- `parked[].revisit` — when/how it should be revisited
-
-Always read the existing file first (it may already contain entries from earlier in the session), append, then write the merged state back. Never overwrite existing entries.
-
-### Health signal
-
-When `parked.length >= 5`, the drawer auto-renders a yellow warning *"Long parking lot — session may be over-scoped"*. Treat this as a prompt to pause and ask the user whether the brainstorm scope should be narrowed before continuing. Do NOT silently keep parking.
+**Load [references/drawer-state.md](references/drawer-state.md) when you're about to write the first decision or parked item** — it has the JSON schema, field reference, read-merge-write protocol, and the 5-item health signal.
 
 ## Decision Ledger Format
 
@@ -169,12 +98,12 @@ These survived the brainstorm as first-class items. They are known, deferred, an
 
 1. **Design before code** — Never write implementation code during brainstorming
 2. **One question at a time** — Don't overwhelm with multiple questions
-3. **User approval per section** — Don't write the full design in one shot
+3. **User approval per section** — Don't write the full ledger in one shot
 4. **Visual companion is optional** — Only offer when visual decisions are involved
-5. **Save and commit** — Design documents are committed to `.prism/shared/plans/`
+5. **Save and commit** — Ledgers are committed to `.prism/shared/brainstorms/`
 
 ## Integration
 
 - **Follows:** `/prism-research` (optional — brainstorming can start from scratch)
-- **Precedes:** `/prism-plan` (design document becomes planning input)
+- **Precedes:** `/prism-design` (architecture) or `/prism-plan` (direct implementation)
 - **Visual companion:** Stored in `.prism/local/brainstorm/` (gitignored)
