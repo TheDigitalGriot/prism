@@ -1,6 +1,6 @@
 # Prism — AI-Powered Development Workflow for VS Code
 
-Prism is a VS Code extension that delivers the structured 4-phase development workflow: **Research → Plan → Implement → Validate**, powered by Claude AI. It serves as the IDE-first companion to the [Prism CLI](../../cmd/prism-cli/).
+Prism is a VS Code extension that delivers the structured 4-phase development workflow: **Research → Plan → Implement → Validate**, powered by Claude AI. It serves as the IDE-first companion to the [Prism CLI](https://github.com/TheDigitalGriot/prism-plugin/tree/main/apps/prism-cli).
 
 ## Features
 
@@ -109,4 +109,4 @@ npm run package
 
 ## License
 
-MIT — see [LICENSE](../../LICENSE)
+MIT — see [LICENSE](https://github.com/TheDigitalGriot/prism-plugin/blob/main/LICENSE)
