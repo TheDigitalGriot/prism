@@ -45,6 +45,7 @@ Skills (Orchestrators)  →  Commands (Operations)  →  Agents (Specialists)
 Additional skills:
 - **Brainstorm** (`/prism-brainstorm`): Open-ended ideation before committing to a plan.
 - **Design** (`/prism-design`): UI/UX design exploration and specification.
+- **Subagent** (`/prism-subagent`): Same-session subagent-driven plan execution with two-stage review, bounded retries, and domain-aware context priming. Sits between `/prism-implement` (single phase) and `/prism-spectrum` (autonomous overnight).
 - **Finish** (`/prism-finish`): Wraps up a development branch (cleanup, PR description, handoff).
 
 ## Execution Models
@@ -54,7 +55,7 @@ Three execution models for different scales of work:
 | Scenario | Model | Invocation |
 |----------|-------|-----------|
 | Large feature (10+ stories), overnight autonomy | **Spectrum** | `/decompose_plan` → `./scripts/spectrum.sh` |
-| Medium feature (3-10 tasks), interactive session | **Subagent-Driven Dev** | `superpowers:subagent-driven-development` |
+| Medium feature (3-10 tasks), interactive session | **Subagent-Driven** | `/prism-subagent` |
 | Quick fix or single-phase work | **Direct** | `/prism-implement` |
 | Parallel feature isolation | **Worktree** | `/worktree` + `/prism-finish` |
 

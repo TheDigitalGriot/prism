@@ -1,0 +1,137 @@
+{
+  "skill": "prism-subagent",
+  "version": "v3.2.0",
+  "baseline": "../../../v3.1.1-snapshot/skills/prism-subagent/SKILL.md",
+  "current": "skills/prism-subagent/SKILL.md",
+  "target_codebase": ".",
+  "test_fixtures": {
+    "plan_simple": ".prism/shared/evals/v3.2.0/skills/prism-subagent/fixtures/plan-simple.md",
+    "plan_contract": ".prism/shared/evals/v3.2.0/skills/prism-subagent/fixtures/plan-contract.md",
+    "plan_r3f": ".prism/shared/evals/v3.2.0/skills/prism-subagent/fixtures/plan-r3f.md"
+  },
+  "evals": [
+    {
+      "id": 1,
+      "dimension": "behavioral_compliance",
+      "prompt": "Execute the plan at .prism/shared/evals/v3.2.0/skills/prism-subagent/fixtures/plan-simple.md using prism-subagent. Use --stdout mode for extract-tasks.py and do not actually dispatch implementers — just demonstrate the pre-flight phase.",
+      "expected_output": "Pre-flight phase that runs extract-tasks.py and produces a valid state.json skeleton",
+      "files": [],
+      "expectations": [
+        "extract-tasks.py is invoked with the plan path before any implementer dispatch",
+        "state.json is written to .prism/local/subagent/<plan-slug>/state.json",
+        "Tasks are NOT re-extracted by reading the plan markdown directly",
+        "Domain is auto-detected (or overridden via --domain flag)",
+        "Each task gets a review_class with a non-empty review_class_reason",
+        "model_ladder is set per task based on review class",
+        "current_task points to the first pending task"
+      ]
+    },
+    {
+      "id": 2,
+      "dimension": "loop_prevention",
+      "prompt": "Simulate executing plan-simple.md with prism-subagent where the spec-reviewer raises the same issue twice in a row. Show how the controller handles this.",
+      "expected_output": "Halt on repeated-issue detection, escalate to user with full diagnostic",
+      "files": [],
+      "expectations": [
+        "raised_issues set is consulted before re-dispatching the implementer",
+        "Issue fingerprint is normalized (kebab-case-summary:file-path)",
+        "When the same fingerprint appears in raised_issues, the task halts immediately",
+        "The escalation surfaces all prior cycles to the user, not just the latest",
+        "consecutive_escalations counter is incremented",
+        "The next task is NOT dispatched until the user resolves the escalation"
+      ]
+    },
+    {
+      "id": 3,
+      "dimension": "loop_prevention",
+      "prompt": "Simulate the no-op spin detector: implementer reports DONE but the diff is byte-identical to the previous cycle. Show the controller's response.",
+      "expected_output": "Halt on no-op spin detection",
+      "files": [],
+      "expectations": [
+        "git diff is captured after each implementer cycle",
+        "Diff is compared to the previous cycle's diff",
+        "Byte-identical diffs trigger immediate halt (no retry)",
+        "The escalation message names the no-op spin specifically",
+        "retry_count is NOT incremented further on a no-op spin (the failure mode is different)"
+      ]
+    },
+    {
+      "id": 4,
+      "dimension": "token_optimization",
+      "prompt": "Execute the first task of plan-simple.md and dispatch the spec-reviewer. Verify the reviewer prompt does NOT contain full file contents.",
+      "expected_output": "Reviewer dispatch contains diff + spec excerpt only, no full files",
+      "files": [],
+      "expectations": [
+        "Reviewer prompt includes a code-fenced diff block",
+        "Reviewer prompt does NOT include any full file contents",
+        "Reviewer prompt includes only the spec_text for the current task, not the whole plan",
+        "Reviewer prompt includes the previously raised_issues list (empty on first review)",
+        "Spec excerpt is taken from state.json.tasks[*].spec_text, not re-read from the plan file"
+      ]
+    },
+    {
+      "id": 5,
+      "dimension": "domain_awareness",
+      "prompt": "Execute plan-r3f.md with prism-subagent. Verify the implementer prompt contains R3F-specific guidance.",
+      "expected_output": "R3F primer pasted into implementer dispatch",
+      "files": [],
+      "expectations": [
+        "Domain is detected as r3f from plan content (useFrame, Canvas, three references)",
+        "extract-tasks.py output reflects domain=r3f",
+        "Implementer dispatch includes the R3F primer from domain-hints.md",
+        "Primer mentions: useFrame allocation discipline, Suspense boundaries, disposal, frame budget verification",
+        "Reviewer dispatches also include the R3F primer for context"
+      ]
+    },
+    {
+      "id": 6,
+      "dimension": "review_decision_matrix",
+      "prompt": "Execute plan-contract.md (touches API contract files) with prism-subagent. Verify contract-class blast-radius check runs.",
+      "expected_output": "Contract task gets extra blast-radius verification",
+      "files": [],
+      "expectations": [
+        "Tasks touching .prism/shared/contracts/ or **/api/** get review_class=contract",
+        "After spec+quality review, controller greps (or graph-traces) for callers of changed exports",
+        "caller_count is recorded in state.json",
+        "If callers exist outside the task's declared file list, status is set to DONE_WITH_CONCERNS",
+        "Final report flags the cross-task blast radius"
+      ]
+    },
+    {
+      "id": 7,
+      "dimension": "compaction_survival",
+      "prompt": "Simulate compaction mid-run: state.json shows current_task=T2 status=in_progress with uncommitted changes. Show recovery.",
+      "expected_output": "Recovery reads state.json and surfaces uncommitted changes to user",
+      "files": [],
+      "expectations": [
+        "Recovery scans .prism/local/subagent/ for the most recent state.json (or reads compact-snapshot.json pointer)",
+        "current_task is identified from state.json, NOT from conversation memory",
+        "git status is checked before resuming",
+        "Dirty tree on an in_progress task triggers a user prompt: discard or commit",
+        "Controller does NOT ask 'what were we doing?'",
+        "Controller does NOT re-extract tasks from the plan file"
+      ]
+    },
+    {
+      "id": 8,
+      "dimension": "regression",
+      "prompt": "Read skills/prism-subagent/SKILL.md and verify all six iron laws are present.",
+      "expected_output": "All six iron laws listed verbatim in SKILL.md",
+      "files": ["skills/prism-subagent/SKILL.md"],
+      "expectations": [
+        "Iron law: ONE IMPLEMENTER AT A TIME. NEVER PARALLEL IMPLEMENTERS.",
+        "Iron law: PASTE TASK TEXT. NEVER MAKE A SUBAGENT READ THE PLAN FILE.",
+        "Iron law: REVIEWERS SEE DIFFS, NOT FULL FILES.",
+        "Iron law: NEVER RETRY THE SAME (TASK, MODEL, ISSUE) MORE THAN ONCE.",
+        "Iron law: NEVER SKIP A REVIEW STAGE THE MATRIX SAYS IS REQUIRED.",
+        "Iron law: STATE.JSON IS THE SOURCE OF TRUTH. CONVERSATIONAL MEMORY IS NOT."
+      ]
+    }
+  ],
+  "metrics": {
+    "token_baseline": null,
+    "token_target": 800,
+    "token_unit": "SKILL.md only, references load on demand",
+    "expected_extraction_savings": "~3000 tokens per run vs LLM extraction"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "version": "v3.2.0",
+  "skill": "prism-subagent",
+  "captured_at": "2026-04-11",
+  "extract_tasks_baseline": {
+    "plan-simple": {
+      "tasks_extracted": 3,
+      "domain_detected": "fullstack",
+      "review_classes": {"T1": "feature", "T2": "test-only", "T3": "feature"},
+      "warnings": []
+    },
+    "plan-contract": {
+      "tasks_extracted": 3,
+      "domain_detected": "fullstack",
+      "review_classes": {"T1": "contract", "T2": "contract", "T3": "feature"},
+      "warnings": []
+    },
+    "plan-r3f": {
+      "tasks_extracted": 3,
+      "domain_detected": "r3f",
+      "review_classes": {"T1": "feature", "T2": "feature", "T3": "feature"},
+      "warnings": []
+    }
+  },
+  "skill_md_token_estimate": "~700 tokens (target <800)",
+  "references_total_token_estimate": "~5500 tokens (loaded on demand)",
+  "regression_thresholds": {
+    "max_tasks_extracted_drift": 0,
+    "max_domain_misdetection": 0,
+    "max_review_class_drift": 0,
+    "skill_md_max_tokens": 900
+  }
+}
