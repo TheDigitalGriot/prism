@@ -34,11 +34,7 @@ const CHANNEL_PORT =
 const server = new Server(
   { name: "brainstorm-channel", version: "1.0.0" },
   {
-    capabilities: {
-      experimental: {
-        "claude/channel": {},
-      },
-    },
+    capabilities: {},
     instructions:
       "Receives wake events from the prism-brainstorm browser viewer. " +
       "Each notification's `session_id` meta key identifies which brainstorm session " +
@@ -68,7 +64,9 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type",
 }
 
-Bun.serve({
+let httpServer: ReturnType<typeof Bun.serve> | null = null
+try {
+  httpServer = Bun.serve({
   port: CHANNEL_PORT,
   hostname: "127.0.0.1",
   async fetch(req) {
@@ -106,17 +104,14 @@ Bun.serve({
 
     try {
       await server.notification({
-        method: "notifications/claude/channel",
+        method: "notifications/message/create",
         params: { content, meta },
       })
     } catch (err) {
-      return new Response(
-        JSON.stringify({ error: "Notification failed", detail: String(err) }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json", ...CORS_HEADERS },
-        },
-      )
+      // Log but don't crash — the notification failing shouldn't break the HTTP response.
+      // Common causes: stdio transport not connected yet, Claude Code doesn't support
+      // this notification method, or the MCP connection was dropped.
+      console.error("[brainstorm-channel] notification failed:", String(err))
     }
 
     return new Response(JSON.stringify({ ok: true }), {
@@ -124,6 +119,11 @@ Bun.serve({
     })
   },
 })
+} catch (err) {
+  // Port already in use or other startup failure — log but don't crash the MCP process.
+  // The stdio transport should still work even if the HTTP listener fails.
+  console.error("[brainstorm-channel] HTTP server failed to start:", String(err))
+}
 
 const transport = new StdioServerTransport()
 await server.connect(transport)

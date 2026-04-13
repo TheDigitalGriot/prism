@@ -7,6 +7,7 @@
     ]
   },
   "enabledMcpjsonServers": [
-    "codebase-memory-mcp"
+    "codebase-memory-mcp",
+    "chrome-devtools"
   ]
 }
