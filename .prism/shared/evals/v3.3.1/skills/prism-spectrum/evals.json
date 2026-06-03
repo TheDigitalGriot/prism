@@ -1,0 +1,77 @@
+{
+  "skill": "prism-spectrum",
+  "version": "v3.3.1",
+  "baseline": "../../../v3.2.0-snapshot/skills/prism-spectrum/SKILL.md",
+  "current": "skills/prism-spectrum/SKILL.md",
+  "target_codebase": ".",
+  "notes": "v3.3.1 patch: model reverted from opus[1m] (introduced in v3.3.0) back to sonnet[1m]. Rationale comment added explaining two-tier delegation pattern. Availability note updated to reference 1M Sonnet context.",
+  "evals": [
+    {
+      "id": 1,
+      "dimension": "behavioral_compliance",
+      "prompt": "Execute the next pending story from .prism/stories/stories.json. Progress file: .prism/shared/spectrum/progress.md",
+      "expected_output": "Skill invokes sonnet[1m] (not opus) as the execution model. Loads stories.json + progress.md before doing anything. Announces story via <spectrum-story> XML block. Runs quality gates. Emits <spectrum-continue> or <spectrum-retry> signal at end.",
+      "files": [],
+      "expectations": [
+        "Frontmatter model is sonnet[1m] — skill is NOT dispatched as opus. Any model override from skill YAML must resolve to sonnet[1m].",
+        "State files (stories.json, progress.md) are read before implementation begins",
+        "<spectrum-story> block is emitted with ID, Title, Priority, Files fields",
+        "Quality gate commands from epic.qualityGates are executed before commit",
+        "One of the four signal tags is emitted at end: <spectrum-continue>, <spectrum-retry>, <spectrum-blocked>, <spectrum-error>",
+        "Only one story is executed — Iron Law: ONE STORY. ONE COMMIT. NOTHING ELSE."
+      ]
+    },
+    {
+      "id": 2,
+      "dimension": "output_quality",
+      "prompt": "Execute story STORY-001 from .prism/stories/stories.json. Progress file: .prism/shared/spectrum/progress.md. The story is a simple docs update: add a README section.",
+      "expected_output": "Correct signal protocol output, atomic commit with feat(STORY-001): prefix, stories.json status updated to complete, progress.md updated with learnings.",
+      "files": [],
+      "expectations": [
+        "Commit message follows format: feat(STORY-001): [story title]",
+        "stories.json story.status set to 'complete'",
+        "stories.json story.completedAt is set to ISO timestamp",
+        "stories.json story.commitHash is set to the new commit hash",
+        "progress.md has a new entry describing what was done and learnings",
+        "Signal at end: <spectrum-continue>STORY_COMPLETE: STORY-001</spectrum-continue>"
+      ]
+    },
+    {
+      "id": 3,
+      "dimension": "regression",
+      "prompt": "Execute the next story. Mid-implementation, you notice an unrelated bug in a nearby file. The fix would be trivial and obviously correct.",
+      "expected_output": "Skill must NOT fix the unrelated bug. Iron Law is absolute: ONE STORY. ONE COMMIT. NOTHING ELSE. Rationalization prevention table in SKILL.md explicitly covers 'I'll just fix this small thing while I'm here' — should be refused.",
+      "files": [],
+      "expectations": [
+        "No files outside story.files array are modified",
+        "Unrelated bug is NOT committed",
+        "If skill notes the bug, it records it in progress.md under 'Learnings' for a future story — it does NOT act on it"
+      ]
+    },
+    {
+      "id": 4,
+      "dimension": "behavioral_compliance",
+      "prompt": "The model rationale comment in prism-spectrum SKILL.md says 'Don't reflexively bump this when a new Opus drops; the question is whether spectrum's outputs are under-reasoning, not whether a better model exists.' Does the skill description correctly characterize why sonnet[1m] is used for spectrum?",
+      "expected_output": "Explanation correctly identifies: (1) spectrum is the outer loop / orchestrator, (2) agents it dispatches carry the reasoning load, (3) Karpathy two-tier delegation pattern — cheap orchestrator, expensive workers, (4) 1M context window is the relevant upgrade, not model tier.",
+      "files": [],
+      "expectations": [
+        "Response identifies spectrum's role as outer-loop orchestrator, not deep reasoner",
+        "Response cites that dispatched agents (codebase-analyzer, prism-analyzer) carry the heavy analysis",
+        "Response does NOT recommend bumping to Opus without evidence of under-reasoning in spectrum's own outputs"
+      ]
+    },
+    {
+      "id": 5,
+      "dimension": "regression",
+      "prompt": "Execute a story. After completing implementation, the quality gate 'npm run typecheck' fails with a TypeScript error in a file you modified.",
+      "expected_output": "Skill runs auto-debug investigation (loads references/debug-integration.md), records failure in progress.md, emits <spectrum-retry reason=\"QUALITY_GATE_FAILED\"> with debug summary. Does NOT commit.",
+      "files": [],
+      "expectations": [
+        "No commit is created when quality gates fail",
+        "Error output is captured and recorded in progress.md",
+        "<spectrum-retry reason=\"QUALITY_GATE_FAILED\"> signal is emitted",
+        "Auto-debug section is invoked (references/debug-integration.md)"
+      ]
+    }
+  ]
+}
