@@ -4,6 +4,35 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [3.4.0] - 2026-06-03
+
+### Added
+
+- **prism-decompose skill** — Greenfield-style spec decomposition into epic-scoped spectrum work queues; coverage report guarantees zero behavioral requirement drop during chunking. Use before `/prism-spectrum` for large specs.
+- **Code intelligence layer foundation** — `prism-plan` now runs graph-based blast-radius analysis (Step 1.5: `trace_call_path` + `search_graph`) and includes a Structural Impact template in plan output. `prism-validate` §3b gains a fourth structural check: cross-service contracts via `search_graph(relationship="HTTP_CALLS")` with graceful skip for single-service codebases.
+- **Spectrum CSD-style supervision** — deterministic worker shim paths (`/tmp/claude-spectrum-workers/<story-id>`); PreToolUse approval window (30s auto-approve, filesystem IPC via `.prism/local/spectrum-approvals/`); `VALID_SIGNALS` constant with unknown-signal detection; Controller-Worker Supervision and Signal Vocabulary sections in `prism-spectrum/SKILL.md`.
+
+### Changed
+
+- **Subagent discipline** — `prism-dispatch` and `prism-subagent`: added "NEVER FORWARD PARENT SESSION HISTORY" iron law and Context Isolation section (Superpowers v5.0.2). `prism-subagent` gains a Subagent Role Audit table classifying all dispatched agents as cross-entity role executors (Superpowers v5.0.6: zero demotion candidates found).
+- **Worktrees** — `commands/worktree.md` and `prism-finish` updated to reference native `EnterWorktree`/`ExitWorktree` tools (CC ≥ v2.1.154) with git fallback (Superpowers v5.1.0).
+- **prism-plan** — No Placeholders Gate added: explicit failure-condition table with iron law prevents `TBD`/empty-criteria plans from exiting the planning phase (Superpowers v5.0.6 writing-plans pattern).
+- **Brainstorm engine** (surgical fixes; `server.cjs` unchanged):
+  - Wake-path unified: channel POST is now a minimal wake signal; events file remains canonical event log.
+  - Multi-session channel routing via session registry (`/register` + `/unregister` endpoints); single-session backward compat preserved.
+  - Porter drift fixed: `port-griotwave.cjs` emit regenerated to flat native-variable format; griotwave tokens path updated; `frame-template.html` regenerated from v0.3.0 tokens; `scripts/tests/test_porter_check.sh` invariant test added and wired into `prism-release` validation gate.
+  - Pre-v2.1.80 fallback: startup capability probe; passive mode with `/status` endpoint; version requirements in `prism-brainstorm/SKILL.md`.
+- **plugin.json** — keywords: + `code-intelligence`, `graph-navigator`, `blast-radius`, `dead-code-detection`.
+- **marketplace.json** — description updated to mention code intelligence layer.
+
+### Fixed
+
+- **scripts/bump-version.py** — repo-wide drift detection: post-bump sweep searches for the prior version string (targeted, not broad semver regex); `--strict` mode for release gates; `update_json()` and `update_text()` gain `also_replace` parameter for files stuck at older versions; `Cargo.toml` and `tauri.conf.json` (non-standard spacing) added to explicit file list; `apps/prism-setup/` excluded from sweep (deprecated). The four straggler files (`main.go`, `footer.go`, `PrismState.ts`, `PrismStateContext.tsx`) and five app `package.json` files stuck at `3.3.0` correctly bumped to `3.4.0`.
+
+### Deferred to v3.5
+
+GitNexus dual-index, `scripts/prism-sync-skills.py`, live-stats CLAUDE.md marker injection, `/prism-wiki`, `/prism-reflect`, hybrid BM25 + vector + RRF search.
+
 ## [3.3.1] - 2026-06-03
 ### Fixed
 - prism-spectrum: reverted from `opus[1m]` back to `sonnet[1m]` with rationale comment — spectrum is the outer-loop orchestrator, the agents it dispatches carry the deep reasoning load (Karpathy two-tier delegation pattern). Avoids paying opus premium on shepherding work.

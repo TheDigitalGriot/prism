@@ -32,9 +32,11 @@ claude --plugin-dir /path/to/prism-plugin
 
 ## Requirements
 
-- **Claude Code v2.1.154 or later** — required for Opus 4.8 features used by `prism-brainstorm`, `prism-iterate`, `prism-plan`, `prism-prd`, `prism-design`, and `prism-subagent` (effort: xhigh).
-  Run `claude update` if on an older version.
-- **Max / Team / Enterprise plan recommended** for `prism-spectrum` (uses `opus[1m]` for 1M context autonomous execution). Pro users require usage credits for 1M context.
+- **Claude Code v2.1.154 or later** — required for Opus 4.8 features, native `EnterWorktree`/`ExitWorktree` support, and `effort: xhigh` skills (`prism-brainstorm`, `prism-plan`, `prism-prd`, `prism-design`, `prism-subagent`, `prism-iterate`). v2.1.80+ required for brainstorm active wake mode. Run `claude update` if on an older version.
+- **codebase-memory-mcp on PATH** (new in v3.4.0) — enables the graph-first intelligence layer (`graph-navigator` agent, blast-radius analysis in `prism-plan`, structural validation in `prism-validate`, graph verification in `prism-spectrum`). Without it, all graph steps no-op gracefully. Verify: `codebase-memory-mcp --version` (should return `0.6.0+`).
+- **bun** — required for the `brainstorm-channel` MCP server (visual companion wake mode). Install: `npm install -g bun` or `curl -fsSL https://bun.sh/install | bash`.
+- **jq** — required for `spectrum.sh` JSON parsing. Install: `brew install jq` (macOS) or `apt install jq` (Linux).
+- **Max / Team / Enterprise plan recommended** for `prism-spectrum` (uses `sonnet[1m]` for 1M context autonomous execution). Pro users require usage credits for 1M context.
 
 ## Usage
 
