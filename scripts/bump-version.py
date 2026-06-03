@@ -97,7 +97,10 @@ def discover_stale_versions(root: Path, new_version: str,
     if not old_versions:
         return []
 
-    EXTENSIONS = {".md", ".json", ".go", ".ts", ".tsx", ".toml"}
+    # .md excluded: documentation files legitimately reference past version labels
+    # (e.g. "added in v3.4.0"). The explicit file list already covers all .md
+    # manifests (plugin.json, marketplace.json) that have actual version fields.
+    EXTENSIONS = {".json", ".go", ".ts", ".tsx", ".toml"}
 
     EXCLUDE_BASENAMES = {
         "package-lock.json", "yarn.lock", "pnpm-lock.yaml",
@@ -187,10 +190,9 @@ def main():
     #   - All four were at 3.3.0 when v3.3.1 shipped (partial bump run).
     #   - v3.4.0 introduces the discovery sweep to prevent recurrence.
     #
-    # also_replace: used one-time to fix files stuck at a version OLDER than
-    # old_version (the VERSION file). Remove this list once all files are
-    # confirmed at the current version post-bump.
-    straggler_also_replace = ["3.3.0"]
+    # also_replace: one-time list for files stuck at a version OLDER than
+    # old_version. Empty after v3.4.1 — all files confirmed at current version.
+    straggler_also_replace = []
 
     straggler_files = [
         root / "apps" / "prism-cli" / "main.go",
