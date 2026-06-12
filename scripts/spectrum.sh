@@ -98,6 +98,9 @@ derive_progress_path() {
 }
 
 PROGRESS_FILE="$(derive_progress_path "$STORIES_FILE")"
+# Two-tier progress tracking: consolidated patterns (read every session) + append-only log (never loaded).
+# progress-log.md lives beside progress.md and accumulates per-iteration entries.
+PROGRESS_LOG_FILE="$(dirname "$PROGRESS_FILE")/progress-log.md"
 MAX_ITERATIONS="${SPECTRUM_MAX_ITERATIONS:-50}"
 VERBOSE="${SPECTRUM_VERBOSE:-false}"
 PAUSE="${SPECTRUM_PAUSE:-2}"
@@ -301,12 +304,15 @@ get_epic_name() {
 
 # Initialize progress file if needed
 init_progress() {
+    local epic_name
+    epic_name=$(get_epic_name)
+    local progress_dir
+    progress_dir=$(dirname "$PROGRESS_FILE")
+    mkdir -p "$progress_dir"
+
+    # progress.md — consolidated patterns only. Read by every worker session.
+    # Keep this file small: only curated patterns that future stories need.
     if [[ ! -f "$PROGRESS_FILE" ]]; then
-        local epic_name
-        epic_name=$(get_epic_name)
-        local progress_dir
-        progress_dir=$(dirname "$PROGRESS_FILE")
-        mkdir -p "$progress_dir"
         cat > "$PROGRESS_FILE" << EOF
 ---
 epic: $epic_name
@@ -314,16 +320,35 @@ startedAt: $(date -Iseconds)
 lastUpdated: $(date -Iseconds)
 ---
 
-# Spectrum Progress Log
+# Spectrum Progress — Consolidated Patterns
+
+This file is loaded by every worker session. Keep it lean.
+Append per-iteration entries to progress-log.md instead.
 
 ## Codebase Patterns (Consolidated)
 
-*Patterns will be added as iterations discover them*
-
----
+*Patterns will be added here as iterations discover them*
 
 EOF
         log "Created progress file: $PROGRESS_FILE"
+    fi
+
+    # progress-log.md — append-only iteration history. Never read on session load.
+    # Raw record of what each story did; useful for auditing but not needed mid-run.
+    if [[ ! -f "$PROGRESS_LOG_FILE" ]]; then
+        cat > "$PROGRESS_LOG_FILE" << EOF
+---
+epic: $epic_name
+startedAt: $(date -Iseconds)
+---
+
+# Spectrum Progress Log (Iteration History)
+
+This file is append-only. It is NOT loaded by worker sessions.
+For curated learnings future sessions should see, edit progress.md instead.
+
+EOF
+        log "Created progress log: $PROGRESS_LOG_FILE"
     fi
 }
 
@@ -350,7 +375,7 @@ run_iteration() {
     local exit_code=0
 
     # Build the prompt — story is pre-selected by spectrum.sh, not by Claude
-    local prompt="Execute story $story_id from $STORIES_FILE using the /prism-spectrum workflow. Progress file: $PROGRESS_FILE. The story has been pre-selected — do not pick a different story."
+    local prompt="Execute story $story_id from $STORIES_FILE using the /prism-spectrum workflow. Progress file (consolidated patterns — read this): $PROGRESS_FILE. Progress log (iteration history — append entries here, do NOT read): $PROGRESS_LOG_FILE. The story has been pre-selected — do not pick a different story."
 
     log "Executing story: $story_id"
 
