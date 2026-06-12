@@ -8,15 +8,27 @@
 # The script uses the current working directory by default.
 #
 # Environment Variables:
-#   SPECTRUM_MAX_ITERATIONS: Maximum iterations (default: 50)
-#   SPECTRUM_VERBOSE: Enable verbose output (default: false)
-#   SPECTRUM_PAUSE: Seconds between iterations (default: 2)
+#   SPECTRUM_MAX_ITERATIONS:    Maximum iterations (default: 50)
+#   SPECTRUM_VERBOSE:           Enable verbose output (default: false)
+#   SPECTRUM_PAUSE:             Seconds between iterations (default: 2)
+#
+# Approval hook (spectrum-approval.sh) env vars — passed explicitly to each worker:
+#   SPECTRUM_SUPERVISED:        Set to any non-empty value (e.g. "1") to enable the
+#                               controller approval protocol. Unset = unsupervised
+#                               (auto-approve instantly, zero polling overhead). Default: unset.
+#   SPECTRUM_APPROVAL_TIMEOUT:  Seconds to poll for approve/deny before auto-approving
+#                               in supervised mode (default: 3). Must be less than the
+#                               hook timeout ceiling in hooks.json (currently 10s) minus ~2s
+#                               of overhead, i.e. keep it at or below 8. If it exceeds the
+#                               ceiling the hook runner kills the script and the tool
+#                               proceeds as a non-blocking error (fail-open, but noisy).
 #
 # Examples:
 #   spectrum                                              # Run from project dir
 #   spectrum .prism/stories/stories.json                 # Specify stories file
 #   SPECTRUM_MAX_ITERATIONS=20 spectrum                  # Custom iteration limit
 #   SPECTRUM_VERBOSE=true spectrum                       # Verbose output
+#   SPECTRUM_SUPERVISED=1 spectrum                       # Enable approval-gate controller
 #
 # Setup (add to ~/.bashrc or ~/.zshrc):
 #   alias spectrum='/path/to/prism-plugin/scripts/spectrum.sh'
@@ -348,12 +360,23 @@ exec claude --dangerously-skip-permissions --print "\$@"
 SHIM
     chmod +x "$shim_path"
 
-    # Run Claude via the shim, passing SPECTRUM_WORKER_STORY_ID for the PreToolUse approval hook.
-    # Using --print to capture output for signal checking.
+    # Run Claude via the shim. Pass approval-hook env vars explicitly so they reach the
+    # PreToolUse hook regardless of how spectrum.sh itself was invoked. SPECTRUM_SUPERVISED
+    # and SPECTRUM_APPROVAL_TIMEOUT must be explicit here — relying on ambient env
+    # inheritance is fragile (the hook runs inside the spawned Claude session, not in
+    # the user's shell). Using --print to capture output for signal checking.
     if [[ "$VERBOSE" == "true" ]]; then
-        output=$(cd "$PROJECT_DIR" && SPECTRUM_WORKER_STORY_ID="$story_id" "$shim_path" "$prompt" 2>&1 | tee /dev/stderr) || exit_code=$?
+        output=$(cd "$PROJECT_DIR" && \
+            SPECTRUM_WORKER_STORY_ID="$story_id" \
+            SPECTRUM_SUPERVISED="${SPECTRUM_SUPERVISED:-}" \
+            SPECTRUM_APPROVAL_TIMEOUT="${SPECTRUM_APPROVAL_TIMEOUT:-3}" \
+            "$shim_path" "$prompt" 2>&1 | tee /dev/stderr) || exit_code=$?
     else
-        output=$(cd "$PROJECT_DIR" && SPECTRUM_WORKER_STORY_ID="$story_id" "$shim_path" "$prompt" 2>&1) || exit_code=$?
+        output=$(cd "$PROJECT_DIR" && \
+            SPECTRUM_WORKER_STORY_ID="$story_id" \
+            SPECTRUM_SUPERVISED="${SPECTRUM_SUPERVISED:-}" \
+            SPECTRUM_APPROVAL_TIMEOUT="${SPECTRUM_APPROVAL_TIMEOUT:-3}" \
+            "$shim_path" "$prompt" 2>&1) || exit_code=$?
     fi
 
     # Return the output for signal checking
