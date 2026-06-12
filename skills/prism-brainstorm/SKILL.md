@@ -25,7 +25,12 @@ Brainstorming produces a decision ledger, not code.
 - [ ] 6. **Write decision ledger** — Save to `.prism/shared/brainstorms/YYYY-MM-DD-<topic>.md` (NOT `plans/` — brainstorm is upstream of design)
 - [ ] 7. **Self-review** — Check for TODOs, contradictions, missing requirements
 - [ ] 8. **User reviews spec** — Present the saved file for review
-- [ ] 9. **Transition** — Offer `/prism-design` (if architecture needed) or `/prism-plan` (direct to implementation)
+- [ ] 9. **Visual companion exit ceremony** — If the visual companion ran, load `visual-companion.md` → **"Session Exit"** for the full exit sequence (artifact packaging, §3 population, server stop, user confirmation). After completion, proceed to step 10.
+- [ ] 10. **Transition to design** — Offer the next phase with context:
+  > "Your brainstorm is complete. The decision ledger is at `.prism/shared/brainstorms/<file>.md`.
+  >
+  > **Next:** `/prism-design` to architect the system (mermaid diagrams, interface contracts, visual layout via Pencil.dev or Claude Design).
+  > Or go straight to `/prism-plan` if the implementation approach is already obvious from the ledger."
 
 ## Visual Companion
 
@@ -36,6 +41,12 @@ When visual decisions are ahead, offer the browser-based companion:
 This offer MUST be its own message. Do not combine it with clarifying questions.
 
 If accepted, load `visual-companion.md` for the full integration guide.
+
+### Source Awareness
+
+If the visual companion is accepted AND the work is visual or brand-driven, ask about design sources before rendering the first screen. **Load [references/design-sources.md](references/design-sources.md)** for the source vocabulary, the question wording, and how selections enrich downstream artifacts (design_prompt.yaml, Claude Design context).
+
+Skip this if a prism-capture ledger exists in `.prism/shared/captures/` — the sources are already documented there. Use the ledger's `## Source Vocabulary` section instead.
 
 ### Fidelity Engine
 
@@ -80,9 +91,22 @@ These survived the brainstorm as first-class items. They are known, deferred, an
 
 ## §3 · Reference Artifacts
 
-- Final hi-fi mockup screen path
-- Visual companion session paths
-- External references
+**Visual companion session:** `.prism/local/brainstorm/<session-id>/` *(or "none — text-only session")*
+**Final hi-fi screen:** `.prism/local/brainstorm/<session-id>/content/<filename>.html` *(prism-design uses this as the visual layout reference for the `.pen` file)*
+**Decisions state:** `.prism/local/brainstorm/<session-id>/state/decisions.json`
+**External references:** *(none | list URLs or file paths)*
+
+**Design tokens (Griotwave baseline):**
+```yaml
+design_tokens:
+  palette: { void: "#000", neural: "#3B82F6", bio: "#10B981", violet: "#A855F7" }
+  surface: glassmorphic   # backdrop-filter: blur(40px) saturate(140%)
+  typography: { display: Inter, eyebrow: "JetBrains Mono" }
+  motion: { language: ember-bloom, easing: "spring 50/22" }
+```
+*Override any field if the brainstorm locked a different palette, typeface, or motion language. If no overrides were decided, these are the defaults prism-design and Claude Design should use.*
+
+> **Note for prism-design:** The "Final hi-fi screen" path above is the HTML mockup that represents the visual intent. Pass it to `mcp__pencil__batch_design()` as the layout reference when materializing the `.pen` file. The design_tokens block above is the token baseline for the `.pen` file's design system — apply overrides from §1 Locked Decisions where relevant. If the path is "none", the design phase proceeds from the ledger text and tokens alone.
 
 ## §4 · Implementation Handoff Notes
 
@@ -90,8 +114,8 @@ These survived the brainstorm as first-class items. They are known, deferred, an
 
 1. Preserve §1 decisions verbatim in the design's "Locked Decisions" section
 2. Carry §2 Deferred Concerns forward as a first-class appendix
-3. Use §3 reference HTML as visual-layout reference for the `.pen` file
-4. Generate architecture (mermaid diagrams, contracts, data models)
+3. Load the §3 hi-fi screen HTML as visual-layout reference for the `.pen` file (see note above)
+4. Generate architecture (mermaid diagrams, interface contracts, data models)
 5. Write `.prism/shared/designs/<date>-<topic>-design.md` + `.pen`
 ```
 
@@ -128,5 +152,14 @@ This prevents concurrent brainstorm sessions from racing to wake each other. The
 - **Follows:** `/prism-research` (optional — brainstorming can start from scratch)
 - **Precedes:** `/prism-design` (architecture) or `/prism-plan` (direct implementation)
 - **Visual companion:** Stored in `.prism/local/brainstorm/` (gitignored)
+
+### Complementary output paths after brainstorm
+
+Two paths can coexist — they serve different layers:
+
+| Path | Tool | What it produces |
+|------|------|-----------------|
+| **Architecture** | `/prism-design` | Mermaid diagrams, interface contracts, visual layout (Pencil or Claude Design) |
+| **Visual prototype** | `idea_init` → emit | `design_prompt.yaml` → Claude Design — visual prototype + design system tokens |
 
 > See also: [cl-plugin-structure/references/model-config.md](../cl-plugin-structure/references/model-config.md) §5 for `ultrathink` keyword behavior — this skill uses it in Step 4 to trigger deeper divergent-thinking reasoning.

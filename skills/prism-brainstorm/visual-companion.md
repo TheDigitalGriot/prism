@@ -131,6 +131,40 @@ The brainstorm server (`server.cjs`) watches `$STATE_DIR` for `decisions.json` c
 
 When `parked.length >= 5`, the parking pane shows a yellow warning *"Long parking lot — session may be over-scoped"*. The skill treats this as a prompt to narrow scope rather than continuing to defer.
 
+## Translation Canvas
+
+When the user has selected design sources (via the source question or a prism-capture ledger), render a **source vs Griotwave translation** side-by-side before asking the decision question. This gives the user a concrete anchor: "here's what you showed me, here's what that looks like in our register."
+
+Use the `.split` layout. Apply `data-fidelity` to the **translation pane only** — the source pane is always shown as-captured:
+
+```html
+<div class="split" style="gap:20px;align-items:stretch;">
+
+  <!-- LEFT: source as captured — no fidelity attribute -->
+  <div>
+    <div class="mono" style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+         color:var(--footstep);margin-bottom:10px;">source · as captured</div>
+    <div style="border-radius:14px;border:1px solid var(--rim-08);background:#08080b;padding:16px;min-height:200px;">
+      {source content — component name, excerpt, description}
+    </div>
+  </div>
+
+  <!-- RIGHT: Griotwave translation at carry-forward fidelity -->
+  <div data-fidelity="{lo|mid|hi}">
+    <div class="mono" style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+         color:var(--neural);margin-bottom:10px;">griotwave translation · {fidelity}</div>
+    <div class="glass" style="border-radius:14px;padding:16px;min-height:200px;">
+      {source reinterpreted in Griotwave tokens at current fidelity}
+    </div>
+  </div>
+
+</div>
+```
+
+See `references/fidelity-engine.md` for exact CSS variable values per level. See `prism-capture/references/translate-canvas.md` for the full template including pattern tags, decision/park protocol, and when NOT to use the canvas (UX pattern references — those go to structural context, not the canvas).
+
+**When to use:** visual/aesthetic decisions where the user has a reference in mind. **When not to use:** purely architectural decisions (navigation structure, data model, feature scope) — use the standard `.options` layout instead.
+
 ## File Naming
 
 Use semantic names that describe the content:
@@ -138,7 +172,27 @@ Use semantic names that describe the content:
 - `navigation-options.html` — not `mockup2.html`
 - Never reuse filenames within a session
 
-## Stopping the Server
+## Session Exit
+
+Execute this sequence after the **final-hi ceremonial render** (see `references/fidelity-engine.md` → Final-hi ceremonial rule). This is the exit protocol referenced by SKILL.md Step 9.
+
+1. **Record the final screen path** — note the exact filename written to `$SCREEN_DIR` for the hi-fi render. This becomes `prism-design`'s visual reference for the `.pen` file or Claude Design prompt.
+2. **Populate ledger §3 Reference Artifacts** with exact paths — no placeholders:
+   - `Visual companion session:` → `.prism/local/brainstorm/<session-id>/`
+   - `Final hi-fi screen:` → `.prism/local/brainstorm/<session-id>/content/<filename>.html`
+   - `Decisions state:` → `.prism/local/brainstorm/<session-id>/state/decisions.json`
+3. **Stop the server:**
+   ```bash
+   bash ${CLAUDE_PLUGIN_ROOT}/skills/prism-brainstorm/scripts/stop-server.sh <session-dir>
+   ```
+4. **Confirm to the user:**
+   > "Visual companion session packaged. Decisions are saved in the ledger and the hi-fi mockup path is recorded in §3 for the design phase."
+
+Then return to SKILL.md Workflow — proceed to Step 10 (Transition to design).
+
+## Stopping the Server (manual)
+
+To stop outside the exit sequence:
 
 ```bash
 bash ${CLAUDE_PLUGIN_ROOT}/skills/prism-brainstorm/scripts/stop-server.sh <session-dir>
