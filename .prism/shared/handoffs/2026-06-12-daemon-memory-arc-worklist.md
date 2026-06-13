@@ -12,7 +12,7 @@
 | paseo (`getpaseo/paseo`) | AGPL-3.0 | `apps/prism-mobile` (vendored v0.1.69) | agent-run service + mobile surface | +584 commits behind; v0.1.95 refresh plan ready |
 | paseo relay (from `getpaseo/paseo`) | AGPL-3.0 | **`packages/prism-relay`** (`@prism/relay`, extracted 2026-06-13) | E2EE relay (ECDH + NaCl box) under `connectRelay()` | sovereign workspace pkg; 4/4 crypto tests |
 | open-design (`nexu-io/open-design`) | Apache-2.0 | `TheDigitalGriot/prism-design-engine` + `apps/prism-design-studio` relay (:7457→:7456) | design-gen service | forked ~2026-06-08; upstream active |
-| Graphify (`safishamsi/graphify`) | **MIT** ✅ | `TheDigitalGriot/graphify` (**TO FORK**) | knowledge/STORE engine (→ Synaptiq) | not yet forked; upstream ~1 release/day — **watch closely** |
+| Graphify (`safishamsi/graphify`) | **MIT** ✅ | `TheDigitalGriot/graphify` (**FORKED** ✅) | knowledge/STORE engine (→ Synaptiq) | fork exists; integration pending (`pip install graphifyy` + wire knowledge service); upstream ~1 release/day — **watch closely** |
 | codebase-memory-mcp | binary on PATH | not forked (yet) | code-intel service | working on Windows |
 
 **Pattern:** fork → own → note lineage → track upstream for enhancements → fine-tune for ourselves. Sovereign, never a runtime dependency.
