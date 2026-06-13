@@ -6,10 +6,14 @@
   "main": ".vite/build/main.js",
   "private": true,
   "scripts": {
+    "build:daemon": "node scripts/build-daemon.mjs",
+    "prestart": "npm run build:daemon",
+    "prepackage": "npm run build:daemon",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
+    "test": "vitest run",
     "lint": "eslint --ext .ts,.tsx ."
   },
   "keywords": [],
@@ -38,11 +42,13 @@
     "@typescript-eslint/parser": "^5.62.0",
     "@vitejs/plugin-react": "^5.1.2",
     "electron": "40.0.0",
+    "esbuild": "^0.25.0",
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.32.0",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.4.5",
-    "vite": "^6.0.0"
+    "vite": "^6.0.0",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "chokidar": "^3.6.0",

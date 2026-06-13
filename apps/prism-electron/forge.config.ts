@@ -1,3 +1,5 @@
+import { execFileSync } from 'node:child_process';
+import * as path from 'node:path';
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
@@ -13,7 +15,20 @@ const config: ForgeConfig = {
     // Bundle the shared office assets (character sprites, floor/wall tiles, furniture)
     // from apps/prism-vscode/assets/ into the packaged app's resources/ directory.
     // At runtime: accessed via path.join(process.resourcesPath, 'assets', ...)
-    extraResource: ['../prism-vscode/assets'],
+    //
+    // daemon-dist/ holds the esbuilt prism-daemon broker (prism-daemon.cjs +
+    // services.config.json + meta.json), shipped OUTSIDE the asar so the desktop
+    // can utilityProcess.fork it at runtime via process.resourcesPath/daemon-dist.
+    extraResource: ['../prism-vscode/assets', './daemon-dist'],
+  },
+  hooks: {
+    // Ensure the broker bundle exists before packaging copies daemon-dist/.
+    generateAssets: async () => {
+      execFileSync('node', ['scripts/build-daemon.mjs'], {
+        cwd: path.resolve(__dirname),
+        stdio: 'inherit',
+      });
+    },
   },
   rebuildConfig: {},
   makers: [

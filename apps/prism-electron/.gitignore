@@ -90,3 +90,6 @@ typings/
 
 # Electron-Forge
 out/
+
+# Bundled prism-daemon broker (built by scripts/build-daemon.mjs)
+daemon-dist/
