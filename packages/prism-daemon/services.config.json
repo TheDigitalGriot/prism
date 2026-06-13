@@ -15,6 +15,19 @@
     "healthProbe": "tools/list"
   },
   {
+    "id": "design-gen",
+    "name": "Design Generation (prism-design-engine via design-studio)",
+    "adapterType": "rest",
+    "endpoint": { "local": "http://127.0.0.1:7457" },
+    "healthProbe": "GET http://127.0.0.1:7456/api/skills",
+    "routes": {
+      "state": { "verb": "GET", "url": "http://127.0.0.1:7457/status" },
+      "launch": { "verb": "POST", "url": "http://127.0.0.1:7457/launch" },
+      "stop": { "verb": "POST", "url": "http://127.0.0.1:7457/stop" },
+      "chat": { "verb": "POST", "url": "http://127.0.0.1:7456/api/chat" }
+    }
+  },
+  {
     "id": "knowledge",
     "name": "Knowledge / STORE (Graphify → Synaptiq)",
     "adapterType": "flask-http",

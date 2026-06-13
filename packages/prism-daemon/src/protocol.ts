@@ -63,6 +63,8 @@ export interface ServiceDescriptor {
   gate?: ServiceGate;
   /** Optional command used to spawn the backend (stdio-mcp / flask-http). */
   spawnCmd?: string;
+  /** Optional per-method route overrides (RestAdapter, for multi-endpoint services like design-gen). */
+  routes?: Record<string, { verb: string; url: string }>;
   lastProbe?: ProbeRecord;
 }
 

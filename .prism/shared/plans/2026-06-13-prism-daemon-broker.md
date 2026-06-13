@@ -135,7 +135,11 @@ Q1 code-intel = brokered service · Q2 daemon = multi-service broker (N protocol
 - [ ] Unit test: each of the 6 messages maps to the expected broker call (mock broker client).
 
 #### Manual Verification
-- [ ] Launch the design engine from the VS Code Design panel **through the broker**; `/api/skills` flips status to `ready`; sending a prompt drops an artifact bundle in `.prism/shared/designs/`.
+- [x] **Part 3A (daemon side) — done.** `RestAdapter` (config-driven `routes`) brokers `design-gen` across the design-studio relay (`:7457` /status,/launch,/stop) + the engine (`:7456` /api/chat), readiness at `/api/skills`. Proven against two mock servers (probe + lifecycle routing + chat round-trip). `design-gen` registered in `services.config.json`.
+- [ ] **Part 3B (surface side) — BLOCKED on idea_init commit.** Migrate the 6 `DesignEngineHost` messages in `PrismPanelProvider.ts` (idea_init's uncommitted file) to `design-gen.*` broker calls. Mapping table above.
+- [ ] Live: launch the engine from the VS Code panel *through the broker*; `/api/skills` flips status to `ready`; a prompt drops an artifact bundle in `.prism/shared/designs/`.
+
+**Checkpoint:** [x] **Phase 3A complete** — automated verified 2026-06-13 (typecheck clean · 33/33 vitest). **All 4 adapter families built.** 3B awaits the idea_init commit (then the non-breaking `PrismPanelProvider` migration finishes Phase 3).
 
 ---
 

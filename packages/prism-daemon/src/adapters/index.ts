@@ -7,6 +7,7 @@ import type { Adapter } from "./types";
 import { WebSocketAdapter } from "./websocket";
 import { StdioMcpAdapter } from "./stdio-mcp";
 import { FlaskHttpAdapter } from "./flask-http";
+import { RestAdapter } from "./rest";
 
 export function createAdapter(desc: ServiceDescriptor): Adapter {
   switch (desc.adapterType) {
@@ -16,6 +17,8 @@ export function createAdapter(desc: ServiceDescriptor): Adapter {
       return new StdioMcpAdapter(desc);
     case "flask-http":
       return new FlaskHttpAdapter(desc);
+    case "rest":
+      return new RestAdapter(desc);
     default:
       throw new Error(`No adapter implementation for type '${desc.adapterType}' (service '${desc.id}')`);
   }
