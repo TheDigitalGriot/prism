@@ -26,6 +26,10 @@ declare global {
       officeMessage: (callback: (msg: unknown) => void) => () => void
       /** Send an office action to the main process (fire-and-forget). */
       officeAction: (msg: unknown) => void
+      /** Current broker daemon status (one-shot). */
+      daemonStatus: () => Promise<unknown>
+      /** Subscribe to broker daemon status changes. Returns an unsubscribe fn. */
+      onDaemonStatus: (cb: (status: unknown) => void) => () => void
     }
   }
 }

@@ -1,6 +1,8 @@
 import React from "react"
 import { useLayout } from "../../context/LayoutContext"
 import { usePrismState } from "@prism-ui/context/PrismStateContext"
+import { useDaemonStatus } from "../../daemon/useDaemonStatus"
+import { DaemonStatusDot } from "../common/DaemonStatusDot"
 
 // ---------------------------------------------------------------------------
 // Prism logo icon (small triangle prism shape)
@@ -32,6 +34,7 @@ const PrismLogoIcon: React.FC = () => (
 export const BottomStatusBar: React.FC = () => {
   const { bottomOpen, toggleBottom } = useLayout()
   const { completedCount, remainingCount, version } = usePrismState()
+  const daemon = useDaemonStatus()
 
   const totalCount = completedCount + remainingCount
   const storyLabel = totalCount > 0 ? `${completedCount}/${totalCount} Stories` : "No Stories"
@@ -53,12 +56,16 @@ export const BottomStatusBar: React.FC = () => {
         userSelect: "none",
       }}
     >
-      {/* Left: logo + version */}
-      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-        <PrismLogoIcon />
-        <span style={{ fontSize: 10.5, color: "var(--prism-fg-muted)" }}>
-          v{version}
-        </span>
+      {/* Left: logo + version + daemon status */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <PrismLogoIcon />
+          <span style={{ fontSize: 10.5, color: "var(--prism-fg-muted)" }}>
+            v{version}
+          </span>
+        </div>
+        <span style={{ width: 1, height: 12, background: "var(--prism-border)" }} />
+        <DaemonStatusDot status={daemon} />
       </div>
 
       {/* Center: story count with spectral gradient */}
