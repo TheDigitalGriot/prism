@@ -2,7 +2,7 @@ import * as vscode from "vscode"
 import * as path from "path"
 import { WebviewProvider, getNonce } from "../../core/webview/WebviewProvider"
 import { PrismController } from "../../core/controller/index"
-import { handleGrpcRequest } from "@prism-core/core/controller/grpc-handler"
+import { handleGrpcRequest, registerBrokerForwarder } from "@prism-core/core/controller/grpc-handler"
 import { WebviewToExtMessage } from "@prism-core/shared/PrismMessage"
 
 /**
@@ -16,6 +16,12 @@ import { WebviewToExtMessage } from "@prism-core/shared/PrismMessage"
 export class VscodeWebviewProvider extends WebviewProvider implements vscode.WebviewViewProvider {
   public static readonly SIDEBAR_ID = "prism.sidebar"
 
+  /** Services the daemon broker owns — gRPC calls for these forward to it. */
+  private static readonly BROKER_SERVICES = new Set([
+    "agent-run", "code-intel", "design-gen", "knowledge", "3d-gen", "cinopsis", "notebooks",
+  ])
+  private static readonly BROKER_PORT = 6780
+
   private _webviewView: vscode.WebviewView | undefined
   private _controller: PrismController
   private _disposables: vscode.Disposable[] = []
@@ -23,6 +29,30 @@ export class VscodeWebviewProvider extends WebviewProvider implements vscode.Web
   constructor(private readonly _context: vscode.ExtensionContext) {
     super()
     this._controller = new PrismController(_context)
+    // Seam bridge: route gRPC calls for brokered services to the daemon broker
+    // (if it's running). VS Code doesn't supervise the daemon, so it uses the
+    // default port and treats the broker as adopt-only.
+    this._registerBrokerForwarder()
+  }
+
+  private _registerBrokerForwarder(): void {
+    registerBrokerForwarder(async (req, respond) => {
+      if (!VscodeWebviewProvider.BROKER_SERVICES.has(req.service)) return false // not ours
+      if (req.is_streaming) return false // unary only for now
+      try {
+        const res = await fetch(`http://127.0.0.1:${VscodeWebviewProvider.BROKER_PORT}/call`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ service: req.service, method: req.method, payload: req.message }),
+        })
+        const json = (await res.json()) as { ok: boolean; result?: unknown; error?: string }
+        if (json.ok) await respond(json.result, true)
+        else await respond({ error: json.error ?? "broker call failed" }, true)
+      } catch (err) {
+        await respond({ error: `broker unreachable: ${String(err)}` }, true)
+      }
+      return true
+    })
   }
 
   get controller(): PrismController {
