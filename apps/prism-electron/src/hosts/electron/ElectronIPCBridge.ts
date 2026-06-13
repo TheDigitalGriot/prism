@@ -203,6 +203,18 @@ export class ElectronIPCBridge {
     ipcMain.handle('daemon:start', () => this._daemonManager.start())
     ipcMain.handle('daemon:stop', () => this._daemonManager.stop())
     ipcMain.handle('daemon:restart', () => this._daemonManager.restart())
+    // Relay pairing payload (for the QR shown to a remote device).
+    ipcMain.handle('daemon:pairing', async (_event, relayUrl?: string) => {
+      const status = this._daemonManager.getStatus()
+      if (status.status !== 'running') return { ok: false, error: `daemon not running (${status.status})` }
+      try {
+        const qs = relayUrl ? `?relayUrl=${encodeURIComponent(relayUrl)}` : ''
+        const res = await fetch(`http://127.0.0.1:${status.port}/pairing${qs}`)
+        return { ok: true, pairing: await res.json() }
+      } catch (err) {
+        return { ok: false, error: `broker unreachable: ${String(err)}` }
+      }
+    })
 
     // Open an external URL in the default browser
     ipcMain.handle('shell:openExternal', async (_event, url: string) => {
@@ -539,6 +551,7 @@ export class ElectronIPCBridge {
     ipcMain.removeHandler('daemon:start')
     ipcMain.removeHandler('daemon:stop')
     ipcMain.removeHandler('daemon:restart')
+    ipcMain.removeHandler('daemon:pairing')
     this._daemonManager.off('statusChange', this._onDaemonStatus)
     registerBrokerForwarder(null)
     ipcMain.removeHandler('prism:openProject')

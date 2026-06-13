@@ -57,6 +57,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on('daemon:statusChange', wrapped);
     return () => ipcRenderer.removeListener('daemon:statusChange', wrapped);
   },
+
+  /** Fetch the relay pairing payload ({ relayUrl, token, pubKey }) for the QR. */
+  daemonPairing: (relayUrl?: string) => ipcRenderer.invoke('daemon:pairing', relayUrl),
 });
 
 // Extend Window type for TypeScript
@@ -70,6 +73,7 @@ declare global {
       officeAction: (msg: unknown) => void;
       daemonStatus: () => Promise<unknown>;
       onDaemonStatus: (cb: (status: unknown) => void) => () => void;
+      daemonPairing: (relayUrl?: string) => Promise<unknown>;
       // Auth channels (Phase 19) — via invoke('prism:getApiKey') etc.
     };
   }

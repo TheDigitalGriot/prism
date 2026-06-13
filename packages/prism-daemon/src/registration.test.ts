@@ -174,6 +174,18 @@ describe("Dynamic registration + health loop (Phase 9)", () => {
     expect(body.ready).toBe(0);
   });
 
+  it("GET /pairing returns a relay pairing payload with the daemon public key (for the QR)", async () => {
+    await boot();
+    const res = await fetch(`${baseHttp}/pairing?relayUrl=wss%3A%2F%2Frelay.example%2Frelay`);
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { relayUrl: string; token: string; pubKey: string };
+    expect(body.relayUrl).toBe("wss://relay.example/relay");
+    expect(typeof body.token).toBe("string");
+    expect(body.token.length).toBeGreaterThan(0);
+    // Curve25519 public key = 32 bytes → 44-char base64.
+    expect(body.pubKey).toMatch(/^[A-Za-z0-9+/]{43}=$/);
+  });
+
   it("POST /call dispatches a unary service call over HTTP (for surfaces that prefer HTTP)", async () => {
     backend = await startMockFlask();
     await boot();

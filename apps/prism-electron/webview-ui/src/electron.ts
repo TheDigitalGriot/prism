@@ -30,6 +30,8 @@ declare global {
       daemonStatus: () => Promise<unknown>
       /** Subscribe to broker daemon status changes. Returns an unsubscribe fn. */
       onDaemonStatus: (cb: (status: unknown) => void) => () => void
+      /** Fetch the relay pairing payload for the QR. */
+      daemonPairing: (relayUrl?: string) => Promise<unknown>
     }
   }
 }

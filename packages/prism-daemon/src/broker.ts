@@ -16,7 +16,7 @@ import { Session } from "./session";
 import { createAdapter, type Adapter } from "./adapters";
 import { resolveEndpoint, type ResolveOptions } from "./resolve";
 import { RelayClient } from "./relay";
-import { exportPublicKey, type KeyPair } from "@prism/relay";
+import { generateKeyPair, exportPublicKey, type KeyPair } from "@prism/relay";
 import {
   errorResponse,
   isEnvelope,
@@ -166,6 +166,12 @@ export class Broker {
       }
       if (req.method === "GET" && url === "/services") {
         send(200, this.registry.snapshot());
+        return;
+      }
+      if (req.method === "GET" && (url === "/pairing" || url.startsWith("/pairing?"))) {
+        const relayUrl =
+          new URL(url, "http://x").searchParams.get("relayUrl") ?? process.env.PRISM_RELAY_URL ?? "";
+        send(200, this.pairingInfo(relayUrl));
         return;
       }
       if (req.method === "POST" && url === "/register") {
@@ -356,22 +362,30 @@ export class Broker {
    * via the daemon's public key (see pairingInfo). Without it, frames forward in the clear.
    */
   async connectRelay(url: string, opts?: { daemonKeyPair?: KeyPair }): Promise<void> {
-    this.relayKeyPair = opts?.daemonKeyPair;
+    // E2EE when a keypair is supplied OR one already exists (e.g. a QR was shown via
+    // pairingInfo); clear mode (back-compat) only when neither is present.
+    const keyPair = opts?.daemonKeyPair ?? this.relayKeyPair;
+    this.relayKeyPair = keyPair;
     this.relay = new RelayClient({
       url,
       onChannel: (send) => this.createSessionHandler(send),
-      crypto: opts?.daemonKeyPair ? { daemonKeyPair: opts.daemonKeyPair } : undefined,
+      crypto: keyPair ? { daemonKeyPair: keyPair } : undefined,
     });
     await this.relay.connect();
   }
 
+  /** Lazily generate (and cache) the daemon's relay keypair for E2EE pairing. */
+  private ensureRelayKeyPair(): KeyPair {
+    this.relayKeyPair ??= generateKeyPair();
+    return this.relayKeyPair;
+  }
+
   /**
-   * QR-encodable pairing payload. When the relay is E2EE, includes the daemon's public
-   * key (base64) so the client can derive the shared key; `pubKey` is null in clear mode.
+   * QR-encodable pairing payload. Always includes the daemon's public key (base64) so a
+   * remote client can derive the shared key and reach this broker over the E2EE relay.
    */
-  pairingInfo(relayUrl: string): { relayUrl: string; token: string; pubKey: string | null } {
-    const pubKey = this.relayKeyPair ? exportPublicKey(this.relayKeyPair.publicKey) : null;
-    return { relayUrl, token: randomUUID(), pubKey };
+  pairingInfo(relayUrl: string): { relayUrl: string; token: string; pubKey: string } {
+    return { relayUrl, token: randomUUID(), pubKey: exportPublicKey(this.ensureRelayKeyPair().publicKey) };
   }
 
   private async handleStream(send: (obj: unknown) => void, env: BrokerEnvelope): Promise<void> {
