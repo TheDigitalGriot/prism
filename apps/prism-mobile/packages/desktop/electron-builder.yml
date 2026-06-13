@@ -1,0 +1,69 @@
+npmRebuild: false
+appId: sh.paseo.desktop
+productName: Paseo
+executableName: Paseo
+afterPack: ./scripts/after-pack.js
+afterSign: ./scripts/after-sign.js
+directories:
+  output: release
+files:
+  - dist/**/*
+asarUnpack:
+  - dist/daemon/node-entrypoint-runner.js
+  - node_modules/@thedigitalgriot/server/dist/server/terminal/shell-integration/**/*
+extraResources:
+  - from: ../app/dist
+    to: app-dist
+  - from: ../../skills
+    to: skills
+publish:
+  provider: github
+  owner: getpaseo
+  repo: paseo
+mac:
+  artifactName: "Paseo-${version}-${arch}.${ext}"
+  category: public.app-category.developer-tools
+  icon: assets/icon.icns
+  hardenedRuntime: true
+  notarize: true
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.inherit.plist
+  extraResources:
+    - from: bin/paseo
+      to: bin/paseo
+  target:
+    - dmg
+    - zip
+linux:
+  category: Development
+  icon: assets
+  artifactName: "Paseo-${version}-${arch}.${ext}"
+  maintainer: "Mohamed Boudra <hello@moboudra.com>"
+  vendor: "Paseo"
+  extraResources:
+    - from: bin/paseo
+      to: bin/paseo
+  target:
+    - AppImage
+    - deb
+    - rpm
+    - tar.gz
+win:
+  artifactName: "Paseo-Setup-${version}-${arch}.${ext}"
+  icon: assets/icon.ico
+  extraResources:
+    - from: bin/paseo.cmd
+      to: bin/paseo.cmd
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true

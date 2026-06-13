@@ -1,0 +1,22 @@
+name = "prism-relay"
+account_id = "c431da740e42c0b57f901b8ba2115bbc"
+main = "src/cloudflare-adapter.ts"
+compatibility_date = "2024-12-01"
+
+# Single route binding: prism.digitalgriot.studio/relay/*
+# The cloudflare-adapter.ts strip-/relay patch maps /relay/ws -> /ws internally.
+# Multi-app strategy: synaptiq.digitalgriot.studio/relay/*, etc. add additional patterns here.
+routes = [
+  { pattern = "prism.digitalgriot.studio/relay/*", zone_name = "digitalgriot.studio" }
+]
+
+[observability]
+enabled = true
+
+[[durable_objects.bindings]]
+name = "RELAY"
+class_name = "RelayDurableObject"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["RelayDurableObject"]

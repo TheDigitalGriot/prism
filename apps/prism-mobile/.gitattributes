@@ -1,0 +1,5 @@
+# Keep our @thedigitalgriot/* namespace through upstream merges from getpaseo/paseo.
+# When git merge upstream/main would re-introduce @getpaseo/* names in these files,
+# resolve with our version. Use git checkout upstream/main -- <file> to override case-by-case.
+packages/*/package.json merge=ours
+package.json merge=ours
