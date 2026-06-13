@@ -1,8 +1,10 @@
+import { createServer } from "node:http";
+import type { AddressInfo } from "node:net";
 import { afterEach, describe, expect, it } from "vitest";
 import { WebSocket } from "ws";
 import { Broker } from "./broker";
 import { Registry } from "./registry";
-import type { BrokerEnvelope, WSHello } from "./protocol";
+import type { BrokerEnvelope, ServiceDescriptor, WSHello } from "./protocol";
 
 function open(ws: WebSocket): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -67,5 +69,85 @@ describe("Broker handshake (Phase 1)", () => {
     expect(res.type).toBe("response");
     expect(res.ok).toBe(false);
     expect((res.error as { code: string }).code).toBe("SERVICE_NOT_FOUND");
+  });
+});
+
+interface MockFlask {
+  baseUrl: string;
+  close: () => Promise<void>;
+}
+
+function startMockFlask(): Promise<MockFlask> {
+  return new Promise((resolve) => {
+    const server = createServer((req, res) => {
+      if (req.method === "GET" && req.url === "/skills") {
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(JSON.stringify({ skills: [{ name: "query", description: "", methods: ["query"] }] }));
+        return;
+      }
+      res.writeHead(404);
+      res.end();
+    });
+    server.listen(0, "127.0.0.1", () => {
+      const port = (server.address() as AddressInfo).port;
+      resolve({
+        baseUrl: `http://127.0.0.1:${port}`,
+        close: () => new Promise<void>((done) => server.close(() => done())),
+      });
+    });
+  });
+}
+
+describe("Broker.init() — try-local→cloud + readiness (Phase 6)", () => {
+  let broker: Broker | undefined;
+  let backend: MockFlask | undefined;
+
+  afterEach(async () => {
+    await broker?.close();
+    await backend?.close();
+    broker = undefined;
+    backend = undefined;
+  });
+
+  it("resolves to local and marks the service ready when reachable", async () => {
+    backend = await startMockFlask();
+    const registry = new Registry();
+    const desc: ServiceDescriptor = {
+      id: "knowledge",
+      name: "knowledge",
+      status: "stopped",
+      adapterType: "flask-http",
+      endpoint: { local: backend.baseUrl, cloud: "http://127.0.0.1:2" },
+      capabilities: [],
+      healthProbe: "GET /skills",
+    };
+    registry.upsert(desc);
+    broker = new Broker({ registry });
+    await broker.init();
+
+    const stored = registry.get("knowledge")!;
+    expect(stored.status).toBe("ready");
+    expect(stored.lastProbe?.via).toBe("local");
+    expect(stored.capabilities.map((c) => c.name)).toContain("query");
+  });
+
+  it("falls back to cloud (via=cloud) when the gate fails", async () => {
+    const registry = new Registry();
+    const desc: ServiceDescriptor = {
+      id: "3d-gen",
+      name: "3d-gen",
+      status: "stopped",
+      adapterType: "flask-http",
+      endpoint: { local: "http://127.0.0.1:1", cloud: "http://127.0.0.1:2" },
+      capabilities: [],
+      healthProbe: "GET /skills",
+      gate: { kind: "vram", min: 999 },
+    };
+    registry.upsert(desc);
+    broker = new Broker({ registry });
+    await broker.init({ gate: () => false });
+
+    const stored = registry.get("3d-gen")!;
+    expect(stored.lastProbe?.via).toBe("cloud");
   });
 });

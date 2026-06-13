@@ -14,12 +14,14 @@ import { Registry } from "./registry";
 import { Router } from "./router";
 import { Session } from "./session";
 import { createAdapter } from "./adapters";
+import { resolveEndpoint, type ResolveOptions } from "./resolve";
 import {
   errorResponse,
   isEnvelope,
   isHello,
   okResponse,
   type BrokerEnvelope,
+  type ServiceDescriptor,
   type ServiceStreamMessage,
   type WSWelcome,
 } from "./protocol";
@@ -59,6 +61,48 @@ export class Broker {
         );
       }
     }
+  }
+
+  /**
+   * Optional boot-readiness pass: resolve each URL-based service's endpoint
+   * (try-local→cloud), (re)build its adapter against the resolved URL, probe it,
+   * and record status + lastProbe. Runs all services in parallel. Pure-local
+   * usage (e.g. unit tests) can skip this and rely on the constructor's wiring.
+   */
+  async init(opts: ResolveOptions = {}): Promise<void> {
+    await Promise.all(this.registry.snapshot().map((desc) => this.resolveAndProbe(desc, opts)));
+  }
+
+  private async resolveAndProbe(desc: ServiceDescriptor, opts: ResolveOptions): Promise<void> {
+    let via: "local" | "cloud" = "local";
+    if (desc.endpoint.local || desc.endpoint.cloud) {
+      let resolved: { url: string; via: "local" | "cloud" };
+      try {
+        resolved = await resolveEndpoint(desc, opts);
+      } catch {
+        this.registry.setStatus(desc.id, "error");
+        return;
+      }
+      via = resolved.via;
+      const resolvedDesc: ServiceDescriptor = { ...desc, endpoint: { ...desc.endpoint, local: resolved.url } };
+      try {
+        this.router.setAdapter(desc.id, createAdapter(resolvedDesc));
+      } catch {
+        this.registry.setStatus(desc.id, "error");
+        return;
+      }
+    }
+    const adapter = this.router.adapterFor(desc.id);
+    if (!adapter) {
+      this.registry.setStatus(desc.id, "error");
+      return;
+    }
+    const probe = await adapter.probe();
+    const stored = this.registry.get(desc.id);
+    if (!stored) return;
+    stored.status = probe.ok ? "ready" : "error";
+    if (probe.manifest && probe.manifest.length > 0) stored.capabilities = probe.manifest;
+    stored.lastProbe = { at: Date.now(), ok: probe.ok, latencyMs: probe.latencyMs, via };
   }
 
   private onConnection(ws: WebSocket): void {

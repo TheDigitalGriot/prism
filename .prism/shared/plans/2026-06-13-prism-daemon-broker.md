@@ -205,7 +205,10 @@ Q1 code-intel = brokered service · Q2 daemon = multi-service broker (N protocol
 - [ ] Unit tests: local-pass→local; gate-miss→cloud; no-cloud→`GATE_FAILED`; local-timeout→cloud.
 
 #### Manual Verification
-- [ ] Force local down (stop the local service) → call falls back to the configured cloud endpoint; `descriptor.lastProbe.via === "cloud"`.
+- [x] **Live boot smoke (2026-06-13):** `tsx src/index.ts` → `broker listening … — 6 service(s)` then `ready services: code-intel` (init resolved + probed all 6; the live codebase-memory-mcp auto-came-up; the other 5 gracefully not-ready). Full pipeline confirmed.
+- [x] *Gate-fall-back (automated):* `init({gate:()=>false})` → `lastProbe.via === "cloud"`.
+
+**Checkpoint:** [x] **Phase 6 complete** — automated verified 2026-06-13 (typecheck clean · 25/25 vitest · live boot smoke green). `broker.init()` is the boot-readiness pass; `resolveEndpoint` + VRAM gate wired.
 
 ---
 

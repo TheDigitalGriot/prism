@@ -52,6 +52,10 @@ async function main(): Promise<void> {
     `[prism-daemon] broker listening on ws://${HOST}:${port} — ${registry.snapshot().length} service(s) in registry`,
   );
 
+  await broker.init();
+  const ready = registry.snapshot().filter((s) => s.status === "ready").map((s) => s.id);
+  console.log(`[prism-daemon] ready services: ${ready.length > 0 ? ready.join(", ") : "(none reachable yet)"}`);
+
   const shutdown = () => {
     void broker.close().then(() => process.exit(0));
   };

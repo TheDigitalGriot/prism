@@ -25,7 +25,8 @@
     "id": "3d-gen",
     "name": "3D Generation (Lucid / ComfyUI)",
     "adapterType": "flask-http",
-    "endpoint": { "local": "http://127.0.0.1:7520" },
+    "endpoint": { "local": "http://127.0.0.1:7520", "cloud": "https://3d.prism.digitalgriot.studio" },
+    "gate": { "kind": "vram", "min": 24 },
     "healthProbe": "GET /skills"
   },
   {
