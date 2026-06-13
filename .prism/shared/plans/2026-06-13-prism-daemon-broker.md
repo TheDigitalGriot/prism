@@ -156,7 +156,10 @@ Q1 code-intel = brokered service · Q2 daemon = multi-service broker (N protocol
 - [ ] Integration test (skipped if binary absent): `tools/list` returns the tool set.
 
 #### Manual Verification
-- [ ] Client sends `{service:"code-intel", method:"search_graph", payload:{...}}` → graph results return; binary-absent → `status: error` (graceful, matches existing eval behavior).
+- [x] **Proven against the LIVE `codebase-memory-mcp` binary** (smoke, 2026-06-13): `probe.ok:true`, real toolset returned (`index_repository`, `search_graph`, `query_graph`, `trace_path`, `get_graph_schema`, `detect_changes`, `manage_adr`, …). No dialect, no Windows spawn issue.
+- [ ] Through a client envelope: `{service:"code-intel", method:"search_graph", payload:{...}}` → graph results (covered by the broker-dispatch path proven in Phase 2).
+
+**Checkpoint:** [x] **Phase 4 complete** — automated verified 2026-06-13 (typecheck clean · 11/11 vitest · **live-binary smoke green**). Unlike paseo, code-intel needs no dialect — MCP is standard.
 
 ---
 
@@ -177,7 +180,10 @@ Q1 code-intel = brokered service · Q2 daemon = multi-service broker (N protocol
 - [ ] Unit test: 4 distinct configs instantiate 4 working descriptors from the single adapter class.
 
 #### Manual Verification
-- [ ] With Cinopsis (Flask) running on its port: `{service:"cinopsis", method:...}` routes; `status: ready` when its discovery endpoint answers.
+- [x] *Proven against a mock Flask backend (automated):* probe parses the skills manifest; `call` POSTs to `/{method}` and returns JSON; **one adapter class instantiates for all four services**.
+- [ ] With a live Flask service (Cinopsis/Graphify/etc.) on its port: `{service:"cinopsis", method:...}` routes; `status: ready` when its discovery endpoint answers.
+
+**Checkpoint:** [x] **Phase 5 complete** — automated verified 2026-06-13 (typecheck clean · 15/15 vitest). ONE adapter → four services; broker registry now carries 6 services across 3 protocol families.
 
 ---
 

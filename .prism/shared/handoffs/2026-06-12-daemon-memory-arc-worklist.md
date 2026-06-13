@@ -58,7 +58,7 @@
 
 ## I · Implementation follow-ups (from the build, 2026-06-13)
 - **paseo-dialect for agent-run** — `WebSocketAdapter` speaks the broker's clean generic dialect; the live paseo daemon (`:6767`) needs a thin translation (per-service relay, like design-studio `:7457`). Phases 1-2 done + tested against a mock; this is what makes agent-run talk to the *real* paseo.
-- Phases 1-2 of `.prism/shared/plans/2026-06-13-prism-daemon-broker.md` are complete + green (typecheck, 7/7 vitest). Broker self-port: **6780**. Runs via `tsx`.
+- Phases 1-2 + 4-5 of `.prism/shared/plans/2026-06-13-prism-daemon-broker.md` complete + green (typecheck, 15/15 vitest; **code-intel proven against the LIVE codebase-memory-mcp**). 3 adapter families done (WebSocket/stdio-MCP/Flask-HTTP); 6 services in the registry. Phase 3 (design-gen RestAdapter) blocked on idea_init commit. Broker self-port **6780**, runs via `tsx`. Not yet committed: Phases 4-5.
 
 ---
 **Sovereignty invariant:** everything self-hosted, Prism-owned end-to-end (DO / Coolify). Donors are absorbed, never depended upon.
