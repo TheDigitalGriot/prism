@@ -10,7 +10,7 @@
 
 export type ServiceId = string;
 
-export type AdapterType = "websocket" | "rest" | "stdio-mcp" | "flask-http";
+export type AdapterType = "websocket" | "websocket-paseo" | "rest" | "stdio-mcp" | "flask-http";
 
 export type ServiceStatus = "stopped" | "starting" | "ready" | "error";
 
