@@ -4,6 +4,7 @@ import { WebviewProvider, getNonce } from "../../core/webview/WebviewProvider"
 import { PrismController } from "../../core/controller/index"
 import { handleGrpcRequest, registerBrokerForwarder } from "@prism-core/core/controller/grpc-handler"
 import { WebviewToExtMessage } from "@prism-core/shared/PrismMessage"
+import { resolveLiveViteServer } from "./viteDevServer"
 
 /**
  * VS Code WebviewViewProvider implementation.
@@ -74,7 +75,7 @@ export class VscodeWebviewProvider extends WebviewProvider implements vscode.Web
       ],
     }
 
-    webviewView.webview.html = this.getHtmlContent(webviewView.webview)
+    webviewView.webview.html = await this.getHtmlContent(webviewView.webview)
 
     // Wire the controller's post-message function to this webview
     this._controller.setPostMessageFn(async (msg) => {
@@ -128,7 +129,7 @@ export class VscodeWebviewProvider extends WebviewProvider implements vscode.Web
     await this.sendToWebview({ type: "command", command, payload })
   }
 
-  getHtmlContent(webview: vscode.Webview): string {
+  async getHtmlContent(webview: vscode.Webview): Promise<string> {
     const nonce = getNonce()
     const cspSource = webview.cspSource
 
@@ -140,18 +141,13 @@ export class VscodeWebviewProvider extends WebviewProvider implements vscode.Web
       vscode.Uri.joinPath(this._context.extensionUri, "webview-ui", "build", "assets", "index.css"),
     )
 
-    // Check if we're in development mode (Vite dev server running)
-    const vitePortPath = path.join(this._context.extensionUri.fsPath, "webview-ui", ".vite-port")
-    let devServerUrl: string | null = null
-    try {
-      const port = require("fs").readFileSync(vitePortPath, "utf-8").trim()
-      if (port && process.env.IS_PRODUCTION !== "true") {
-        devServerUrl = `http://localhost:${port}`
-      }
-    } catch {
-      // Not in dev mode
-    }
-
+    // Use the Vite dev server ONLY if one is actually listening on the port it
+    // advertised. A stale `.vite-port` left by a dead dev server resolves to null,
+    // so we fall back to the production build instead of rendering a blank webview.
+    const devServerUrl = await resolveLiveViteServer(
+      this._context.extensionUri.fsPath,
+      path.join("webview-ui", ".vite-port"),
+    )
     if (devServerUrl) {
       // HMR mode: load from Vite dev server
       return this._getDevHtml(nonce, devServerUrl)

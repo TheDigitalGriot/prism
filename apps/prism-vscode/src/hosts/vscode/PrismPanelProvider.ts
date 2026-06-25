@@ -5,6 +5,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as util from 'util';
 import * as vscode from 'vscode';
+import { resolveLiveViteServer } from './viteDevServer';
 import type { AgentState, PostMessageFn } from '@prism-core/office/types';
 import {
   launchNewTerminal,
@@ -253,7 +254,7 @@ export class PrismPanelProvider implements vscode.WebviewViewProvider {
   // WebviewViewProvider
   // ---------------------------------------------------------------------------
 
-  resolveWebviewView(webviewView: vscode.WebviewView): void {
+  async resolveWebviewView(webviewView: vscode.WebviewView): Promise<void> {
     this._webviewView = webviewView;
 
     webviewView.webview.options = {
@@ -264,7 +265,7 @@ export class PrismPanelProvider implements vscode.WebviewViewProvider {
       ],
     };
 
-    webviewView.webview.html = this._getWebviewContent(webviewView.webview);
+    webviewView.webview.html = await this._getWebviewContent(webviewView.webview);
 
     webviewView.webview.onDidReceiveMessage(async (message) => {
       await this._handleMessage(message);
@@ -1465,22 +1466,16 @@ export class PrismPanelProvider implements vscode.WebviewViewProvider {
   // HTML generation
   // ---------------------------------------------------------------------------
 
-  private _getWebviewContent(webview: vscode.Webview): string {
+  private async _getWebviewContent(webview: vscode.Webview): Promise<string> {
     const nonce = getNonce();
     const cspSource = webview.cspSource;
 
-    // Check for Vite dev server (development mode)
-    const vitePortPath = path.join(this._extensionUri.fsPath, 'webview-panel', '.vite-panel-port');
-    let devServerUrl: string | null = null;
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const port = require('fs').readFileSync(vitePortPath, 'utf-8').trim() as string;
-      if (port && process.env['IS_PRODUCTION'] !== 'true') {
-        devServerUrl = `http://localhost:${port}`;
-      }
-    } catch {
-      // Not in dev mode
-    }
+    // Use the Vite dev server only if one is actually listening on the advertised
+    // port. A stale `.vite-panel-port` resolves to null → fall back to production.
+    const devServerUrl = await resolveLiveViteServer(
+      this._extensionUri.fsPath,
+      path.join('webview-panel', '.vite-panel-port'),
+    );
 
     if (devServerUrl) {
       return this._getDevHtml(nonce, devServerUrl);

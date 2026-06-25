@@ -14,8 +14,10 @@ export abstract class WebviewProvider {
   /**
    * Generate the full HTML page for the webview.
    * Called once by resolveWebviewView() after the webview is available.
+   * May be sync or async (async impls can probe a live Vite dev server before
+   * deciding between HMR and the production build).
    */
-  abstract getHtmlContent(webview: vscode.Webview): string
+  abstract getHtmlContent(webview: vscode.Webview): string | Promise<string>
 
   /** Handle an incoming message from the webview. */
   abstract handleMessage(message: unknown): Promise<void>

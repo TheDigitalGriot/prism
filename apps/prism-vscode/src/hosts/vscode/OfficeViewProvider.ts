@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { resolveLiveViteServer } from './viteDevServer';
 import type { AgentState, PostMessageFn } from '@prism-core/office/types';
 import {
 	launchNewTerminal,
@@ -167,7 +168,7 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 		});
 	}
 
-	resolveWebviewView(webviewView: vscode.WebviewView): void {
+	async resolveWebviewView(webviewView: vscode.WebviewView): Promise<void> {
 		this._webviewView = webviewView;
 
 		webviewView.webview.options = {
@@ -178,7 +179,7 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 			],
 		};
 
-		webviewView.webview.html = this._getWebviewContent(webviewView.webview);
+		webviewView.webview.html = await this._getWebviewContent(webviewView.webview);
 
 		webviewView.webview.onDidReceiveMessage(async (message) => {
 			await this._handleMessage(message);
@@ -475,22 +476,16 @@ export class OfficeViewProvider implements vscode.WebviewViewProvider {
 		}
 	}
 
-	private _getWebviewContent(webview: vscode.Webview): string {
+	private async _getWebviewContent(webview: vscode.Webview): Promise<string> {
 		const nonce = getNonce();
 		const cspSource = webview.cspSource;
 
-		// Check for Vite dev server (development mode)
-		const vitePortPath = path.join(this._extensionUri.fsPath, 'webview-office', '.vite-office-port');
-		let devServerUrl: string | null = null;
-		try {
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			const port = require('fs').readFileSync(vitePortPath, 'utf-8').trim() as string;
-			if (port && process.env['IS_PRODUCTION'] !== 'true') {
-				devServerUrl = `http://localhost:${port}`;
-			}
-		} catch {
-			// Not in dev mode
-		}
+		// Use the Vite dev server only if one is actually listening on the advertised
+		// port. A stale `.vite-office-port` resolves to null → fall back to production.
+		const devServerUrl = await resolveLiveViteServer(
+			this._extensionUri.fsPath,
+			path.join('webview-office', '.vite-office-port'),
+		);
 
 		if (devServerUrl) {
 			return this._getDevHtml(nonce, devServerUrl);

@@ -5,5 +5,7 @@ out/
 webview-ui/node_modules/
 webview-ui/build/
 webview-ui/.vite-port
+webview-panel/.vite-panel-port
+webview-office/.vite-office-port
 .vscode-test/
 *.js.map
