@@ -4,22 +4,37 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## [3.6.5] - 2026-06-25
+## [3.7.0] - 2026-06-29
+
+Bookend of all work since `v3.6.0` (17 commits). Headline: the interactive Architecture Explorer, broker/daemon substrate expansion, and a full repair + hardening of the VSCode extension surface (which would not load in Cursor / newer-engine editors).
+
+### Added
+
+- **Architecture Explorer** — interactive, deployable site with three views (**Runtime / Workflows / Plugin**), node expansion, and every skill / command / agent / hook / script rendered as its own node; ships via GitHub Pages deploy.
+- **`/prism-wiki` command** — generates an architecture wiki from the code-intelligence graph, plus a generated repo overview.
+- **AgentRunClient** (`packages/prism-daemon-client`) — brokered agent substrate (full-managed, step 1) for routing agent runs through the daemon broker.
+- **Daemon knowledge service** wired to `graphify-mcp` over stdio-MCP.
+- **Relay pairing** — relay pairing endpoint + desktop QR-pairing UI for device handoff.
+- **VSCode seam-bridge broker forwarder** — the VSCode webview's gRPC client reaches brokered services (code-intel / design-gen / etc.) via `POST :6780/call` when the daemon broker is running (mirror of the Electron side).
 
 ### Fixed
 
-- **VSCode extension would not load in Cursor / older VS Code** — `apps/prism-vscode` declared `engines.vscode` `^1.109.0` (set at v3.0.0), newer than the editor's VS Code base (e.g. Cursor 2.4.31), so the editor silently excluded the extension — Prism was absent from **both** the activity-bar sidebar and the bottom panel. Restored to `^1.84.0`, the last known-good "working ecosystem" value (`3de58aa`). `scripts/bump-version.py` does not manage this field, so it will not regress on a version bump.
-- **Blank sidebar / bottom-panel webviews** — the webview providers chose Vite HMR mode from the mere existence of a `.vite-port` / `.vite-panel-port` / `.vite-office-port` file, so a stale file left by a dead dev server routed the webview at a dead `localhost` and rendered blank. Removed the stale port files and built the sidebar production bundle. (Tree views are native and were unaffected.)
+- **VSCode extension would not load in Cursor / newer-engine editors** — `apps/prism-vscode` declared `engines.vscode` `^1.109.0` (set at v3.0.0), newer than the editor's VS Code base (e.g. Cursor 2.4.31), so the editor **silently excluded** the extension — Prism was absent from **both** the activity-bar sidebar and the bottom panel. Restored to `^1.84.0`, the last known-good "working ecosystem" value (`3de58aa`). `scripts/bump-version.py` does not manage this field, so it will not regress on a version bump.
+- **Blank sidebar / bottom-panel webviews** — providers chose Vite HMR mode from the mere existence of a `.vite-port` / `.vite-panel-port` / `.vite-office-port` file, so a stale file left by a dead dev server routed the webview at a dead `localhost` and rendered blank. Removed stale port files and built the sidebar production bundle. (Tree views are native and were unaffected.)
+- **Release version-string drift** — bump script now syncs all version strings (incl. `prism-mobile`) and tracks previously-missed files.
 
 ### Changed
 
-- **Webview dev-server detection hardened** — new shared helper `apps/prism-vscode/src/hosts/vscode/viteDevServer.ts` (`resolveLiveViteServer`) performs a fast TCP liveness probe of the advertised port before choosing HMR; a stale/dead port falls back to the production build. Wired into `VscodeWebviewProvider`, `PrismPanelProvider`, and `OfficeViewProvider`; base `WebviewProvider.getHtmlContent` widened to `string | Promise<string>`. Preserves HMR, adds zero latency when no port file exists.
-- **`apps/prism-vscode/.gitignore`** — added `webview-panel/.vite-panel-port` and `webview-office/.vite-office-port` (the sidebar's `.vite-port` was already ignored) so stale dev-server pointers can't be committed and re-break the panels.
+- **Webview dev-server detection hardened** — new shared helper `apps/prism-vscode/src/hosts/vscode/viteDevServer.ts` (`resolveLiveViteServer`) does a fast TCP liveness probe of the advertised port before choosing HMR; a stale/dead port falls back to the production build. Wired into `VscodeWebviewProvider`, `PrismPanelProvider`, and `OfficeViewProvider`; base `WebviewProvider.getHtmlContent` widened to `string | Promise<string>`. Preserves HMR, zero added latency when no port file exists.
+- **`apps/prism-vscode/.gitignore`** — added `webview-panel/.vite-panel-port` and `webview-office/.vite-office-port` (the sidebar's `.vite-port` was already ignored) so stale dev-server pointers can't be committed.
+
+### Verified (no code change)
+
+- **prism-electron surface** tested end-to-end: `build:daemon` ✓, single window + Vite-served renderer ✓, broker **adopts** the daemon on `:6780` (`/health` → 7 services) ✓, no crash. Electron is **immune** to the VSCode stale-port class — it binds `MAIN_WINDOW_VITE_DEV_SERVER_URL` at build time, not via a runtime port file.
 
 ### Notes
 
-- Committed only — **not** released. Run `/prism-release` separately to build artifacts and tag.
-- The `Canceled: Canceled` extension-host error observed during F5 is Cursor's normal shutdown teardown (gitlens `dispose()` + `ProxyResolver`), not a Prism fault.
+- The `Canceled: Canceled` extension-host error seen during VSCode F5, and the Chromium DevTools `Autofill.enable` error in Electron, are host/runtime teardown noise — not Prism faults.
 - Investigation record: `.prism/shared/research/2026-06-25-vscode-f5-extension-host-fixes.md`.
 
 ## [3.4.0] - 2026-06-03
