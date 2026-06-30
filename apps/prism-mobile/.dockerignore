@@ -1,0 +1,8 @@
+node_modules
+**/node_modules
+.git
+_setup_install.log
+_daemon6767.log
+_builddaemon.log
+**/dist
+**/.expo

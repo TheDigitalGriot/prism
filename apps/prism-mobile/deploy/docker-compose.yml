@@ -1,0 +1,35 @@
+# Griot always-on agent daemon — Coolify deploy (build context = apps/prism-mobile)
+services:
+  griot-daemon:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    restart: unless-stopped
+    environment:
+      PASEO_NODE_ENV: production
+      PASEO_LISTEN: 0.0.0.0:6767
+      PASEO_HOME: /data
+      PASEO_SOURCE_CHECKOUT_PATH: /workspace
+      PASEO_RELAY_ENABLED: "true"
+      # Verify the exact form the relay client expects (the strip-/relay patch maps /relay/ws -> /ws).
+      PASEO_RELAY_ENDPOINT: wss://prism.digitalgriot.studio/relay
+      PASEO_RELAY_PUBLIC_ENDPOINT: https://prism.digitalgriot.studio/relay
+      PASEO_LOG_FORMAT: json
+      PASEO_LOG_LEVEL: info
+      # Optional: require a password for clients pairing to this daemon.
+      # PASEO_PASSWORD: ${PASEO_PASSWORD}
+    volumes:
+      # Claude Max auth — run `claude login` ON THE DROPLET HOST first, then mount read-only.
+      - /root/.claude:/root/.claude:ro
+      # Daemon state (agents/projects/workspaces). Persistent.
+      - griot_daemon_data:/data
+      # Server-side checkouts of your Griot repos. git clone into here.
+      - griot_workspace:/workspace
+    # The daemon dials OUT to the relay; no public port needed.
+    # Uncomment to also reach it directly on the LAN / via a routed subdomain:
+    # ports:
+    #   - "6767:6767"
+
+volumes:
+  griot_daemon_data:
+  griot_workspace:
