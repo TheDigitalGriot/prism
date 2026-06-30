@@ -472,27 +472,30 @@ fn detect_editor_macos(config: &EditorConfig) -> Option<DetectedTool> {
             .join("app")
             .join("bin")
             .join(config.cli_name);
+        // Compute once: `cli_path` (PathBuf) is moved into `executable` below, so
+        // capture the bool before the move to avoid a borrow-after-move (E0382).
+        let cli_available = cli_path.exists();
 
         let version = read_version_from_macos_app(&app_path);
 
         let mut metadata = HashMap::new();
         metadata.insert("id".into(), config.id.into());
         metadata.insert("detection_method".into(), "macos_app_bundle".into());
-        if cli_path.exists() {
+        if cli_available {
             metadata.insert("cli_path".into(), cli_path.to_string_lossy().into());
         }
 
         return Some(DetectedTool {
             name: config.name.into(),
             version,
-            executable: if cli_path.exists() {
+            executable: if cli_available {
                 Some(cli_path)
             } else {
                 None
             },
             install_location: Some(app_path),
             install_method: method,
-            cli_available: cli_path.exists(),
+            cli_available,
             metadata,
         });
     }
