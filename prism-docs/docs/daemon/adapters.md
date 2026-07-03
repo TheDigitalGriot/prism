@@ -41,9 +41,12 @@ server → { type:"stream_end", id }
 Speaks the **real paseo daemon's** dialect (the live agent daemon at `:6767`), so `agent-run`
 targets it directly — a sovereign absorption of paseo's protocol, not a dependency.
 
+The daemon mounts its WebSocket on **`/ws`** (a bare-host URL is rejected at the upgrade), and it
+completes the hello with a **`server_info`** status frame — *not* a `welcome`:
+
 ```
-client → { type:"hello", clientId, clientType, protocolVersion, appVersion? }
-server → { type:"welcome", sessionId, daemonVersion?, capabilities? }
+client → { type:"hello", clientId, clientType, protocolVersion, appVersion? }   (dial …:6767/ws)
+server → { type:"session", message:{ type:"status", payload:{ status:"server_info", version, serverId } } }
 client → { type:`${method}_request`,  requestId, ...payload }
 server → { type:`${method}_response`, requestId, ... }       (requestId-correlated)
 server → push frames (timeline / turn_* / agent_*)           (surfaced via stream())
@@ -51,6 +54,11 @@ server → push frames (timeline / turn_* / agent_*)           (surfaced via str
 
 `call("fetch_agents", {})` sends `fetch_agents_request` and awaits `fetch_agents_response`;
 `stream("timeline", …)` forwards every push frame whose `type === "timeline"`.
+
+> **3.8.0 fix:** the adapter previously dialed the bare URL and awaited a `welcome` frame the daemon
+> never sends, so `agent-run` was stuck in `error`. It now normalizes a path-less endpoint to `/ws`
+> and accepts the `server_info` frame as connection-complete (the `welcome` branch is kept for any
+> clean-dialect daemon) → `agent-run` reports `ready` in `prism-cli daemon ls`.
 
 ## RestAdapter (`rest`)
 
