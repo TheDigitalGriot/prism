@@ -4,7 +4,7 @@ name: Deploy Docs to GitHub Pages
 # explorer) and publishes it to GitHub Pages.
 #
 # One-time setup: repo Settings → Pages → Source: "GitHub Actions".
-# Result: https://<owner>.github.io/prism-plugin/  (architecture at /prism-plugin/architecture.html)
+# Result: https://<owner>.github.io/prism/  (architecture at /prism/architecture.html)
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
         run: npm ci || npm install
       - name: Build VitePress (project-Pages base)
         env:
-          DOCS_BASE: /prism-plugin/
+          DOCS_BASE: /prism/
         run: npm run docs:build
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3

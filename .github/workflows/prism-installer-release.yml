@@ -69,8 +69,8 @@ jobs:
           npm ci
           npx @vscode/vsce package \
             --no-dependencies \
-            --baseContentUrl https://github.com/TheDigitalGriot/prism-plugin/tree/main/apps/prism-vscode \
-            --baseImagesUrl https://github.com/TheDigitalGriot/prism-plugin/raw/main/apps/prism-vscode \
+            --baseContentUrl https://github.com/TheDigitalGriot/prism/tree/main/apps/prism-vscode \
+            --baseImagesUrl https://github.com/TheDigitalGriot/prism/raw/main/apps/prism-vscode \
             --out ../../artifacts/extensions/prism-${{ steps.ver.outputs.version }}.vsix
         continue-on-error: true
 

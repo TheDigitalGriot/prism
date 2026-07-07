@@ -58,7 +58,7 @@ export async function installClaudePlugin(options: {
     // Primary: use Claude CLI for proper installation
     try {
       sendProgress(onProgress, { status: 'installing', percent: 30, message: 'Adding marketplace source...' });
-      execSync(`"${claudePath}" plugin marketplace add TheDigitalGriot/prism-plugin`, {
+      execSync(`"${claudePath}" plugin marketplace add TheDigitalGriot/prism`, {
         timeout: 30000,
         encoding: 'utf-8',
         stdio: ['pipe', 'pipe', 'pipe'],

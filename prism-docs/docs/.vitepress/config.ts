@@ -34,7 +34,7 @@ export default defineConfig({
       { text: 'Eval', link: '/eval/' },
       {
         text: 'GitHub',
-        link: 'https://github.com/TheDigitalGriot/prism-plugin',
+        link: 'https://github.com/TheDigitalGriot/prism',
         target: '_blank',
       },
     ],
@@ -194,7 +194,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/TheDigitalGriot/prism-plugin' },
+      { icon: 'github', link: 'https://github.com/TheDigitalGriot/prism' },
     ],
 
     footer: {
@@ -203,7 +203,7 @@ export default defineConfig({
     },
 
     editLink: {
-      pattern: 'https://github.com/TheDigitalGriot/prism-plugin/edit/main/prism-docs/docs/:path',
+      pattern: 'https://github.com/TheDigitalGriot/prism/edit/main/prism-docs/docs/:path',
       text: 'Edit this page on GitHub',
     },
   },

@@ -1,7 +1,7 @@
 import https from 'node:https';
 import type { ReleaseAsset } from '../types';
 
-const REPO = 'TheDigitalGriot/prism-plugin';
+const REPO = 'TheDigitalGriot/prism';
 const API_URL = `https://api.github.com/repos/${REPO}/releases/latest`;
 
 type GitHubRelease = {
