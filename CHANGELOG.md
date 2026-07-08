@@ -4,6 +4,23 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [3.9.6] - 2026-07-08
+
+Second marketplace cache-bust for the `prism-v2-update.zip` untrack, paired with a workflow-description refresh. Anthropic's plugin backend re-indexed the 3.9.5 metadata but kept serving a **stale package** still containing the removed nested zip, which continued to block Cowork/Desktop installs. A fresh commit hash + version forces the backend to re-package the clean tree.
+
+### Changed
+
+- **Plugin descriptions: 4-phase → 6-phase** — `plugin.json` and `marketplace.json` descriptions updated from `4-phase (Research → Plan → Implement → Validate)` to `6-phase (Ideate → Research → Plan → Design → Implement → Validate)`. Text/metadata only — the **Ideate** and **Design** phases are not implemented yet.
+
+### Fixed
+
+- **Stale package still shipping the nested zip** — the backend re-indexed 3.9.5 metadata but continued serving a cached package containing the removed `prism-v2-update.zip`. A new commit hash + version (`3.9.5 → 3.9.6`) forces a clean re-package. Repo confirmed to have **zero tracked zips** (`git ls-files "*.zip"` is empty).
+
+### Notes
+
+- VitePress footer version straggler (`prism-docs/docs/.vitepress/config.ts`) synced to 3.9.6 by the post-bump discovery sweep.
+- No functional code change beyond version strings and the two description edits.
+
 ## [3.9.5] - 2026-07-08
 
 Marketplace cache-bust for the `prism-v2-update.zip` untrack fix. The 3.9.0 change removed the nested zip from git tracking, but the marketplace kept serving the cached 3.9.0 plugin tree (which still contained the tracked zip) because the version number never changed. Bumping to 3.9.5 forces the marketplace to re-fetch the now-clean tree, so nested zips no longer block Claude Cowork installs.
