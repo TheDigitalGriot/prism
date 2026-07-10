@@ -56,6 +56,7 @@ export default defineConfig({
         items: [
           { text: 'Plugin Overview', link: '/plugin/' },
           { text: 'Plugin Manifest & Distribution', link: '/plugin/manifest' },
+          { text: 'Cowork Sideload', link: '/plugin/cowork-sideload' },
           { text: 'Three-Layer Architecture', link: '/plugin/architecture' },
           { text: 'Commands Reference', link: '/plugin/commands' },
           { text: 'Agents Reference', link: '/plugin/agents' },
