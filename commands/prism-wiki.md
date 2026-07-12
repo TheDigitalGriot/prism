@@ -22,7 +22,8 @@ Arguments (`$ARGUMENTS`):
 
 - Onboarding a new surface/contributor who needs a structural map fast.
 - After a large feature lands (e.g. a new package), to regenerate the architecture overview.
-- To produce a CLAUDE.md-injectable "live stats" block.
+- To produce a structural snapshot for onboarding. (For a live stats block *inside*
+  `CLAUDE.md`, use `scripts/prism-inject-stats.py` — `/prism-wiki` never edits `CLAUDE.md`.)
 
 ## Prerequisites
 
@@ -93,6 +94,12 @@ search_graph(project=<P>, label="Function",  file_pattern="<pkg>/**", min_degree
 search_graph(project=<P>, label="Route",     file_pattern="<pkg>/**")                  # HTTP/RPC surface
 ```
 
+**Schema-gate label-specific queries.** Before running any query that names a specific node
+label (e.g. `Route`, `Interface`, `Class`), check the schema you fetched in step 1
+(`get_graph_schema`) to confirm that label actually exists in this graph. Skip or adjust
+queries for labels the schema doesn't list — e.g. a non-HTTP repo won't have `Route`, so
+running that query only returns confusing empty results. Only query labels the schema reports.
+
 Prefer `query=` (BM25) for natural-language discovery, `name_pattern=` for exact regex,
 `semantic_query=[...]` to bridge vocabulary. Use `max_degree=0, exclude_entry_points=true`
 to surface dead code worth noting.
@@ -125,11 +132,10 @@ Each page header records provenance: the project name, node/edge counts, and the
 date. Note that the index may lag uncommitted changes — run `detect_changes(project=<P>)`
 and mention any HIGH/CRITICAL drift so readers know the map may be slightly stale.
 
-### 7. (Optional) Inject live stats into CLAUDE.md
+### 7. Live stats in CLAUDE.md — defer to the dedicated injector
 
-Emit a compact block (node/edge counts, unit count, route count, top-called functions)
-suitable for a `<!-- prism-wiki:stats -->` fenced region in CLAUDE.md, so agents get the
-live structural snapshot on every session.
+For a live node/edge-count block in `CLAUDE.md`, run `python scripts/prism-inject-stats.py`
+(a dedicated marker-safe injector); `/prism-wiki` never edits `CLAUDE.md`.
 
 ## Rules
 
@@ -140,10 +146,18 @@ live structural snapshot on every session.
 3. **Cite counts** — every "load-bearing" claim is backed by a degree/caller count from the graph.
 4. **Provenance** — every generated page records the project, counts, and date, and notes that
    the index may lag uncommitted work.
-5. **Idempotent** — regenerating overwrites the wiki pages cleanly; don't append duplicates.
+5. **Idempotent, scope-aware** — regenerating replaces content in place without appending
+   duplicates, but the blast radius depends on scope:
+   - **FULL run** (no `$ARGUMENTS`): regenerate all unit pages and rewrite `index.md` so it
+     covers all units.
+   - **SCOPED run** (`$ARGUMENTS` names specific units): write/replace ONLY the in-scope
+     units' pages, and **MERGE** (not replace) the `index.md` unit list — update the entries
+     for in-scope units and leave every other entry intact. NEVER delete pages or `index.md`
+     entries for units outside the scope; a scoped run must not destroy prior wiki content.
 6. **No editorializing** — describe the structure the graph shows; this is a map, not a review.
 
 ## Output
 
 `.prism/shared/docs/wiki/index.md` + one page per unit under `.prism/shared/docs/wiki/`.
-Optionally a CLAUDE.md stats block.
+(A live `CLAUDE.md` stats block is out of scope here — run `scripts/prism-inject-stats.py`
+for that; `/prism-wiki` never edits `CLAUDE.md`.)
