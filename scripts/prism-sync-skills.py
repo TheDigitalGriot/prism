@@ -194,7 +194,14 @@ def load_symbols(binary: str, project: str, verbose: bool) -> dict:
             f"MATCH (n:{label}) RETURN n.qualified_name, n.name, n.file_path",
         )
         kept = 0
-        for qn, name, fp in rows:
+        skipped = 0
+        for row in rows:
+            # Guard against an unexpected column count from query_graph so a shape
+            # change surfaces as a clean skip, not a raw ValueError past main()'s handler.
+            if not isinstance(row, (list, tuple)) or len(row) != 3:
+                skipped += 1
+                continue
+            qn, name, fp = row
             if not qn or not fp or is_vendor(fp) or not is_real_symbol_name(name or ""):
                 continue
             # First writer wins; qualified_name is unique per symbol.
@@ -203,7 +210,8 @@ def load_symbols(binary: str, project: str, verbose: bool) -> dict:
                                "label": label}
                 kept += 1
         if verbose:
-            print(f"  {label}: {len(rows)} rows -> {kept} kept", file=sys.stderr)
+            note = f" ({skipped} malformed)" if skipped else ""
+            print(f"  {label}: {len(rows)} rows -> {kept} kept{note}", file=sys.stderr)
     return symbols
 
 
@@ -222,7 +230,11 @@ def load_edges(binary: str, project: str, symbols: dict, verbose: bool):
             f"MATCH (a)-[r:{etype}]->(b) RETURN a.qualified_name, b.qualified_name",
         )
         used = 0
-        for a, b in rows:
+        for row in rows:
+            # Same shape guard as load_symbols: tolerate an unexpected column count.
+            if not isinstance(row, (list, tuple)) or len(row) != 2:
+                continue
+            a, b = row
             if a in symbols and b in symbols and a != b:
                 adjacency[a][b] = adjacency[a].get(b, 0) + weight
                 adjacency[b][a] = adjacency[b].get(a, 0) + weight
@@ -380,6 +392,18 @@ def describe(name: str, members: list, symbols: dict, area: str) -> str:
     return desc[:300]
 
 
+def yaml_dq(value: str) -> str:
+    """Emit `value` as a YAML double-quoted scalar (stdlib-only, no pyyaml).
+
+    A plain (unquoted) scalar containing ``": "`` is parsed by YAML as a nested
+    mapping, so descriptions like ``57 symbols: 27 functions`` break `safe_load`.
+    Double-quoting fixes that: inside a double-quoted scalar a ``: `` is literal.
+    Only ``\\`` and ``"`` need escaping for a single-line value.
+    """
+    escaped = value.replace("\\", "\\\\").replace('"', '\\"')
+    return '"' + escaped + '"'
+
+
 def render_skill(name: str, area: str, members: list, symbols: dict,
                  in_degree: Counter, adjacency: dict) -> str:
     """Render a full SKILL.md string (deterministic; no timestamps)."""
@@ -398,8 +422,8 @@ def render_skill(name: str, area: str, members: list, symbols: dict,
 
     lines = []
     lines.append("---")
-    lines.append(f"name: {name}")
-    lines.append(f"description: {desc}")
+    lines.append(f"name: {yaml_dq(name)}")
+    lines.append(f"description: {yaml_dq(desc)}")
     lines.append("---")
     lines.append("")
     lines.append(GENERATED_MARKER)
@@ -549,6 +573,9 @@ def main(argv=None) -> int:
 
         write_outputs(output_dir, skills, args.dry_run)
     except CodememError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    except Exception as exc:  # last-resort net: never crash with a raw traceback
         print(f"error: {exc}", file=sys.stderr)
         return 1
 
