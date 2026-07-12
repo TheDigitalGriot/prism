@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Working in this ecosystem (operating principles)
+
+- **My tools first.** Before generating, scaffolding, or "helping" in any domain, assume I've already built a purpose-made skill/command/template/agent for it — search for it and use it. Never reach for a generic default (superpowers, ad-hoc HTML, Glob/Grep over graph tools) when a Prism/Griot equivalent exists.
+- **Detail is a signal, not noise.** Heavy detail attributed to something = slow down and use it fully, at its own fidelity. Half-assing over crafted work is worse than not acting.
+- **Propose before changing my things.** Never edit my CLAUDE.md, config, or files without showing the change and getting a yes.
+- **Infer only once trust is earned.** Until we have fluidity, ask or show rather than assume. Inference grows with the collaboration; it isn't the default.
+
 ## What This Is
 
 Prism is a Claude Code plugin that implements a structured 4-phase development workflow: **Research → Plan → Implement → Validate**. It provides skills, commands, and agents that guide AI through deliberate phases rather than jumping straight into code. For large features, Spectrum autonomous execution runs one story per fresh Claude session in a loop.
