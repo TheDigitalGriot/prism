@@ -64,6 +64,16 @@
             "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/log-observation.py"
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/detect-changes-gate.sh",
+            "timeout": 15
+          }
+        ]
       }
     ],
     "WorktreeCreate": [
