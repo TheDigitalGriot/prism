@@ -123,10 +123,11 @@ export class PrismApiHandler {
           break
 
         case "message_delta":
+          // SDK StopReason union lacks "refusal" here; cast required
           if ((event.delta.stop_reason as string) === "refusal") {
             throw new Error(
               "Request declined by safety classifier (stop_reason: refusal). " +
-                "This can occur with Claude Fable 5 on certain content. Retry or rephrase.",
+                "This can occur on certain content. Retry or rephrase.",
             )
           }
           if (event.usage) {
