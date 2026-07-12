@@ -2,7 +2,7 @@
 name = "prism-installer"
 version = "4.0.0"
 description = "Prism installer — unified setup wizard for Windows and macOS"
-authors = ["TheDigitalGriot <digitalgriotstudios@gmail.com>"]
+authors = ["Digital Griot Studio <digitalgriotstudios@gmail.com>"]
 edition = "2021"
 license = "MIT"
 

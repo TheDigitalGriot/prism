@@ -333,7 +333,7 @@ Unlike traditional software plugins that extend functionality through code, Pris
   "name": "prism",
   "description": "Structured 4-phase development workflow (Research -> Plan -> Implement -> Validate) with Spectrum-style iterative execution with TUI",
   "version": "2.5.0",
-  "author": { "name": "Prism Team" }
+  "author": { "name": "Digital Griot Studio" }
 }
 ```
 
@@ -342,7 +342,7 @@ Unlike traditional software plugins that extend functionality through code, Pris
 ```json
 {
   "name": "prism-marketplace",
-  "owner": { "name": "Prism Team" },
+  "owner": { "name": "Digital Griot Studio" },
   "plugins": [{
     "name": "prism",
     "source": { "source": "github", "repo": "TheDigitalGriot/prism-plugin" },

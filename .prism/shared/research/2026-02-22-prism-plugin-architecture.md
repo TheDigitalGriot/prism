@@ -31,7 +31,7 @@ Full architectural breakdown of the Prism Claude Code plugin: skills, commands, 
 │   Skills (10)  ·  Commands (22)  ·  Agents (9)             │
 │   Scripts (6)  ·  CLI Dashboard (Go TUI)                    │
 │                                                             │
-│   Author: Prism Team                                        │
+│   Author: Digital Griot Studio                                   │
 │   Repo:   TheDigitalGriot/prism-plugin                      │
 │   License: MIT                                              │
 └─────────────────────────────────────────────────────────────┘

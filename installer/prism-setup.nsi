@@ -31,7 +31,7 @@ SetCompressor /SOLID lzma
 !endif
 
 !define PRODUCT_NAME      "Prism"
-!define PRODUCT_PUBLISHER  "TheDigitalGriot"
+!define PRODUCT_PUBLISHER  "Digital Griot Studio"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 
 ; ---------------------------------------------------------------------------

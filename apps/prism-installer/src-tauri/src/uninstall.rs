@@ -23,7 +23,7 @@ pub fn register_uninstaller(install_dir: &str, version: &str, exe_path: &str) {
         let quiet_uninstall = format!("\"{}\" --uninstall", exe_path);
         let _ = key.set_value("DisplayName", &"Prism");
         let _ = key.set_value("DisplayVersion", &version);
-        let _ = key.set_value("Publisher", &"TheDigitalGriot");
+        let _ = key.set_value("Publisher", &"Digital Griot Studio");
         let _ = key.set_value("InstallLocation", &install_dir);
         let _ = key.set_value("UninstallString", &quiet_uninstall.as_str());
         let _ = key.set_value("QuietUninstallString", &quiet_uninstall.as_str());

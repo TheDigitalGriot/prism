@@ -445,7 +445,7 @@ The current manifest is minimal (name, description, version, author). After Phas
   "description": "Structured 4-phase development workflow (Research -> Plan -> Implement -> Validate) with Spectrum-style iterative execution with TUI",
   "version": "2.5.3",
   "author": {
-    "name": "Prism Team"
+    "name": "Digital Griot Studio"
   },
   "hooks": "hooks/hooks.json"
 }
