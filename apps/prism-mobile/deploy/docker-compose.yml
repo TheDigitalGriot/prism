@@ -28,8 +28,8 @@ services:
       - /root/.claude:/root/.claude:ro
       # Daemon state (agents/projects/workspaces). Persistent.
       - griot_daemon_data:/data
-      # Server-side checkouts of your Griot repos. git clone into here.
-      - griot_workspace:/workspace
+      # Server-side checkouts of your Griot repos (host dir; RUNBOOK prereq 2 clones here).
+      - /opt/griot-workspace:/workspace
       # Optional: host-stored git credentials so agents inside the container can clone/push
       # PRIVATE repos. Create BOTH files on the host first (RUNBOOK prereq 3), then uncomment —
       # mounting a nonexistent file makes Docker create a directory and breaks git.
@@ -42,4 +42,3 @@ services:
 
 volumes:
   griot_daemon_data:
-  griot_workspace:
