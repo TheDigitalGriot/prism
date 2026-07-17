@@ -161,6 +161,16 @@ The release should include 8 assets:
 - 1 Tauri installer (`Prism Setup_{VERSION}_x64-setup.exe`)
 - 1 Legacy NSIS all-in-one installer (`Prism-Setup-{VERSION}.exe`)
 
+### Step 6.5: Sync the marketplace mirror
+
+```bash
+sh scripts/sync-marketplace.sh
+```
+
+Pushes the six plugin dirs to `TheDigitalGriot/prism-marketplace` (thin mirror, single fresh
+commit per sync). Claude Desktop's marketplace points at the mirror — the full monorepo
+settles `failed_content` in the backend (observed 2026-07-17); the mirror doesn't.
+
 ### Step 7: Create eval snapshot
 
 Snapshot the current skills, agents, commands, and scripts for future eval comparisons:
