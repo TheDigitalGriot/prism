@@ -123,8 +123,22 @@ touch .prism/local/spectrum-approvals/<story-id>/<request-id>.deny
 ## Cross-Platform Compatibility
 
 - Python scripts use `pathlib` for path handling (Windows, macOS, Linux)
-- Bash scripts use `#!/usr/bin/env bash` for portability
 - All scripts exit cleanly on missing input (no crashes if stdin is empty)
+
+### The POSIX contract (v4.2.1)
+
+All five sh hook scripts are **POSIX sh ONLY** — cloud sandboxes (Claude Desktop / Cowork)
+run hooks under dash/busybox, where a rejected `set` option exits 2, and the PreToolUse
+protocol reads non-zero as DENY. A single bashism in a matcher-`""` hook **fail-closes every
+tool in the session** (observed live 2026-07-17). The contract:
+
+- `set -eu` only; pipefail is probed, never assumed:
+  `if (set -o pipefail) 2>/dev/null; then set -o pipefail; fi`
+- `[ ]` not `[[ ]]`; no arrays, no `local`, no bash-only expansions
+- A hook may exit non-zero **only as a deliberate decision** — every environmental failure
+  path is guarded (`|| true`) or exits 0. PreToolUse hooks carry a fast-path `exit 0` for
+  sessions they don't govern.
+- Verify with `sh -n scripts/*.sh` before committing hook changes.
 
 ## See Also
 

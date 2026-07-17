@@ -4,6 +4,26 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.3.0] - 2026-07-17
+
+**Resilience release** — hardens the three layers behind the 2026-07-17 cloud fail-close incident: hook fail-modes, the release process, and the collaboration protocol. Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-4.3.0.md`.
+
+### Added
+
+- **prism-release Step 1c: clean-tree guard** (MANDATORY) — review `git status --porcelain` before staging; parallel Claude sessions share the working tree and can write into it mid-release (v4.2.0 raced past an uncommitted 5-file fix exactly this way).
+- **prism-release Step 2 warning** — never hand-edit `VERSION` before `bump-version.py`; the script keys off it and silently no-ops when it already equals the target (`--set` shares the trap).
+- **Hook fail-mode audit** — line-level proof that no hook can environmentally fail-close a session (deliberate denies only); `sh -n` verified on all five. Documented in PRISM-DOCUMENTATION-4.3.0 §2 and the docs-site hooks page ("The POSIX contract").
+- **Mid-task interjection protocol** encoded in project + global CLAUDE.md — stop, answer first, integrate, resume on go.
+
+### Changed
+
+- Docs-site hooks page: POSIX contract section replaces the stale "`#!/usr/bin/env bash`" portability claim.
+
+### Housekeeping
+
+- prism-eval embedded repo healed (stale 5-day `index.lock` cleared; `7db4497` pushed to `prism-eval-app`; gitlink updated).
+- Adopted: `AGENTS.md`, `.claude/skills/gitnexus/*`, 2026-07-12 semantic-layer plan; `.superpowers/` gitignored; "excellent option" principle landed in CLAUDE.md.
+
 ## [4.2.1] - 2026-07-17
 
 ### Fixed

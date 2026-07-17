@@ -41,11 +41,33 @@ bash scripts/tests/test_porter_check.sh
 
 Both must exit 0. If `claude plugin validate .` fails, fix the errors before continuing. If `test_porter_check.sh` fails, run `node skills/prism-brainstorm/scripts/port-griotwave.cjs` to regenerate `frame-template.html`, then re-check.
 
+### Step 1c: Clean-tree guard (parallel-session race check)
+
+**MANDATORY** — parallel Claude sessions (cloud, Cowork, other terminals) share this working
+tree and may write into it while a release is in flight (observed live 2026-07-17: a 5-file
+hook fix appeared uncommitted mid-release and v4.2.0 shipped without it).
+
+```bash
+git status --porcelain
+```
+
+Review EVERY entry before proceeding. For each unexpected modification: identify its origin
+(another session? a build artifact?), then either **land it deliberately** (own commit, before
+the release) or **confirm it must stay out**. Never let the release's staged-file list silently
+race against concurrent work — and never proceed with unexplained modifications to files the
+release will package (`scripts/`, `skills/`, `hooks/`, `agents/`, `commands/`).
+
 ### Step 2: Bump version across all files
 
 ```bash
 python scripts/bump-version.py <major|minor|patch> --root .
 ```
+
+> ⚠️ **Never hand-edit `VERSION` before running this script.** It keys off root `VERSION` to
+> detect the current version — if `VERSION` already equals the target, it reports success while
+> updating **nothing** (observed live 2026-07-17: "already at 4.2.0", 0 files updated). The
+> `--set X.Y.Z` flag has the same trap. Let the script move `VERSION` itself, then verify the
+> printed "Updated (N)" list is non-empty.
 
 This updates version locations including: VERSION, plugin.json, marketplace.json, main.go, footer.go, package.json files (prism-vscode, prism-electron, prism-installer), PrismState.ts, PrismStateContext.tsx. Verify the output shows all files updated.
 
