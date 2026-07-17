@@ -4,6 +4,39 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.2.0] - 2026-07-17
+
+**Model B is live.** The always-on agent daemon runs on the DO droplet (`digitalgriot-server-tor1`, Coolify resource `prism:main-daemon`), dials the Griot relay from production (`relay_control_connected` verified in container logs, `authRequired: true`), and generates valid pairing offers carrying the droplet's own identity (`srv_-Xi2lw5SY7Zz`).
+
+### Added
+
+- **Droplet daemon deployed** — Coolify Docker Compose resource (base dir `/apps/prism-mobile`, compose `/deploy/docker-compose.yml`, repo `TheDigitalGriot/prism@main`). Speech models auto-download to `/data/models/local-speech` on first boot.
+- **RUNBOOK prereqs 0–3** — swap memory (hard requirement on ≤4 GB droplets; first build without it drove load to 145 and knocked the box offline), Claude Max auth, workspace clones, git credentials for private repos.
+- **`PRISM-DOCUMENTATION-4.2.0.md`** — resumes the release-doc convention (lapsed after 3.8.0), scoped to this release's delta.
+- **`v4.2.0` eval snapshot** — resumes the snapshot convention (lapsed after 3.3.1); skills/agents/commands byte-identical to 4.1.0, noted in `SNAPSHOT-NOTE.md`.
+
+### Fixed
+
+- **Relay endpoint format** — `PASEO_RELAY_ENDPOINT` must be `host:port[/path]` (`prism.digitalgriot.studio:443/relay`); the daemon's `parseHostPort()` throws on scheme URLs (`wss://…`), so the previous deploy values could never dial the relay. TLS auto-derives from `:443`. Fixed in Dockerfile, compose, `.env.example`.
+- **Workspace bind-mount** — `/opt/griot-workspace` (host) → `/workspace` (container); was a blank named volume, hiding host-cloned repos from agents.
+- **lefthook in-image build failure** — `"prepare": "lefthook install --force"` requires a `.git` dir absent from the build context; dropped container-only via `npm pkg delete scripts.prepare` (postinstall patches + native builds preserved).
+- **`@prism/*` workspace links broken since the v4.0.0 repo rename** — all six symlinks pointed at the dead `GriotApps/prism-plugin` path; healed with absolute junctions (surfaced by the Electron daemon-bundle build). A future root `npm install` re-heals npm-natively.
+
+### Changed
+
+- **`PASEO_PASSWORD` enabled** in the droplet compose (via Coolify env) — bcrypt-hashed bearer gate on direct `:6767` connections only; the relay path is governed by offer-link possession + Curve25519/NaCl E2EE (documented in the 2026-07-15 auth-map brainstorm ledger).
+- **VSIX packaging** — `engines.vscode ^1.109.0` to match `@types/vscode` (`d204a56`).
+- **Docs site** — daemon `surface-connectivity` droplet section updated from aspirational to production state, with the endpoint-format warning.
+
+### Known issues
+
+- **Phone pairing over relay stalls at "connecting"** — daemon-side relay control connection is verified healthy; the phone-side session handshake doesn't complete. Triage open (see 2026-07-17 handoff for suspects and starting greps).
+- `scripts/bump-version.py --set X.Y.Z` silently no-ops if root `VERSION` already equals the target — don't hand-edit `VERSION` before running it.
+
+## [4.1.0] - 2026-07-12
+
+*(Entry backfilled at 4.2.0 — this release shipped without a changelog entry.)* Native fused-hybrid semantic layer: codebase-memory C-fork + pro fixes, GitNexus retained in the ensemble. All 10 tasks of the 2026-07-12 plan shipped (`.prism/shared/plans/2026-07-12-native-fused-hybrid-semantic-layer.md`, handoff `db312e7`).
+
 ## [4.0.0] - 2026-07-10
 
 Milestone release: the **6-phase workflow** identity (Ideate → Research → Plan → Design → Implement → Validate) plus a first-class **Cowork sideload** path. The major version marks the workflow rebrand and the new plugin-distribution capability — there are no breaking changes to existing skills, agents, or commands.
