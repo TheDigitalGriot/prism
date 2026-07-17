@@ -15,6 +15,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - **Hook fail-mode audit** — line-level proof that no hook can environmentally fail-close a session (deliberate denies only); `sh -n` verified on all five. Documented in PRISM-DOCUMENTATION-4.3.0 §2 and the docs-site hooks page ("The POSIX contract").
 - **Mid-task interjection protocol** encoded in project + global CLAUDE.md — stop, answer first, integrate, resume on go.
 
+### Fixed
+
+- **CRLF line endings — the true cloud fail-close trigger** (found in Gavin's parallel session): `core.autocrlf=true` checked out `.sh` files with CRLF; cloud sync ships disk bytes verbatim; Linux sh reads `set -o pipefail\r` as an invalid option → exit 2 → PreToolUse DENY. New `.gitattributes` pins `*.sh` + `hooks/hooks.json` to `eol=lf`; index renormalized; working tree re-smudged (0 CR bytes verified). A CRLF-synced POSIX script still dies — 4.2.1's hardening alone was insufficient.
+- **hooks.json runner**: `bash ${CLAUDE_PLUGIN_ROOT}/…` → `sh "${CLAUDE_PLUGIN_ROOT}/…"` (POSIX runner, quoted paths).
+- **prepare-resources.sh**: installer plugin packaging now includes `hooks/` and `scripts/` (previously missing from resources).
+
 ### Changed
 
 - Docs-site hooks page: POSIX contract section replaces the stale "`#!/usr/bin/env bash`" portability claim.

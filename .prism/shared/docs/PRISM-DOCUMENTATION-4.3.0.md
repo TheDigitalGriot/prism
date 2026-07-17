@@ -11,8 +11,14 @@
 ## 1. The incident (what 4.2.1 + 4.3.0 answer)
 
 A Claude Desktop/Cowork cloud session synced the Prism plugin and every tool call died with
-`line 33: set: pipefail: invalid option name`. Three stacked causes:
+`line 33: set: pipefail: invalid option name`. Four stacked causes:
 
+0. **CRLF line endings — the primary trigger (found by Gavin's parallel session).**
+   `core.autocrlf=true` checks out `.sh` files with CRLF on Windows; the cloud syncs disk
+   bytes verbatim; Linux sh reads `set -o pipefail\r` — carriage return included — as an
+   invalid option name. Even a fully POSIX script dies when synced with CRLF. Fix:
+   `.gitattributes` pins `*.sh` + `hooks/hooks.json` to `text eol=lf` (+ index renormalize
+   + working-tree re-smudge, verified 0 CR bytes on disk).
 1. **Bashisms in a matcher-`""` PreToolUse hook** — `set -euo pipefail` + `[[ ]]` in
    `spectrum-approval.sh`. Cloud sandboxes run hooks under dash/busybox, where `set -o pipefail`
    exits 2; the PreToolUse protocol reads non-zero as DENY → **every tool fail-closed**
