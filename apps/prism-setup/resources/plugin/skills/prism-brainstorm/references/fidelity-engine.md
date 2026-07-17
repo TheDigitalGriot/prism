@@ -10,7 +10,43 @@ When the visual companion is running, every screen Claude renders has a **fideli
 | `mid` | structured | solid borders, light blur, no bloom — functional but unpolished | once direction is forming |
 | `hi` | polished | full griotwave glass — backdrop blur, ember bloom, neural-blue accents | confirmed picks, ceremonial final render |
 
-CSS variables `--fidelity-blur`, `--fidelity-shadow`, `--fidelity-bloom`, `--fidelity-border-style`, `--fidelity-saturation`, `--fidelity-opacity` are reshaped by `[data-fidelity="lo|mid|hi"]` selectors in `frame-template.html`. New components reference these instead of hard-coding effects.
+### Canonical values (authoritative — sourced from idea_init `view_translate.jsx`)
+
+These are the hand-tuned numbers behind each level. Use them when implementing the CSS variable cascade or when generating inline styles that need to match the fidelity system precisely:
+
+| Level | `blur` (px) | `saturate` (%) | `bloom` (opacity) | `rim` (border opacity) | `radius` (px) | Border style |
+|-------|------------|---------------|------------------|----------------------|--------------|-------------|
+| `lo`  | `0`        | `100`         | `0`              | `.07`                | `6`          | `dashed`    |
+| `mid` | `8`        | `118`         | `.26`            | `.09`                | `14`         | `solid`     |
+| `hi`  | `40`       | `140`         | `.55`            | `.13`                | `20`         | `solid`     |
+
+**Level notes (verbatim from source):**
+- `lo` — "structure only — dashed rims, no glass, embers desaturate to white"
+- `mid` — "color + light blur return · embers tint · depth begins"
+- `hi` — "full frost · three-layer bloom on the primary affordance · ceremonial"
+
+**CSS variable mapping:**
+
+```css
+/* lo */
+--fidelity-blur: 0px;       --fidelity-saturate: 100%;
+--fidelity-bloom: 0;        --fidelity-rim: .07;
+--fidelity-radius: 6px;     --fidelity-border: dashed;
+
+/* mid */
+--fidelity-blur: 8px;       --fidelity-saturate: 118%;
+--fidelity-bloom: .26;      --fidelity-rim: .09;
+--fidelity-radius: 14px;    --fidelity-border: solid;
+
+/* hi */
+--fidelity-blur: 40px;      --fidelity-saturate: 140%;
+--fidelity-bloom: .55;      --fidelity-rim: .13;
+--fidelity-radius: 20px;    --fidelity-border: solid;
+```
+
+The bloom value drives the radial-gradient intensity on the primary affordance: `radial-gradient(120% 90% at 100% 0%, {ember}{bloom×26 as hex}, transparent 55%)` and the box-shadow glow: `0 0 {bloom×60}px 0 {ember}{bloom×60 as hex}`.
+
+CSS variables `--fidelity-blur`, `--fidelity-shadow`, `--fidelity-bloom`, `--fidelity-border-style`, `--fidelity-saturate`, `--fidelity-rim`, `--fidelity-radius` are reshaped by `[data-fidelity="lo|mid|hi"]` selectors in `frame-template.html`. New components reference these instead of hard-coding effects.
 
 ## Classifier
 

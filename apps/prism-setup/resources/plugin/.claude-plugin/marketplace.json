@@ -13,8 +13,8 @@
         "source": "github",
         "repo": "TheDigitalGriot/prism"
       },
-      "description": "Structured 4-phase development workflow (Research -> Plan -> Implement -> Validate)",
-      "version": "3.4.0"
+      "description": "Structured 6-phase development workflow (Ideate -> Research -> Plan -> Design -> Implement -> Validate)",
+      "version": "4.2.0"
     }
   ]
 }

@@ -111,6 +111,7 @@ For detailed component patterns: [references/component-patterns.md](./references
 name: my-agent
 description: When to invoke this agent — name 2-4 trigger scenarios (proactive + reactive)
 model: inherit         # REQUIRED — inherit | sonnet | opus | haiku  (inherit = same as parent, recommended)
+                       #   (claude-fable-5 exists but is 🔒 RESERVED / NOT ENABLED — see Model Configuration below)
 color: cyan            # REQUIRED — blue | cyan | green | yellow | magenta | red  (UI identifier)
 effort: medium         # low | medium | high
 maxTurns: 15           # haiku: 5-8, sonnet: 12-18, opus: 12-15
@@ -251,15 +252,26 @@ For the four-leaks audit framing, full routing-table syntax, room-file examples,
 
 ## Model Configuration (Claude Code current model line)
 
-As of June 2026: `opus` resolves to **Opus 4.8** on Anthropic API, `sonnet` to **Sonnet 4.6**, `haiku` to **Haiku 4.5**. From Claude 4.6 onward, dateless IDs like `claude-opus-4-8` are **pinned snapshots**, not evergreen aliases — use the alias form (`model: opus`) for auto-updates, the full ID for pinning.
+As of June 2026, three tiers are enabled, with a fourth reserved:
+
+| Tier | Frontmatter | When to reach for it |
+|---|---|---|
+| **Opus 4.8** | `model: opus` | Deep analysis, planning, critical reasoning — the **hard ceiling** for all current work |
+| **Sonnet 4.6** | `model: sonnet` | General work, implementation, pattern-finding |
+| **Haiku 4.5** | `model: haiku` | Fast lookups, locators, mechanical commands |
+| **Fable 5** 🔒 | `model: claude-fable-5` | **RESERVED / NOT ENABLED** — documented for future adoption; do not set it yet |
+
+> 🔒 **Fable 5 is reserved, not enabled.** It exists in Claude Code's model line, but no agent or skill in this plugin may set `model: claude-fable-5` until activation work ships (tracked in `.prism/shared/research/2026-06-12-fable-5-integration.md`). Opus 4.8 is the ceiling. When enabled: Fable has **no alias** (always pin the full ID), a different API surface (always-on thinking, `refusal` stop reason, new tokenizer, 30-day retention) — read [references/model-config.md §5](./references/model-config.md) first — and an effective cost ~2.6× Opus 4.8 for the same prompt.
+
+For the Opus/Sonnet/Haiku aliases: from Claude 4.6 onward, dateless IDs like `claude-opus-4-8` are **pinned snapshots**, not evergreen aliases — use the alias form (`model: opus`) for auto-updates, the full ID for pinning.
 
 Effort levels on Opus 4.7+: `low`, `medium`, `high`, `xhigh`, `max`. Default on Opus 4.8 is `high`. Set `effort: xhigh` in agent frontmatter for heavier reasoning; reserve `max` for one-shot critical work (it's session-only). The `ultrathink` keyword anywhere in a prompt triggers deeper reasoning on a single turn without changing session effort.
 
-For long-session work, append `[1m]` to the alias or pinned ID: `model: opus[1m]` opens the 1M-token context window. Useful for autonomous multi-story execution and compaction-survival-sensitive workflows.
+For long-session work, append `[1m]` to the alias or pinned ID: `model: opus[1m]` opens the 1M-token context window. Fable 5 always uses 1M context — no suffix needed.
 
-**Opus 4.8 requires Claude Code v2.1.154+.** Run `claude update` before relying on it.
+**Fable 5 requires Claude Code v2.1.173+. Opus 4.8 requires v2.1.154+.** Run `claude update` before relying on either.
 
-For the full per-provider alias resolution table, dateless-snapshot rule, effort-level matrix, currency-check protocol, and provider-specific env-var pins: [references/model-config.md](./references/model-config.md).
+For the full per-provider alias resolution table, dateless-snapshot rule, effort-level matrix, Fable 5 API differences, currency-check protocol, and provider-specific env-var pins: [references/model-config.md](./references/model-config.md).
 ## Harness Architecture (load when building composed systems)
 
 When building or optimizing a **harness** — a composed system of skills + agents + hooks + modes + workspaces + tool policies — load [references/component-patterns.md § Harness Architecture](./references/component-patterns.md) for the full architectural framework and observation hook patterns.

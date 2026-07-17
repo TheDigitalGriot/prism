@@ -44,7 +44,10 @@ Read ALL state files completely before doing anything:
 
 ```
 1. Read the stories file at the path from the prompt
-2. Read the progress file at the path from the prompt (create if it doesn't exist)
+2. Read the progress file (consolidated patterns) at the path from the prompt — create if it doesn't exist
+   ⚠ Do NOT read progress-log.md — it is append-only iteration history and is intentionally
+     excluded from session load to keep token cost bounded. The consolidated patterns in
+     progress.md are the only prior-session context worker sessions need.
 3. Read CLAUDE.md (if exists in project root)
 ```
 
@@ -88,7 +91,7 @@ Before implementing:
 After implementing:
 4. Run `index_repository` again to capture changes
 5. Run `search_graph(max_degree=0, exclude_entry_points=true)` → dead code check
-6. Log graph delta in progress.md entry (nodes added/removed, new dead code)
+6. Log graph delta in progress-log.md entry (nodes added/removed, new dead code)
 
 If codebase-memory-mcp is not available, skip all graph steps silently.
 
@@ -136,14 +139,14 @@ After implementing the story, self-assess your work and report one of four statu
 | Status | When to Use | What Happens Next |
 |--------|-------------|-------------------|
 | **DONE** | Implementation complete, confident in quality | Proceed to quality gates |
-| **DONE_WITH_CONCERNS** | Complete but with doubts about approach | Log concerns to progress.md, proceed to quality gates |
+| **DONE_WITH_CONCERNS** | Complete but with doubts about approach | Log concerns to progress-log.md, proceed to quality gates |
 | **NEEDS_CONTEXT** | Missing information needed to complete | Emit `<spectrum-needs-context>` with what's needed |
 | **BLOCKED** | Cannot complete the story | Emit `<spectrum-blocked>` with root cause |
 
 ### DONE_WITH_CONCERNS
 
 If you completed the work but have doubts:
-1. Log your concerns in progress.md under a `### Concerns` subsection
+1. Log your concerns in progress-log.md under a `### Concerns` subsection
 2. Proceed to quality gates — the two-stage review will catch real issues
 3. Include concerns in the `<spectrum-continue>` signal:
 
@@ -209,7 +212,7 @@ make test
 1. DO NOT commit
 2. Capture the full error output
 3. **Run auto-debug investigation** (see Debug Integration section)
-4. Record failure details AND debug findings in progress.md
+4. Record failure details AND debug findings in progress-log.md
 5. Output: `<spectrum-retry reason="QUALITY_GATE_FAILED">[debug summary]</spectrum-retry>`
 6. Exit (spectrum.sh will retry in fresh session with debug context)
 
@@ -244,7 +247,7 @@ Load `references/quality-review-prompt.md` for the dispatch template.
    - Fix the issues
    - Re-run quality gates
    - Re-dispatch quality reviewer
-3. If **Minor only**: Note in progress.md, proceed
+3. If **Minor only**: Note in progress-log.md, proceed
 4. If **✅ Approved**: Proceed to commit
 
 ### Review Skip Conditions
@@ -296,7 +299,10 @@ Capture the commit hash for the story record.
 
 **Update stories.json**: Set story `status` to `"complete"`, `completedAt` to ISO timestamp, `commitHash` to the new commit hash, and all steps to `done: true`. (`spectrum.sh` will independently verify this state post-iteration.)
 
-**Append to progress.md**: Add a brief entry with what was done, learnings for future iterations, files changed, and quality gate results. If new general patterns were discovered, add them to the "Codebase Patterns" section at the top of progress.md.
+**Two-tier progress update** — keep the two files distinct:
+
+- **Append to `progress-log.md`** (path from prompt): Add a brief iteration entry — story ID, what was done, files changed, quality gate results. This file is never read by future sessions; write freely.
+- **Edit `progress.md`** (path from prompt) only when you discover a new general codebase pattern worth surfacing to future stories. Add it to the "Codebase Patterns (Consolidated)" section. Do NOT append raw iteration notes here — this file is loaded every session and must stay lean (<5 KB ideally).
 
 ### 8. Signal Continuation
 
@@ -312,7 +318,7 @@ Emit the appropriate signal tag at the end of your response. `spectrum.sh` will 
 
 | Scenario | Action |
 |----------|--------|
-| Story requirements unclear | Record question in progress.md, signal `<spectrum-blocked>` |
+| Story requirements unclear | Record question in progress-log.md, signal `<spectrum-blocked>` |
 | Quality gate fails | Run auto-debug (see below), signal `<spectrum-retry>` |
 | Merge conflict | Record conflict, signal `<spectrum-error>` |
 | File not found | Check if it should be created, adapt or record in learnings |
@@ -400,14 +406,14 @@ If quality gates fail after retry:
 
 ```
 1. Read prompt → "Execute story STORY-003 from .prism/stories/stories.json"
-2. Load stories.json, progress.md, CLAUDE.md
+2. Load stories.json, progress.md (consolidated patterns only), CLAUDE.md
 3. Read story STORY-003 context: why, risks, patterns, edge cases
 4. Announce: <spectrum-story>ID: STORY-003, Title: Add password validation</spectrum-story>
 5. Read files: src/auth/login.ts, src/types/auth.ts
 6. Implement: Add password validation
 7. Run quality gates: typecheck ✓, lint ✓, test ✓
 8. Commit: "feat(STORY-003): Add password validation"
-9. Update: stories.json (status: complete), progress.md (learnings)
+9. Update: stories.json (status: complete), progress-log.md (iteration entry), progress.md (only if new patterns found)
 10. Signal: <spectrum-continue>STORY_COMPLETE: STORY-003</spectrum-continue>
 ```
 
