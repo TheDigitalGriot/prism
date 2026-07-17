@@ -4,6 +4,17 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.2.1] - 2026-07-17
+
+### Fixed
+
+- **All 5 sh hook scripts POSIX-hardened** (`spectrum-approval`, `fable-gate`, `detect-changes-gate`, `worktree-setup`, `worktree-cleanup`) — cloud sandboxes run hooks under dash/busybox, where `set -o pipefail` exits 2; the PreToolUse protocol reads non-zero as DENY, and with matcher `""` this **fail-closed every tool in the session** (observed live in Claude Desktop/Cowork cloud). New pattern: `set -eu` + `if (set -o pipefail) 2>/dev/null; then set -o pipefail; fi`, `[[ ]]` → `[ ]`. The fix was authored in a parallel session but sat uncommitted — v4.2.0 shipped without it; 4.2.1 lands it.
+
+### Notes
+
+- Plugin-tree-only change; release binaries are unchanged from v4.2.0.
+- Cloud surfaces additionally pinned to a stale-cached "3.9.5" tree (the documented stale-package marketplace bug) — refresh via marketplace re-fetch of 4.2.1 or `/prism-sideload` upload.
+
 ## [4.2.0] - 2026-07-17
 
 **Model B is live.** The always-on agent daemon runs on the DO droplet (`digitalgriot-server-tor1`, Coolify resource `prism:main-daemon`), dials the Griot relay from production (`relay_control_connected` verified in container logs, `authRequired: true`), and generates valid pairing offers carrying the droplet's own identity (`srv_-Xi2lw5SY7Zz`).
