@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # spectrum-approval.sh — Spectrum worker PreToolUse approval gate.
 #
 # Called by the PreToolUse hook before each tool invocation.
@@ -30,17 +30,22 @@
 #   SPECTRUM_SUPERVISED         — set to any non-empty value to enable controller protocol
 #   SPECTRUM_APPROVAL_TIMEOUT   — seconds to poll before auto-approving (default: 3)
 #
-set -euo pipefail
+# POSIX sh ONLY — this hook fires on EVERY tool call (matcher "") and must
+# survive minimal shells (dash/busybox) in cloud sandboxes. A shell that rejects
+# a `set` option exits with status 2, which the hook protocol reads as DENY —
+# a single bashism here fail-closes the entire session. No pipelines exist in
+# this script, so pipefail is deliberately omitted. Keep it POSIX.
+set -eu
 
 # Fast path: not a spectrum worker session — exit immediately with no overhead.
-if [[ -z "${SPECTRUM_WORKER_STORY_ID:-}" ]]; then
+if [ -z "${SPECTRUM_WORKER_STORY_ID:-}" ]; then
     exit 0
 fi
 
 # Fast path: unsupervised mode (default). No controller is watching, so auto-approve
 # immediately with zero polling overhead. Set SPECTRUM_SUPERVISED=1 to opt into
 # the full controller protocol below.
-if [[ -z "${SPECTRUM_SUPERVISED:-}" ]]; then
+if [ -z "${SPECTRUM_SUPERVISED:-}" ]; then
     exit 0
 fi
 
@@ -69,12 +74,12 @@ printf '{"tool":"%s","story":"%s","ts":"%s","request_id":"%s"}\n' \
 TIMEOUT="${SPECTRUM_APPROVAL_TIMEOUT:-3}"
 elapsed=0
 
-while [[ $elapsed -lt $TIMEOUT ]]; do
-    if [[ -f "$APPROVE_FILE" ]]; then
+while [ "$elapsed" -lt "$TIMEOUT" ]; do
+    if [ -f "$APPROVE_FILE" ]; then
         rm -f "$REQUEST_FILE" "$APPROVE_FILE"
         exit 0  # Approved — tool call proceeds
     fi
-    if [[ -f "$DENY_FILE" ]]; then
+    if [ -f "$DENY_FILE" ]; then
         rm -f "$REQUEST_FILE" "$DENY_FILE"
         # Exit 2 to block the tool call (per hook-events.md: exit 2 = block)
         echo "[spectrum-approval] Tool call denied by controller: $TOOL (story: $STORY_ID)" >&2

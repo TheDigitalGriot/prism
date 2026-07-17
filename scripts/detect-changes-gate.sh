@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # detect-changes-gate.sh — PostToolUse ADVISORY for codemem change-impact.
 #
 # Fires after Write|Edit. Runs `codebase-memory-mcp cli detect_changes` for the
@@ -48,7 +48,12 @@
 #
 # JSON is parsed with node (no jq dependency; robust on Windows Git Bash),
 # matching scripts/fable-gate.sh convention.
-set -euo pipefail
+#
+# POSIX sh ONLY — cloud sandboxes may run hooks under dash/busybox. pipefail is
+# enabled only when the shell supports it; every pipeline below already carries
+# an `|| true` guard, so its absence is safe.
+set -eu
+if (set -o pipefail) 2>/dev/null; then set -o pipefail; fi
 
 # Read the PostToolUse payload from stdin (skip when attached to a terminal).
 PAYLOAD=""

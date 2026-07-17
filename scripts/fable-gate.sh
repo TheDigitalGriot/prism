@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # fable-gate.sh — PreToolUse gate for Fable 5 (claude-fable-5) Task dispatches.
 #
 # Called by the PreToolUse hook (matcher "Task") before each Task tool call.
@@ -13,7 +13,13 @@
 # JSON is parsed with node (no jq dependency; robust on Windows Git Bash), matching
 # the repo's node/python hook convention. Emits a PreToolUse permission decision on
 # stdout per the hook output protocol (see cl-plugin-structure/references/hook-events.md).
-set -euo pipefail
+#
+# POSIX sh ONLY — cloud sandboxes may run hooks under dash/busybox, where a
+# rejected `set` option exits 2 (= DENY in the hook protocol). pipefail is
+# enabled only when the shell supports it; the pipelines below all carry their
+# own `|| true` / `|| echo` guards, so its absence is safe.
+set -eu
+if (set -o pipefail) 2>/dev/null; then set -o pipefail; fi
 
 # Read the hook payload from stdin (skip when attached to a terminal, e.g. debug).
 PAYLOAD=""
