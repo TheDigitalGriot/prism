@@ -393,8 +393,14 @@ still `sh.paseo` (stale upstream Apple id — conflicts with the live bundle id;
 lane would target the WRONG app on App Store Connect) `[v]` ·
 **maestro** `sh.paseo` appId in 12 yaml files (+ `PASEO_MAESTRO_APP_ID` env in 9) — targets an
 app id we don't ship · **eas.json:45** `ascAppId: "6758887924"` — this **equals the upstream
-paseo-pocket-engineer App Store id** in `downloads.tsx:28`; verify ASC ownership before any
-`eas submit` lane is ever run.
+paseo-pocket-engineer App Store id** in `downloads.tsx:28`. **RESOLVED (2026-07-18 `[v]`):
+checked App Store Connect under the `digitalgriot` Apple account — it shows "No Apps" (zero iOS
+records). So `sh.paseo` AND `6758887924` are confirmed pure upstream pollution: there is no Griot
+record for them to collide with, and the `eas submit` / fastlane `submit_review` path has never
+been executed (current distribution is EAS internal / dev-client, which needs neither value).
+Both are a FREE DELETE at rename. Shipping to the iOS App Store later would first require
+creating a Griot app record — a deferred, conditional "set up first" step, not a blocker for the
+rename.**
 
 ### Self-host path (nix) — CHANGE (free, unused by our deploys)
 
@@ -506,8 +512,11 @@ rationale expires the moment this doc is greenlit.
 2. **Website** — retarget `packages/website` to a sovereign domain (needs new wrangler
    name/account/routes + full §5-D asset generation) or park it dormant?
 3. **SECURITY.md contact** — route to a Griot address, or keep upstream provenance intact?
-4. **eas.json `ascAppId 6758887924`** — verify App Store Connect ownership before any submit
-   lane ever runs (it matches upstream's paseo-pocket-engineer listing id).
+4. ~~**eas.json `ascAppId 6758887924`** — verify App Store Connect ownership~~ **RESOLVED
+   2026-07-18:** not ours — ASC shows "No Apps" under the `digitalgriot` account, so `sh.paseo`
+   + `6758887924` are upstream pollution (free delete). Standing up a Griot iOS App Store record
+   is a deferred, conditional step — only if App-Store distribution is ever pursued (dev-client /
+   internal distribution needs none of it).
 5. **Grandfather list** — confirm 1-B/1-C/1-D stay paseo forever (recommended) or get seams.
 
 ---
