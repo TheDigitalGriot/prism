@@ -4,6 +4,12 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.5.2] - 2026-07-20
+
+### Added
+
+- **Closing-ceremony meta-skill handed down to Fragment** — `fragment-ai-scaffold` now emits a generalized `closing-ceremony` skill (`templates/base/skills/`) so every scaffolded Griot tool inherits the one-command bookend → docs-update → release wrap-up (parity with Prism's `prism-closing-ceremony`). Fragment's `docs-update` meta-skill also gained the required root `CHANGELOG.md` step. Conformance-checklist **B9** tracks the emitted meta-skill set.
+
 ## [4.5.1] - 2026-07-20
 
 ### Added
