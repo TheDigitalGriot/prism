@@ -59,23 +59,40 @@ export const OAUTH_TOKEN_ENV = 'CLAUDE_CODE_OAUTH_TOKEN'
 /** Beta header required when authenticating the Messages API with an OAuth token. */
 export const OAUTH_BETA_HEADER = 'oauth-2025-04-20'
 
+/**
+ * Env var that opts INTO the metered Anthropic API-key fallback. Absent/empty
+ * means STRICT subscription-only: a Griot tool never silently bills the metered
+ * API — a missing subscription token resolves to `none` (an error at use). This
+ * is the flag-gated escape hatch, mirroring the Fable 5 flag: metered is a
+ * deliberate opt-in, never a silent default. Truthy values: 1/true/yes/on.
+ */
+export const ALLOW_METERED_ENV = 'GRIOT_ALLOW_METERED'
+
 /** Which credential a request should use. */
 export type ResolvedAuth =
   | { mode: 'subscription'; authToken: string }
   | { mode: 'api-key'; apiKey: string }
   | { mode: 'none' }
 
+function flagEnabled(value: string | undefined): boolean {
+  if (!value) return false
+  return ['1', 'true', 'yes', 'on'].includes(value.trim().toLowerCase())
+}
+
 /**
- * Decide which Claude credential to authenticate with.
+ * Decide which Claude credential to authenticate with — STRICT subscription-first.
  *
- * Prefers the Claude Code subscription OAuth token (`CLAUDE_CODE_OAUTH_TOKEN`,
- * produced by `claude setup-token`) so every Prism surface bills against the Max
- * subscription like the daemon and CLI already do. Falls back to a stored,
- * metered Anthropic API key when no subscription token is present, and reports
- * `none` when neither is available.
+ * 1. A Claude Code subscription OAuth token (`CLAUDE_CODE_OAUTH_TOKEN`, from
+ *    `claude setup-token`) always wins — requests bill against the Max
+ *    subscription with no API fees, like the daemon and CLI.
+ * 2. The metered API key is used ONLY when the subscription token is absent AND
+ *    `GRIOT_ALLOW_METERED` is explicitly set — the flag-gated escape hatch. By
+ *    default a Griot tool never silently falls to the metered API.
+ * 3. Otherwise `none` — the caller surfaces an actionable error (run
+ *    `claude setup-token`) rather than quietly billing the API.
  *
  * @param apiKey Metered API key from secret storage (fallback), if any.
- * @param env    Environment to read the OAuth token from (defaults to process.env).
+ * @param env    Environment to read from (defaults to process.env).
  */
 export function resolveAnthropicAuth(
   apiKey?: string,
@@ -86,6 +103,6 @@ export function resolveAnthropicAuth(
   const oauth = env[OAUTH_TOKEN_ENV]?.trim()
   if (oauth) return { mode: 'subscription', authToken: oauth }
   const key = apiKey?.trim()
-  if (key) return { mode: 'api-key', apiKey: key }
+  if (key && flagEnabled(env[ALLOW_METERED_ENV])) return { mode: 'api-key', apiKey: key }
   return { mode: 'none' }
 }

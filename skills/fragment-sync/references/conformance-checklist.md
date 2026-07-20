@@ -27,6 +27,7 @@ Each item: what current `cl-plugin-structure` requires · where Fragment must re
 | B5 | Emit a **routing-table `CLAUDE.md`** + a **`.prism/`-aware scaffold** — REQUIRED (every Griot tool is Prism-image). Pattern source: `cl-plugin-structure` §"Folder Architecture: The Routing-Table Pattern" + `references/folder-architecture-routing.md` | `templates/base/CLAUDE.md.tmpl`, `templates/base/.prism/` | B |
 | B6 | Vendored `@anthropic-ai/*` deps current (was `claude-agent-sdk ^0.2.23`) | template `package.json.tmpl` files | B |
 | B7 | CLI/root **version reconciled** (root `1.0.0` vs published CLI `1.0.1`) before any republish | `package.json` files | B |
+| B8 | Emitted projects carry the canonical **strict subscription-first auth protocol** — `resolveAnthropicAuth`: `CLAUDE_CODE_OAUTH_TOKEN` wins; metered API key only behind the `GRIOT_ALLOW_METERED` flag, else `none` — so a Griot tool never silently bills the metered API. Surfaces resolve + inject via `authEnv`. Source of truth: Prism `packages/prism-core/src/core/api/auth.ts` | `templates/core/src/shared/auth.ts`; `templates/vscode` + `templates/electron` glue | B |
 
 ## Model line reference (for B3)
 

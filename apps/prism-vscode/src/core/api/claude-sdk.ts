@@ -46,15 +46,16 @@ export interface PrismApiHandlerOptions {
 }
 
 export class PrismApiHandler {
-  private readonly _client: Anthropic
+  private readonly _client: Anthropic | null
   private readonly _model: string
   private readonly _maxTokens: number
   private readonly _authMode: ResolvedAuth["mode"]
 
   constructor(options: PrismApiHandlerOptions) {
-    // Prefer the Claude Code subscription OAuth token (CLAUDE_CODE_OAUTH_TOKEN)
-    // so requests bill against the Max subscription like the daemon/CLI already
-    // do; fall back to a metered API key when no subscription token is present.
+    // STRICT subscription-first: prefer the Claude Code subscription OAuth token
+    // (CLAUDE_CODE_OAUTH_TOKEN) so requests bill against the Max subscription
+    // like the daemon/CLI. A metered API key is used only when GRIOT_ALLOW_METERED
+    // is set; otherwise 'none' — a Griot tool never silently bills the API.
     const auth = resolveAnthropicAuth(options.apiKey)
     this._authMode = auth.mode
     if (auth.mode === "subscription") {
@@ -66,10 +67,12 @@ export class PrismApiHandler {
         authToken: auth.authToken,
         defaultHeaders: { "anthropic-beta": OAUTH_BETA_HEADER },
       })
+    } else if (auth.mode === "api-key") {
+      this._client = new Anthropic({ apiKey: auth.apiKey })
     } else {
-      this._client = new Anthropic({
-        apiKey: auth.mode === "api-key" ? auth.apiKey : "",
-      })
+      // 'none' — no usable credential under the strict policy. Defer a clear
+      // error to first use (createMessage) rather than construct a doomed client.
+      this._client = null
     }
     this._model = MODEL_IDS[options.model ?? "sonnet"]
     this._maxTokens = options.maxTokens ?? 8192
@@ -92,6 +95,13 @@ export class PrismApiHandler {
     messages: ApiConversationMessage[],
     tools?: ApiToolDefinition[],
   ): ApiStream {
+    if (!this._client) {
+      throw new Error(
+        "No Claude subscription credential. Run `claude setup-token` and set " +
+          "CLAUDE_CODE_OAUTH_TOKEN to use your Max subscription. To allow a " +
+          "metered API key instead, set GRIOT_ALLOW_METERED=1.",
+      )
+    }
     const stream = this._client.messages.stream({
       model: this._model,
       max_tokens: this._maxTokens,
