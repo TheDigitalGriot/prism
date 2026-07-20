@@ -4,6 +4,12 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.5.3] - 2026-07-20
+
+### Fixed
+
+- **skill-guard no longer false-positives on Fragment scaffold templates** — hand-authored `create-fragment/templates/**` meta-skills (e.g. the `closing-ceremony` meta-skill, which says "Generalized from the Prism … workflow") name-matched the `prism` generator skill and were wrongly blocked. Added a Gavin-approved template allowlist to `~/.claude/hooks/skill-guard/skill_guard.py`.
+
 ## [4.5.2] - 2026-07-20
 
 ### Added
