@@ -78,7 +78,7 @@ The Spectrum iterative executor — the main autonomous execution loop that spaw
 Cross-platform bash installer for the prism-cli binary:
 - Detects platform (darwin/linux/windows) and architecture (amd64/arm64)
 - Three methods: `auto` (try download, fall back to source), `download`, `source`
-- Downloads from `github.com/TheDigitalGriot/prism-plugin/releases`
+- Downloads from `github.com/TheDigitalGriot/prism/releases`
 - Configures PATH in `~/.zshrc`, `~/.bashrc`, `~/.bash_profile`, and PowerShell `$PROFILE`
 - Initializes `~/.prism/workspaces.json` registry
 

@@ -7,7 +7,7 @@ model: sonnet
 
 Install the Prism CLI binary so it can be launched from any terminal. Delegates to platform-specific installer scripts that download pre-built release binaries, configure PATH for all shells, and initialize the global `~/.prism/` workspace registry.
 
-**Repository**: `https://github.com/TheDigitalGriot/prism-plugin`
+**Repository**: `https://github.com/TheDigitalGriot/prism`
 
 ## Process
 
@@ -24,7 +24,7 @@ If found, check for updates:
 
 ```bash
 LOCAL_VERSION=$(prism-cli --version 2>/dev/null | grep -oP '\d+\.\d+\.\d+' || echo "unknown")
-LATEST_VERSION=$(gh release view --repo TheDigitalGriot/prism-plugin --json tagName -q '.tagName' 2>/dev/null | sed 's/^v//')
+LATEST_VERSION=$(gh release view --repo TheDigitalGriot/prism --json tagName -q '.tagName' 2>/dev/null | sed 's/^v//')
 echo "LOCAL=$LOCAL_VERSION LATEST=$LATEST_VERSION"
 ```
 
@@ -74,7 +74,7 @@ This script will:
 & "${CLAUDE_PLUGIN_ROOT}\scripts\prism-cli-install.ps1" -Method download
 ```
 
-**If the script fails**, do NOT try alternate URLs. Report the error and suggest the user check https://github.com/TheDigitalGriot/prism-plugin/releases.
+**If the script fails**, do NOT try alternate URLs. Report the error and suggest the user check https://github.com/TheDigitalGriot/prism/releases.
 
 ### Step 3: Verify Installation
 
@@ -125,8 +125,8 @@ This is NOT the default method — only use when explicitly requested or when no
 
 ## Error Handling
 
-- If download fails: check https://github.com/TheDigitalGriot/prism-plugin/releases for available binaries
+- If download fails: check https://github.com/TheDigitalGriot/prism/releases for available binaries
 - If PATH update fails: the installer prints manual instructions
 - If verification fails: suggest opening a new terminal
-- NEVER download from any URL other than `https://github.com/TheDigitalGriot/prism-plugin/releases`
+- NEVER download from any URL other than `https://github.com/TheDigitalGriot/prism/releases`
 - NEVER attempt `make build` unless the user explicitly requests a source build

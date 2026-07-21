@@ -8,7 +8,7 @@ model: sonnet
 
 Full release pipeline: bump version → build all artifacts → commit → tag → push → GitHub release.
 
-**Repository**: `TheDigitalGriot/prism-plugin`
+**Repository**: `TheDigitalGriot/prism`
 
 ## Process
 

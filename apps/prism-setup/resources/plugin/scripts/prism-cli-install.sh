@@ -4,11 +4,11 @@
 #
 # Usage:
 #   bash prism-cli-install.sh [auto|source|download]
-#   curl -fsSL https://raw.githubusercontent.com/TheDigitalGriot/prism-plugin/main/scripts/prism-cli-install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/TheDigitalGriot/prism/main/scripts/prism-cli-install.sh | bash
 
 set -euo pipefail
 
-REPO="TheDigitalGriot/prism-plugin"
+REPO="TheDigitalGriot/prism"
 BINARY_NAME="prism-cli"
 INSTALL_DIR="${PRISM_BIN_DIR:-$HOME/.prism/bin}"
 

@@ -21,7 +21,7 @@ fn download_url(version: &str) -> String {
     };
 
     format!(
-        "https://github.com/TheDigitalGriot/prism-plugin/releases/download/v{}/{}",
+        "https://github.com/TheDigitalGriot/prism/releases/download/v{}/{}",
         version,
         asset_name.replace(' ', "%20")
     )
@@ -175,7 +175,7 @@ mod tests {
     fn test_download_url_construction() {
         let url = download_url("2.4.6");
         assert!(url.contains("v2.4.6"));
-        assert!(url.contains("github.com/TheDigitalGriot/prism-plugin"));
+        assert!(url.contains("github.com/TheDigitalGriot/prism"));
 
         #[cfg(target_os = "windows")]
         assert!(url.contains("Setup.exe"));

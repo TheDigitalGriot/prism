@@ -9,7 +9,7 @@ type Props = {
 
 export function DoneScreen({ mode, hasErrors, onRestart }: Props) {
   const openDocs = () => {
-    window.setupAPI.openExternal('https://github.com/TheDigitalGriot/prism-plugin');
+    window.setupAPI.openExternal('https://github.com/TheDigitalGriot/prism');
   };
 
   return (

@@ -15,8 +15,8 @@ Verify: `ls -la apps/prism-cli/bin/` shows 5 binaries.
 ```bash
 cd apps/prism-vscode && npx @vscode/vsce package \
   --no-dependencies \
-  --baseContentUrl https://github.com/TheDigitalGriot/prism-plugin/tree/main/apps/prism-vscode \
-  --baseImagesUrl https://github.com/TheDigitalGriot/prism-plugin/raw/main/apps/prism-vscode \
+  --baseContentUrl https://github.com/TheDigitalGriot/prism/tree/main/apps/prism-vscode \
+  --baseImagesUrl https://github.com/TheDigitalGriot/prism/raw/main/apps/prism-vscode \
   --out ../prism-setup/resources/extensions/prism.vsix
 ```
 

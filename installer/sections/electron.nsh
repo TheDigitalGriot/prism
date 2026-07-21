@@ -8,7 +8,7 @@ Section /o "Prism Desktop App" SEC_ELECTRON
   ; Use versioned asset name matching the Electron Forge output: Prism-{VERSION}.Setup.exe
   ; VERSION is passed at compile time via makensis -DVERSION=x.y.z
   !define ELECTRON_DL_URL \
-    "https://github.com/TheDigitalGriot/prism-plugin/releases/download/v${VERSION}/Prism-${VERSION}.Setup.exe"
+    "https://github.com/TheDigitalGriot/prism/releases/download/v${VERSION}/Prism-${VERSION}.Setup.exe"
 
   DetailPrint "Downloading Prism Desktop App from GitHub..."
 
@@ -22,7 +22,7 @@ Section /o "Prism Desktop App" SEC_ELECTRON
   ${If} $0 != "OK"
     DetailPrint "Download failed: $0"
     MessageBox MB_OK|MB_ICONEXCLAMATION \
-      "Desktop app download failed: $0$\n$\nYou can download it manually from:$\nhttps://github.com/TheDigitalGriot/prism-plugin/releases/latest"
+      "Desktop app download failed: $0$\n$\nYou can download it manually from:$\nhttps://github.com/TheDigitalGriot/prism/releases/latest"
     Goto electron_cleanup
   ${EndIf}
 

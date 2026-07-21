@@ -25,7 +25,7 @@ outline: [2, 3]
   "owner": { "name": "Digital Griot Studio" },
   "plugins": [{
     "name": "prism",
-    "source": { "source": "github", "repo": "TheDigitalGriot/prism-plugin" },
+    "source": { "source": "github", "repo": "TheDigitalGriot/prism" },
     "description": "Structured 4-phase development workflow (Research -> Plan -> Implement -> Validate)",
     "version": "2.3.0"
   }]
@@ -36,6 +36,6 @@ outline: [2, 3]
 |-------|-------|
 | Plugin Name | `prism` |
 | Version | 2.3.0 |
-| Distribution | GitHub: `TheDigitalGriot/prism-plugin` |
+| Distribution | GitHub: `TheDigitalGriot/prism` |
 | Build Step | None — pure markdown prompt engineering |
 | Auto-Discovery | Claude Code scans `commands/`, `agents/`, `skills/*/SKILL.md` on enable |

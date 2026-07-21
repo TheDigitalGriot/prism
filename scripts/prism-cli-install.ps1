@@ -3,7 +3,7 @@
 #
 # Usage:
 #   .\prism-cli-install.ps1 [-Method auto|source|download]
-#   irm https://raw.githubusercontent.com/TheDigitalGriot/prism-plugin/main/scripts/prism-cli-install.ps1 | iex
+#   irm https://raw.githubusercontent.com/TheDigitalGriot/prism/main/scripts/prism-cli-install.ps1 | iex
 
 param(
     [string]$Method = "auto"
@@ -11,7 +11,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$Repo = "TheDigitalGriot/prism-plugin"
+$Repo = "TheDigitalGriot/prism"
 $BinaryName = "prism-cli"
 $InstallDir = if ($env:PRISM_BIN_DIR) { $env:PRISM_BIN_DIR } else { "$env:USERPROFILE\.prism\bin" }
 

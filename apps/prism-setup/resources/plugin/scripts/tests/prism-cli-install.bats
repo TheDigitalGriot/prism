@@ -231,7 +231,7 @@ teardown() {
     mkdir -p "$INSTALL_DIR"
 
     run download_release "linux-amd64"
-    [[ "$output" == *"https://github.com/TheDigitalGriot/prism-plugin/releases/latest/download/prism-cli-linux-amd64"* ]]
+    [[ "$output" == *"https://github.com/TheDigitalGriot/prism/releases/latest/download/prism-cli-linux-amd64"* ]]
 
     unset -f curl
 }
@@ -242,7 +242,7 @@ teardown() {
     mkdir -p "$INSTALL_DIR"
 
     run download_release "darwin-arm64" "v1.2.3"
-    [[ "$output" == *"https://github.com/TheDigitalGriot/prism-plugin/releases/download/v1.2.3/prism-cli-darwin-arm64"* ]]
+    [[ "$output" == *"https://github.com/TheDigitalGriot/prism/releases/download/v1.2.3/prism-cli-darwin-arm64"* ]]
 
     unset -f curl
 }

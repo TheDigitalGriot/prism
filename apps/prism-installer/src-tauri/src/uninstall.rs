@@ -27,7 +27,7 @@ pub fn register_uninstaller(install_dir: &str, version: &str, exe_path: &str) {
         let _ = key.set_value("InstallLocation", &install_dir);
         let _ = key.set_value("UninstallString", &quiet_uninstall.as_str());
         let _ = key.set_value("QuietUninstallString", &quiet_uninstall.as_str());
-        let _ = key.set_value("URLInfoAbout", &"https://github.com/TheDigitalGriot/prism-plugin");
+        let _ = key.set_value("URLInfoAbout", &"https://github.com/TheDigitalGriot/prism");
         let _ = key.set_value("NoModify", &1u32);
         let _ = key.set_value("NoRepair", &1u32);
     }

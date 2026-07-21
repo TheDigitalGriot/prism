@@ -84,7 +84,7 @@ BrandingText      "${PRODUCT_NAME} v${VERSION}"
 !define MUI_FINISHPAGE_RUN_TEXT "Open a new terminal"
 !define MUI_FINISHPAGE_RUN_FUNCTION OpenNewTerminal
 !define MUI_FINISHPAGE_LINK "Prism on GitHub"
-!define MUI_FINISHPAGE_LINK_LOCATION "https://github.com/TheDigitalGriot/prism-plugin"
+!define MUI_FINISHPAGE_LINK_LOCATION "https://github.com/TheDigitalGriot/prism"
 
 ; ---------------------------------------------------------------------------
 ;  Pages

@@ -13,7 +13,7 @@ Function WriteUninstallEntry
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "UninstallString" '"$INSTDIR\uninstall.exe"'
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "QuietUninstallString" '"$INSTDIR\uninstall.exe" /S'
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "https://github.com/TheDigitalGriot/prism-plugin"
+  WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "https://github.com/TheDigitalGriot/prism"
   WriteRegDWORD HKCU "${PRODUCT_UNINST_KEY}" "NoModify" 1
   WriteRegDWORD HKCU "${PRODUCT_UNINST_KEY}" "NoRepair" 1
 FunctionEnd

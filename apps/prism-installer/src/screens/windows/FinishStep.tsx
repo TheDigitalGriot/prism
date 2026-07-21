@@ -152,7 +152,7 @@ export function FinishStep({ checked }: FinishStepProps) {
                 cursor: "pointer",
               }}
             >
-              github.com/TheDigitalGriot/prism-plugin
+              github.com/TheDigitalGriot/prism
             </span>
           </div>
         </div>
