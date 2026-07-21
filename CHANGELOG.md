@@ -4,6 +4,12 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.5.6] - 2026-07-21
+
+### Changed
+
+- **All `TheDigitalGriot/prism-plugin` references repointed to the renamed `prism` repo.** The GitHub repository was renamed from `prism-plugin` to `prism`. GitHub's rename-redirect kept old URLs working (verified against the live v4.5.5 asset), but the installers (`electron.nsh`, Tauri `download.rs`, legacy NSIS), the CLI install scripts (`prism-cli-install.{sh,ps1}` + tests), the `prism-release` skill, the docs site, and the `/plugin marketplace add` command all hardcoded the old name. Repointed every live reference (23 files) so nothing depends on the redirect. Historical `.prism/` records and Go module paths intentionally left as-is.
+
 ## [4.5.5] - 2026-07-21
 
 ### Added
