@@ -1,0 +1,252 @@
+{
+  "epic": "plan-story-source-unification",
+  "stories": [
+    {
+      "id": "s-566c09c0",
+      "title": "Write stories contract",
+      "description": "Author .prism/shared/contracts/stories-contract.md: canonical stories.json schema + plan->stories mapping rules.",
+      "priority": 1,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "/.prism/shared/contracts/stories-contract.md"
+      ],
+      "steps": [
+        "Author .prism/shared/contracts/stories-contract.md: canonical stories.json schema + plan->stories mapping rules."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "b43dd90"
+    },
+    {
+      "id": "s-5f7f3faa",
+      "title": "prism-plan emits stories",
+      "description": "Add Step 6 to prism-plan: emit stories.json via decompose_plan; add epic back-link.",
+      "priority": 1,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "skills/prism-plan/SKILL.md"
+      ],
+      "steps": [
+        "Add Step 6 to prism-plan: emit stories.json via decompose_plan; add epic back-link."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "b43dd90"
+    },
+    {
+      "id": "s-88e5fc7c",
+      "title": "plan-template epic field",
+      "description": "Add epic front-matter field + stories-emit note to the plan template.",
+      "priority": 2,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "skills/prism-plan/references/plan-template.md"
+      ],
+      "steps": [
+        "Add epic front-matter field + stories-emit note to the plan template."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "b43dd90"
+    },
+    {
+      "id": "s-54b85477",
+      "title": "create_plan emits stories",
+      "description": "Mirror the emit-stories step in the create_plan command.",
+      "priority": 2,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "commands/create_plan.md"
+      ],
+      "steps": [
+        "Mirror the emit-stories step in the create_plan command."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "b43dd90"
+    },
+    {
+      "id": "s-564f6f78",
+      "title": "decompose_plan canonical engine",
+      "description": "Document decompose_plan as the canonical plan->stories engine; cite the contract.",
+      "priority": 2,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "commands/decompose_plan.md"
+      ],
+      "steps": [
+        "Document decompose_plan as the canonical plan->stories engine; cite the contract."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "b43dd90"
+    },
+    {
+      "id": "s-a9018233",
+      "title": "verify-story-unification script",
+      "description": "Add scripts/verify-story-unification.mjs static guard.",
+      "priority": 1,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "scripts/verify-story-unification.mjs"
+      ],
+      "steps": [
+        "Add scripts/verify-story-unification.mjs static guard."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "b43dd90"
+    },
+    {
+      "id": "s-120ef642",
+      "title": "prism-implement reads stories",
+      "description": "prism-implement loads stories.json into TodoWrite; plan.md is narrative only.",
+      "priority": 1,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "skills/prism-implement/SKILL.md"
+      ],
+      "steps": [
+        "prism-implement loads stories.json into TodoWrite; plan.md is narrative only."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "35d7c1f"
+    },
+    {
+      "id": "s-d8f312bc",
+      "title": "implement_plan reads stories",
+      "description": "implement_plan sources tasks from stories.json.",
+      "priority": 2,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "commands/implement_plan.md"
+      ],
+      "steps": [
+        "implement_plan sources tasks from stories.json."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "35d7c1f"
+    },
+    {
+      "id": "s-a91552dd",
+      "title": "prism-subagent seeds from stories",
+      "description": "prism-subagent seeds state.json from stories (one story=one task, by id).",
+      "priority": 1,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "skills/prism-subagent/SKILL.md"
+      ],
+      "steps": [
+        "prism-subagent seeds state.json from stories (one story=one task, by id)."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "35d7c1f"
+    },
+    {
+      "id": "s-250d2e03",
+      "title": "state-schema keyed by story id",
+      "description": "state-schema: add stories_path; tasks keyed by story id; state=runtime status.",
+      "priority": 2,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "skills/prism-subagent/references/state-schema.md"
+      ],
+      "steps": [
+        "state-schema: add stories_path; tasks keyed by story id; state=runtime status."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "35d7c1f"
+    },
+    {
+      "id": "s-aaa4071c",
+      "title": "iterate re-emits stories",
+      "description": "prism-iterate + iterate_plan re-emit stories on plan edit with stable ids.",
+      "priority": 1,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "skills/prism-iterate/SKILL.md",
+        "commands/iterate_plan.md"
+      ],
+      "steps": [
+        "prism-iterate + iterate_plan re-emit stories on plan edit with stable ids."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "bd2cb63"
+    },
+    {
+      "id": "s-e34f52cd",
+      "title": "validate story coverage gate",
+      "description": "prism-validate + validate_plan add a plan<->stories coverage gate.",
+      "priority": 1,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "skills/prism-validate/SKILL.md",
+        "commands/validate_plan.md"
+      ],
+      "steps": [
+        "prism-validate + validate_plan add a plan<->stories coverage gate."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "bd2cb63"
+    },
+    {
+      "id": "s-2c786185",
+      "title": "locator co-surfaces stories",
+      "description": "prism-locator co-surfaces a plan's emitted stories.",
+      "priority": 2,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "agents/prism-locator.md"
+      ],
+      "steps": [
+        "prism-locator co-surfaces a plan's emitted stories."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "bd2cb63"
+    },
+    {
+      "id": "s-f1915293",
+      "title": "review-finding fixes",
+      "description": "Address two-stage review: subagent fallback wording, verify negative-assertion, contract id example.",
+      "priority": 1,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "skills/prism-subagent/SKILL.md",
+        "scripts/verify-story-unification.mjs",
+        ".prism/shared/contracts/stories-contract.md"
+      ],
+      "steps": [
+        "Address two-stage review: subagent fallback wording, verify negative-assertion, contract id example."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "dd892a3"
+    },
+    {
+      "id": "s-ff65a1a2",
+      "title": "bundle+seed contract distribution",
+      "description": "Bundle stories-contract.md + seed via init_prism.py into new/migrated/re-run projects.",
+      "priority": 1,
+      "status": "done",
+      "blockedBy": [],
+      "files": [
+        "skills/prism/scripts/init_prism.py",
+        "skills/prism/scripts/templates/stories-contract.md",
+        "skills/prism-init/SKILL.md",
+        "commands/prism_dir_update.md"
+      ],
+      "steps": [
+        "Bundle stories-contract.md + seed via init_prism.py into new/migrated/re-run projects."
+      ],
+      "completedAt": "2026-07-22",
+      "commitHash": "5deca09"
+    }
+  ]
+}
