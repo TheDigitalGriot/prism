@@ -19,7 +19,8 @@
   "epic": "kebab-slug-matching-the-plan-frontmatter-epic",
   "stories": [
     {
-      "id": "STORY-001",
+      "id": "s7f3a9c2",
+      "_id_note": "content-hash of the requirement text (see rule 4) — stable across re-emits, NOT a sequential label like STORY-001",
       "title": "Short imperative title",
       "description": "One behavioral requirement, self-contained — no 'see plan' cross-refs.",
       "priority": 1,

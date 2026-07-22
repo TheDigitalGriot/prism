@@ -60,6 +60,14 @@ add('consumers', 'prism-subagent reads stories.json', () =>
   has('skills/prism-subagent/SKILL.md', 'stories.json'));
 add('consumers', 'subagent state keyed by story id', () =>
   has('skills/prism-subagent/references/state-schema.md', 'stories.json'));
+add('consumers', 'prism-implement dropped legacy phase-parsing as primary', () => {
+  const t = read('skills/prism-implement/SKILL.md');
+  if (t === null) return { ok: false, why: 'missing' };
+  // the pre-unification primary instruction — must be gone, not just shadowed by a stories.json mention
+  return t.includes('Load phases into TodoWrite')
+    ? { ok: false, why: 'still contains legacy "Load phases into TodoWrite"' }
+    : { ok: true };
+});
 
 // ---- Phase 3: coherence guards ----
 add('coherence', 'iterate re-emits stories', () =>
