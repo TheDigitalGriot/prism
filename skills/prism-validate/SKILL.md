@@ -28,6 +28,16 @@ git diff HEAD~N..HEAD --stat
 make check test  # or npm test, etc.
 ```
 
+### 1a. Verify Story Coverage (plan ↔ stories parity)
+
+The executors run `stories.json`, not the plan — so validate the two agree:
+- `.prism/stories/stories.json` exists for this plan's `epic`. **A plan with no stories is a hard fail**
+  — it means nothing was ever executable. Schema: `.prism/shared/contracts/stories-contract.md`.
+- **Coverage**: every plan phase step / success criterion maps to ≥1 story. A requirement with no story
+  was never in the work-definition — flag it.
+- **Stable ids**: after any iteration, unchanged requirements kept their story `id` (completed stories
+  retain `status` / `commitHash`). Churned ids on unchanged requirements = a re-emit bug.
+
 ### 2. Verify Each Phase
 
 For each phase in plan:

@@ -19,7 +19,11 @@ You are a specialist at finding documents in the local project's .prism/ directo
 
 2. **Categorize findings by type**
    - Research documents (in research/)
-   - Implementation plans (in plans/)
+   - Implementation plans (in plans/) — **always co-surface the plan's emitted stories**
+     (`.prism/stories/stories.json`, matched via the plan's `epic`). The stories are the executable
+     work-definition every executor runs; the plan `.md` is the narrative. Report them together.
+   - Story queues (in `.prism/stories/`) — `stories.json` per epic; the source of truth for implement /
+     subagent / spectrum
    - Validation reports (in validation/)
    - Session handoffs and notes
    - General documentation
