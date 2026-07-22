@@ -111,6 +111,26 @@ Save to `.prism/shared/plans/YYYY-MM-DD-feature.md`
 
 Use TodoWrite to track phases.
 
+### 6. Emit Stories (the executable work-definition)
+
+A plan is not finished until it has emitted its **stories** — the single work-definition every
+executor (`prism-implement`, `prism-subagent`, `prism-spectrum`) reads. Do NOT leave this as a
+separate step the user must remember; the plan doc and the stories are produced together, from
+the same plan.
+
+1. Add an `epic:` id to the plan's front-matter (kebab-slug of the plan filename). This is the
+   stable back-link between `plan.md` (human narrative) and `stories.json` (executable truth) —
+   either can be found from the other.
+2. Invoke the shared plan→stories engine — the [`decompose_plan`](../../commands/decompose_plan.md)
+   command — to parse the plan's phases/steps into `.prism/stories/stories.json`. Schema + mapping
+   rules live in [`.prism/shared/contracts/stories-contract.md`](../../.prism/shared/contracts/stories-contract.md):
+   one behavioral requirement per story, zero requirements dropped, story `id`s stable across re-emits.
+3. If the plan exceeds a single epic (~200K tokens of requirements), delegate to
+   [`prism-decompose`](../prism-decompose/SKILL.md) for multi-epic splitting instead.
+
+**A plan without a `stories.json` is incomplete.** `plan.md` is the contract for humans; the
+stories are the contract for the executors.
+
 ## Output
 
 See [references/plan-template.md](references/plan-template.md) for full template.

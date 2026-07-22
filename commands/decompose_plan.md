@@ -7,6 +7,14 @@ model: opus
 
 Convert an existing Prism implementation plan into Spectrum-compatible `stories.json` format for autonomous execution via `spectrum.sh`.
 
+> **This is the canonical plan→stories engine.** `/prism-plan` and `/create_plan` both call this as
+> their final "emit stories" step, and it can be run standalone against any existing plan — one parser,
+> two entry points. The emitted `.prism/stories/stories.json` is the **single work-definition** every
+> executor reads (`prism-implement`, `prism-subagent`, `prism-spectrum`). Schema + the plan→stories
+> mapping rules are the contract at [`.prism/shared/contracts/stories-contract.md`](../.prism/shared/contracts/stories-contract.md):
+> one behavioral requirement per story · zero requirements dropped · story `id`s stable across re-emits
+> (hash the requirement text so an unchanged requirement keeps its id when a plan is iterated).
+
 ## Prerequisites
 
 - Approved plan in `.prism/shared/plans/`

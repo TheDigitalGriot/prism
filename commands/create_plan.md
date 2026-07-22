@@ -281,6 +281,21 @@ After structure approval:
 - Similar implementation: `[file:line]`
 ````
 
+### Step 4.5: Emit Stories (executable work-definition)
+
+A plan is not complete until it emits its **stories** — the single work-definition every executor
+(`prism-implement`, `prism-subagent`, `prism-spectrum`) reads. Emit them together with the plan, not
+as a separate step the user must remember:
+
+1. Add an `epic:` id to the plan front-matter (kebab-slug of the plan filename) — the stable
+   back-link between `plan.md` and `.prism/stories/stories.json`.
+2. Invoke the shared plan→stories engine — the `decompose_plan` command — to parse the plan's
+   phases/steps into `.prism/stories/stories.json`. Schema + mapping rules:
+   `.prism/shared/contracts/stories-contract.md` (one requirement per story, none dropped, stable ids).
+3. For a plan larger than one epic (~200K tokens of requirements), delegate to `prism-decompose`.
+
+A plan without a `stories.json` is incomplete.
+
 ### Step 5: Sync and Review
 
 1. **Sync the prism directory**:
