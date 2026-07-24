@@ -1,6 +1,6 @@
 ---
 title: Commands Reference
-description: All 25 Prism commands — user-invocable via /command-name from Claude Code.
+description: All 26 Prism commands — user-invocable via /command-name from Claude Code.
 outline: [2, 3]
 ---
 

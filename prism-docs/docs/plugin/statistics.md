@@ -83,7 +83,7 @@ The Claude plugin is the **brain** — the three platform implementations (CLI, 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Claude Plugin (Part V)                         │
-│   25 commands, 14 agents, 23 skills, 8 hooks, 11 references      │
+│   26 commands, 14 agents, 28 skills, 9 hooks, 18 references      │
 │   Pure prompt engineering — defines workflows and behavior       │
 │                                                                   │
 │   Invoked by: claude CLI process                                 │

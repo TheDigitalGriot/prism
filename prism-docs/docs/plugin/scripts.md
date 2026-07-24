@@ -100,7 +100,7 @@ Initializes the `.prism/` directory structure in any project:
 - Optionally adds Prism section to `CLAUDE.md`
 - Wrapped by the `/prism-init` skill (v3.0.3)
 
-### Hook Scripts (v3.0.1, extended v3.2.0, extended v3.4.0)
+### Hook Scripts (v3.0.1, extended v3.2.0, extended v3.4.0, extended v4.1.0)
 
 | Script | Type | Hook Event | Description |
 |--------|------|------------|-------------|
@@ -111,6 +111,8 @@ Initializes the `.prism/` directory structure in any project:
 | `worktree-setup.sh` | Bash | WorktreeCreate | Auto-setup: gitignore check, deps install, config copy, `.prism/shared` symlink |
 | `worktree-cleanup.sh` | Bash | WorktreeRemove | Warns on uncommitted changes, removes `.prism/shared` symlink |
 | `log-agent.py` | Python | SubagentStart/Stop | Logs agent dispatches to `.prism/local/agent-log.jsonl` |
+| `fable-gate.sh` | Bash | **PreToolUse** (Task) | **v4.1.0** — HITL gate for Fable 5 (`claude-fable-5`) Task dispatches. Only `fable` / `claude-fable-5` models are gated (every other model passes through); reads the app's `.prism/local/fable.flag` — flag ON (`enabled === true`) → **ask** (human confirm), flag OFF / missing / malformed → **deny**. Payload parsed with node (no `jq` dependency); POSIX-sh hardened for dash/busybox |
+| `detect-changes-gate.sh` | Bash | PostToolUse (Write\|Edit) | **v4.1.0** — Non-blocking codemem change-impact advisory. Runs `codebase-memory-mcp cli detect_changes`; when the accumulated blast radius is HIGH/CRITICAL, surfaces an advisory via both a top-level `systemMessage` and `hookSpecificOutput.additionalContext`. LOW / MEDIUM / none / any error → no output; never blocks the tool (exits 0 on every path) |
 
 ### Other Scripts
 
@@ -119,6 +121,20 @@ Initializes the `.prism/` directory structure in any project:
 | `visual-regression.sh` | Bash | Screenshots via playwright-cli, diffs against baselines with pixelmatch |
 | `bump-version.py` | Python | Bumps semver across all JSON/source files. **v3.4.0:** post-bump discovery sweep searches for stale old-version strings (targeted search, not broad semver regex); `--strict` flag fails on any stale hits; `also_replace` parameter handles files stuck at older versions than the VERSION file |
 | `extract-tasks.py` | Python | **v3.2.0** — Deterministic Prism plan markdown → `state.json` extractor for `prism-subagent`. ~280 lines. Auto-classifies tasks into 9 review classes, auto-detects domain (r3f/electron/fullstack/experiment/mixed), assigns per-task model ladder, atomic writes. Replaces ~3000 tokens of LLM extraction per run with regex parsing. Exit code 3 → controller falls back to LLM extraction. Verified against 4 real plans + 3 fixture plans, 100% extraction success |
+| `prism-inject-stats.py` | Python | **v4.1.0** — Injects live `codebase-memory-mcp` graph stats (node/edge counts) into the project `CLAUDE.md` via a marker-aware upsert between `<!-- prism:start -->` / `<!-- prism:end -->`. Drives the codemem CLI (`list_projects`, `index_status` fallback) since a standalone script cannot call MCP tools directly |
+| `prism-sync-skills.py` | Python | **v4.1.0** — Generates community `skills/generated/<kebab-cluster>/SKILL.md` files from the real `codebase-memory-mcp` code graph. Derives communities via deterministic label propagation (seeded by module locality) over nodes/edges from `query_graph`, emitting one skill per community above a symbol threshold. Output is 100% regenerable — byte-identical on an unchanged index (no timestamps, everything sorted) |
+| `sync-marketplace.sh` | Bash | **v4.4.0** — Pushes the six plugin dirs to the thin `TheDigitalGriot/prism-marketplace` mirror repo (Desktop's marketplace backend chokes on the full ~121 MB monorepo; the few-MB mirror processes cleanly). One fresh force-pushed commit per sync via `git archive` (respects `.gitattributes` eol=lf, skips gitlinks). Run from repo root, or by `prism-release` Step 6.5 |
+
+### Release & Audit Gate Scripts (v4.5.8)
+
+The deterministic half of the closing-ceremony **Review & Audit gate** — run before the version bump so a release cannot ship on a broken or unintegrated tree. `pre-release-audit.mjs` is the Step-0 runner; it auto-discovers and executes every `scripts/verify-*.mjs`, so new guards are picked up simply by matching the `verify-*.mjs` name.
+
+| Script | Type | Description |
+|--------|------|-------------|
+| `pre-release-audit.mjs` | Node | Deterministic release-gate audit runner (closing-ceremony Step 0). Runs `claude plugin validate .`, discovers + runs every `scripts/verify-*.mjs`, and checks a handful of `cl-plugin-structure` best practices. Exits non-zero on any failure so the ceremony gates on it |
+| `verify-branch-integrated.mjs` | Node | Release-integration guard — fails a release unless HEAD is `main`, the base version is tagged, and no finalized release is left untagged. Removes the "released off an unmerged branch, never tagged, main left stale" drift by requiring the branch be integrated to main and the release cut from there |
+| `verify-ceremony-gate.mjs` | Node | Static guard that the closing ceremony actually wires the Review & Audit gate **ahead of** bookend (gate = Sequence step 0, bookend = step 1) and references `spec-reviewer`, `quality-reviewer`, `pre-release-audit`, and `review-audit-gate` |
+| `verify-story-unification.mjs` | Node | Static guard that the plan → story → execute flow stays unified on `stories.json`. Phased checks: generation (default), `--check-consumers` (implement/subagent), `--check-coherence` (iterate/validate), `--all` (every phase) |
 
 ### Test Scripts (v3.4.0)
 
