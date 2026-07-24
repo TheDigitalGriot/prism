@@ -132,6 +132,13 @@ Get user confirmation before proceeding.
    - Use `make` commands for automated verification
    - Keep language clear and actionable
 
+### Step 4.5: Re-emit Stories
+
+After updating the plan, re-run the `decompose_plan` engine to patch `.prism/stories/stories.json` so
+the executors track the edited plan — **not** the stale one. Preserve stable story `id`s (hash the
+requirement text) so unchanged requirements keep their in-flight `status` / `commitHash`; never wipe a
+completed story on re-emit. Schema: `.prism/shared/contracts/stories-contract.md`.
+
 ### Step 5: Sync and Review
 
 1. **Sync the updated plan**:

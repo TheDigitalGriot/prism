@@ -75,6 +75,15 @@ Modify the plan in `.prism/shared/plans/`:
 **Approved by**: User
 ```
 
+### 3.5 Re-emit Stories (keep the queue in sync)
+
+A plan edit that doesn't re-emit stories leaves the executors running the *old* work-definition. After
+updating the plan, re-run the `decompose_plan` engine to patch `.prism/stories/stories.json`:
+- **Stable ids**: unchanged requirements keep their story `id` (hash the requirement text), so in-flight
+  `status` / `commitHash` survive. Only added / changed / removed requirements churn.
+- Never wipe a completed story's `status` / `commitHash` on re-emit.
+- Schema + rules: `.prism/shared/contracts/stories-contract.md`.
+
 ### 4. Resume Implementation
 
 Follow `/prism-implement` workflow from the updated phase.

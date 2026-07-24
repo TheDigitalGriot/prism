@@ -67,6 +67,15 @@ If starting fresh or need more context:
    Return: Structural validation results
    ```
 
+### Step 1.5: Story Coverage Gate (plan ↔ stories parity)
+
+The executors run `.prism/stories/stories.json`, not the plan — validate they agree before anything else:
+- Stories exist for this plan's `epic`. **No stories = hard fail** (nothing was ever executable). Schema:
+  `.prism/shared/contracts/stories-contract.md`.
+- Every plan phase step / success criterion maps to ≥1 story (coverage).
+- After iteration, unchanged requirements kept stable story `id`s (completed stories retain `status` /
+  `commitHash`).
+
 ### Step 2: Systematic Validation
 
 For each phase in the plan:

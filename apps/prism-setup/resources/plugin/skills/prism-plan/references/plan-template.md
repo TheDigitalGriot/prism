@@ -13,7 +13,11 @@ branch: [feature-branch-name]
 ticket: [TICKET-123 or N/A]
 status: [draft | approved | in-progress | complete]
 research: .prism/shared/research/YYYY-MM-DD-topic.md
+epic: [kebab-slug — the stories.json epic this plan emits; stable back-link to .prism/stories/]
 ---
+
+> On finalize, this plan emits `.prism/stories/stories.json` (the executable work-definition every
+> executor reads) via the `decompose_plan` engine. See `.prism/shared/contracts/stories-contract.md`.
 
 # Plan: [Feature/Fix Name]
 
