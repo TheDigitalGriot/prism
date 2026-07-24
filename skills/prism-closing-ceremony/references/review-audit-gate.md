@@ -35,9 +35,10 @@ absolute plugin-resource paths). Exits non-zero on any failure.
 
 The auto-discovered set includes **`verify-branch-integrated.mjs`** — the release-integration guard.
 It fails the gate unless HEAD is `main`, the base version is tagged, and no finalized release is left
-untagged, so **"release from `main`, integrate the whole branch, never cherry-pick"** is enforced,
-not merely documented. (Provenance: v4.5.7 + v4.5.8 shipped off a feature branch, untagged, and
-`main` drifted two releases behind before it was caught.)
+untagged. That makes the **stranding** failure mode unshippable and removes the *reason* to cherry-pick
+a change forward: an arbitrary cherry-pick can't be detected from `main` alone, so the guard instead
+forces whole-branch integration — extracting one commit is never necessary. (Provenance: v4.5.7 +
+v4.5.8 shipped off a feature branch, untagged, and `main` drifted two releases behind before it was caught.)
 
 ## D. Gate rule
 

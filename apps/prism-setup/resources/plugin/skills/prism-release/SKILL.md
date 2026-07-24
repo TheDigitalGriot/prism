@@ -69,10 +69,11 @@ node scripts/verify-branch-integrated.mjs
 ```
 
 Must exit 0. It fails if HEAD is not `main`, the base version has no reachable tag, or a finalized
-release is left untagged. If it fails, integrate the branch to `main`
-(`git checkout main && git merge --ff-only <branch>`) and backfill any missing release tags before
-continuing. The closing ceremony runs this automatically at its Step-0 audit; run it here too when
-invoking `prism-release` standalone.
+release is left untagged. (It does not detect an arbitrary cherry-pick — infeasible from `main`
+alone — it enforces release-from-`main`, which makes extracting one commit unnecessary.) If it fails,
+integrate the branch to `main` (`git checkout main && git merge --ff-only <branch>`) and backfill any
+missing release tags before continuing. The closing ceremony runs this automatically at its Step-0
+audit; run it here too when invoking `prism-release` standalone.
 
 ### Step 2: Bump version across all files
 
