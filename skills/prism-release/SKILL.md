@@ -57,6 +57,23 @@ the release) or **confirm it must stay out**. Never let the release's staged-fil
 race against concurrent work — and never proceed with unexplained modifications to files the
 release will package (`scripts/`, `skills/`, `hooks/`, `agents/`, `commands/`).
 
+### Step 1d: Branch-integration guard (releases land on `main`, never a cherry-pick)
+
+**MANDATORY.** Cut releases from `main` with the whole branch integrated — fast-forward or merge —
+never a cherry-picked extract, which strands the rest of the branch and drifts `main` from what
+shipped (observed live: v4.5.7 + v4.5.8 were bookended on a feature branch, never merged or tagged;
+`main` sat two releases behind).
+
+```bash
+node scripts/verify-branch-integrated.mjs
+```
+
+Must exit 0. It fails if HEAD is not `main`, the base version has no reachable tag, or a finalized
+release is left untagged. If it fails, integrate the branch to `main`
+(`git checkout main && git merge --ff-only <branch>`) and backfill any missing release tags before
+continuing. The closing ceremony runs this automatically at its Step-0 audit; run it here too when
+invoking `prism-release` standalone.
+
 ### Step 2: Bump version across all files
 
 ```bash
