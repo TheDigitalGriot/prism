@@ -88,6 +88,8 @@ Three execution models for different scales of work:
 
 **Commit convention:** Always use conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`). Spectrum uses `feat(STORY-XXX):` format.
 
+**Integration invariant:** A release lands on `main`. Integrate the whole branch (fast-forward or merge) — never cherry-pick to extract a change; it strands the rest and drifts `main` from what shipped. Enforced at release time by `scripts/verify-branch-integrated.mjs` (closing-ceremony Step-0 gate).
+
 ## Spectrum Autonomous Execution
 
 For large features (10+ stories):
