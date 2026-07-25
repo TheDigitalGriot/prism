@@ -203,13 +203,13 @@ The release should include 9 assets:
 - 1 Legacy NSIS all-in-one installer (`Prism-Setup-{VERSION}.exe`)
 - 1 Cowork sideload zip (`prism-sideload-{VERSION}.zip`)
 
-### Step 6.5: Sync the marketplace mirror
+### Step 6.5: Sync the plugin-only mirror
 
 ```bash
-sh scripts/sync-marketplace.sh
+sh scripts/sync-prism-plugin.sh
 ```
 
-Pushes the six plugin dirs to `TheDigitalGriot/prism-marketplace` (thin mirror, single fresh
+Pushes the six plugin dirs to `TheDigitalGriot/prism-plugin` (plugin-only, source ".", single fresh
 commit per sync). Claude Desktop's marketplace points at the mirror — the full monorepo
 settles `failed_content` in the backend (observed 2026-07-17); the mirror doesn't.
 
