@@ -14,7 +14,7 @@ Each item: what current `cl-plugin-structure` requires · where Fragment must re
 | A4 | **Cowork** is a first-class surface/target awareness (remote-connector cloud-routing caveat; Customize-menu install) | `scripts/detect-surfaces.py`; fragment-connect guidance | A |
 | A5 | `claude plugin validate .` is a **completion gate** | run against `plugins/fragment-plugin/` | A |
 | A6 | Plugin currency: submodule tracks its own remote `main` | `git submodule` pin (GATED) | A |
-| A7 | Marketplace manifest schema-compliant (`description` in `metadata`, no `$schema`, no stray root keys) | `.claude-plugin/marketplace.json` — verify (was compliant) | A |
+| A7 | Marketplace manifest schema-compliant **and remotely installable**: `description` in `metadata`; `$schema` is optional (the official `anthropics/claude-plugins-official` ships one — the earlier "no `$schema`" note was wrong); plugin `source` must be a **valid shape** — a `github` / `url` / `git-subdir` object, or a `./subdir` relative path — **never `source:"."`** (the Cowork/Desktop remote backend rejects it in ~2.6s: a relative source must start with `./` and name a subdir). For Cowork/Desktop install, **ship a small plugin-only mirror repo** and point the plugin `source` at it via a `github` object — the multi-GB monorepo times out the remote crawl (~11.8s → `failed_content`, observed 2026-07-25 main.log; the *small* mirror installed clean: `install succeeded prism@prism-plugin`, cowork). Pattern: Prism `scripts/sync-prism-plugin.sh` (prism-release Step 6.5) + `anthropics/claude-plugins-official`. | `.claude-plugin/marketplace.json` + a `sync-<name>-plugin.sh` mirror step | A |
 
 ## B · `create-fragment` (the generator + what it emits)
 
