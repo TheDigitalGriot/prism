@@ -4,6 +4,11 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.6.0] - 2026-07-26
+
+### Added
+
+- **Prism-Brainstorm companion — GriotwaveGridBackground reskin.** The visual companion background (`skills/prism-brainstorm/scripts/frame-template.html`) gains the shared GriotwaveGridBackground treatment recovered via the new `lucid-ux-muse` skill: a radial-ellipse **vignette mask** on the 32px ghost grid, **Iris (cyan/teal) accent lines drawing in** via stroke-dashoffset (`gbDraw`), **pulsing detail dots** (`gbPulse`), and a **subtle neural mouse-follow gradient** — the digital-serenity motion language (recovered verbatim from the 21st CDN bundle) reskinned to Prism's **Iris** ember (cyan/teal #22D3EE/#2DD4BF) — the companion was previously mis-colored with Lucid's neural blue; this re-embers the surface + background to Iris. Append-only over the existing grid + ambient blooms; disabled under `[data-fidelity="lo"]` and `prefers-reduced-motion`.
 ## [4.5.9] - 2026-07-24
 
 ### Added

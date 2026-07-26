@@ -456,10 +456,50 @@
     text-transform:uppercase;letter-spacing:.14em;color:var(--footstep);
   }
   .indicator-bar .selected-text{color:var(--voltage)}
+
+  /* ===== Prism ember = Iris (cyan/teal) — GriotwaveGridBackground + surface re-ember (was Lucid's neural blue) ===== */
+  :root{
+    --iris:#22D3EE; --iris-2:#2DD4BF; --iris-rgb:34,211,238;
+    /* repoint every neural-keyed accent to Iris so the whole companion reads as Prism */
+    --neural:#22D3EE; --neural-glow:rgba(34,211,238,.22); --neural-wash:rgba(34,211,238,.20);
+    --accent:var(--iris); --accent-hover:var(--iris-2); --accent-soft:rgba(34,211,238,.20); --accent-wash:rgba(34,211,238,.06);
+    --selected-bg:rgba(34,211,238,.16); --selected-border:var(--iris);
+  }
+  /* recolor the primary ambient bloom to Iris (append-only, later same-specificity rule wins) */
+  .amb.a{background:radial-gradient(circle,rgba(34,211,238,.50) 0%,transparent 70%)}
+  body::before{ -webkit-mask-image:radial-gradient(ellipse 130% 100% at 50% 42%, #000 90%, transparent 100%); mask-image:radial-gradient(ellipse 130% 100% at 50% 42%, #000 90%, transparent 100%) }
+  .gb-glow{position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(680px 460px at 78% -6%, rgba(34,211,238,.22), transparent 60%),
+      radial-gradient(560px 420px at 12% 106%, rgba(45,212,191,.13), transparent 60%);}
+  .gb-accent{position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%;filter:drop-shadow(0 0 3px rgba(34,211,238,.6))}
+  .gb-line{stroke:var(--iris);stroke-width:.9;opacity:0;stroke-dasharray:5 5;stroke-dashoffset:1000;animation:gbDraw 2s ease-out forwards}
+  .gb-dot{fill:var(--iris-2);opacity:0;animation:gbPulse 3.4s ease-in-out infinite}
+  #gb-mouse{position:fixed;z-index:0;width:460px;height:460px;border-radius:9999px;transform:translate(-50%,-50%);opacity:0;pointer-events:none;background-image:radial-gradient(circle,rgba(34,211,238,.15),rgba(34,211,238,.06),transparent 70%);filter:blur(30px);transition:left 90ms linear,top 90ms linear,opacity 320ms ease-out;will-change:left,top,opacity}
+  @keyframes gbDraw{0%{stroke-dashoffset:1000;opacity:0}50%{opacity:.72}100%{stroke-dashoffset:0;opacity:.4}}
+  @keyframes gbPulse{0%,100%{opacity:.28;transform:scale(1)}50%{opacity:.62;transform:scale(1.15)}}
+  [data-fidelity="lo"] .gb-accent, [data-fidelity="lo"] #gb-mouse, [data-fidelity="lo"] .gb-glow{display:none}
+  @media (prefers-reduced-motion:reduce){.gb-line{animation:none;opacity:.34;stroke-dashoffset:0}.gb-dot{animation:none;opacity:.42}#gb-mouse{display:none}}
 </style>
 </head>
 <body>
 <div class="amb a"></div><div class="amb b"></div><div class="amb c"></div>
+<div class="gb-glow" aria-hidden="true"></div>
+<svg class="gb-accent" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" aria-hidden="true">
+  <line x1="0" y1="20%" x2="100%" y2="20%" class="gb-line" style="animation-delay:.5s"/>
+  <line x1="0" y1="80%" x2="100%" y2="80%" class="gb-line" style="animation-delay:1s"/>
+  <line x1="20%" y1="0" x2="20%" y2="100%" class="gb-line" style="animation-delay:1.5s"/>
+  <line x1="80%" y1="0" x2="80%" y2="100%" class="gb-line" style="animation-delay:2s"/>
+  <line x1="50%" y1="0" x2="50%" y2="100%" class="gb-line" style="animation-delay:2.5s;opacity:.16"/>
+  <line x1="0" y1="50%" x2="100%" y2="50%" class="gb-line" style="animation-delay:3s;opacity:.16"/>
+  <circle cx="20%" cy="20%" r="2" class="gb-dot" style="animation-delay:3s"/>
+  <circle cx="80%" cy="20%" r="2" class="gb-dot" style="animation-delay:3.2s"/>
+  <circle cx="20%" cy="80%" r="2" class="gb-dot" style="animation-delay:3.4s"/>
+  <circle cx="80%" cy="80%" r="2" class="gb-dot" style="animation-delay:3.6s"/>
+  <circle cx="50%" cy="50%" r="1.5" class="gb-dot" style="animation-delay:4s"/>
+</svg>
+<div id="gb-mouse" aria-hidden="true"></div>
+
 
 <div class="header">
   <div style="display:flex;align-items:center;gap:11px">
@@ -509,5 +549,6 @@
   <span id="indicator-text">Click an option above, then return to the terminal</span>
 </div>
 
+<script>(function(){var m=document.getElementById('gb-mouse');if(!m)return;var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(rm)return;window.addEventListener('pointermove',function(e){m.style.left=e.clientX+'px';m.style.top=e.clientY+'px';m.style.opacity='1';},{passive:true});window.addEventListener('pointerleave',function(){m.style.opacity='0';});})();</script>
 </body>
 </html>
