@@ -1,7 +1,7 @@
 ---
 name: fragment-sync
 description: Use when Fragment (the create-fragment scaffolder / fragment-plugin) has drifted from the current cl-plugin-structure / Prism standard and needs re-syncing — after Prism advances, before exposing Fragment anywhere, or when scaffolded projects look stale (missing Cowork awareness, channels, or the current model line). Reconciles Fragment so it once again emits "Prism-image" projects. Triggers on "sync fragment", "update fragment", "fragment fell behind", "conform fragment", "fragment is stale".
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Fragment Sync
@@ -46,6 +46,40 @@ Apply the audited template/engine changes so emitted projects carry channels + C
 
 ### 5. Verify
 Re-run the diff (step 1). A clean run reports **zero gaps** — the skill is idempotent. Update the readiness doc: Fragment → synced.
+
+## Thin marketplace sync — publish the conformed plugin (release step)
+Conforming a plugin to the standard is only half the job — every Griot tool also ships to
+users through the shared **`digital-griot-marketplace`** as a THIN `<tool>-plugin/` folder.
+That thin copy drifts the instant the tool's own repo advances and the marketplace is not
+re-synced. **A repo fix is NOT a marketplace fix.** (July 2026: cinopsis's ingest-gate fix
+landed in the cinopsis repo, but the marketplace had *no* cinopsis entry at all and would
+have installed the old, gate-less build.)
+
+So every release of a Griot tool (Fragment included) runs the marketplace sync as a
+**non-optional** step, from the tool's repo root, AFTER the release is committed + pushed:
+
+```
+sh <marketplace-clone>/scripts/sync-to-marketplace.sh
+```
+
+`sync-to-marketplace.sh` clones the marketplace, `git archive HEAD`s the tool's plugin dirs
+(`.claude-plugin skills agents commands hooks scripts`) into `<tool>-plugin/`, upserts ONE
+`./<tool>-plugin` entry in the root `marketplace.json` (preserving every other tool), then
+commits + pushes. Needs node + git + push auth; on Windows run it through git-bash.
+
+Two traps that make the thin copy ship WITHOUT the fix:
+- It archives **HEAD**, so the release must be **committed** first. An uncommitted change is
+  invisible to `git archive`.
+- A stale **`.git/index.lock`** silently makes `git add` a no-op (errors swallowed), so a
+  "successful" commit changes nothing. Clear `.git/**/*.lock` and confirm `git diff --cached`
+  is non-empty before committing.
+
+**Verify after (never trust the push echo):** fetch the raw marketplace files and confirm the
+version AND the actual fix are present in `<tool>-plugin/`:
+```
+curl -s .../<tool>-plugin/.claude-plugin/plugin.json | grep version
+curl -s .../<tool>-plugin/scripts/<changed-file> | grep <the-fix>
+```
 
 ## Gates (never run these without an explicit go)
 
