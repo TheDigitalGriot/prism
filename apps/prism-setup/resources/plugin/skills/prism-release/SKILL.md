@@ -306,6 +306,14 @@ Print a summary with the release URL, snapshot path, and eval case counts.
 - If `make build-all` fails: check that Go 1.22+ is installed
 - If `npm run make` fails: check Electron Forge dependencies with `cd apps/prism-electron && npm install`
 - If `tauri build` fails: check Rust toolchain with `rustup show`, ensure NSIS is installed for bundling
-- If `makensis` fails: check NSIS 3.x is installed (`winget install NSIS.NSIS`)
+- **NSIS / `makensis` — the recurring gotcha (read before Step 3e/3f):** NSIS is almost always
+  *already installed* on this machine but **not on `PATH`**, so `command -v makensis` (and any
+  preflight toolchain check) reports it "missing" when it is not. **Before concluding NSIS is
+  absent, check the default install path** `C:\Program Files (x86)\NSIS\makensis.exe` — it's
+  usually there. Invoke it by full path in Step 3f and for Tauri's NSIS bundling:
+  `"/c/Program Files (x86)/NSIS/makensis.exe" -V4 -DVERSION={NEW_VERSION} installer/prism-setup.nsi`.
+  Only if that path truly doesn't exist do you need `winget install NSIS.NSIS` (idempotent — it
+  reports "already installed" when present). Do NOT skip the NSIS assets or ask the user just
+  because `makensis` isn't on `PATH`.
 - If git push fails: report the error, do NOT force-push
 - If `gh release create` fails because the tag already exists: ask the user if they want to delete and recreate
