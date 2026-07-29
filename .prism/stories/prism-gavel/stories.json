@@ -1,0 +1,112 @@
+{
+  "epic": "prism-gavel",
+  "stories": [
+    {
+      "id": "s-dd9c27cf",
+      "title": "Scaffold prism-gavel skill",
+      "description": "Scaffold the prism-gavel skill: create skills/prism-gavel/{SKILL.md, visual-companion.md, references/, scripts/} mirroring prism-brainstorm and register the skill so the plugin validates, prism-gavel loads as a skill, and brainstorm is unaffected.",
+      "priority": 1,
+      "status": "pending",
+      "blockedBy": [],
+      "files": [
+        "skills/prism-gavel/SKILL.md",
+        "skills/prism-gavel/visual-companion.md",
+        "skills/prism-gavel/references/",
+        "skills/prism-gavel/scripts/",
+        ".claude-plugin/plugin.json"
+      ],
+      "steps": [
+        "Create skills/prism-gavel/ mirroring the prism-brainstorm layout (SKILL.md, visual-companion.md, references/, scripts/).",
+        "Author SKILL.md frontmatter + body for the Gavel decision cockpit as a sibling to prism-brainstorm.",
+        "Register prism-gavel in .claude-plugin/plugin.json without touching Prism core.",
+        "Verify: plugin validates, prism-gavel loads as a skill, brainstorm still loads unaffected."
+      ],
+      "completedAt": null,
+      "commitHash": null
+    },
+    {
+      "id": "s-0f7a0813",
+      "title": "Generalize channel to digital-griot-mcp",
+      "description": "Generalize the channel into digital-griot-mcp: rename and relocate brainstorm-channel to a neutral path, update the plugin.json mcpServers key and channels, repoint brainstorm, and add gavel intents plus the six MCP tools so both siblings ride one shared wire and brainstorm still drives.",
+      "priority": 2,
+      "status": "pending",
+      "blockedBy": ["s-dd9c27cf"],
+      "files": [
+        ".claude-plugin/plugin.json",
+        "skills/prism-brainstorm/scripts/brainstorm-channel.ts",
+        "skills/prism-brainstorm/scripts/helper.js"
+      ],
+      "steps": [
+        "Rename and relocate brainstorm-channel out of prism-brainstorm/scripts/ to a neutral home as digital-griot-mcp.",
+        "Update plugin.json: rename the mcpServers key and the channels registration to digital-griot-mcp.",
+        "Repoint brainstorm's channel references to the new name/path in one commit.",
+        "Add gavel intents plus the six tools (gavel_state, gavel_decide, gavel_open, gavel_scan, gavel_commit, gavel_verify) to the shared wire.",
+        "Verify brainstorm still drives through the renamed channel BEFORE relying on gavel tools; confirm gavel tools are callable."
+      ],
+      "completedAt": null,
+      "commitHash": null
+    },
+    {
+      "id": "s-60898f71",
+      "title": "Lift Gavel cockpit into the frame",
+      "description": "Lift the Gavel cockpit into scripts/frame.html: port the existing Gavel tab cockpit and wire use/role/stage controls, the notes box, and the four verbs via helper.js to the channel so the cockpit renders in the popout and controls both update decision state and emit channel intents.",
+      "priority": 3,
+      "status": "pending",
+      "blockedBy": ["s-0f7a0813"],
+      "files": [
+        "skills/prism-gavel/scripts/frame.html",
+        "skills/prism-gavel/scripts/helper.js"
+      ],
+      "steps": [
+        "Port the existing Gavel tab cockpit markup into skills/prism-gavel/scripts/frame.html.",
+        "Wire use/role/stage buttons and the notes box to update decision state.",
+        "Wire the four verbs through helper.js to emit channel intents.",
+        "Verify the popout drive works in Cowork early (per the undocumented-channel risk): cockpit renders and controls update state AND emit intents."
+      ],
+      "completedAt": null,
+      "commitHash": null
+    },
+    {
+      "id": "s-ffac38f6",
+      "title": "Wire the four verbs end to end",
+      "description": "Wire the four verbs end to end: scan routes to griot-potluck-search, commit writes a batch via dgs-plan-update, open opens a repo/video via Chrome MCP, and verify resolves slug + stars through the resolver, so each verb round-trips click to agent action to reflect.",
+      "priority": 4,
+      "status": "pending",
+      "blockedBy": ["s-60898f71"],
+      "files": [
+        "skills/prism-gavel/scripts/helper.js",
+        "skills/prism-gavel/SKILL.md"
+      ],
+      "steps": [
+        "Wire scan -> griot-potluck-search.",
+        "Wire commit -> dgs-plan-update (route file writes through the GriotMeta root + native Copy-Item, git via Windows-MCP PowerShell per dgs-plan-update Rule 3).",
+        "Wire open -> Chrome MCP (open repo / play video).",
+        "Wire verify -> slug + stars resolver to promote v / u / x.",
+        "Verify each verb round-trips: click -> agent acts with real tools -> reflect back to cockpit."
+      ],
+      "completedAt": null,
+      "commitHash": null
+    },
+    {
+      "id": "s-f6bbcf35",
+      "title": "Package, verify, release, register",
+      "description": "Package, verify, release, and register: bump the Prism version, sideload-verify, release via prism-release and closing-ceremony, and register prism-gavel as an app in the DGS plan so the sideload is clean, the release ships, and the DGS plan shows prism-gavel.",
+      "priority": 5,
+      "status": "pending",
+      "blockedBy": ["s-ffac38f6"],
+      "files": [
+        ".claude-plugin/plugin.json",
+        ".claude-plugin/marketplace.json"
+      ],
+      "steps": [
+        "Bump the Prism version across version files.",
+        "Sideload-verify the plugin (clean load of prism-gavel + brainstorm).",
+        "Release via prism-release + closing-ceremony.",
+        "Register prism-gavel as an app in the DGS plan (dgs-plan-update).",
+        "Verify: sideload clean, released, DGS plan shows prism-gavel."
+      ],
+      "completedAt": null,
+      "commitHash": null
+    }
+  ]
+}
