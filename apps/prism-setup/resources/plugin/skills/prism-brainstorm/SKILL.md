@@ -123,11 +123,11 @@ design_tokens:
 
 ## Visual Companion — Version Requirements
 
-The brainstorm-channel MCP server provides active wake (click → Claude wakes):
+The `digital-griot-mcp` MCP server (the shared Griot wake channel, formerly `brainstorm-channel`) provides active wake (click → Claude wakes):
 
 | Feature | Requirement |
 |---------|-------------|
-| Active wake (click → Claude wakes) | Claude Code ≥ v2.1.80 + `brainstorm-channel` MCP running |
+| Active wake (click → Claude wakes) | Claude Code ≥ v2.1.80 + `digital-griot-mcp` MCP running |
 | Events file logging (fallback) | Any version — events written to `$STATE_DIR/events`, read on next user message |
 | Passive mode indicator | Automatic — `/status` endpoint returns `{passive: true}` when active wake unavailable |
 

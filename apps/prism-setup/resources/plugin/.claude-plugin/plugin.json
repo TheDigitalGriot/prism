@@ -7,15 +7,15 @@
     "name": "Digital Griot Studio"
   },
   "mcpServers": {
-    "brainstorm-channel": {
+    "digital-griot-mcp": {
       "type": "stdio",
       "command": "bun",
       "args": [
-        "${CLAUDE_PLUGIN_ROOT}/skills/prism-brainstorm/scripts/brainstorm-channel.ts"
+        "${CLAUDE_PLUGIN_ROOT}/scripts/digital-griot-mcp/digital-griot-mcp.ts"
       ]
     }
   },
   "channels": [
-    { "server": "brainstorm-channel" }
+    { "server": "digital-griot-mcp" }
   ]
 }

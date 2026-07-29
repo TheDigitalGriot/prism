@@ -25,7 +25,7 @@ Use this skill when reading, modifying, or tracing the **packages/prism-daemon/s
 - `packages/prism-daemon/src/adapters/websocket.test.ts` — 2 symbols
 - `packages/prism-daemon/src/adapters/websocket.ts` — 11 symbols
 - `packages/prism-daemon/src/resolve.ts` — 1 symbol
-- `skills/prism-brainstorm/scripts/brainstorm-channel.ts` — 1 symbol
+- `scripts/digital-griot-mcp/digital-griot-mcp.ts` — 1 symbol
 
 ## Entry Points
 
@@ -36,7 +36,7 @@ Most-referenced symbols in this community (likely public surface):
 - `connect` (Method) — `packages/prism-daemon/src/adapters/paseo-websocket.ts` [3 refs]
 - `connect` (Method) — `packages/prism-daemon/src/adapters/stdio-mcp.ts` [3 refs]
 - `connect` (Method) — `packages/prism-daemon/src/adapters/websocket.ts` [3 refs]
-- `fetch` (Function) — `skills/prism-brainstorm/scripts/brainstorm-channel.ts` [3 refs]
+- `fetch` (Function) — `scripts/digital-griot-mcp/digital-griot-mcp.ts` [3 refs]
 - `onData` (Method) — `packages/prism-daemon/src/adapters/stdio-mcp.ts` [3 refs]
 - `request` (Method) — `packages/prism-daemon/src/adapters/stdio-mcp.ts` [3 refs]
 

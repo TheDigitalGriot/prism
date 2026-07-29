@@ -140,7 +140,7 @@ VIEWS.plugin = {
       ['spectrum.sh','autonomous loop'],['spectrum-approval.sh','PreToolUse gate'],['extract-tasks.py','plan→state.json'],['bump-version.py','version sync'],['pre-compact.py','snapshot'],['post-compact.py','restore'],
       ['log-observation.py','PostToolUse log'],['log-agent.py','subagent log'],['worktree-setup.sh','wt create'],['worktree-cleanup.sh','wt remove'],['prism-cli-install.sh','CLI install'],['visual-regression.sh','visual diff']]},
     {id:'mcp',x:40,y:1386,kind:'meta',label:'MCP servers',sub:'4 · click ＋',grid:g(4,-10),detail:{desc:'Model Context Protocol servers wired to Prism.',files:['.mcp.json']},members:[
-      ['brainstorm-channel','wake-on-click'],['codebase-memory-mcp','code graph'],['graphify-mcp','knowledge graph'],['chrome-devtools','browser']]},
+      ['digital-griot-mcp','wake-on-click'],['codebase-memory-mcp','code graph'],['graphify-mcp','knowledge graph'],['chrome-devtools','browser']]},
     {id:'build',x:40,y:1514,kind:'meta',label:'Build & installers',sub:'5 · click ＋',grid:g(5,-10),detail:{desc:'How Prism ships across platforms.',files:['apps/prism-installer/']},members:[
       ['prism-installer','Tauri/Rust'],['prism-setup','legacy NSIS'],['cli-install','PATH+workspace'],['daemon bundle','esbuild .cjs'],['prism-docs','VitePress+Pages']]},
   ],
