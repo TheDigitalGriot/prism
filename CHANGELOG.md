@@ -4,6 +4,21 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.7.0] - 2026-07-29
+
+### Added
+
+- **prism-gavel — the Gavel decision cockpit.** A sibling skill to `prism-brainstorm`: a Claude Code browser popout where each card is a candidate awaiting a ruling, and every verb button **wakes the agent to act with real tools** (open a repo/▶video · scan the potluck shelf · commit a batch of rulings · resolve+verify a slug) instead of a sandboxed artifact trying to act on its own. Ships the skill (`skills/prism-gavel/`), the lifted cockpit popout stack (`frame.html`/`helper.js`/`server.cjs`, own random port; use·role·stage·notes stay local, only verb clicks wake), and six real MCP tools on the shared channel — `gavel_state` (reads the undecided-cards store from `griot-live-artifacts` HEAD), `gavel_decide`, `gavel_open`, `gavel_scan`, `gavel_commit` (routes through `dgs-plan-update`'s Rule-2 anti-clobber gate — never writes the store directly), `gavel_verify` (slug + GitHub stars → v/u/x). Built via `prism-subagent` (S1–S5), each story spec+quality reviewed with a final cross-story integration pass.
+- **Generalized wake channel — `brainstorm-channel` → `digital-griot-mcp`.** The MCP wake channel is renamed and relocated to a neutral home (`scripts/digital-griot-mcp/`) so it is no longer brainstorm-specific: one `127.0.0.1:52342` wire that both `prism-brainstorm` and `prism-gavel` ride (disambiguated by a `meta.skill` key). The per-surface popout stacks couple to the channel by **port, not name**, so brainstorm's drive is provably unchanged. More Griot tooling routes through the one bus later.
+
+### Fixed
+
+- **Version-drift from v4.6.0 healed.** The v4.6.0 release bumped only the root `VERSION` file, leaving every manifest (`plugin.json`, `marketplace.json`, all `package.json`, `main.go`, `footer.go`, `PrismState.ts`, `PrismStateContext.tsx`, `tauri.conf.json`, `Cargo.toml`, the docs footer) stranded at 4.5.9. All version locations are now reconciled to 4.7.0 (bridged via `bump-version.py --set` off the true current version, since the drift defeated the plain `minor` bump).
+
+### Changed
+
+- **`prism-release` — NSIS-on-PATH gotcha documented.** The release kept mis-detecting NSIS as "missing" because `makensis` is installed at `C:\Program Files (x86)\NSIS\makensis.exe` but not on `PATH`, so `command -v makensis` reports it absent. The skill's Error Handling now checks that default install path (and invokes `makensis` by full path) **before** concluding NSIS is absent — so a release never skips the NSIS installer assets over a PATH quirk.
+
 ## [4.6.0] - 2026-07-26
 
 ### Added
