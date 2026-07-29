@@ -42,6 +42,16 @@ Skills live at `skills/*/SKILL.md` and are auto-discovered workflow orchestrator
 | 16 | `prism-design` | ~80 | **opus** | "design this", "create a design", "design the architecture" |
 | 17 | `prism-finish` | ~100 | **sonnet** | "finish this branch", "ready to merge", "create PR", "clean up branch" |
 
+### Decision Cockpit Skills (v4.7.0)
+
+| # | Skill | Lines | Model | Trigger Patterns |
+|---|-------|-------|-------|-----------------|
+| 18 | `prism-gavel` | ~130 | **opus** | "gavel", "decision cockpit", "triage the shelf", "rule on these", "commit the batch", "verify the slug" |
+
+**`prism-gavel`** is a decision **cockpit** and a sibling to `prism-brainstorm`: a browser popout where each card is a candidate awaiting a ruling, and every button **wakes the agent to act with real tools** rather than a sandboxed artifact trying to act on its own. A ruling is `use · role · stage · note`; four verbs drive the follow-through — **open** (repo/▶video via Chrome MCP), **scan** (`griot-potluck-search`), **commit** (batch → plan + git via `dgs-plan-update`, HITL-gated), **verify** (slug + stars → v/u/x). The drive loop is `cockpit → button → channel → agent → reflect → cockpit`. State-mutating verbs are human-in-the-loop by hard gate.
+
+Both `prism-gavel` and `prism-brainstorm` ride one shared wake channel, **`digital-griot-mcp`** (renamed and generalized from `brainstorm-channel` in v4.7.0), on `127.0.0.1:52342`. The popout stacks discover the channel **by port, not by name**, so the surfaces stay independent. Surfaces disambiguate via a `meta.skill` key on the wake payload.
+
 **`prism-capture`** codifies design inspiration into a structured capture ledger that `prism-brainstorm` reads as pre-loaded context instead of starting from scratch. Three stages — Genesis (what + where) → Triage (categorize as active / reference / parked) → Translate (render source vs Griotwave side-by-side in the visual companion). Outputs to `.prism/shared/captures/YYYY-MM-DD-<topic>.md`. Precedes `prism-brainstorm`.
 
 **`prism-brainstorm`** includes a browser-based **Visual Companion** — a zero-dependency Node.js HTTP/WebSocket server that serves interactive HTML mockups for A/B design choices. User clicks are captured as JSONL events.
