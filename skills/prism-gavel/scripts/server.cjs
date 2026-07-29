@@ -182,6 +182,17 @@ function handleRequest(req, res) {
       : '{"decisions":[],"parked":[]}';
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
     res.end(body);
+  } else if (req.method === 'GET' && req.url === '/state/gavel-cards.json') {
+    // S4: live shelf. gavel_state (digital-griot-mcp) parses ITEMS/RESOLVE from the plan
+    // at git HEAD and writes this file into STATE_DIR; the cockpit fetches it to hydrate
+    // its deck (replacing the S3 baked-ITEMS stopgap). Missing file → empty shell so the
+    // cockpit falls back to its baked snapshot.
+    const cardsFile = path.join(STATE_DIR, 'gavel-cards.json');
+    const body = fs.existsSync(cardsFile)
+      ? fs.readFileSync(cardsFile, 'utf-8')
+      : '{"ok":false,"cards":[],"resolve":[]}';
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(body);
   } else if (req.method === 'GET' && req.url.startsWith('/files/')) {
     const fileName = req.url.slice(7);
     const filePath = path.join(CONTENT_DIR, path.basename(fileName));

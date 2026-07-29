@@ -40,6 +40,10 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
         keepalive: true
+      }).then(res => {
+        // fetch only rejects on network failure — a non-2xx (routed:false, 400, 404…) still
+        // resolves. Surface it so a dropped wake isn't silent.
+        if (res && !res.ok) console.warn('[gavel] channel POST non-2xx:', res.status);
       }).catch(err => console.warn('[gavel] channel POST failed:', err));
     } catch (err) {
       console.warn('[gavel] channel POST threw:', err);
@@ -87,8 +91,17 @@
       ? 'Gavel: commit the decided batch (route through dgs-plan-update)'
       : 'Gavel: ' + verb + (cardTitle ? ' — ' + cardTitle : (cardId ? ' — ' + cardId : ''));
 
+    // For commit, carry the full decided-batch payload (cockpit local state) into the WS
+    // event so server.cjs writes it to STATE_DIR/events — gavel_commit reads the latest
+    // commit event's `batch` to assemble what dgs-plan-update receives. (Meta over the wake
+    // channel must be small strings, so the batch travels via the events file, not the POST.)
+    const evt = { type: 'verb', skill: 'gavel', verb: verb, card_id: cardId, card_title: cardTitle };
+    if (verb === 'commit') {
+      try { evt.batch = (typeof window.__gavelPayload === 'function') ? window.__gavelPayload() : null; } catch (_) { evt.batch = null; }
+    }
+
     // Log to gavel's own server (WS event file) …
-    sendEvent({ type: 'verb', skill: 'gavel', verb: verb, card_id: cardId, card_title: cardTitle });
+    sendEvent(evt);
 
     // … and wake Claude via the shared channel. THIS is the only wake event.
     postToChannel({

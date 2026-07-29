@@ -9,7 +9,7 @@ effort: xhigh
 
 A decision **cockpit**: a browser popout where each card is a candidate awaiting a ruling, and every button on it **wakes the agent to act with real tools** — open the repo or the video, scan the potluck shelf, commit a batch of rulings to the plan + git, resolve and verify a slug. The sandboxed artifact never acts on its own; it fires an intent and the agent does the work, then reflects the result back to the cockpit.
 
-> **Scaffold status (v1 groundwork).** This SKILL.md describes the full cockpit and its intended architecture. The wiring — the `digital-griot-mcp` channel, the cockpit HTML, and the six MCP tools — is delivered in later stories (S2-S4). This file is the contract those stories build to.
+> **Status (S4 wired).** The `digital-griot-mcp` channel (S2), the cockpit popout (S3), and the six `gavel_*` tool handlers (S4) are implemented. `gavel_state` and `gavel_verify` run server-side; `gavel_open`/`gavel_scan`/`gavel_commit` are **resolve-and-return** — the tool assembles the payload, Claude performs the external action on wake (see [On-Wake Verb Handling](#on-wake-verb-handling-s4) below). The first live `gavel_commit` write is Gavin's to trigger.
 
 <HARD-GATE>
 Gavel rulings that mutate state (commit a batch, promote a verification slug) MUST be
@@ -60,6 +60,35 @@ The cockpit drives the agent through a `digital-griot-mcp` server exposing six t
 | `gavel_verify` | Resolve a slug + stars -> promote the card's verification mark (v / u / x). |
 
 **Reflection contract:** every verb that acts (`gavel_open`, `gavel_scan`, `gavel_commit`, `gavel_verify`) writes its outcome back through `gavel_state` so the cockpit advances the card. See [references/architecture.md](references/architecture.md) for the store shape, the wake-event payload, and the reflection protocol.
+
+## On-Wake Verb Handling (S4)
+
+When a cockpit verb fires, the popout POSTs `{skill:"gavel", verb, card_id, content}` to the shared `digital-griot-mcp` channel on `:52342` and Claude wakes. **Read the events file** at `$GAVEL_STATE_DIR/events` for the full event (the commit event also carries the decided `batch`). Then act by verb.
+
+The handlers split by capability — two run fully server-side; three are **resolve-and-return** (the tool assembles the payload, *Claude* performs the external action):
+
+### The round-trip
+
+```text
+cockpit button → POST :52342 (wake) → Claude reads events file → calls gavel_<verb>
+   → server-side tools ACT and return; resolve-and-return tools RETURN a payload
+   → Claude performs the external action (Chrome / potluck-search / dgs-plan-update)
+   → reflect the result back so the cockpit advances the card
+```
+
+### Per-verb, on wake
+
+- **`gavel_state`** *(server-side)* — parses `ITEMS`(undecided)/`RESOLVE` from `griot-live-artifacts/live/dgs-definitive-plan.html` at **git HEAD (read-only)** and writes the shelf JSON to the popout's `STATE_DIR/gavel-cards.json`. The cockpit fetches `/state/gavel-cards.json` and hydrates its deck (replacing the baked snapshot). Never writes the artifact. Run it to (re)load the live shelf; pass `state_dir` if the popout's dir isn't discoverable from env.
+
+- **`gavel_open`** *(resolve-and-return)* — returns the card's `url` (repo) and optional `video_url`. **On wake, open `url` (and `video_url` if present) via the Chrome MCP** — the sandbox-safe path. The tool does not open anything itself.
+
+- **`gavel_scan`** *(resolve-and-return)* — returns `{query, context}` framed as "does our Griot Potluck already solve this?". **On wake, run the `griot-potluck-search` skill** with that query/context and surface matches back to the shelf.
+
+- **`gavel_verify`** *(server-side where possible)* — resolves the card's slug + GitHub stars over HTTP and returns a `verdict` (`v` verified / `u` unresolved / `x` rejected) plus `stars`. It **returns the verdict only — it never writes it back** to `griot-live-artifacts`. The promotion is persisted later, through `gavel_commit` → `dgs-plan-update`.
+
+- **`gavel_commit`** *(resolve-and-return, HITL)* — assembles the decided `batch` (from the commit event's payload in the events file, or the `batch` arg) and returns it with `action:"run_dgs_plan_update"`, `dry_run:true`. **On wake, run the `dgs-plan-update` skill with `batch`.** This MUST route through `dgs-plan-update` — it owns the **Rule-2 anti-clobber sync gate** (stage-live vs repo HEAD; on divergence STOP + reconcile) and the artifact refresh. `gavel_commit` NEVER writes `griot-live-artifacts` directly, and the write is HITL-gated (show blast radius, confirm first).
+
+- **`gavel_decide`** *(local)* — records a `use·role·stage·note` ruling into `STATE_DIR/gavel-cards.json`. No wake, no artifact write; the cockpit re-renders from the store.
 
 ## Workflow
 

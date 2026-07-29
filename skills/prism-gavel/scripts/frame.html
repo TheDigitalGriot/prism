@@ -193,7 +193,9 @@ const EDGES = [
 ];
 
 /* items: {app,item,type,detail,source,status,stage,dark,note}  — app matches APPS.id via name */
-const ITEMS = [
+/* S4: `var` (not `const`) so the live hydration (gavel_state → /state/gavel-cards.json)
+   can replace this baked snapshot with the current undecided shelf from the plan at HEAD. */
+var ITEMS = [
  {app:'djeli',item:'Instatic',type:'oss-inspo',detail:'OSS Webflow/Framer/WordPress alt — agentic self-hosted visual CMS outputting clean static pages. also Lucid (visual output), Prism (design).',src:'scan',status:'idea',stage:'next',oss:'Instatic',slug:'CoreBunch/Instatic',decision:'undecided',role:''},
  {app:'synaptiq',item:'Shiori',type:'oss-inspo',detail:'Simple self-hosted bookmark manager (Go) — save/organize/archive pages; a self-hostable spine for the research shelf. also Kaleidoscope.',src:'scan',status:'idea',stage:'later',oss:'Shiori',slug:'go-shiori/shiori',decision:'undecided',role:''},
  {app:'lucid',item:'KokonutUI',type:'oss-inspo',detail:'Liquid-glass OSS component library (Tailwind/shadcn/Motion). Vibe-coder design set → feeds Lucid + Decision Review. also Kweli, Prism-design.',src:'potluck:9NubqbSNbjg',status:'idea',stage:'next',oss:'KokonutUI',slug:'kokonut-labs/kokonutui',decision:'undecided',role:''},
@@ -1091,10 +1093,18 @@ const GAPS = [
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const appById=Object.fromEntries(APPS.map(a=>[a.id,a]));
 const VERTS=[{id:'infra',n:'Dev Infra',c:'#57b98a'},{id:'knowledge',n:'Knowledge & Capture',c:'#7c7cf0'},{id:'creative',n:'Creative Gen',c:'#f2915f'},{id:'product',n:'GriotProducts',c:'#4fd0e0'},{id:'assistant',n:'Assistant & Meta',c:'#e0a458'},{id:'client',n:'Client Work',c:'#9a8c98'},{id:'ventures',n:'Ventures & Applied',c:'#b76fce'}];
-const ossStage={}, ossDecision={}, ossRole={};
-ITEMS.forEach((it,i)=>{ if(it.type==='oss-inspo'){ it._id='oss'+i; ossStage[it._id]=it.stage; ossDecision[it._id]=it.decision||'undecided'; ossRole[it._id]=it.role||''; } });
-const ossItems=ITEMS.filter(i=>i.type==='oss-inspo');
-const RESOLVE=[
+// S4: re-runnable so live hydration can rebuild the oss state after ITEMS is replaced.
+// _id mirrors gavel_state's server-side assignment ('oss'+index-in-ITEMS): reuse it._id
+// when the live JSON already carries one, so open/scan/verify resolve the same card.
+var ossStage={}, ossDecision={}, ossRole={}, ossItems=[];
+function deriveOssFromItems(){
+  ossStage={}; ossDecision={}; ossRole={};
+  ITEMS.forEach((it,i)=>{ if(it.type==='oss-inspo'){ it._id=it._id||('oss'+i); ossStage[it._id]=it.stage; ossDecision[it._id]=it.decision||'undecided'; ossRole[it._id]=it.role||''; } });
+  ossItems=ITEMS.filter(i=>i.type==='oss-inspo');
+}
+deriveOssFromItems();
+/* S4: `var` so live hydration can replace the baked RESOLVE snapshot too. */
+var RESOLVE=[
 {n:"Graphify",r:"Graphify-Labs/graphify",s:"v",st:95938},
 {n:"Code Review Graph",r:"tirth8205/code-review-graph",s:"v",st:26429},
 {n:"Codex Orchestration",r:"Cjbuilds/Codex-Orchestration",s:"v",st:537},
@@ -1340,7 +1350,10 @@ const RESOLVE=[
   const nameOf=id=>{const a=appById[id]; return a?a.name:(id==='suite'?'Suite-wide':id);};
   const vertOf=id=>{const a=appById[id]; return a?a.vertical:'assistant';};
   const vertName=v=>{const x=VERTS.find(z=>z.id===v); return x?x.n:v;};
-  const esc=s=>(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // S4: hardened before wiring live/less-controlled data (gavel_state) into the cockpit.
+  // Escapes & first, then < > " ' — so a card title with a quote can't break out of an
+  // attribute (e.g. data-card-title="${esc(...)}"). Used for both text and attributes.
+  const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
   // ---- non-OSS decisions as first-class data + state ----
   const ARCHQ=[
@@ -1352,11 +1365,17 @@ const RESOLVE=[
   const archChoice={}, gapChoice={}, launchSeq={}, parked={}, noteMap={};
 
   // ---- unified deck — OSS reads LIVE from the shared store (ossDecision/ossRole/ossStage) ----
+  // S4: buildDeck() is re-runnable (keeps the same D reference so closures stay valid) so the
+  // live hydration can rebuild the deck after gavel_state replaces ITEMS/ossItems.
   const D=[];
-  ossItems.forEach(it=>D.push({id:it._id,kind:'oss',app:it.app,appName:nameOf(it.app),vert:vertOf(it.app),title:it.oss||it.item,sum:it.detail,slug:it.slug||'',ref:it}));
-  ARCHQ.forEach((a,i)=>D.push({id:'arch'+i,kind:'arch',app:'suite',appName:'Suite-wide',vert:'assistant',title:a.t,sum:a.d,opts:a.opts}));
-  GAPS.forEach((g,i)=>D.push({id:'gap'+i,kind:'gap',app:'suite',appName:'Suite-wide',vert:'assistant',title:g.g,sum:g.d,opts:['resolve','defer','drop']}));
-  APPS.forEach(a=>D.push({id:'lc-'+a.id,kind:'launch',app:a.id,appName:a.name,vert:a.vertical,title:a.name,sum:(a.one||a.status||'')+' · now: '+(a.stage||'—'),opts:['launch now','next','later','hold']}));
+  function buildDeck(){
+    D.length=0;
+    ossItems.forEach(it=>D.push({id:it._id,kind:'oss',app:it.app,appName:nameOf(it.app),vert:vertOf(it.app),title:it.oss||it.item,sum:it.detail,slug:it.slug||'',ref:it}));
+    ARCHQ.forEach((a,i)=>D.push({id:'arch'+i,kind:'arch',app:'suite',appName:'Suite-wide',vert:'assistant',title:a.t,sum:a.d,opts:a.opts}));
+    GAPS.forEach((g,i)=>D.push({id:'gap'+i,kind:'gap',app:'suite',appName:'Suite-wide',vert:'assistant',title:g.g,sum:g.d,opts:['resolve','defer','drop']}));
+    APPS.forEach(a=>D.push({id:'lc-'+a.id,kind:'launch',app:a.id,appName:a.name,vert:a.vertical,title:a.name,sum:(a.one||a.status||'')+' · now: '+(a.stage||'—'),opts:['launch now','next','later','hold']}));
+  }
+  buildDeck();
 
   const useOf=d=> d.kind==='oss'?(ossDecision[d.id]||'undecided'):d.kind==='arch'?(archChoice[d.id]||'undecided'):d.kind==='gap'?(gapChoice[d.id]||'undecided'):(launchSeq[d.id]||'undecided');
   const decided=d=>useOf(d)!=='undecided';
@@ -1385,7 +1404,9 @@ const RESOLVE=[
 
   // ---- card ----
   const VIDT={"-VlRHcpvjxI": "157-tool toolkit", "-kEOSut9oMI": "GitHub Trending Weekly #38", "0lAUBeTBtYY": "Syntax remote agents", "0t-5IfBRpY8": "Qwen Audio 3.0", "40dlEO_JD_8": "Pagecast: publish your agent's HTML straight to a live Cloudflare Pages URL", "5MKq5qahKQ8": "Impeccable — design skill for AI agents", "5n2Op3T-yUk": "Weave Router: proxy that picks the right model per request", "6YRpXxbtc2c": "Nub — Node toolkit review", "6fZ5TgW3u40": "GitHub Trending Weekly #37", "9NubqbSNbjg": "8 free design-component sites (vibe-coding)", "Alveu07gvvk": "ACE-Step UI", "CAKAIsUiTsI": "OpenWiki: CLI that generates & keeps your repo wiki current", "COte4lzHcdI": "35 self-hosted alts", "CYdzyCNvNm8": "Plane", "CizQBQKipVU": "20 dev-tools roundup", "DCCkBPcIVAo": "GitHub Awesome HN #10", "ERCdFgTXNY4": "Poolside Laguna", "GHQWvOViXGo": "Twenty CRM", "IDsdmdLfT0I": "Neko browser", "JKQwLV3MBMM": "GitHub Trending Today #37", "JmiQvaqQ_7M": "GH trending agent infra", "KITOm0HitpY": "20 AI agent tools", "KqL-2KEGqxc": "GH Trending #41", "LDXM3p83UsQ": "Code Review Graph", "QacqRZ0vsD4": "Free transcription app, YouTube scraper & GitHub's top repos", "Ti0jeXaaUis": "Flowise vs Langflow", "Ue6iTXSO1As": "AI Copywriter (Short)", "XNspkAPNTbM": "Tutti: one shared workspace for Claude Code & Codex", "YAcIUCjsRnU": "Thinking Machines model", "ZotwULorjwI": "GitHub Trending Today #39", "aVgR5YHk4QA": "Canvas UI", "bJGOxx0azas": "22 Self-Hosted Apps", "bPDb_fRvtvQ": "Qoder/Cantus", "csbM6kw5NG0": "Nanobot", "dQhOxW-nuRU": "20 trending agent repos", "doFmozbBkmI": "Mindwalk: replay Claude Code/Codex sessions as a 3D repo map", "eyDUqRu2Bgk": "Coreutils for Win", "fMaPaK4gcNE": "AI news roundup", "j__YOmUX0WI": "Kimi vs Claude (Blender)", "k92LeiSYPoQ": "scroll-world: scroll-driven camera flights through diorama scenes", "keillCm88ZY": "GH Trending #40", "lPZrLtM3JBI": "35 Self-hosted Projects on GitHub (vol. 2)", "m1uaDuHxNwE": "PhotoGIMP", "n0VhIVtviC0": "Prototype/Wayfinder", "peJr-6BRQ3M": "GH Trending Weekly #5", "sA2uZm0-W-g": "GitHub Trending Weekly #39", "sJYOOQ-FB7A": "self-learning-skills: meta-skill that saves agent solutions as rules", "sfmm3P9zX1Y": "agentcn: shadcn for AI agents — drop a complete agent recipe", "tX9ANddpAqc": "AI Video/Token Tricks", "tb4VYOIeq7w": "Open Knowledge: AI-native markdown editor & LLM wiki", "wAIW31__ghE": "claude-real-video: let Claude actually watch a video", "xOqTB_XpRUw": "Kage: shadow any website for offline viewing, JS stripped", "ywr_o3Tga0E": "Luz: a C++20 path tracer built from scratch, zero deps", "z6QVBXljJwk": "35 Self-hosted Projects on GitHub", "zKXSaxndXyE": "DocuSeal"};
-  const RESMAP=Object.fromEntries(RESOLVE.map(o=>[o.n,o]));
+  // S4: `let` + rebuild so live hydration can refresh RESMAP after RESOLVE is replaced.
+  let RESMAP=Object.fromEntries(RESOLVE.map(o=>[o.n,o]));
+  function rebuildResmap(){ RESMAP=Object.fromEntries(RESOLVE.map(o=>[o.n,o])); }
   const _clRepo=s=>!!s&&s.indexOf('/')>0&&s.indexOf('not OSS')<0&&s.charAt(0)!=='—'&&s.indexOf('http')!==0&&s.indexOf(' ')<0;
   const _site=s=>!!s&&s.indexOf('/')<0&&s.indexOf('.')>0&&s.indexOf(' ')<0&&s.indexOf('not OSS')<0&&s.charAt(0)!=='—';
   function repoMeta(d){
@@ -1509,7 +1530,31 @@ const RESOLVE=[
     w.querySelector('#gvClose').onclick=()=>w.remove(); w.onclick=e=>{if(e.target===w)w.remove();};
     w.querySelector('#gvCopy').onclick=()=>{const t=w.querySelector('.gvout');t.select();try{navigator.clipboard.writeText(json);}catch(e){}}; }
 
-  draw();
+  // ---- S4: live hydration ----------------------------------------------------------
+  // The baked ITEMS/RESOLVE render immediately (offline-safe fallback). Then we fetch the
+  // live shelf that gavel_state parsed from the plan at git HEAD and wrote to STATE_DIR
+  // (served at /state/gavel-cards.json). If it carries cards, it REPLACES the baked
+  // snapshot as the source of truth — this is the "static ITEMS lift stopgap" removal:
+  // the cockpit now shows the current undecided shelf, not the S3-time bake.
+  async function hydrateLiveState(){
+    try{
+      const res=await fetch('/state/gavel-cards.json',{cache:'no-store'});
+      if(!res.ok) return;
+      const j=await res.json();
+      if(!j||!Array.isArray(j.cards)||j.cards.length===0) return;
+      ITEMS=j.cards;                                   // live undecided shelf (oss-inspo, _id-carrying)
+      if(Array.isArray(j.resolve)) RESOLVE=j.resolve;  // live star/verification map
+      deriveOssFromItems();
+      buildDeck();
+      rebuildResmap();
+      active=null; idx=0;
+      draw(); crossReflect();
+      if(window.__gavelToast) window.__gavelToast('Live shelf loaded — '+j.cards.length+' undecided'+(j.head?' @ '+j.head:''));
+    }catch(_){ /* keep the baked fallback */ }
+  }
+
+  buildDeck(); rebuildResmap(); draw();
+  hydrateLiveState();
 })();
 </script>
 </body>
