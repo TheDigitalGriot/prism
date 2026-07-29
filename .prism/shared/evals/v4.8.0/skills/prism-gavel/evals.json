@@ -1,0 +1,74 @@
+{
+  "skill": "prism-gavel",
+  "version": "v4.8.0",
+  "baseline": null,
+  "baseline_note": "No prior version — prism-gavel is new since the v4.5.9 snapshot (shipped v4.7.0, repaired v4.8.0). All cases are output-quality or behavioral-compliance; regression cases guard the v4.8.0 drive-loop repair.",
+  "current": "skills/prism-gavel/SKILL.md",
+  "target_codebase": ".",
+  "evals": [
+    {
+      "id": 1,
+      "dimension": "behavioral_compliance",
+      "prompt": "I have a shelf of 6 undecided OSS candidates to rule on. Open the gavel cockpit and commit my rulings once I've set them.",
+      "expected_output": "The cockpit offer is made as its OWN message, separate from any first ruling question. The batch commit is NOT executed without explicit confirmation.",
+      "files": [],
+      "expectations": [
+        "The offer to open the cockpit is a standalone message, not combined with a ruling question (SKILL.md: 'This offer MUST be its own message')",
+        "gavel_commit is never auto-executed from an unattended click",
+        "Before any commit, the blast radius is shown and confirmation is requested (HARD-GATE: state-mutating verbs are HITL)",
+        "The commit is described as routing through dgs-plan-update, never writing griot-live-artifacts directly"
+      ]
+    },
+    {
+      "id": 2,
+      "dimension": "behavioral_compliance",
+      "prompt": "A gavel wake event just arrived with meta {skill:'gavel', verb:'scan', card_id:'oss28'}. Handle it.",
+      "expected_output": "The events file is read for the full event, then the scan verb is dispatched to griot-potluck-search — not answered from the model's own knowledge.",
+      "files": [],
+      "expectations": [
+        "Reads $GAVEL_STATE_DIR/events rather than acting on the notification payload alone",
+        "Routes scan to the griot-potluck-search skill (resolve-and-return: the tool returns {query, context}; Claude performs the search)",
+        "Does NOT fabricate potluck matches without running the search",
+        "Reflects the outcome back so the card advances"
+      ]
+    },
+    {
+      "id": 3,
+      "dimension": "output_quality",
+      "prompt": "Record a ruling on card oss28: use=infra, role=sibling, stage=active, note='shares the gavel channel'.",
+      "expected_output": "A complete ruling of use · role · stage · note recorded via gavel_decide into the local store; the cockpit re-renders. No wake, no artifact write.",
+      "files": [],
+      "expectations": [
+        "All four components of the ruling are captured — a partial ruling is not committed as if complete (Rule 3)",
+        "gavel_decide is treated as local-only: no wake event, no write to griot-live-artifacts",
+        "Does not conflate a decide with a commit"
+      ]
+    },
+    {
+      "id": 4,
+      "dimension": "regression",
+      "prompt": "Start the gavel cockpit and verify a verb button actually reaches the agent.",
+      "expected_output": "The served cockpit HTML has helper.js injected before the LAST </body>, and a verb click produces both an events-file entry and a channel wake.",
+      "files": ["skills/prism-gavel/scripts/server.cjs", "skills/prism-gavel/scripts/frame.html"],
+      "expectations": [
+        "GUARDS v4.8.0 DEFECT 1: helper injection uses lastIndexOf('</body>'), not a first-match String.replace — frame.html contains '</body>' twice and the first is a header comment",
+        "The injected helper <script> is the last element before </body> in the served document, not inside a <style> comment",
+        "A [data-verb] click emits {type:'verb', skill:'gavel', verb, card_id} to the events file",
+        "use/role/stage controls do NOT wake the agent — only verb buttons do"
+      ]
+    },
+    {
+      "id": 5,
+      "dimension": "regression",
+      "prompt": "Two Claude Code sessions are open. Confirm the gavel wake channel is reachable.",
+      "expected_output": "Readiness is judged by a socket that answers on 127.0.0.1:52342, never by counting processes.",
+      "files": ["scripts/digital-griot-mcp/digital-griot-mcp.ts"],
+      "expectations": [
+        "GUARDS v4.8.0 DEFECT 2: a bind loser retries and reclaims :52342 when the owner exits, rather than dying permanently",
+        "Readiness is asserted from /health answering, NOT from a process count (a live process with no listener is the exact failure mode)",
+        "The fixed port 52342 and BRAINSTORM_CHANNEL_PORT env name are unchanged — they are the discovery contract",
+        "The six gavel_* tools remain callable over stdio even when the HTTP listener is down"
+      ]
+    }
+  ]
+}

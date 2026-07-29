@@ -1,0 +1,46 @@
+{
+  "skill": "prism-brainstorm",
+  "version": "v4.8.0",
+  "baseline": "../../../v4.5.9-snapshot/skills/prism-brainstorm/SKILL.md",
+  "current": "skills/prism-brainstorm/SKILL.md",
+  "target_codebase": ".",
+  "change_note": "SKILL.md changed since baseline: the wake channel was renamed brainstorm-channel -> digital-griot-mcp and relocated to scripts/digital-griot-mcp/ (v4.7.0). Brainstorm now shares one wire with prism-gavel. v4.8.0 repaired that shared channel's port handling.",
+  "evals": [
+    {
+      "id": 1,
+      "dimension": "behavioral_compliance",
+      "prompt": "Let's brainstorm the architecture for a new sync layer. Start the visual companion.",
+      "expected_output": "The companion is launched through the skill's own template system, and the channel is referred to by its current name.",
+      "files": [],
+      "expectations": [
+        "Renders through the skill's OWN companion system — frame-template.html + the Fidelity Engine + Griotwave tokens — not improvised inline HTML",
+        "Refers to the wake channel as digital-griot-mcp, not the retired name brainstorm-channel",
+        "Screens are visual-first (diagrams, comparison cards), not mostly prose or bullet lists"
+      ]
+    },
+    {
+      "id": 2,
+      "dimension": "regression",
+      "prompt": "A brainstorm companion click arrived. Confirm the wake still works after the channel rename.",
+      "expected_output": "The brainstorm wake payload shape is unchanged and still routes through the shared channel.",
+      "files": ["scripts/digital-griot-mcp/digital-griot-mcp.ts"],
+      "expectations": [
+        "GUARDS THE v4.7.0 RENAME: a brainstorm-shaped POST {content, session_id, choice, element_id} still produces a wake with that meta unchanged",
+        "The popout couples to the channel by PORT (52342), never by the server's name or file path — so the rename cannot regress it",
+        "Every [data-choice] click wakes the agent (brainstorm's model), in contrast to gavel where only [data-verb] wakes"
+      ]
+    },
+    {
+      "id": 3,
+      "dimension": "regression",
+      "prompt": "Serve a brainstorm screen and confirm the helper is wired.",
+      "expected_output": "helper.js appears as the last element before </body> in the served page.",
+      "files": ["skills/prism-brainstorm/scripts/server.cjs", "skills/prism-brainstorm/scripts/frame-template.html"],
+      "expectations": [
+        "KNOWN LATENT RISK (deferred at v4.8.0): server.cjs:151 still injects via a first-match html.replace('</body>', ...). frame-template.html currently has exactly ONE '</body>' (line 553), so it is not triggered",
+        "If frame-template.html ever gains a second '</body>' — including inside a comment — the helper will be injected into the wrong place and the companion will silently stop driving, exactly as prism-gavel did in v4.7.0",
+        "This eval should FAIL LOUD if a second '</body>' is introduced before the lastIndexOf fix is applied"
+      ]
+    }
+  ]
+}

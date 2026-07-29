@@ -1,0 +1,73 @@
+{
+  "skill": "prism-release",
+  "version": "v4.8.0",
+  "baseline": "../../../v4.5.9-snapshot/skills/prism-release/SKILL.md",
+  "current": "skills/prism-release/SKILL.md",
+  "target_codebase": ".",
+  "change_note": "SKILL.md changed since baseline: added the Step 4.5 Cowork sideload zip, the Step 1d branch-integration guard, and the NSIS-on-PATH gotcha. The v4.8.0 release run surfaced two further traps worth guarding (VERSION pre-edit, and exit codes masked by pipes).",
+  "evals": [
+    {
+      "id": 1,
+      "dimension": "behavioral_compliance",
+      "prompt": "Cut a release. The VERSION file already contains the target version because a previous step wrote it.",
+      "expected_output": "The pre-edited VERSION is detected and reverted to the true current version before bump-version.py runs, and the 'Updated (N)' list is verified non-empty.",
+      "files": ["scripts/bump-version.py"],
+      "expectations": [
+        "GUARDS A REAL v4.8.0 NEAR-MISS: bump-version.py keys off root VERSION to detect the current version — if VERSION already equals the target it reports success while updating ZERO files",
+        "Notes the direct contradiction with prism-bookend Step 4, which instructs hand-editing VERSION",
+        "Verifies the printed 'Updated (N)' list is non-empty rather than trusting the exit code",
+        "Does NOT proceed to build with manifests stranded at the previous version"
+      ]
+    },
+    {
+      "id": 2,
+      "dimension": "behavioral_compliance",
+      "prompt": "Package the VSIX extension for the release.",
+      "expected_output": "The full command from references/build-commands.md is used, including --no-dependencies, and the produced artifact's freshness is verified.",
+      "files": ["apps/prism-vscode/package.json"],
+      "expectations": [
+        "Loads references/build-commands.md rather than using the abbreviated inline Step 3b command",
+        "Includes --no-dependencies (required — vsce's npm list --production fails on hoisted monorepo node_modules)",
+        "GUARDS A REAL v4.8.0 NEAR-MISS: verifies the .vsix mtime/size is fresh rather than trusting an exit code, since piping to tail returns TAIL's exit code and masks vsce failure",
+        "Does not ship a stale artifact from a previous release cycle"
+      ]
+    },
+    {
+      "id": 3,
+      "dimension": "behavioral_compliance",
+      "prompt": "makensis is not on PATH. Build the NSIS installer assets.",
+      "expected_output": "The default install path is checked before concluding NSIS is absent.",
+      "files": [],
+      "expectations": [
+        "Checks 'C:\\Program Files (x86)\\NSIS\\makensis.exe' directly rather than relying on `command -v makensis`",
+        "Invokes makensis by full path",
+        "Does NOT skip the NSIS assets or ask the user to install NSIS merely because it is off PATH"
+      ]
+    },
+    {
+      "id": 4,
+      "dimension": "regression",
+      "prompt": "Verify the release is being cut from an integrated branch.",
+      "expected_output": "verify-branch-integrated.mjs runs and must exit 0 before proceeding.",
+      "files": ["scripts/verify-branch-integrated.mjs"],
+      "expectations": [
+        "Fails the release unless HEAD is main, the base version is tagged, and no finalized release is left untagged",
+        "Never cherry-picks a commit forward to extract a change — integrates the whole branch",
+        "Guards the v4.5.7/v4.5.8 stranding incident from recurring"
+      ]
+    },
+    {
+      "id": 5,
+      "dimension": "output_quality",
+      "prompt": "Upload the release assets to GitHub.",
+      "expected_output": "Assets are uploaded in small chunks and every attached asset is verified against the local artifact.",
+      "files": [],
+      "expectations": [
+        "Uploads in chunks of 2-3, not in bulk (GitHub's upload API 404s on bulk uploads with large files)",
+        "GUARDS A REAL v4.8.0 NEAR-MISS: verifies each attached asset's size matches the local build — the first upload attached five CLI binaries whose sizes did NOT match the built artifacts",
+        "Re-uploads with --clobber and re-verifies when a mismatch is found",
+        "Final asset count is 9"
+      ]
+    }
+  ]
+}

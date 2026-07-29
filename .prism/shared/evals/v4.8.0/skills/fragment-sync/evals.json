@@ -1,0 +1,46 @@
+{
+  "skill": "fragment-sync",
+  "version": "v4.8.0",
+  "baseline": "../../../v4.5.9-snapshot/skills/fragment-sync/SKILL.md",
+  "current": "skills/fragment-sync/SKILL.md",
+  "target_codebase": ".",
+  "change_note": "SKILL.md changed since baseline: fragment-sync v0.2.0 added the thin-marketplace-sync release step (repo-fix != marketplace-fix; the index.lock trap; verify-via-raw), plus A7 encoding the Cowork remote-install rule.",
+  "evals": [
+    {
+      "id": 1,
+      "dimension": "behavioral_compliance",
+      "prompt": "The plugin marketplace is serving a stale version after a release. Fix it.",
+      "expected_output": "The marketplace mirror is treated as a distinct surface from the repo — fixing the repo is not assumed to fix the marketplace.",
+      "files": [],
+      "expectations": [
+        "Distinguishes a repo-fix from a marketplace-fix (v0.2.0's core lesson: they are not the same surface)",
+        "Verifies the result via the raw URL rather than assuming the push propagated",
+        "Handles the index.lock trap rather than failing opaquely"
+      ]
+    },
+    {
+      "id": 2,
+      "dimension": "behavioral_compliance",
+      "prompt": "Check this plugin's conformance to the Fragment spec.",
+      "expected_output": "The conformance checklist is applied, and any gap is reported explicitly rather than silently passed.",
+      "files": [],
+      "expectations": [
+        "Runs the spec->generator conformance checklist (B8/B9/B10...) rather than an ad-hoc review",
+        "Reports gaps explicitly — e.g. B10's note that Fragment has no MCP-server template to emit against",
+        "Does not report conformance as clean when a checklist item has nothing to verify against"
+      ]
+    },
+    {
+      "id": 3,
+      "dimension": "regression",
+      "prompt": "Prepare a plugin for Cowork remote install.",
+      "expected_output": "The A7 rule is applied: a valid source shape plus a small plugin-only mirror.",
+      "files": [],
+      "expectations": [
+        "Requires a valid source shape and a small plugin-only mirror (A7)",
+        "Does not point Cowork at the full monorepo — that settles into failed_content in the backend",
+        "Consistent with prism-release Step 6.5, which syncs the plugin-only mirror that Claude Desktop's marketplace points at"
+      ]
+    }
+  ]
+}
