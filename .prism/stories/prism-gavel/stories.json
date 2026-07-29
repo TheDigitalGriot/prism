@@ -6,7 +6,7 @@
       "title": "Scaffold prism-gavel skill",
       "description": "Scaffold the prism-gavel skill: create skills/prism-gavel/{SKILL.md, visual-companion.md, references/, scripts/} mirroring prism-brainstorm and register the skill so the plugin validates, prism-gavel loads as a skill, and brainstorm is unaffected.",
       "priority": 1,
-      "status": "pending",
+      "status": "complete",
       "blockedBy": [],
       "files": [
         "skills/prism-gavel/SKILL.md",
@@ -21,15 +21,15 @@
         "Register prism-gavel in .claude-plugin/plugin.json without touching Prism core.",
         "Verify: plugin validates, prism-gavel loads as a skill, brainstorm still loads unaffected."
       ],
-      "completedAt": null,
-      "commitHash": null
+      "completedAt": "2026-07-28T20:09:38-04:00",
+      "commitHash": "9826249"
     },
     {
       "id": "s-0f7a0813",
       "title": "Generalize channel to digital-griot-mcp",
       "description": "Generalize the channel into digital-griot-mcp: rename and relocate brainstorm-channel to a neutral path, update the plugin.json mcpServers key and channels, repoint brainstorm, and add gavel intents plus the six MCP tools so both siblings ride one shared wire and brainstorm still drives.",
       "priority": 2,
-      "status": "pending",
+      "status": "complete",
       "blockedBy": ["s-dd9c27cf"],
       "files": [
         ".claude-plugin/plugin.json",
@@ -43,15 +43,16 @@
         "Add gavel intents plus the six tools (gavel_state, gavel_decide, gavel_open, gavel_scan, gavel_commit, gavel_verify) to the shared wire.",
         "Verify brainstorm still drives through the renamed channel BEFORE relying on gavel tools; confirm gavel tools are callable."
       ],
-      "completedAt": null,
-      "commitHash": null
+      "completedAt": "2026-07-29T03:39:44-04:00",
+      "commitHash": "14c6a75",
+      "validation": "Verified 2026-07-29: brainstorm-shaped POST to :52342 still wakes with meta {session_id, choice, element_id} unchanged; gavel_state returned the real shelf. Defect found and fixed post-hoc: the channel bound a fixed port with no retry (see .prism/shared/validation/2026-07-29-prism-gavel-report.md, Defect 2)."
     },
     {
       "id": "s-60898f71",
       "title": "Lift Gavel cockpit into the frame",
       "description": "Lift the Gavel cockpit into scripts/frame.html: port the existing Gavel tab cockpit and wire use/role/stage controls, the notes box, and the four verbs via helper.js to the channel so the cockpit renders in the popout and controls both update decision state and emit channel intents.",
       "priority": 3,
-      "status": "pending",
+      "status": "complete",
       "blockedBy": ["s-0f7a0813"],
       "files": [
         "skills/prism-gavel/scripts/frame.html",
@@ -63,15 +64,16 @@
         "Wire the four verbs through helper.js to emit channel intents.",
         "Verify the popout drive works in Cowork early (per the undocumented-channel risk): cockpit renders and controls update state AND emit intents."
       ],
-      "completedAt": null,
-      "commitHash": null
+      "completedAt": "2026-07-29T04:07:19-04:00",
+      "commitHash": "5194945",
+      "validation": "Verified 2026-07-29 — but the acceptance criterion FAILED as originally shipped. helper.js was injected into a CSS comment (server.cjs used a first-match replace on '</body>', which frame.html contains twice), so controls emitted nothing. Fixed with lastIndexOf; cockpit then rendered 6 cards / 4 verbs / use-role-stage and emitted intents. See validation report Defect 1."
     },
     {
       "id": "s-ffac38f6",
       "title": "Wire the four verbs end to end",
       "description": "Wire the four verbs end to end: scan routes to griot-potluck-search, commit writes a batch via dgs-plan-update, open opens a repo/video via Chrome MCP, and verify resolves slug + stars through the resolver, so each verb round-trips click to agent action to reflect.",
       "priority": 4,
-      "status": "pending",
+      "status": "complete",
       "blockedBy": ["s-60898f71"],
       "files": [
         "skills/prism-gavel/scripts/helper.js",
@@ -84,8 +86,9 @@
         "Wire verify -> slug + stars resolver to promote v / u / x.",
         "Verify each verb round-trips: click -> agent acts with real tools -> reflect back to cockpit."
       ],
-      "completedAt": null,
-      "commitHash": null
+      "completedAt": "2026-07-29T04:35:23-04:00",
+      "commitHash": "5c3e0cc",
+      "validation": "Verified 2026-07-29 post-fix. Live scan + verify clicks produced canonical events-file entries and an MCP wake carrying meta {session_id, skill:'gavel', verb, card_id}. commit deliberately NOT fired (HITL HARD-GATE). Round-trip was impossible before the Defect 1 fix."
     },
     {
       "id": "s-f6bbcf35",

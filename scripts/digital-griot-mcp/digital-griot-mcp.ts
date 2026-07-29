@@ -848,8 +848,16 @@ const CORS_HEADERS = {
 }
 
 let httpServer: ReturnType<typeof Bun.serve> | null = null
-try {
-  httpServer = Bun.serve({
+
+// The channel binds a FIXED port (52342) — that port IS the discovery contract
+// server.cjs/helper.js depend on, so it must not become dynamic. But this server is
+// spawned PER Claude Code session, so concurrent sessions race for the bind. Before the
+// retry loop below, every loser logged once to stderr (invisible — MCP stderr is never
+// surfaced) and then gave up forever. When the winning session later exited, the port
+// freed but no survivor ever reclaimed it: live processes, zero listeners, a dead wake
+// channel for both prism-gavel and prism-brainstorm. Losers now stand by and rebind the
+// moment the port frees.
+const CHANNEL_SERVE_OPTIONS = {
   port: CHANNEL_PORT,
   hostname: "127.0.0.1",
   async fetch(req) {
@@ -965,12 +973,41 @@ try {
       headers: { "Content-Type": "application/json", ...CORS_HEADERS },
     })
   },
-})
-} catch (err) {
-  // Port already in use or other startup failure — log but don't crash the MCP process.
-  // The stdio transport should still work even if the HTTP listener fails.
-  console.error("[digital-griot-mcp] HTTP server failed to start:", String(err))
 }
+
+const REBIND_DELAY_MS = 3000
+let rebindTimer: ReturnType<typeof setTimeout> | null = null
+
+// Bind, or stand by and keep trying. Never crashes the MCP process — the stdio transport
+// (and every gavel_* tool) works regardless of whether the HTTP listener is up.
+function bindChannel(): void {
+  try {
+    httpServer = Bun.serve(CHANNEL_SERVE_OPTIONS as Parameters<typeof Bun.serve>[0])
+    if (rebindTimer) {
+      clearTimeout(rebindTimer)
+      rebindTimer = null
+      console.error(
+        `[digital-griot-mcp] HTTP channel RECLAIMED 127.0.0.1:${CHANNEL_PORT} — wake active.`,
+      )
+    } else {
+      console.error(`[digital-griot-mcp] HTTP channel listening on 127.0.0.1:${CHANNEL_PORT}`)
+    }
+  } catch (err) {
+    httpServer = null
+    if (!rebindTimer) {
+      // Log the transition once, not once per retry, so stderr stays readable.
+      console.error(
+        `[digital-griot-mcp] HTTP bind failed (${String(err)}) — another instance owns ` +
+          `:${CHANNEL_PORT}. Standing by; will reclaim it if that instance exits.`,
+      )
+    }
+    rebindTimer = setTimeout(bindChannel, REBIND_DELAY_MS)
+    // Don't hold the process open on the retry timer alone.
+    ;(rebindTimer as unknown as { unref?: () => void }).unref?.()
+  }
+}
+
+bindChannel()
 
 const transport = new StdioServerTransport()
 await server.connect(transport)

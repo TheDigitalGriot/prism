@@ -167,8 +167,13 @@ function handleRequest(req, res) {
     const raw = screenFile ? fs.readFileSync(screenFile, 'utf-8') : (frameHtml || WAITING_PAGE);
     let html = isFullDocument(raw) ? injectChannelMeta(raw) : wrapInFrame(raw);
 
-    if (html.includes('</body>')) {
-      html = html.replace('</body>', helperInjection + '\n</body>');
+    // Inject before the LAST </body>, not the first. frame.html's header comment
+    // contains the literal string "</body>" (it documents this very injection), and
+    // String.replace(str, ...) only substitutes the FIRST match — which buried the
+    // helper inside a CSS comment and silently killed the entire drive loop.
+    const bodyClose = html.lastIndexOf('</body>');
+    if (bodyClose !== -1) {
+      html = html.slice(0, bodyClose) + helperInjection + '\n' + html.slice(bodyClose);
     } else {
       html += helperInjection;
     }
