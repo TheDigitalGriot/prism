@@ -122,8 +122,13 @@ function injectChannelMeta(html) {
   return channelMetaTags + '\n' + html;
 }
 
+// GMCL-C5 · Brainstorm now consumes the shared griot-widget render() primitive. injectMeta preserves
+// Brainstorm's exact channel meta, so output is byte-identical to the pre-extraction wrapInFrame
+// (proven by packages/griot-widget/test.cjs + the on-device real-template equivalence check).
+const { render: griotRender } = require('../../../packages/griot-widget/render.cjs');
+
 function wrapInFrame(content) {
-  return injectChannelMeta(frameTemplate.replace('<!-- CONTENT -->', content));
+  return griotRender(content, { template: frameTemplate, injectMeta: injectChannelMeta });
 }
 
 function getNewestScreen() {

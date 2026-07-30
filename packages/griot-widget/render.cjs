@@ -33,9 +33,16 @@ function loadTemplate(opts) {
  * opts: { template | templatePath, comm?, ember?, fidelity? }
  * A full <html> document is passed through (comm meta only); a fragment is slotted into the frame.
  */
+// applyMeta: a consumer may pass its own exact meta-injector (opts.injectMeta) — this is what lets
+// render() be a byte-identical drop-in for a tool's existing wrap (e.g. Brainstorm injectChannelMeta).
+// Otherwise the default griot-* comm meta from opts.comm is used.
+function applyMeta(html, opts) {
+  return typeof opts.injectMeta === 'function' ? opts.injectMeta(html) : injectCommMeta(html, opts.comm);
+}
+
 function render(content, opts = {}) {
   content = content == null ? '' : String(content);
-  if (isFullDocument(content)) return injectCommMeta(content, opts.comm);
+  if (isFullDocument(content)) return applyMeta(content, opts);
 
   let html = loadTemplate(opts).replace(SLOT, content);
   if (opts.ember) {
@@ -44,7 +51,7 @@ function render(content, opts = {}) {
   if (opts.fidelity) {
     html = html.replace('data-fidelity="hi"', `data-fidelity="${opts.fidelity}"`);
   }
-  return injectCommMeta(html, opts.comm);
+  return applyMeta(html, opts);
 }
 
 module.exports = { render, isFullDocument, injectCommMeta, SLOT };

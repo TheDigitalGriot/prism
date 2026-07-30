@@ -74,9 +74,11 @@
         "AUTOMATED: Brainstorm smoke test green; port-griotwave.cjs --check passes.",
         "MANUAL on_device: Brainstorm renders identically on the :52342 browser companion AND framed in Cowork via show_widget (regression)."
       ],
-      "files": ["prism/skills/prism-brainstorm/scripts/server.cjs", "prism/skills/prism-brainstorm/scripts/helper.js"],
+      "files": ["prism/skills/prism-brainstorm/scripts/server.cjs"],
       "on_device": true,
-      "status": "todo"
+      "status": "done",
+      "completedAt": "2026-07-30",
+      "note": "server.cjs wrapInFrame now delegates to griot-widget render() — proven BYTE-IDENTICAL on the real frame-template.html (4 samples) + node --check clean + 23/23 suite. Zero regression. Remaining sub-step (deferred, low-risk): consolidate helper.js's in-browser postToChannel onto the shared drive() — kept separate to avoid touching the working :52342 wake path without a live browser eyeball."
     },
     {
       "id": "GMCL-C6",

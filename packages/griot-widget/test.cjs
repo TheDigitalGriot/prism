@@ -61,4 +61,16 @@ assert(bindChatCta(fakeRoot, (v) => { driven = v; }) === true); ok('bindChatCta 
 fakeSend._cb();
 assert(driven === 'other answer'); ok('clicking send drives the typed free-text');
 
+// GMCL-C5 · render() is a byte-identical drop-in for the old wrapInFrame (zero regression)
+const injectChannelMetaOld = (html) =>
+  html.replace('</head>', '<meta name="brainstorm-channel-port" content="52342">\n<meta name="brainstorm-session-id" content="s1">\n</head>');
+const frame = '<html><head></head><body><div id="claude-content"><!-- CONTENT --></div></body></html>';
+const wrapOld = (c) => injectChannelMetaOld(frame.replace('<!-- CONTENT -->', c));
+for (const sample of ['<p>hi</p>', '', '<div data-choice="a">A</div>', '<section>x &amp; y</section>']) {
+  assert(render(sample, { template: frame, injectMeta: injectChannelMetaOld }) === wrapOld(sample), 'equiv fragment: ' + sample);
+}
+const fullDoc = '<!DOCTYPE html><html><head></head><body>z</body></html>';
+assert(render(fullDoc, { template: frame, injectMeta: injectChannelMetaOld }) === injectChannelMetaOld(fullDoc));
+ok('render(injectMeta) is byte-identical to the old wrapInFrame — C5 is a zero-regression swap');
+
 console.log(`\nALL ${n} ASSERTIONS PASSED`);
