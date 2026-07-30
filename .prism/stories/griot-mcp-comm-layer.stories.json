@@ -1,0 +1,112 @@
+{
+  "epic": "griot-mcp-comm-layer",
+  "generated": "2026-07-30",
+  "source_plan": ".prism/shared/plans/2026-07-30-griot-mcp-comm-layer-plan.md",
+  "source_ledger": ".prism/shared/brainstorms/2026-07-30-griot-mcp-comm-layer.md",
+  "sequence": ["C", "B", "A"],
+  "stories": [
+    {
+      "id": "GMCL-C1",
+      "phase": "C",
+      "title": "Extract renderFrame() + render() into griot-widget",
+      "requirement": "A new package prism/packages/griot-widget/ exposes render(content, surface?) that injects content into the griotwave frame via the <!-- CONTENT --> slot and applies tokens/ember/fidelity, generalized from wrapInFrame (server.cjs:125-127) and isFullDocument (server.cjs:109-112).",
+      "acceptance": [
+        "AUTOMATED: render('<div>x</div>','browser') returns HTML containing the griotwave :root token block, the content, and browser comm meta; unit test green.",
+        "AUTOMATED: isFullDocument branch preserved — a full <html> doc is not double-wrapped."
+      ],
+      "files": ["prism/packages/griot-widget/frame.cjs", "prism/packages/griot-widget/render.cjs"],
+      "on_device": false,
+      "status": "todo"
+    },
+    {
+      "id": "GMCL-C2",
+      "phase": "C",
+      "title": "Capability manifest + resolveSurface()/rebind()",
+      "requirement": "manifest.cjs defines per-surface entries {renderer,frame,comm,fallback} for browser (WS+:52342), cowork (host sendPrompt), and mcp-app (ui:// stub), plus resolveSurface() and rebind() that re-resolves on drop.",
+      "acceptance": [
+        "AUTOMATED: resolveSurface() returns 'cowork' when globalThis.sendPrompt exists, 'browser' when a :52342 channel meta is present, else the mcp-app/clipboard fallback; unit test green.",
+        "AUTOMATED: manifest lookup returns the correct comm + fallback per surface."
+      ],
+      "files": ["prism/packages/griot-widget/manifest.cjs"],
+      "on_device": false,
+      "status": "todo"
+    },
+    {
+      "id": "GMCL-C3",
+      "phase": "C",
+      "title": "drive() response-hook with fallback ladder",
+      "requirement": "drive.js generalizes helper.js postToChannel/sendEvent (helper.js:21-33) into drive(payload) that feature-detects in order: MCP-App postMessage -> Cowork window.sendPrompt -> :52342 POST -> clipboard copy (the last two rungs are NEW). Host-status reflects the live rung.",
+      "acceptance": [
+        "AUTOMATED: with sendPrompt stubbed, drive({text}) calls it; with only a channel port, it POSTs; with neither, it writes the clipboard; unit test green.",
+        "MANUAL on_device: a CTA click in a Cowork-rendered widget drives the agent."
+      ],
+      "files": ["prism/packages/griot-widget/drive.js"],
+      "on_device": true,
+      "status": "todo"
+    },
+    {
+      "id": "GMCL-C4",
+      "phase": "C",
+      "title": "Agentic free-text CTA component",
+      "requirement": "chat-cta.js provides a reusable griotwave chat input (textarea + Send, Enter-to-send) bound to drive(), shipped in every widget so an 'Other'/free-text answer is always first-class.",
+      "acceptance": [
+        "AUTOMATED: component markup contains a textarea + send control bound to drive; unit test green.",
+        "MANUAL on_device: typing text + Send drives the agent in Cowork."
+      ],
+      "files": ["prism/packages/griot-widget/chat-cta.js", "prism/skills/prism-brainstorm/scripts/frame-template.html"],
+      "on_device": true,
+      "status": "todo"
+    },
+    {
+      "id": "GMCL-C5",
+      "phase": "C",
+      "title": "Re-point Brainstorm to consume the primitive",
+      "requirement": "server.cjs imports render() from griot-widget (replacing inline wrapInFrame/compose, server.cjs:125-154) and helper.js imports the shared drive(); Brainstorm-specific drawer/fidelity/[data-choice] stay as config.",
+      "acceptance": [
+        "AUTOMATED: Brainstorm smoke test green; port-griotwave.cjs --check passes.",
+        "MANUAL on_device: Brainstorm renders identically on the :52342 browser companion AND framed in Cowork via show_widget (regression)."
+      ],
+      "files": ["prism/skills/prism-brainstorm/scripts/server.cjs", "prism/skills/prism-brainstorm/scripts/helper.js"],
+      "on_device": true,
+      "status": "todo"
+    },
+    {
+      "id": "GMCL-C6",
+      "phase": "C",
+      "title": "Broker/registry skeleton + capability handshake",
+      "requirement": "registry.cjs provides register(tool, adapter, {readiness}) and handshake() that declares the active surface/renderer/frame/comm/fallback on entry and hides not-ready adapters (readiness-gated).",
+      "acceptance": [
+        "AUTOMATED: registering an adapter + handshake() returns the resolved manifest; readiness='not-ready' hides the adapter; unit test green."
+      ],
+      "files": ["prism/packages/griot-widget/registry.cjs"],
+      "on_device": false,
+      "status": "todo"
+    },
+    {
+      "id": "GMCL-B1",
+      "phase": "B",
+      "title": "Gavel adapter on griot-widget",
+      "requirement": "Prism Gavel's decision card-stack renders through render() with Gavel's ember and its card buttons drive via the shared drive() hook, registered on the broker.",
+      "acceptance": [
+        "AUTOMATED: a Gavel adapter test renders a card-stack fragment through render() and asserts framed output + a CTA bound to drive; green.",
+        "MANUAL on_device: Gavel card-stack renders framed and a verb button drives the agent on browser + Cowork."
+      ],
+      "files": ["prism/skills/prism-gavel/scripts/"],
+      "on_device": true,
+      "status": "todo"
+    },
+    {
+      "id": "GMCL-A1",
+      "phase": "A",
+      "title": "Cinopsis compare-graph adapter (cross-tool proof)",
+      "requirement": "The Cinopsis compare viewer emits a contract-shaped framed compare-graph (griotwave frame + Cinopsis ember) with re-run/capture CTAs driving via the shared hook, bridging the Python/JS gap by applying the token block server-side rather than importing the JS runtime.",
+      "acceptance": [
+        "AUTOMATED: the adapter produces a framed compare-graph fragment carrying the griotwave :root block + Cinopsis ember + a drive-bound CTA; test green.",
+        "MANUAL on_device: the Cinopsis compare viewer renders framed and a CTA drives the agent."
+      ],
+      "files": ["Cinopsis/scripts/compare_server.py", "Cinopsis/scripts/griot_widget_adapter.py"],
+      "on_device": true,
+      "status": "todo"
+    }
+  ]
+}
