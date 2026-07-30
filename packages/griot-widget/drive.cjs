@@ -35,7 +35,7 @@
       case 'channel':
         try {
           var url = env.channelUrl || ('http://127.0.0.1:' + (env.meta && env.meta.channelPort) + '/channel');
-          if (global.fetch) global.fetch(url, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+          if (global.fetch) global.fetch(url, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).catch(function () {});
         } catch (e) {}
         return 'channel';
       default:

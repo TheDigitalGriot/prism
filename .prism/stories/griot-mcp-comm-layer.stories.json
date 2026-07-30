@@ -3,7 +3,11 @@
   "generated": "2026-07-30",
   "source_plan": ".prism/shared/plans/2026-07-30-griot-mcp-comm-layer-plan.md",
   "source_ledger": ".prism/shared/brainstorms/2026-07-30-griot-mcp-comm-layer.md",
-  "sequence": ["C", "B", "A"],
+  "sequence": [
+    "C",
+    "B",
+    "A"
+  ],
   "stories": [
     {
       "id": "GMCL-C1",
@@ -14,7 +18,9 @@
         "AUTOMATED: render('<div>x</div>','browser') returns HTML containing the griotwave :root token block, the content, and browser comm meta; unit test green.",
         "AUTOMATED: isFullDocument branch preserved — a full <html> doc is not double-wrapped."
       ],
-      "files": ["prism/packages/griot-widget/render.cjs"],
+      "files": [
+        "prism/packages/griot-widget/render.cjs"
+      ],
       "on_device": false,
       "status": "done",
       "completedAt": "2026-07-30",
@@ -29,7 +35,9 @@
         "AUTOMATED: resolveSurface() returns 'cowork' when globalThis.sendPrompt exists, 'browser' when a :52342 channel meta is present, else the mcp-app/clipboard fallback; unit test green.",
         "AUTOMATED: manifest lookup returns the correct comm + fallback per surface."
       ],
-      "files": ["prism/packages/griot-widget/manifest.cjs"],
+      "files": [
+        "prism/packages/griot-widget/manifest.cjs"
+      ],
       "on_device": false,
       "status": "done",
       "completedAt": "2026-07-30",
@@ -44,7 +52,9 @@
         "AUTOMATED: with sendPrompt stubbed, drive({text}) calls it; with only a channel port, it POSTs; with neither, it writes the clipboard; unit test green.",
         "MANUAL on_device: a CTA click in a Cowork-rendered widget drives the agent."
       ],
-      "files": ["prism/packages/griot-widget/drive.cjs"],
+      "files": [
+        "prism/packages/griot-widget/drive.cjs"
+      ],
       "on_device": true,
       "status": "done",
       "completedAt": "2026-07-30",
@@ -59,7 +69,9 @@
         "AUTOMATED: component markup contains a textarea + send control bound to drive; unit test green.",
         "MANUAL on_device: typing text + Send drives the agent in Cowork."
       ],
-      "files": ["prism/packages/griot-widget/chat-cta.cjs"],
+      "files": [
+        "prism/packages/griot-widget/chat-cta.cjs"
+      ],
       "on_device": true,
       "status": "done",
       "completedAt": "2026-07-30",
@@ -74,11 +86,13 @@
         "AUTOMATED: Brainstorm smoke test green; port-griotwave.cjs --check passes.",
         "MANUAL on_device: Brainstorm renders identically on the :52342 browser companion AND framed in Cowork via show_widget (regression)."
       ],
-      "files": ["prism/skills/prism-brainstorm/scripts/server.cjs"],
+      "files": [
+        "prism/skills/prism-brainstorm/scripts/server.cjs"
+      ],
       "on_device": true,
       "status": "done",
       "completedAt": "2026-07-30",
-      "note": "server.cjs wrapInFrame now delegates to griot-widget render() — proven BYTE-IDENTICAL on the real frame-template.html (4 samples) + node --check clean + 23/23 suite. Zero regression. Remaining sub-step (deferred, low-risk): consolidate helper.js's in-browser postToChannel onto the shared drive() — kept separate to avoid touching the working :52342 wake path without a live browser eyeball."
+      "note": "server.cjs wrapInFrame now delegates to griot-widget render() — proven BYTE-IDENTICAL on the real frame-template.html (4 samples) + node --check clean + 23/23 suite. Zero regression. Remaining sub-step (deferred, low-risk): consolidate helper.js's in-browser postToChannel onto the shared drive() — kept separate to avoid touching the working :52342 wake path without a live browser eyeball. [B/A follow-up: drive.cjs channel fetch hardened with .catch() so a dropped wake is never fatal.]"
     },
     {
       "id": "GMCL-C6",
@@ -88,7 +102,9 @@
       "acceptance": [
         "AUTOMATED: registering an adapter + handshake() returns the resolved manifest; readiness='not-ready' hides the adapter; unit test green."
       ],
-      "files": ["prism/packages/griot-widget/registry.cjs"],
+      "files": [
+        "prism/packages/griot-widget/registry.cjs"
+      ],
       "on_device": false,
       "status": "done",
       "completedAt": "2026-07-30",
@@ -103,9 +119,13 @@
         "AUTOMATED: a Gavel adapter test renders a card-stack fragment through render() and asserts framed output + a CTA bound to drive; green.",
         "MANUAL on_device: Gavel card-stack renders framed and a verb button drives the agent on browser + Cowork."
       ],
-      "files": ["prism/skills/prism-gavel/scripts/"],
+      "files": [
+        "prism/skills/prism-gavel/scripts/"
+      ],
       "on_device": true,
-      "status": "todo"
+      "status": "done",
+      "completedAt": "2026-07-30",
+      "note": "server.cjs wrapInFrame now delegates to griot-widget render() (BYTE-IDENTICAL on the real 303KB frame.html, 4 samples) + adapter.cjs registers gavel on the broker + verbs -> shared drive() ladder. node --check clean; adapter.test.cjs 8/8 + griot-widget suite 23/23 green on-device. Live browser/Cowork verb-drive eyeball pending (manual on_device)."
     },
     {
       "id": "GMCL-A1",
@@ -116,9 +136,14 @@
         "AUTOMATED: the adapter produces a framed compare-graph fragment carrying the griotwave :root block + Cinopsis ember + a drive-bound CTA; test green.",
         "MANUAL on_device: the Cinopsis compare viewer renders framed and a CTA drives the agent."
       ],
-      "files": ["Cinopsis/scripts/compare_server.py", "Cinopsis/scripts/griot_widget_adapter.py"],
+      "files": [
+        "Cinopsis/scripts/compare_server.py",
+        "Cinopsis/scripts/griot_widget_adapter.py"
+      ],
       "on_device": true,
-      "status": "todo"
+      "status": "done",
+      "completedAt": "2026-07-30",
+      "note": "griot_widget_adapter.py = REUSABLE theme-driven template (GriotFlaskTheme); frame_viewer() applies griotwave :root token OVERRIDE (recolors the graph to the Cinopsis design system server-side, purple->YT-Red #EF233C, cascade wins by source order) + cinopsis-mark logo + one drive() CTA + inline ladder, graph markup/JS untouched, idempotent. compare_server.py index() wired through it. test 10/10 incl. real 89KB viewer.html + a non-Cinopsis theme genericity proof (Lucid/R3F/Kora reuse path). Live Flask-render eyeball pending (manual on_device)."
     }
   ]
 }
