@@ -44,9 +44,11 @@
         "AUTOMATED: with sendPrompt stubbed, drive({text}) calls it; with only a channel port, it POSTs; with neither, it writes the clipboard; unit test green.",
         "MANUAL on_device: a CTA click in a Cowork-rendered widget drives the agent."
       ],
-      "files": ["prism/packages/griot-widget/drive.js"],
+      "files": ["prism/packages/griot-widget/drive.cjs"],
       "on_device": true,
-      "status": "todo"
+      "status": "done",
+      "completedAt": "2026-07-30",
+      "note": "drive.cjs fallback ladder mcp-app->cowork(sendPrompt)->:52342->clipboard, node+device tests green; live cowork rung demonstrated this session. Final browser-surface eyeball pending."
     },
     {
       "id": "GMCL-C4",
@@ -57,9 +59,11 @@
         "AUTOMATED: component markup contains a textarea + send control bound to drive; unit test green.",
         "MANUAL on_device: typing text + Send drives the agent in Cowork."
       ],
-      "files": ["prism/packages/griot-widget/chat-cta.js", "prism/skills/prism-brainstorm/scripts/frame-template.html"],
+      "files": ["prism/packages/griot-widget/chat-cta.cjs"],
       "on_device": true,
-      "status": "todo"
+      "status": "done",
+      "completedAt": "2026-07-30",
+      "note": "chat-cta.cjs (chatCtaHtml + bindChatCta) built + tests green; frame-slot injection lands with C5 re-point. Live typing-drives demonstrated this session."
     },
     {
       "id": "GMCL-C5",

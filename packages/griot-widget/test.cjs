@@ -36,4 +36,29 @@ assert(reg.get('cinopsis') === null && reg.get('gavel')); ok('get() hides not-re
 const hs = reg.handshake('cowork');
 assert(hs.surface === 'cowork' && hs.manifest.comm === 'sendPrompt' && hs.tools.includes('gavel')); ok('handshake returns manifest + ready tools');
 
+// GMCL-C3 · drive() fallback ladder
+const { drive, detectRung } = require('./drive.cjs');
+assert(detectRung({ mcpApp: true }) === 'mcp-app'); ok('drive detects mcp-app rung');
+assert(detectRung({ sendPrompt: true }) === 'cowork'); ok('drive detects cowork rung');
+assert(detectRung({ meta: { channelPort: 5 } }) === 'channel'); ok('drive detects :52342 channel rung');
+assert(detectRung({}) === 'clipboard'); ok('drive falls through to clipboard');
+let sent = null;
+global.sendPrompt = (t) => { sent = t; };
+assert(drive('hey') === 'cowork' && sent === 'hey'); ok('drive -> cowork actually calls sendPrompt');
+delete global.sendPrompt;
+assert(drive('x') === 'clipboard'); ok('drive with no surface returns clipboard (never a dead end)');
+
+// GMCL-C4 · agentic chat CTA
+const { chatCtaHtml, bindChatCta } = require('./chat-cta.cjs');
+const cta = chatCtaHtml({});
+assert(cta.includes('<textarea') && cta.includes('data-griot-send') && cta.includes('data-griot-chat')); ok('chat CTA renders textarea + send in a griot-chat wrapper');
+// bind against a tiny fake DOM
+let driven = null;
+const fakeInput = { value: 'other answer', addEventListener() {} };
+const fakeSend = { _cb: null, addEventListener(ev, cb) { this._cb = cb; } };
+const fakeRoot = { querySelector(sel) { return sel === '[data-griot-chat]' ? this : (sel.indexOf('send') > -1 ? fakeSend : fakeInput); } };
+assert(bindChatCta(fakeRoot, (v) => { driven = v; }) === true); ok('bindChatCta wires a found chat CTA');
+fakeSend._cb();
+assert(driven === 'other answer'); ok('clicking send drives the typed free-text');
+
 console.log(`\nALL ${n} ASSERTIONS PASSED`);
