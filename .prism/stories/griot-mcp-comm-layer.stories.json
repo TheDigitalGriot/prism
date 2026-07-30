@@ -14,9 +14,11 @@
         "AUTOMATED: render('<div>x</div>','browser') returns HTML containing the griotwave :root token block, the content, and browser comm meta; unit test green.",
         "AUTOMATED: isFullDocument branch preserved — a full <html> doc is not double-wrapped."
       ],
-      "files": ["prism/packages/griot-widget/frame.cjs", "prism/packages/griot-widget/render.cjs"],
+      "files": ["prism/packages/griot-widget/render.cjs"],
       "on_device": false,
-      "status": "todo"
+      "status": "done",
+      "completedAt": "2026-07-30",
+      "note": "render.cjs implemented + 13/13 node test green (test.cjs)"
     },
     {
       "id": "GMCL-C2",
@@ -29,7 +31,9 @@
       ],
       "files": ["prism/packages/griot-widget/manifest.cjs"],
       "on_device": false,
-      "status": "todo"
+      "status": "done",
+      "completedAt": "2026-07-30",
+      "note": "manifest.cjs (resolveSurface/rebind/getManifest) implemented + test green"
     },
     {
       "id": "GMCL-C3",
@@ -80,7 +84,9 @@
       ],
       "files": ["prism/packages/griot-widget/registry.cjs"],
       "on_device": false,
-      "status": "todo"
+      "status": "done",
+      "completedAt": "2026-07-30",
+      "note": "registry.cjs (register/list/get/handshake, readiness-gated) implemented + test green"
     },
     {
       "id": "GMCL-B1",

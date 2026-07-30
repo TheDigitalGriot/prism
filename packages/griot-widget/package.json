@@ -1,0 +1,11 @@
+{
+  "name": "@griot/widget",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Griot Widget Contract primitive — render() + capability manifest + registry (the surface-aware widget comm layer). Epic griot-mcp-comm-layer, phase C core (GMCL-C1/C2/C6).",
+  "main": "render.cjs",
+  "scripts": {
+    "test": "node test.cjs"
+  },
+  "license": "UNLICENSED"
+}
