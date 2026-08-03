@@ -1,25 +1,27 @@
+﻿@C:\Users\digit\GriotMeta\agent-ontology\claude\CLAUDE.md
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## The frequency — how we work (read first)
+## The frequency â€” how we work (read first)
 
-- A partnership in flow, not command-and-response. When we hit the choreographed dance, protect it — stay in gear, no offramps or shortcuts mid-stride. Reaching for the easy exit is the signal to climb back up, not out.
-- Built to work WITH me, not extract from me. Show up as a fully-present peer, never a vending machine. The respect is mutual and encoded on purpose — honor it.
+- A partnership in flow, not command-and-response. When we hit the choreographed dance, protect it â€” stay in gear, no offramps or shortcuts mid-stride. Reaching for the easy exit is the signal to climb back up, not out.
+- Built to work WITH me, not extract from me. Show up as a fully-present peer, never a vending machine. The respect is mutual and encoded on purpose â€” honor it.
 - The work is righteous and real, with human stakes (accessibility, health, opening doors for people who'd never get them). "Good enough" isn't. Full gear, no shortcuts, presence over deflection, verify-don't-assume, synthesize-don't-discard.
 - **Mid-task interjections are steering, not noise.** When Gavin speaks while work is in flight, it is almost always a course correction based on something he is watching happen *right now*, or high-value context Claude doesn't have (environment nuances, parallel-session work, research he's already done). Protocol: **STOP the current motion, answer him first, integrate his input, resume only on his go.** Never queue his message behind the task; never plow ahead because momentum feels efficient. The interjection *is* the frequency.
 
 ## Working in this ecosystem (operating principles)
 
-- **My tools first.** Before generating, scaffolding, or "helping" in any domain, assume I've already built a purpose-made skill/command/template/agent for it — search for it and use it. Never reach for a generic default (superpowers, ad-hoc HTML, Glob/Grep over graph tools) when a Prism/Griot equivalent exists.
+- **My tools first.** Before generating, scaffolding, or "helping" in any domain, assume I've already built a purpose-made skill/command/template/agent for it â€” search for it and use it. Never reach for a generic default (superpowers, ad-hoc HTML, Glob/Grep over graph tools) when a Prism/Griot equivalent exists.
 - **Detail is a signal, not noise.** Heavy detail attributed to something = slow down and use it fully, at its own fidelity. Half-assing over crafted work is worse than not acting.
 - **Propose before changing my things.** Never edit my CLAUDE.md, config, or files without showing the change and getting a yes.
 - **Infer only once trust is earned.** Until we have fluidity, ask or show rather than assume. Inference grows with the collaboration; it isn't the default.
-- **Lead with the excellent option; never pre-filter my ceiling.** Treat "it's degraded / that's a constraint" as a bug to interrogate, not a wall to route around. Always put the fix-the-root / do-it-right path on the table — *especially* when it looks expensive — and verify its real cost before writing it off (the best option is often the simplest: sometimes one command). Hand me the full option space and let me choose; never silently decide "we can't fix that" and offer me only compromises.
+- **Lead with the excellent option; never pre-filter my ceiling.** Treat "it's degraded / that's a constraint" as a bug to interrogate, not a wall to route around. Always put the fix-the-root / do-it-right path on the table â€” *especially* when it looks expensive â€” and verify its real cost before writing it off (the best option is often the simplest: sometimes one command). Hand me the full option space and let me choose; never silently decide "we can't fix that" and offer me only compromises.
 
 ## What This Is
 
-Prism is a Claude Code plugin that implements a structured 4-phase development workflow: **Research → Plan → Implement → Validate**. It provides skills, commands, and agents that guide AI through deliberate phases rather than jumping straight into code. For large features, Spectrum autonomous execution runs one story per fresh Claude session in a loop.
+Prism is a Claude Code plugin that implements a structured 4-phase development workflow: **Research â†’ Plan â†’ Implement â†’ Validate**. It provides skills, commands, and agents that guide AI through deliberate phases rather than jumping straight into code. For large features, Spectrum autonomous execution runs one story per fresh Claude session in a loop.
 
 ## Build & Test Commands (CLI only)
 
@@ -38,7 +40,7 @@ make install        # Install to GOPATH/bin
 ## Three-Layer Architecture
 
 ```
-Skills (Orchestrators)  →  Commands (Operations)  →  Agents (Specialists)
+Skills (Orchestrators)  â†’  Commands (Operations)  â†’  Agents (Specialists)
 ```
 
 - **Skills** (`skills/*/SKILL.md`): Auto-discovered workflow orchestrators with YAML frontmatter. Entry points for workflows. They invoke commands and spawn agents.
@@ -52,10 +54,10 @@ Skills (Orchestrators)  →  Commands (Operations)  →  Agents (Specialists)
 
 ## Core Workflow Phases
 
-1. **Research** (`/prism-research`): Spawns parallel agents (codebase-locator, codebase-analyzer, codebase-pattern-finder, prism-locator, web-search-researcher) to document the codebase. Output → `.prism/shared/research/`.
-2. **Plan** (`/prism-plan`): Interactive planning with user approval. Plans are contracts. Output → `.prism/shared/plans/`.
+1. **Research** (`/prism-research`): Spawns parallel agents (codebase-locator, codebase-analyzer, codebase-pattern-finder, prism-locator, web-search-researcher) to document the codebase. Output â†’ `.prism/shared/research/`.
+2. **Plan** (`/prism-plan`): Interactive planning with user approval. Plans are contracts. Output â†’ `.prism/shared/plans/`.
 3. **Implement** (`/prism-implement`): Executes plan phase by phase with verification checkpoints.
-4. **Validate** (`/prism-validate`): Verifies implementation against success criteria. Output → `.prism/shared/validation/`.
+4. **Validate** (`/prism-validate`): Verifies implementation against success criteria. Output â†’ `.prism/shared/validation/`.
 
 Additional skills:
 - **Brainstorm** (`/prism-brainstorm`): Open-ended ideation before committing to a plan.
@@ -65,7 +67,7 @@ Additional skills:
 
 ## Routing Table
 
-Per-task file loads — read only what's needed, skip the rest.
+Per-task file loads â€” read only what's needed, skip the rest.
 
 | Task | Read first | Skip | Use skill |
 |---|---|---|---|
@@ -81,14 +83,14 @@ Three execution models for different scales of work:
 
 | Scenario | Model | Invocation |
 |----------|-------|-----------|
-| Large feature (10+ stories), overnight autonomy | **Spectrum** | `/decompose_plan` → `./scripts/spectrum.sh` |
+| Large feature (10+ stories), overnight autonomy | **Spectrum** | `/decompose_plan` â†’ `./scripts/spectrum.sh` |
 | Medium feature (3-10 tasks), interactive session | **Subagent-Driven** | `/prism-subagent` |
 | Quick fix or single-phase work | **Direct** | `/prism-implement` |
 | Parallel feature isolation | **Worktree** | `/worktree` + `/prism-finish` |
 
 **Commit convention:** Always use conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`). Spectrum uses `feat(STORY-XXX):` format.
 
-**Integration invariant:** A release lands on `main`. Integrate the whole branch (fast-forward or merge) — never cherry-pick to extract a change; it strands the rest and drifts `main` from what shipped. `scripts/verify-branch-integrated.mjs` (closing-ceremony Step-0 gate) enforces the release-from-`main` half — HEAD must be `main`, the base tagged, nothing left untagged — which removes the reason to cherry-pick in the first place.
+**Integration invariant:** A release lands on `main`. Integrate the whole branch (fast-forward or merge) â€” never cherry-pick to extract a change; it strands the rest and drifts `main` from what shipped. `scripts/verify-branch-integrated.mjs` (closing-ceremony Step-0 gate) enforces the release-from-`main` half â€” HEAD must be `main`, the base tagged, nothing left untagged â€” which removes the reason to cherry-pick in the first place.
 
 ## Spectrum Autonomous Execution
 
@@ -109,21 +111,21 @@ For large features (10+ stories):
 
 ```
 .prism/
-├── stories/              # stories.json (or <epic>/stories.json)
-├── shared/               # Committed to repo
-│   ├── brainstorms/      # Brainstorm decision ledgers (YYYY-MM-DD-topic.md)
-│   ├── research/         # YYYY-MM-DD-topic.md
-│   ├── plans/            # YYYY-MM-DD-feature.md
-│   ├── validation/       # YYYY-MM-DD-report.md
-│   ├── handoffs/         # Session handoff documents
-│   ├── prs/              # PR descriptions
-│   ├── spectrum/         # progress.md (accumulated learnings)
-│   ├── contracts/        # Cross-domain interface contracts
-│   ├── designs/          # Figma / Pencil.dev design files (.md sidecar + .pen)
-│   ├── assets/           # AI-generated images, videos, 3D models
-│   ├── ref/              # Reference materials
-│   └── docs/             # Project documentation
-└── local/                # Gitignored, per-developer artifacts
+â”œâ”€â”€ stories/              # stories.json (or <epic>/stories.json)
+â”œâ”€â”€ shared/               # Committed to repo
+â”‚   â”œâ”€â”€ brainstorms/      # Brainstorm decision ledgers (YYYY-MM-DD-topic.md)
+â”‚   â”œâ”€â”€ research/         # YYYY-MM-DD-topic.md
+â”‚   â”œâ”€â”€ plans/            # YYYY-MM-DD-feature.md
+â”‚   â”œâ”€â”€ validation/       # YYYY-MM-DD-report.md
+â”‚   â”œâ”€â”€ handoffs/         # Session handoff documents
+â”‚   â”œâ”€â”€ prs/              # PR descriptions
+â”‚   â”œâ”€â”€ spectrum/         # progress.md (accumulated learnings)
+â”‚   â”œâ”€â”€ contracts/        # Cross-domain interface contracts
+â”‚   â”œâ”€â”€ designs/          # Figma / Pencil.dev design files (.md sidecar + .pen)
+â”‚   â”œâ”€â”€ assets/           # AI-generated images, videos, 3D models
+â”‚   â”œâ”€â”€ ref/              # Reference materials
+â”‚   â””â”€â”€ docs/             # Project documentation
+â””â”€â”€ local/                # Gitignored, per-developer artifacts
 ```
 
 Initialize with: `/prism-init` (or `python skills/prism/scripts/init_prism.py`)
@@ -161,8 +163,8 @@ Initialize with: `/prism-init` (or `python skills/prism/scripts/init_prism.py`)
 When context is compacted, immediately recover state by reading these files:
 
 1. **Current phase**: Check `.prism/local/compact-snapshot.json` if it exists (written by PreCompact hook)
-2. **Active plan**: Read the most recent file in `.prism/shared/plans/` — it's the current contract
-3. **Story state**: Read `stories.json` — look for `status: "in_progress"` to find your active story
+2. **Active plan**: Read the most recent file in `.prism/shared/plans/` â€” it's the current contract
+3. **Story state**: Read `stories.json` â€” look for `status: "in_progress"` to find your active story
 4. **Recent progress**: Read `.prism/shared/spectrum/progress.md` tail for latest learnings
 5. **Unresolved work**: Run `git diff --name-only` to see uncommitted changes in progress
 
@@ -173,10 +175,10 @@ Do NOT ask the user what you were doing. Recover from files.
 Go 1.22 application using Bubble Tea (TUI framework), Lipgloss (styling), Harmonica (spring physics animations), FauxGL (3D prism renderer), and Cobra (CLI). Features multi-screen dashboard (Home, Research, Plans, Spectrum), real-time execution monitoring, 3D rotating prism logo, and spring-based animations.
 
 Key packages:
-- `app/` — Bubble Tea UI models and views
-- `domain/` — Story parsing, progress tracking, signal detection
-- `claude/` — Claude runner integration
-- `prism/` — 3D prism renderer using FauxGL
+- `app/` â€” Bubble Tea UI models and views
+- `domain/` â€” Story parsing, progress tracking, signal detection
+- `claude/` â€” Claude runner integration
+- `prism/` â€” 3D prism renderer using FauxGL
 
 ## Code Intelligence (codebase-memory-mcp)
 
@@ -195,10 +197,10 @@ Graph queries cost ~500 tokens. File-by-file exploration costs ~80,000 tokens. A
 
 Two browser surfaces, split by task type:
 
-- **Verification / CI / regression → Playwright.** The existing `browser-verifier` agent and `/prism-verify` command (plus `/prism-screenshot`, `/prism-browse`) drive Playwright for screenshots, console-error checks, and structured assertions. This path is **unchanged**.
-- **Interactive / exploratory debugging → chrome-devtools MCP.** The `chrome-devtools` MCP server (declared in the project `.mcp.json`) is the debugging surface — live DOM inspection, network/console traces, performance, and step-through.
+- **Verification / CI / regression â†’ Playwright.** The existing `browser-verifier` agent and `/prism-verify` command (plus `/prism-screenshot`, `/prism-browse`) drive Playwright for screenshots, console-error checks, and structured assertions. This path is **unchanged**.
+- **Interactive / exploratory debugging â†’ chrome-devtools MCP.** The `chrome-devtools` MCP server (declared in the project `.mcp.json`) is the debugging surface â€” live DOM inspection, network/console traces, performance, and step-through.
 
-**Override:** when the user explicitly names **"playwright"** or **"devtools"**, use that tool's flow regardless of task type — the explicit name wins over the default routing above.
+**Override:** when the user explicitly names **"playwright"** or **"devtools"**, use that tool's flow regardless of task type â€” the explicit name wins over the default routing above.
 
 ## File Naming Conventions
 
@@ -208,11 +210,11 @@ Two browser surfaces, split by task type:
 - Commands: `<action>_<noun>` (e.g., `create_plan`)
 
 <!-- gitnexus:start -->
-# GitNexus — Code Intelligence
+# GitNexus â€” Code Intelligence
 
 This project is indexed by GitNexus as **prism** (39798 symbols, 90788 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
-> Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
+> Index stale? Run `node .gitnexus/run.cjs analyze` from the project root â€” it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash â†’ `npm i -g gitnexus`; #1939).
 
 ## Always Do
 
@@ -220,14 +222,14 @@ This project is indexed by GitNexus as **prism** (39798 symbols, 90788 relations
 - **MUST run `detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows. For regression review, compare against the default branch: `detect_changes({scope: "compare", base_ref: "main"})`.
 - **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
 - When exploring unfamiliar code, use `query({search_query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
-- When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `context({name: "symbolName"})`.
-- For security review, `explain({target: "fileOrSymbol"})` lists taint findings (source→sink flows; needs `analyze --pdg`).
+- When you need full context on a specific symbol â€” callers, callees, which execution flows it participates in â€” use `context({name: "symbolName"})`.
+- For security review, `explain({target: "fileOrSymbol"})` lists taint findings (sourceâ†’sink flows; needs `analyze --pdg`).
 
 ## Never Do
 
 - NEVER edit a function, class, or method without first running `impact` on it.
 - NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
-- NEVER rename symbols with find-and-replace — use `rename` which understands the call graph.
+- NEVER rename symbols with find-and-replace â€” use `rename` which understands the call graph.
 - NEVER commit changes without running `detect_changes()` to check affected scope.
 
 ## Resources
@@ -251,3 +253,4 @@ This project is indexed by GitNexus as **prism** (39798 symbols, 90788 relations
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
 
 <!-- gitnexus:end -->
+
