@@ -1,0 +1,619 @@
+{
+  "epic": {
+    "name": "channel-adoption",
+    "source": ".prism/shared/plans/2026-08-04-channel-adoption.md",
+    "qualityGates": [
+      "The converted skill runs to completion under headless `claude -p` (no TTY) without hanging on a former AskUserQuestion gate",
+      "Headless run with empty $STATE_DIR/events takes the documented default for every former gate and completes",
+      "The converted SKILL.md references $SCREEN_DIR (option/progress cards) and $STATE_DIR/events (rulings)",
+      "No new experimental[\"claude/channel\"] live-push is declared (passive-bus floor only)",
+      "claude plugin validate . passes"
+    ],
+    "decisions": [
+      "Passive bus only: capabilities:{tools:{}} + $SCREEN_DIR cards out / $STATE_DIR/events JSONL in. No live-push (interactive-only, inert headless).",
+      "Shared server scripts/digital-griot-mcp/digital-griot-mcp.ts is READ-ONLY reference — unchanged by every story.",
+      "The uniform conversion recipe: (1) detect non-interactive run; (2) replace each AskUserQuestion / interactive-subagent gate with write-card-to-$SCREEN_DIR + read-$STATE_DIR/events; (3) fall through to a documented default when events is empty — never block; (4) emit progress cards at phase boundaries.",
+      "ALL implementation routes through /prism:cl-plugin-structure (Griot-suite gold-standard rule).",
+      "prism-init dual-listing resolved to CONVERT (T-ceremony, light-touch, safe default = do NOT overwrite).",
+      "No browser cockpits / visual-companion.md for converted skills — the bus card is load-bearing; the cockpit is an optional accelerator (out of scope)."
+    ],
+    "references": [
+      "skills/cl-plugin-structure/references/channel-patterns.md#transport-modes",
+      "skills/fragment-sync/references/conformance-checklist.md (row B13)",
+      "skills/prism-brainstorm (reference adopter)",
+      "skills/prism-gavel (reference adopter)",
+      "scripts/digital-griot-mcp/digital-griot-mcp.ts (capabilities:{tools:{}}, $STATE_DIR/events)"
+    ],
+    "outOfScope": [
+      "Building browser cockpits / visual-companion.md for the converted skills",
+      "Adding live-push (experimental[\"claude/channel\"] + notifications/claude/channel)",
+      "Any change to the shared digital-griot-mcp server or its transport",
+      "Re-converting prism-brainstorm / prism-gavel (already done)",
+      "Converting the SKIP set (prism, cl-plugin-structure, fragment-sync)",
+      "Editing the cl-plugin-structure skill itself",
+      "Building the durable run_device_skill(skill,args,answers) MCP invocation verb"
+    ],
+    "risks": [
+      "A default fallthrough that is unsafe (e.g. auto-overwrite, auto-discard, auto-commit) would make a headless run destructive — every default must be the least-destructive choice.",
+      "A skill that still gates on AskUserQuestion anywhere will hang headless — conversions must be exhaustive per skill, not partial.",
+      "prism-closing-ceremony orchestrates bookend/docs-update/release — it is only headless-safe once those three are."
+    ]
+  },
+  "stories": [
+    {
+      "id": "STORY-001",
+      "title": "Headless channel surface: prism-release",
+      "description": "Convert prism-release to a passive-bus channel surface via /prism:cl-plugin-structure. Replace its interactive gates (semver increment choice; the push confirmation; GitHub-release + native-build confirmations) with option cards written to $SCREEN_DIR and rulings read from $STATE_DIR/events. Emit a progress card per build/release step. Defaults when events is empty: accept the commit-derived semver increment; per B12 a release means work is wanted upstream so push proceeds; build the standard asset set. Emits: version-increment card, push-confirm card, per-step progress cards.",
+      "priority": 1,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-release/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure to drive the conversion to Prism patterns", "done": false },
+        { "description": "Add a `## Headless Channel Surface` section documenting the bus contract, cards, and defaults", "done": false },
+        { "description": "Replace each AskUserQuestion gate (increment / push / build / GH-release) with $SCREEN_DIR card + $STATE_DIR/events read + default fallthrough", "done": false },
+        { "description": "Emit a progress card at each build/release step", "done": false },
+        { "description": "Headless smoke-run under `claude -p` (empty events → defaults; seeded events → ruling honored)", "done": false }
+      ],
+      "context": {
+        "why": "prism-release is a proven headless-hang offender in the release chain; it is the highest-value ceremony surface for cloud/CI operation.",
+        "risks": ["The push default must respect B12 (always push on release) yet never push a half-built release — gate the default behind a successful build."],
+        "edgeCases": ["No commits since last tag (increment card should offer 'no-op')", "Native build target unavailable on the headless host"],
+        "patterns": ["skills/prism-gavel/SKILL.md (events-file read on wake)", "skills/prism-brainstorm/SKILL.md (card write to $STATE_DIR)"],
+        "graphTargets": ["skills/prism-release/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-002",
+      "title": "Headless channel surface: prism-bookend",
+      "description": "Convert prism-bookend via /prism:cl-plugin-structure. Replace its version-increment confirmation and docs-snapshot confirmation with a $SCREEN_DIR option card + a $STATE_DIR/events read. Default when events is empty: accept the commit-analysis-suggested semver increment and take the snapshot. Emit progress cards for analyze → suggest → snapshot → sync.",
+      "priority": 1,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-bookend/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (bus contract + increment card + default)", "done": false },
+        { "description": "Replace the increment/snapshot confirmation gate with card + events read + default", "done": false },
+        { "description": "Emit analyze/suggest/snapshot/sync progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "bookend is invoked by closing-ceremony; its headless-safety is a prerequisite for the one-pass wrap.",
+        "risks": ["A wrong default increment ships the wrong version — surface the reasoning on the card so a watching operator can override."],
+        "edgeCases": ["Ambiguous commit history where the increment is not clearly major/minor/patch"],
+        "patterns": ["skills/prism-brainstorm/SKILL.md"],
+        "graphTargets": ["skills/prism-bookend/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-003",
+      "title": "Headless channel surface: prism-docs-update",
+      "description": "Convert prism-docs-update via /prism:cl-plugin-structure. Replace the source-file selection and the VitePress-page overwrite confirmation with a $SCREEN_DIR card + $STATE_DIR/events read. Default when events is empty: use the newest PRISM-DOCUMENTATION-*.md and apply the update. Emit progress cards per page updated.",
+      "priority": 1,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-docs-update/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface`", "done": false },
+        { "description": "Replace source-select + overwrite-confirm gates with card + events read + default (newest doc, apply)", "done": false },
+        { "description": "Emit per-page progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Second link in the closing-ceremony chain; must run clean headless in cloud.",
+        "risks": ["Overwriting hand-edited VitePress pages — the card must show which pages change."],
+        "edgeCases": ["Multiple candidate PRISM-DOCUMENTATION-*.md files present"],
+        "patterns": ["skills/prism-gavel/SKILL.md"],
+        "graphTargets": ["skills/prism-docs-update/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-004",
+      "title": "Headless channel surface: prism-init",
+      "description": "Convert prism-init via /prism:cl-plugin-structure (light-touch). Its only interactive gate is the overwrite confirmation when a .prism/ already exists — replace with a single $SCREEN_DIR option card + $STATE_DIR/events read. Default when events is empty: DO NOT overwrite (safe, non-destructive). Emit a progress card for the scaffold result.",
+      "priority": 1,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-init/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (single overwrite card + safe default)", "done": false },
+        { "description": "Replace the overwrite confirmation with card + events read + default = no-overwrite", "done": false },
+        { "description": "Emit a scaffold-result progress card", "done": false },
+        { "description": "Headless smoke-run (existing .prism → default preserves it)", "done": false }
+      ],
+      "context": {
+        "why": "Dual-listed; resolved to CONVERT because 'init prism' is a top-level surface that prompts on an existing dir.",
+        "risks": ["A destructive default would wipe an existing .prism — default MUST be no-overwrite."],
+        "edgeCases": ["Fresh repo (no gate needed) vs existing .prism (card shown)"],
+        "patterns": ["skills/prism-brainstorm/SKILL.md"],
+        "graphTargets": ["skills/prism-init/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-005",
+      "title": "Headless channel surface: prism-sideload",
+      "description": "Convert prism-sideload via /prism:cl-plugin-structure. Replace any build-target / output-path confirmation with a $SCREEN_DIR card + $STATE_DIR/events read. Default when events is empty: produce the standard Cowork sideload zip at the conventional output path. Emit progress cards for pack → zip → report.",
+      "priority": 1,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-sideload/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface`", "done": false },
+        { "description": "Replace target/path confirmation with card + events read + default", "done": false },
+        { "description": "Emit pack/zip/report progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Sideload builds the Cowork-uploadable zip — the exact artifact a cloud operator produces headless.",
+        "risks": ["Stale cache reuse if the default path collides with a prior zip"],
+        "edgeCases": ["Output dir missing → create vs fail"],
+        "patterns": ["skills/prism-gavel/SKILL.md"],
+        "graphTargets": ["skills/prism-sideload/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-006",
+      "title": "Headless channel surface: prism-finish",
+      "description": "Convert prism-finish via /prism:cl-plugin-structure. Its core gate is the structured option menu (merge / PR / cleanup / discard) — replace with a $SCREEN_DIR option card + $STATE_DIR/events read. Default when events is empty: the LEAST-DESTRUCTIVE option (create/keep PR + keep branch; NEVER discard). Emit a progress card for the chosen action.",
+      "priority": 1,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-finish/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (finish-options card + safe default)", "done": false },
+        { "description": "Replace the merge/PR/cleanup/discard menu with card + events read + default = least-destructive", "done": false },
+        { "description": "Emit an action-result progress card", "done": false },
+        { "description": "Headless smoke-run (empty events → never discards)", "done": false }
+      ],
+      "context": {
+        "why": "finish presents destructive options; unattended it must default to the safe branch.",
+        "risks": ["'discard' as a default would delete work — explicitly forbidden as a fallthrough."],
+        "edgeCases": ["No open PR to update", "Dirty working tree"],
+        "patterns": ["skills/prism-gavel/SKILL.md (HITL-gated mutating verbs)"],
+        "graphTargets": ["skills/prism-finish/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-007",
+      "title": "Headless channel surface: prism-closing-ceremony",
+      "description": "Convert prism-closing-ceremony via /prism:cl-plugin-structure. It orchestrates the Review & Audit gate → bookend → docs-update → release in one pass; each embedded gate becomes a $SCREEN_DIR card + $STATE_DIR/events read, and the Review & Audit verdict is emitted as a card. Default when events is empty: proceed through each sub-ceremony using that sub-skill's documented default, honoring each sub-skill's own HITL gates (push, GH release). Emit a progress card at each ceremony boundary. BLOCKED until its three sub-skills are headless-safe.",
+      "priority": 1,
+      "status": "pending",
+      "blockedBy": ["STORY-001", "STORY-002", "STORY-003"],
+      "files": [{ "path": "skills/prism-closing-ceremony/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` documenting the per-ceremony cards + the Review & Audit verdict card", "done": false },
+        { "description": "Replace embedded gates with card + events read + per-sub-skill defaults (fail-fast preserved)", "done": false },
+        { "description": "Emit a boundary progress card between Review&Audit → bookend → docs-update → release", "done": false },
+        { "description": "Headless smoke-run of the full one-pass chain under `claude -p`", "done": false }
+      ],
+      "context": {
+        "why": "The one-pass release wrap is the flagship cloud-headless ceremony; it only works once its sub-skills do.",
+        "risks": ["A sub-skill still hanging headless would stall the whole ceremony — depends on STORY-001/002/003."],
+        "edgeCases": ["Review & Audit gate FAIL → ceremony must stop with a verdict card, not proceed"],
+        "patterns": ["skills/prism-gavel/SKILL.md", "skills/prism-release/SKILL.md (after STORY-001)"],
+        "graphTargets": ["skills/prism-closing-ceremony/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-008",
+      "title": "Headless channel surface: prism-plan",
+      "description": "Convert prism-plan via /prism:cl-plugin-structure. Replace its interactive 'present understanding → per-section approval' loop and clarifying questions with $SCREEN_DIR cards (an understanding card, then a per-section approval card) + $STATE_DIR/events reads. Default when events is empty: proceed with the drafted plan and mark it Status: awaiting-review (never present as user-approved). Emit progress cards per plan section.",
+      "priority": 2,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-plan/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (understanding + per-section approval cards; awaiting-review default)", "done": false },
+        { "description": "Replace the interactive approval loop with cards + events read + default", "done": false },
+        { "description": "Emit per-section progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Planning is the most interactive core surface; its AskUserQuestion loop is the canonical headless-hang.",
+        "risks": ["A headless plan must not claim human approval it never got — default status = awaiting-review."],
+        "edgeCases": ["Unresolved unknowns that would normally block finalization"],
+        "patterns": ["skills/prism-brainstorm/SKILL.md (per-section approval mirrors decision ledger)"],
+        "graphTargets": ["skills/prism-plan/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-009",
+      "title": "Headless channel surface: prism-implement",
+      "description": "Convert prism-implement via /prism:cl-plugin-structure. Replace its phase-verification checkpoints ('proceed to next phase?') with a $SCREEN_DIR checkpoint card + $STATE_DIR/events read. Default when events is empty: proceed to the next phase ONLY if that phase's automated verification passed; otherwise stop and emit a blocked card. Emit a progress card per phase.",
+      "priority": 2,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-implement/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (checkpoint card + verification-gated default)", "done": false },
+        { "description": "Replace each phase checkpoint with card + events read + default (advance iff verified)", "done": false },
+        { "description": "Emit per-phase progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Phase checkpoints are interactive gates that stall a headless implement run.",
+        "risks": ["Advancing past a failed verification silently — default must gate on the phase's automated checks."],
+        "edgeCases": ["Verification command missing for a phase"],
+        "patterns": ["skills/prism-gavel/SKILL.md"],
+        "graphTargets": ["skills/prism-implement/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-010",
+      "title": "Headless channel surface: prism-design",
+      "description": "Convert prism-design via /prism:cl-plugin-structure. Replace its design-approach approval and source questions with $SCREEN_DIR cards + $STATE_DIR/events read. Default when events is empty: proceed with the drafted architecture/design (mermaid + contracts + data models) marked awaiting-review; skip the interactive source prompt and use provided/ledger sources. Emit progress cards per design section.",
+      "priority": 2,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-design/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface`", "done": false },
+        { "description": "Replace approach-approval + source questions with cards + events read + defaults", "done": false },
+        { "description": "Emit per-section progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Design gates on user buy-in and source selection — both hang headless.",
+        "risks": ["Materializing a .pen without a chosen source — default to ledger/provided sources only."],
+        "edgeCases": ["No brainstorm ledger present"],
+        "patterns": ["skills/prism-brainstorm/SKILL.md"],
+        "graphTargets": ["skills/prism-design/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-011",
+      "title": "Headless channel surface: prism-iterate",
+      "description": "Convert prism-iterate via /prism:cl-plugin-structure. Replace its plan-update approval and 'which changes to re-implement' questions with $SCREEN_DIR cards + $STATE_DIR/events read. Default when events is empty: apply the drafted iteration (plan delta + re-implementation) marked awaiting-review. Emit progress cards for plan-delta → re-implement.",
+      "priority": 2,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-iterate/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface`", "done": false },
+        { "description": "Replace approval/selection gates with cards + events read + default", "done": false },
+        { "description": "Emit plan-delta / re-implement progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Iterate combines plan-update + re-implement; both inherited interactive gates.",
+        "risks": ["Re-implementing changes the operator did not intend — surface the delta on the card."],
+        "edgeCases": ["No prior plan/implementation to iterate on"],
+        "patterns": ["skills/prism-plan/SKILL.md (after STORY-008)"],
+        "graphTargets": ["skills/prism-iterate/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-012",
+      "title": "Headless channel surface: prism-brand",
+      "description": "Convert prism-brand via /prism:cl-plugin-structure. Replace its logo-seed selection (pick among 12 divergent seeds) and mark-refinement choices with $SCREEN_DIR option cards + $STATE_DIR/events read. Default when events is empty: carry the top-ranked seed forward and emit all 12 as a card for later human choice (do not lock a brand unattended). Emit progress cards per stage (seeds → refine → system).",
+      "priority": 2,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-brand/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (seed-selection card + top-ranked default)", "done": false },
+        { "description": "Replace seed/refinement selection with cards + events read + default", "done": false },
+        { "description": "Emit seeds/refine/system progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Brand identity is a high-taste human choice; headless must surface options, not silently lock one.",
+        "risks": ["Auto-committing a brand identity the human never picked — default surfaces, does not finalize."],
+        "edgeCases": ["No brand-profile source present"],
+        "patterns": ["skills/prism-brainstorm/SKILL.md (A/B option cards)"],
+        "graphTargets": ["skills/prism-brand/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-013",
+      "title": "Headless channel surface: prism-eval",
+      "description": "Convert prism-eval via /prism:cl-plugin-structure. Replace its 'which skills/versions to evaluate' and benchmark-confirm prompts with a $SCREEN_DIR card + $STATE_DIR/events read. Default when events is empty: evaluate the current skill version against the immediately previous version and emit the report. Emit progress cards per eval run.",
+      "priority": 2,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-eval/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface`", "done": false },
+        { "description": "Replace selection/confirm gates with card + events read + default (current vs previous)", "done": false },
+        { "description": "Emit per-run progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Eval is a producer surface an operator wants to launch headless and watch.",
+        "risks": ["Running an unbounded benchmark set unattended — default to the current-vs-previous scope."],
+        "edgeCases": ["No previous version to compare against"],
+        "patterns": ["skills/prism-gavel/SKILL.md"],
+        "graphTargets": ["skills/prism-eval/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-014",
+      "title": "Headless channel surface: prism-capture",
+      "description": "Convert prism-capture via /prism:cl-plugin-structure. Replace its source-vocabulary questions with a $SCREEN_DIR card + $STATE_DIR/events read. Default when events is empty: capture the provided references as-is into the capture ledger and flag unknown source fields rather than prompting. Emit a progress card for the captured ledger.",
+      "priority": 2,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-capture/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface`", "done": false },
+        { "description": "Replace source questions with card + events read + default (capture as-is, flag gaps)", "done": false },
+        { "description": "Emit a ledger progress card", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Capture front-loads source Q&A that blocks a headless run.",
+        "risks": ["Losing source provenance — default flags missing fields instead of dropping them."],
+        "edgeCases": ["No references provided at all"],
+        "patterns": ["skills/prism-brainstorm/SKILL.md (source-awareness)"],
+        "graphTargets": ["skills/prism-capture/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-015",
+      "title": "Headless channel surface: prism-prd",
+      "description": "Convert prism-prd via /prism:cl-plugin-structure. Replace its requirements clarifying questions with $SCREEN_DIR cards + $STATE_DIR/events read. Default when events is empty: draft the PRD from the provided scope and mark open requirements as explicit gaps (do not invent). Emit progress cards per PRD section.",
+      "priority": 2,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-prd/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface`", "done": false },
+        { "description": "Replace clarifying questions with cards + events read + default (draft + flag gaps)", "done": false },
+        { "description": "Emit per-section progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "PRD generation is Q&A-heavy; unattended it must draft-and-flag rather than block.",
+        "risks": ["Fabricating requirements to fill a gap — default marks gaps explicitly."],
+        "edgeCases": ["Sparse scope input"],
+        "patterns": ["skills/prism-plan/SKILL.md"],
+        "graphTargets": ["skills/prism-prd/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-016",
+      "title": "Headless channel surface: prism-visual-docs",
+      "description": "Convert prism-visual-docs via /prism:cl-plugin-structure. Replace its flow/wireframe scope questions with $SCREEN_DIR cards + $STATE_DIR/events read. Default when events is empty: generate user flows / wireframes / screen inventory from the provided context and mark assumptions. Emit progress cards per artifact.",
+      "priority": 2,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-visual-docs/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface`", "done": false },
+        { "description": "Replace scope questions with cards + events read + default", "done": false },
+        { "description": "Emit per-artifact progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Visual-docs gates on scope questions before generating artifacts.",
+        "risks": ["Generating the wrong flow scope — surface assumptions on the card."],
+        "edgeCases": ["No UX context provided"],
+        "patterns": ["skills/prism-design/SKILL.md"],
+        "graphTargets": ["skills/prism-visual-docs/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-017",
+      "title": "Headless channel surface: prism-codex-plan-sync",
+      "description": "Convert prism-codex-plan-sync via /prism:cl-plugin-structure. Its interactive gate is the Gavel ceremony that resolves codex OPEN decisions — replace each OPEN decision with a $SCREEN_DIR option card + $STATE_DIR/events read (mirroring the gavel decision surface). Default when events is empty: leave OPEN decisions UNRESOLVED (HITL-safe; never auto-resolve) and still perform the non-decision bidirectional sync (git commit-scope reverse channel). Emit a card per OPEN decision + a sync progress card.",
+      "priority": 2,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-codex-plan-sync/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (OPEN-decision cards; unresolved default)", "done": false },
+        { "description": "Replace the Gavel resolution gate with per-decision cards + events read + default = leave unresolved", "done": false },
+        { "description": "Emit OPEN-decision + sync progress cards; keep the reverse-channel sync running headless", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "The codex<->prism-plan bridge resolves decisions interactively via Gavel; unattended it must sync but not auto-decide.",
+        "risks": ["Auto-resolving an OPEN codex decision headless — explicitly forbidden; default leaves them open."],
+        "edgeCases": ["No OPEN decisions (pure sync path)"],
+        "patterns": ["skills/prism-gavel/SKILL.md (decision cards + events)"],
+        "graphTargets": ["skills/prism-codex-plan-sync/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-018",
+      "title": "Headless channel surface: prism-research",
+      "description": "Convert prism-research via /prism:cl-plugin-structure. It already fans out non-interactive Task agents; add the passive-bus surface (additive) — emit a progress card per dispatched agent (locator/analyzer/pattern-finder/web) and a 'research complete' card. Replace any scope-narrowing question with a $SCREEN_DIR card + $STATE_DIR/events read defaulting to the broad scope. Emits: per-agent progress cards, completion card.",
+      "priority": 3,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-research/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (per-agent progress cards; broad-scope default)", "done": false },
+        { "description": "Replace any scope question with card + events read + default", "done": false },
+        { "description": "Emit per-agent + completion progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Research is a long fan-out; progress cards let a headless operator watch the parallel agents.",
+        "risks": ["Additive change must not gate the fan-out on any card."],
+        "edgeCases": ["An agent returning empty"],
+        "patterns": ["skills/prism-gavel/SKILL.md"],
+        "graphTargets": ["skills/prism-research/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-019",
+      "title": "Headless channel surface: prism-decompose",
+      "description": "Convert prism-decompose via /prism:cl-plugin-structure. Replace its story-boundary / epic-bundling confirmations with a $SCREEN_DIR card + $STATE_DIR/events read. Default when events is empty: emit the drafted stories.json + epic bundling and mark it for review. Emit progress cards per epic bundled.",
+      "priority": 3,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-decompose/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface`", "done": false },
+        { "description": "Replace boundary/bundling confirms with card + events read + default", "done": false },
+        { "description": "Emit per-epic progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Decompose is the queue-builder for Spectrum; it should run headless to feed autonomous loops.",
+        "risks": ["Wrong story boundaries emitted unattended — mark output for review."],
+        "edgeCases": ["Very large spec exceeding a single pass"],
+        "patterns": ["skills/prism-plan/SKILL.md"],
+        "graphTargets": ["skills/prism-decompose/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-020",
+      "title": "Headless channel surface: prism-subagent",
+      "description": "Convert prism-subagent via /prism:cl-plugin-structure. Replace its interactive review-outcome / retry decisions (two-stage review) with $SCREEN_DIR cards + $STATE_DIR/events read. Default when events is empty: follow the bounded-retry policy automatically (retry within bounds, then mark blocked) — never wait on a human. Emit a progress card per task + review stage.",
+      "priority": 3,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-subagent/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (review-outcome cards; bounded-retry default)", "done": false },
+        { "description": "Replace review/retry gates with cards + events read + default (bounded policy)", "done": false },
+        { "description": "Emit per-task + per-review-stage progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Subagent-driven execution already has a bounded-retry policy — headless just formalizes the default.",
+        "risks": ["Infinite retry if the bound is not enforced as the default"],
+        "edgeCases": ["A task failing both review stages"],
+        "patterns": ["skills/prism-gavel/SKILL.md"],
+        "graphTargets": ["skills/prism-subagent/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-021",
+      "title": "Headless channel surface: prism-dispatch",
+      "description": "Convert prism-dispatch via /prism:cl-plugin-structure. Replace any 'which domains to fan out' selection with a $SCREEN_DIR card + $STATE_DIR/events read. Default when events is empty: dispatch all identified independent domains. Emit a progress card per dispatched domain + a merge card.",
+      "priority": 3,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-dispatch/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface`", "done": false },
+        { "description": "Replace domain-selection with card + events read + default (dispatch all)", "done": false },
+        { "description": "Emit per-domain + merge progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Dispatch fans out independent domains; headless should launch all by default.",
+        "risks": ["Selecting a subset silently — default is all identified domains."],
+        "edgeCases": ["Domains with hidden shared state (should not be dispatched in parallel)"],
+        "patterns": ["skills/prism-research/SKILL.md (after STORY-018)"],
+        "graphTargets": ["skills/prism-dispatch/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-022",
+      "title": "Headless channel surface: prism-spectrum",
+      "description": "Convert prism-spectrum via /prism:cl-plugin-structure. It already runs autonomous per-story sessions with a <spectrum-*> signal protocol; add the passive-bus surface — emit a progress card per story (start / gates / signal) and turn any quality-gate-fail human decision into a $SCREEN_DIR card + $STATE_DIR/events read. Default when events is empty: follow the signal protocol (retry within bounds → <spectrum-retry>, then <spectrum-blocked>). Emits: per-story progress cards + gate-fail card.",
+      "priority": 3,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-spectrum/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (per-story progress + gate-fail cards; signal-protocol default)", "done": false },
+        { "description": "Map quality-gate-fail decisions to card + events read + default = signal protocol", "done": false },
+        { "description": "Emit per-story start/gate/signal progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Spectrum is the autonomous loop itself; the cards make its overnight run observable without changing the signal contract.",
+        "risks": ["Card logic must not interfere with the <spectrum-*> signal protocol spectrum.sh parses."],
+        "edgeCases": ["Gate failure at the retry bound → <spectrum-blocked>"],
+        "patterns": ["skills/prism-gavel/SKILL.md"],
+        "graphTargets": ["skills/prism-spectrum/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-023",
+      "title": "Headless channel surface: prism-validate",
+      "description": "Convert prism-validate via /prism:cl-plugin-structure. Add the passive-bus verdict surface (additive) — emit a progress card per verification command and a final verdict card. Replace any manual-verification confirmation with a $SCREEN_DIR card + $STATE_DIR/events read. Default when events is empty: run all automated checks and report manual-verification items as UNVERIFIED-MANUAL (do not block, do not claim pass). Emits: per-check + verdict cards.",
+      "priority": 3,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-validate/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (per-check + verdict cards; unverified-manual default)", "done": false },
+        { "description": "Replace manual-verification confirmation with card + events read + default", "done": false },
+        { "description": "Emit per-check + verdict progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Validate is the ship gate; a headless operator most wants its verdict as a card.",
+        "risks": ["Claiming a manual item passed unattended — default is UNVERIFIED-MANUAL."],
+        "edgeCases": ["A verification command that itself prompts"],
+        "patterns": ["skills/prism-gavel/SKILL.md (verdict marks v/u/x)"],
+        "graphTargets": ["skills/prism-validate/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-024",
+      "title": "Headless channel surface: prism-verify",
+      "description": "Convert prism-verify via /prism:cl-plugin-structure. It drives Playwright via the browser-verifier agent (already headless-capable); add the passive-bus surface (additive) — emit a screenshot/console-assertion verdict card + per-assertion progress cards to $SCREEN_DIR. No AskUserQuestion gate exists, so the default is simply the assertion-derived pass/fail (no fallthrough decision needed). Emits: per-assertion + verdict cards.",
+      "priority": 3,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-verify/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (verdict + per-assertion cards; no gate to remove)", "done": false },
+        { "description": "Emit screenshot/console verdict cards to $SCREEN_DIR", "done": false },
+        { "description": "Confirm no interactive gate remains", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Verify is additive: no hang risk, but its screenshot/verdict is exactly what a headless operator wants surfaced.",
+        "risks": ["Over-building — keep it additive; do not introduce a gate where none exists."],
+        "edgeCases": ["Playwright unavailable on the headless host"],
+        "patterns": ["skills/prism-gavel/SKILL.md"],
+        "graphTargets": ["skills/prism-verify/SKILL.md"]
+      }
+    },
+    {
+      "id": "STORY-025",
+      "title": "Headless channel surface: prism-debug",
+      "description": "Convert prism-debug via /prism:cl-plugin-structure. It fans out non-interactive investigator agents (log/state/git); add the passive-bus surface — emit a findings card per investigator, and replace the post-investigation 'which hypothesis to pursue' selection with a $SCREEN_DIR option card + $STATE_DIR/events read. Default when events is empty: proceed with the highest-confidence hypothesis and record the alternatives on the card. Emits: per-investigator findings cards + hypothesis card.",
+      "priority": 3,
+      "status": "pending",
+      "blockedBy": null,
+      "files": [{ "path": "skills/prism-debug/SKILL.md", "action": "modify" }],
+      "steps": [
+        { "description": "Invoke /prism:cl-plugin-structure", "done": false },
+        { "description": "Add `## Headless Channel Surface` (findings + hypothesis cards; highest-confidence default)", "done": false },
+        { "description": "Replace hypothesis selection with card + events read + default", "done": false },
+        { "description": "Emit per-investigator findings progress cards", "done": false },
+        { "description": "Headless smoke-run", "done": false }
+      ],
+      "context": {
+        "why": "Debug fans out investigators then asks the human to pick a hypothesis — that pick hangs headless.",
+        "risks": ["Pursuing a low-confidence hypothesis silently — record alternatives on the card."],
+        "edgeCases": ["Investigators disagree with no clear top hypothesis"],
+        "patterns": ["skills/prism-research/SKILL.md (after STORY-018)"],
+        "graphTargets": ["skills/prism-debug/SKILL.md"]
+      }
+    }
+  ]
+}
