@@ -1,7 +1,7 @@
 ---
 name: cl-plugin-structure
 description: Use when creating, scaffolding, structuring, or validating plugins for Claude Code or Claude Cowork. Covers the .claude-plugin/plugin.json + marketplace manifest, component organization (agents, skills, slash commands, hooks, MCP/LSP servers, channels), agent/command/hook frontmatter, the .local.md per-project settings pattern, portable paths, surface compatibility, bundled validator scripts, and development workflow. Use this whenever the user mentions building a plugin, a skill, a slash command, a hook, an MCP server, a marketplace, or asks about plugin.json/SKILL.md structure — even if they don't say "plugin" explicitly.
-version: 0.7.3
+version: 0.7.4
 ---
 
 # Plugin Structure for Claude Code and Cowork
@@ -96,7 +96,7 @@ Required when distributing via a marketplace. Different schema from plugin.json.
 | **MCP Servers (remote/HTTP connector)** | `.mcp.json` | JSON | ✅ | ☁️ | **Cowork routes connectors through Anthropic's cloud** — must be publicly internet-reachable, not LAN/firewalled |
 | **LSP Servers** | `.lsp.json` | JSON | ✅ | ❌ | Requires binary in PATH. No Cowork editor surface |
 | **Output Styles** | `output-styles/*.md` | MD | ✅ | ❌ | Claude Code-specific formatting concept |
-| **Channels** | `plugin.json` + MCP server | JSON + TS/JS | ✅ | ❓ | Bound to mcpServers entry; 3 tiers. Cowork behavior undocumented |
+| **Channels** | `plugin.json` + MCP server | JSON + TS/JS | ✅ | ✅ | Bound to mcpServers entry; 3 push tiers + a transport axis -- passive file-bus (tools:{}) runs headless/Cowork, live-push is interactive-only |
 | **`bin/` executables** | `bin/*` | Any | ✅ | ❌ | Added to Bash tool PATH. Cowork has no Bash tool |
 | **Settings** | `settings.json` | JSON | ✅ | ⚠️ | Currently only `agent` key |
 | **userConfig** | `plugin.json` | JSON | ✅ | ✅ | Enable-time prompts. Cowork surfaces via Customize menu |
@@ -185,7 +185,7 @@ Channels are MCP servers that push external events into Claude's context. Three 
 | **Two-way** (+ `tools`) | Above + Claude calls a reply tool to send messages back. |
 | **Permission relay** (+ `claude/channel/permission`) | Above + remote tool approval from phone. v2.1.81+ |
 
-Channel servers must use `@modelcontextprotocol/sdk`, declare `claude/channel` capability, and emit `notifications/claude/channel` events. Bind to an MCP server in `plugin.json`:
+**Transport axis (orthogonal to the tiers):** how events *move*. **Passive bus** -- declare only `capabilities:{tools:{}}` and move events through the filesystem (`$SCREEN_DIR` out / `$STATE_DIR/events` in); runs unchanged headless and in Cowork cloud (what `digital-griot-mcp` uses, and why brainstorm/gavel run headless). **Live-push** -- `claude/channel` + `notifications/claude/channel`; needs an interactive consumer, so it is inert headless. **Griot rule: build on the bus first; layer push on only for interactive surfaces, and never gate skill correctness on a pushed reply.** Bind to an MCP server in `plugin.json`:
 
 ```json
 {
@@ -193,7 +193,7 @@ Channel servers must use `@modelcontextprotocol/sdk`, declare `claude/channel` c
 }
 ```
 
-For server implementation patterns, security (sender gating, pairing flows), permission relay protocol, and integration with hooks/skills: [references/channel-patterns.md](./references/channel-patterns.md)
+For transport modes (passive bus vs live-push), the cloud->local headless invocation contract, server implementation patterns, security (sender gating, pairing flows), permission relay protocol, and integration with hooks/skills: [references/channel-patterns.md](./references/channel-patterns.md)
 
 ## Portable Paths
 
