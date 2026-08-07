@@ -52,7 +52,7 @@ array length + field values, so you never hand-edit a count.
 
 ## Device-side execution + git
 
-The masters' git source of truth is `C:\Users\digit\GriotMeta\griot-live-artifacts\live\`. Scans and
+The masters' git source of truth is `<GriotMeta>/griot-live-artifacts/live/`. Scans and
 git write-backs run **device-side via Windows-MCP PowerShell** — NOT `device_bash` (its VM has no
 GitHub network and times out on big trees) and NOT cloud egress (blocked). Prism plugin skills
 (`prism-plan`, `decompose_plan`, `prism-implement`, `cl-plugin-structure`) load only inside the repo;
