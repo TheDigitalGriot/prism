@@ -52,3 +52,6 @@ prism-eval/
 # housekeeping
 *.bak
 _to_delete/
+
+# ICM experiment workspace (generated brains + cost-of-remembering results; rebuild.py regenerates)
+icm/
