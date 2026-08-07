@@ -4,6 +4,23 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.9.0] - 2026-08-07
+
+### Added
+
+- **Griot Widget comm layer (`packages/griot-widget/`).** A shared local package extracting the per-surface widget plumbing into single-purpose modules: a `render()` primitive proven **byte-identical** to the old bespoke frame-wrapping (via a real-template equivalence test, 23/23 assertions), a capability manifest, a registry/handshake skeleton, a `drive()` fallback ladder (`mcp-app → cowork → :52342 → clipboard`), and an agentic chat CTA component. Gavel rides it via a broker adapter (`skills/prism-gavel/scripts/adapter.cjs`, 8/8 assertions) and `prism-brainstorm`'s server delegates to the shared `render()` — the live browser wake path is unchanged.
+- **New skill: `prism-codex-plan-sync`.** A bidirectional bridge between a Griot codex (an app's one-page architecture artifact) and Prism's plan/stories execution layer. Forward: resolves the codex's OPEN decisions via a Gavel ceremony, emits an epic-keyed plan + stable `stories.json`, and routes to the right executor. Reverse: harvests what shipped back into the codex via git commit scopes, executor-agnostic.
+- **New skill: `icm-architect`.** Designs any process, idea, or knowledge base into an ICM (Interpretable Context Methodology) workspace — folder structure as agent architecture, where one model walking the right files replaces a multi-agent framework. Also restructures existing folders/repos/vaults to ICM conventions.
+- **channel-adoption epic (author-only).** Plan + 25 stories (`.prism/stories/channel-adoption/`) for the headless/cloud passive-bus channel-transport rollout, plus transport documentation in `cl-plugin-structure` and `fragment-sync`. All stories ship `pending` — no skill is converted this release; this is groundwork only.
+
+### Changed
+
+- **Portability repair in root `CLAUDE.md`.** The `@`-import changed from a hardcoded absolute machine path to the home-relative `@~/GriotMeta/agent-ontology/claude/CLAUDE.md`, and cp1252 mojibake was repaired (23 proper U+2014 em-dashes restored). `fragment-sync` and `prism-codex-plan-sync` docs likewise replaced hardcoded machine paths with portable placeholders.
+- **`.gitignore`** now excludes generated/experiment artifacts (`icm/`, `*.bak`, `_to_delete/`).
+- **`prism-closing-ceremony`** captures the Griot Widget Contract and cloud-runnable release routing.
+
+> Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-4.9.0.md`. Known follow-ups: the GMCL-C4 chat CTA and GMCL-C5 browser-side `drive()` unification ship as components but are not yet wired into the live templates/`helper.js` (deferred, tracked).
+
 ## [4.8.0] - 2026-07-29
 
 ### Fixed

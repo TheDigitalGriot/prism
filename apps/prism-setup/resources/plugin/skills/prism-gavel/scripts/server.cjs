@@ -16,6 +16,7 @@ const crypto = require('crypto');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { render: griotRender } = require('../../../packages/griot-widget/render.cjs');
 
 // ========== WebSocket Protocol (RFC 6455) ==========
 
@@ -141,9 +142,10 @@ function injectChannelMeta(html) {
 }
 
 function wrapInFrame(content) {
-  // Gavel's frame.html is a complete document (no <!-- CONTENT --> placeholder), so a
-  // partial screen would just serve the cockpit. S3 never pushes partial screens.
-  return injectChannelMeta(frameHtml.replace('<!-- CONTENT -->', content));
+  // GMCL-B1: delegate to the shared griot-widget render() primitive. Byte-identical to the
+  // old inline wrap (frame.html has no <!-- CONTENT --> placeholder -> the slot-replace is a
+  // no-op and injectChannelMeta runs exactly as before), proven by adapter.test.cjs.
+  return griotRender(content, { template: frameHtml, injectMeta: injectChannelMeta });
 }
 
 function getNewestScreen() {

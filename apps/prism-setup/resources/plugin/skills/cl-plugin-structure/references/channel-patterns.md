@@ -27,6 +27,56 @@ Every channel is an MCP server. What it can do depends on which capabilities it 
 
 Choose the minimum tier needed. One-way is simplest and sufficient for CI alerts, monitoring, and log forwarding.
 
+## Transport Modes -- Live-Push vs Passive Bus (the headless / cloud axis)
+
+The three tiers above describe *what a channel can do*. This section describes *how its events move* -- an orthogonal axis the tiers do not cover, and the one that decides whether a channel works when Claude runs **headless** (Cowork cloud, `claude -p`, CI) instead of in an interactive terminal. Get this wrong and a channel that is perfect on the desktop silently breaks in the cloud.
+
+### Two transport modes
+
+**Live-push (the tiers above).** `capabilities.experimental["claude/channel"]` + the `notifications/claude/channel` method. This requires a **live channel consumer** -- an interactive client attached to the session to receive the push. Under a headless `claude -p` run there is no consumer, so pushed notifications have nowhere to land: the channel's input half is inert, and any skill that *waits* on a pushed reply (or on `AskUserQuestion`) hangs with no TTY to answer. Excellent for phone-relay + real-time interactive wake; **interactive-only.**
+
+**Passive bus (headless / cloud-safe).** The channel server declares only `capabilities: { tools: {} }` and moves events through the **filesystem** instead of the push-notification stream:
+
+- **OUT** -- the server (or the driving skill) writes human-readable option cards as HTML to a per-session `$SCREEN_DIR` the cockpit renders.
+- **IN** -- rulings/events are appended as JSONL to `$STATE_DIR/events`; the server's tools read that file. STATE_DIR resolution precedence: explicit arg -> env var -> newest session dir -> fallback.
+
+Because nothing depends on a live notification listener, the **same server runs unchanged** in an interactive terminal, in Cowork cloud, and under headless `claude -p`. This is the transport `digital-griot-mcp` uses today, and it is why `prism-brainstorm` and `prism-gavel` already run headless.
+
+### The Griot rule: bus is the substrate, push is an optional accelerator
+
+Build every Griot channel on the **passive bus first** -- `capabilities: { tools: {} }` + the file bus is the load-bearing transport. Layer `experimental["claude/channel"]` push on top **only** for interactive surfaces that benefit from real-time wake / phone-relay, and **never let a skill's correctness depend on a pushed reply arriving.** A channel that gates progress on live push is a channel that breaks the moment it runs in the cloud.
+
+- Reference server: `scripts/digital-griot-mcp/digital-griot-mcp.ts` (`capabilities:{tools:{}}`, `$STATE_DIR/events`, `gavel_state` / `gavel_decide` / `gavel_commit`).
+- Reference consumers: `prism-brainstorm`, `prism-gavel`.
+
+### Cloud -> local headless invocation contract
+
+A passive-bus channel is only useful headless if the skill that drives it can actually be **launched** headless from the cloud. The proven, least-brittle pattern (control-tested):
+
+A launcher `.ps1` reads the prompt from a file into a variable and runs claude as a detached process with output to a log:
+
+```powershell
+$p = Get-Content <task>-instructions.md -Raw
+& claude.exe -p $p --agent claude --dangerously-skip-permissions --verbose *> run.log
+```
+
+Launched **detached** so it survives the caller returning, then **polled** -- never awaited in one call:
+
+```powershell
+Start-Process powershell -File launcher.ps1 -PassThru -WindowStyle Hidden
+# then poll: launcher PID alive + claude-child CPU (climbing = working, ~5s flat = hung) + git/file progress
+```
+
+Three non-negotiables, each learned from a real failure:
+
+1. **`--agent claude`** -- a device `claude -p` defaults to whatever agent is persisted (e.g. a digest-writer that ignores the task and just asks for a URL). Pin the general agent explicitly.
+2. **Prompt as a VARIABLE arg read from a FILE** (`& claude -p $p`) -- NOT a `Start-Process -ArgumentList` array (truncates to the first word), NOT a single inline string (quoting breaks -> 0 bytes), NOT a stdin pipe (hangs idle on the unclosed stream).
+3. **Detached + poll** -- the ~45s device/bridge timeout is **per-call, not per-task**. Launch, return, and poll across successive short calls until the process exits.
+
+### The headless-hang caveat (why adoption matters)
+
+Skills that call `AskUserQuestion` or spawn interactive subagents **hang** under headless `claude -p` -- no TTY to answer, so claude sits idle (~5s CPU, 0 output, 0 progress). This is exactly why the release-cycle skills hung headless. The passive-bus adoption **is** the fix: a skill running non-interactively must skip `AskUserQuestion`, emit its decision as a bus card to `$SCREEN_DIR`, and read the ruling from `$STATE_DIR/events` (or fall through to provided defaults) -- never block on an interactive prompt. Durable target: a Griot MCP verb `run_device_skill(skill, args, answers)` that owns the invocation, injects the answers, and polls.
+
 ## Server Constructor
 
 All channels must use the `@modelcontextprotocol/sdk` npm package and declare `claude/channel` as an experimental capability.

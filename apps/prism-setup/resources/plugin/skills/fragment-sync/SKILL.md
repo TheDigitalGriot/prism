@@ -1,7 +1,7 @@
 ---
 name: fragment-sync
 description: Use when Fragment (the create-fragment scaffolder / fragment-plugin) has drifted from the current cl-plugin-structure / Prism standard and needs re-syncing — after Prism advances, before exposing Fragment anywhere, or when scaffolded projects look stale (missing Cowork awareness, channels, or the current model line). Reconciles Fragment so it once again emits "Prism-image" projects. Triggers on "sync fragment", "update fragment", "fragment fell behind", "conform fragment", "fragment is stale".
-version: 0.2.0
+version: 0.2.1
 ---
 
 # Fragment Sync
@@ -22,7 +22,7 @@ If the standard gained a capability, the generator must emit it — and the plug
 1. **The standard** — `../cl-plugin-structure/SKILL.md` (+ its `references/`). The authority. Note its version.
 2. **Prism's own manifest** — `../../.claude-plugin/plugin.json` — a live example of a current plugin (channels, current version).
 3. **The conformance checklist** — [references/conformance-checklist.md](references/conformance-checklist.md). The concrete item-by-item spec, distilled from the last full audit. Update it whenever the standard gains something new.
-4. **Fragment on disk** — default `c:/Users/digit/GriotApps/fragment-ai-scaffold` (confirm the path). Two layers:
+4. **Fragment on disk** — default `<GriotApps>/fragment-ai-scaffold` (confirm the path). Two layers:
    - **Layer A** — `plugins/fragment-plugin/` (the Claude Code plugin: `agents/`, `skills/`, `scripts/`, `.claude-plugin/`).
    - **Layer B** — `packages/create-fragment/` (the CLI + `templates/` — what Fragment *emits*).
 

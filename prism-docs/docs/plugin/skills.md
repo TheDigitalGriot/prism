@@ -124,6 +124,19 @@ Both `prism-gavel` and `prism-brainstorm` ride one shared wake channel, **`digit
 
 **`prism-sideload`** builds a lean, Cowork-uploadable sideload zip of the Prism plugin (tracked components at `HEAD`, via `build-sideload.py`) to bypass Cowork's GitHub-sync path — which caches plugin content server-side and routinely ignores new commits, version bumps, and description edits. Runs in Claude Code (needs Bash + git); the zip is uploaded by hand in Claude Desktop's Cowork UI.
 
+### Integration & Workspace Skills (v4.9.0)
+
+| # | Skill | Lines | Model | Trigger Patterns |
+|---|-------|-------|-------|-----------------|
+| 29 | `prism-codex-plan-sync` | ~86 | — | "plan out the &lt;app&gt; codex", "decompose the codex into stories", "hold a Gavel ceremony on the codex's open decisions", "sync the codex with what we built", "send this change back to the codex" |
+| 30 | `icm-architect` | ~106 | — | "make this an ICM", "ICM this", "build me a workspace", "structure this for agents", "context map", "second brain", "team brain" |
+
+**`prism-codex-plan-sync`** is a bidirectional bridge between a Griot **codex** (the one-page architecture artifact for an app) and Prism's plan/stories execution layer. Forward: it resolves the codex's OPEN decisions first via a Gavel ceremony, emits an epic-keyed plan + a stable `stories.json`, and routes execution to the right Prism executor (`implement` / `subagent` / `dispatch` / `spectrum`) from the story graph. Reverse: it harvests what actually shipped back into the codex, executor-agnostic, by reading git commit scopes — so the architecture doc and the build never silently diverge.
+
+**`icm-architect`** designs any process, idea, or body of knowledge into an **ICM (Interpretable Context Methodology)** workspace — folder structure *as* agent architecture. Numbered folders carry sequencing, hierarchy carries context scoping, and plain markdown files carry state, so one model walking the right files at the right moment replaces a multi-agent framework and a human can see the system's state just by opening a folder. Also restructures an existing folder, repo, or vault to ICM conventions. Method: Interpretable Context Methodology (Van Clief &amp; McDermott, arXiv:2603.16021, MIT-licensed).
+
+**Shared widget spine (v4.9.0).** The per-surface popout plumbing that `prism-brainstorm` and `prism-gavel` grew individually is now extracted into a shared local package, **`packages/griot-widget`** — a `render()` primitive (proven byte-identical to the prior bespoke frame-wrapping), a capability manifest, a registry/handshake, a `drive()` fallback ladder (`mcp-app → cowork → :52342 → clipboard`), and an agentic chat CTA. Gavel rides it via a broker adapter (`skills/prism-gavel/scripts/adapter.cjs`) and Brainstorm's server delegates to the shared `render()`; the live browser wake path is unchanged. This is the groundwork the headless/cloud **channel-adoption** epic builds on.
+
 ## Skill Subdirectory Contents
 
 Each skill directory may contain supporting files:
