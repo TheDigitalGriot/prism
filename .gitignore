@@ -53,5 +53,6 @@ prism-eval/
 *.bak
 _to_delete/
 
-# ICM experiment workspace (generated brains + cost-of-remembering results; rebuild.py regenerates)
-icm/
+# ICM: vendor the method source (methodology + paper + README); ignore only generated brains + harness results (rebuild.py regenerates brains)
+icm/cost-of-remembering/
+icm/brains/
