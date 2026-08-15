@@ -4,6 +4,21 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.10.0] - 2026-08-15
+
+### Added
+
+- **Headless-aware release cycle via answer-injection.** The four end-of-cycle skills (`prism-bookend`, `prism-docs-update`, `prism-release`, `prism-closing-ceremony`) now run unattended under `claude -p` / Cowork cloud / CI. When `PRISM_NONINTERACTIVE` is set, each interactive gate resolves its answer from a static `release-answers.json` instead of prompting; when unset, every gate prompts exactly as before and the answers file is ignored (purely additive — no interactive run changes byte-for-byte).
+- **`scripts/resolve-answer.mjs`** — the shared answer resolver. Pure, unit-testable core (`resolveWith(answers, key, safeDefault)`) with dotted-key traversal, an embedded self-test (22 assertions), and env/arg discovery precedence (`--answers` → `PRISM_RELEASE_ANSWERS` → `.prism/local/release-answers.json`). Destructive gates (`push`, `githubRelease`, `syncMirror`) are **fail-closed** to `false`, and `tagCollision` defaults to `abort` — an unattended run can never force-push or clobber a tag by omission.
+- **Answers templates** — `scripts/release-answers.template.json` (safe default: `dryRun: true`, destructive keys off) and `scripts/release-answers.full-push.example.json` (documented full-release intent). The per-gate key map is documented in `skills/prism-release/references/answers-resolution.md`.
+- **Vendored ICM method source (`icm/`).** Interpretable Context Methodology reference (methodology, templates, paper) for the `icm-architect` skill; generated brains and results stay gitignored.
+
+### Changed
+
+- **`.gitignore`** now excludes `.prism/local/release-answers.json` (machine-specific) and `.prism/*-progress.txt` heartbeat files, while shipping the two example answer templates tracked.
+
+> Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-4.10.0.md`. Known follow-up: tighten `isHeadless` to an explicit allow-list (`1`/`true`) so `PRISM_NONINTERACTIVE=false` cannot accidentally enable headless mode — not exercised by this release, filed from the Step-0 quality review.
+
 ## [4.9.0] - 2026-08-07
 
 ### Added

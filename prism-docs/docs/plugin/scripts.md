@@ -136,6 +136,18 @@ The deterministic half of the closing-ceremony **Review & Audit gate** — run b
 | `verify-ceremony-gate.mjs` | Node | Static guard that the closing ceremony actually wires the Review & Audit gate **ahead of** bookend (gate = Sequence step 0, bookend = step 1) and references `spec-reviewer`, `quality-reviewer`, `pre-release-audit`, and `review-audit-gate` |
 | `verify-story-unification.mjs` | Node | Static guard that the plan → story → execute flow stays unified on `stories.json`. Phased checks: generation (default), `--check-consumers` (implement/subagent), `--check-coherence` (iterate/validate), `--all` (every phase) |
 
+### Headless Release Cycle (v4.10.0)
+
+The release-cycle skills (`prism-bookend`, `prism-docs-update`, `prism-release`, `prism-closing-ceremony`) can run unattended under `claude -p` / Cowork cloud / CI. Each interactive gate resolves its answer from a static answers file when `PRISM_NONINTERACTIVE` is set; when it is unset, every gate prompts exactly as before and the answers file is ignored (purely additive — no interactive run changes).
+
+| Script | Type | Description |
+|--------|------|-------------|
+| `resolve-answer.mjs` | Node | Shared headless answer resolver. `resolveWith(answers, key, safeDefault)` returns `answers[key]` when defined, else the safe default; supports dotted keys (`docs.proceed`, `review.overrideHigh`). **Fail-closed** on destructive gates (`push` / `githubRelease` / `syncMirror` → `false` unless explicitly `true`); `tagCollision` → `abort`. Activation keys on `PRISM_NONINTERACTIVE` (unset ⇒ answers file ignored entirely). Discovery precedence: `--answers <path>` → `PRISM_RELEASE_ANSWERS` → `.prism/local/release-answers.json`. Embedded self-test (`node scripts/resolve-answer.mjs self-test`, 22 assertions) |
+| `release-answers.template.json` | JSON | Safe starting point for an answers file (`dryRun: true`, destructive keys false/omitted) |
+| `release-answers.full-push.example.json` | JSON | Documented example of a full real-release intent (all destructive gates `true`) — authored by the orchestration, never a skill default |
+
+The per-gate key map (which interactive gate reads which answers key, with each safe default) lives in `skills/prism-release/references/answers-resolution.md`. The `.prism/local/release-answers.json` file is gitignored (machine-specific); the two example templates ship tracked.
+
 ### Test Scripts (v3.4.0)
 
 | Script | Description |

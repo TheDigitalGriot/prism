@@ -81,6 +81,8 @@ Both `prism-gavel` and `prism-brainstorm` ride one shared wake channel, **`digit
 
 **`prism-closing-ceremony`** runs the full end-of-cycle ceremony in one fail-fast pass instead of four separate asks: a **Review & Audit gate** — an independent two-stage `spec-reviewer` → `quality-reviewer` review of the diff since the last version tag plus the deterministic `pre-release-audit.mjs` best-practices audit, which must come back clean — then `prism-bookend` → `prism-docs-update` → `prism-release` in that order. Each sub-skill's own gates (push, GitHub release, native builds) are honored.
 
+**Headless release cycle (v4.10.0).** All four release-cycle skills (`prism-bookend`, `prism-docs-update`, `prism-release`, `prism-closing-ceremony`) can now run unattended under `claude -p` / Cowork cloud / CI. When `PRISM_NONINTERACTIVE` is set, each interactive gate resolves its answer from a static `release-answers.json` via `scripts/resolve-answer.mjs` instead of prompting; when it is unset, every gate prompts exactly as before and the answers file is ignored (purely additive). The destructive gates (`push`, `githubRelease`, `syncMirror`) are **fail-closed** — they fire only on an explicit `true`, deliberately inverting the interactive "always push" default so an unattended run can never force-push by omission. Full schema + per-gate key map: `skills/prism-release/references/answers-resolution.md`.
+
 ### Subagent Execution Skills (v3.2.0)
 
 | # | Skill | Lines | Model | Trigger Patterns |

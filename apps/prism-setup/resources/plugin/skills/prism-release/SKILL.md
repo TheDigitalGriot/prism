@@ -10,6 +10,26 @@ Full release pipeline: bump version → build all artifacts → commit → tag �
 
 **Repository**: `TheDigitalGriot/prism`
 
+## Headless mode (PRISM_NONINTERACTIVE)
+
+**If the `PRISM_NONINTERACTIVE` environment variable is set**, this skill runs unattended (Cowork
+cloud / `claude -p` / CI). At each gate below, resolve the answer from the release-answers file
+(`node scripts/resolve-answer.mjs <key> <safeDefault>`) instead of prompting — including the one
+`AskUserQuestion` in Step 1, which **hangs** with no TTY and must be skipped. **If it is unset,
+every gate behaves exactly as today** (the answers file is ignored — purely additive).
+
+Rules for this mode (schema + full key map: `skills/prism-release/references/answers-resolution.md`):
+
+- **Fail-closed destructive gates.** `push` (Step 5), `githubRelease` (Step 6), `syncMirror`
+  (Step 6.5) fire **only** when the answers file sets them `true`. Missing key ⇒ `false`. This
+  deliberately inverts the interactive "always push" policy for unattended runs.
+- **`dryRun` (default true) short-circuits the release.** When `dryRun` resolves truthy, run the
+  pipeline up to — but **not** including — commit/tag (Step 4), push (Step 5), GitHub release
+  (Step 6), mirror sync (Step 6.5), and the amend/tag-force (Step 8). Report what it *would* do.
+- **The deterministic guards keep their teeth.** Step 1b (`claude plugin validate .` + porter) and
+  Step 1d (`verify-branch-integrated.mjs`) are exit-code gates — the injection layer adds **no**
+  bypass; a non-zero exit halts the run.
+
 ## Process
 
 ### Step 1: Determine bump type
@@ -25,6 +45,13 @@ Read the current version from `VERSION` file and show it so the user knows what 
 ```bash
 cat VERSION
 ```
+
+**Headless (R1) — the one `AskUserQuestion`; skip it under `PRISM_NONINTERACTIVE`:** resolve
+`node scripts/resolve-answer.mjs version` first — if a semver string is returned, bump with
+`bump-version.py --set X.Y.Z` (do **not** hand-edit `VERSION` first; see Step 2's trap). Otherwise
+resolve `node scripts/resolve-answer.mjs bump` and use that component. If neither an explicit
+`version` nor a `bump` is provided, **halt** — never silently auto-derive a bump (a wrong bump
+double-increments or ships a major as a patch).
 
 ### Step 1b: Validate plugin manifest + invariant tests
 
@@ -56,6 +83,11 @@ Review EVERY entry before proceeding. For each unexpected modification: identify
 the release) or **confirm it must stay out**. Never let the release's staged-file list silently
 race against concurrent work — and never proceed with unexplained modifications to files the
 release will package (`scripts/`, `skills/`, `hooks/`, `agents/`, `commands/`).
+
+**Headless (R2):** if `PRISM_NONINTERACTIVE` is set, resolve
+`node scripts/resolve-answer.mjs cleanTree porcelain-empty-only`. For the default
+`porcelain-empty-only`, proceed only if `git status --porcelain` is empty; otherwise **halt** — do
+not attempt to reconcile unexplained files unattended.
 
 ### Step 1d: Branch-integration guard (releases land on `main`, never a cherry-pick)
 
@@ -99,6 +131,10 @@ Run these builds. CLI + VSIX can run in parallel, then Electron, then Tauri, the
 
 Load `references/build-commands.md` for the full build command reference.
 
+**Headless (R9):** builds produce local artifacts only (non-destructive). If
+`PRISM_NONINTERACTIVE` is set, run them when `node scripts/resolve-answer.mjs nativeBuilds true`
+resolves truthy; skip and note otherwise.
+
 #### 3a. Cross-compile CLI binaries
 `cd apps/prism-cli && make build-all` — produces 5 binaries in `apps/prism-cli/bin/`.
 
@@ -135,6 +171,11 @@ git commit -m "v{NEW_VERSION}"
 git tag v{NEW_VERSION}
 ```
 
+**Headless (R6 / dryRun):** commit + tag are the first irreversible steps. Under
+`PRISM_NONINTERACTIVE`, if `node scripts/resolve-answer.mjs dryRun true` resolves truthy, **stop
+here** — report the staged file list and the tag that *would* be created, and skip Steps 4.5–8.
+Proceed only when `dryRun` is explicitly `false`.
+
 ### Step 4.5: Build the Cowork sideload zip
 
 Archive the tagged plugin components into an uploadable zip. This runs **after** the commit+tag
@@ -160,7 +201,15 @@ install it via Cowork → Customize → Browse plugins → Upload plugin).
 git push && git push origin v{NEW_VERSION}
 ```
 
+**Headless (R7) — destructive, fail-closed:** if `PRISM_NONINTERACTIVE` is set, push **only** when
+`node scripts/resolve-answer.mjs push false` resolves `true`. Missing/false ⇒ skip the push (the
+commit + tag stay local and reversible) and report the release as built-but-unpushed.
+
 ### Step 6: Create GitHub release
+
+**Headless (R8) — destructive (public), fail-closed:** if `PRISM_NONINTERACTIVE` is set, create the
+GitHub release **only** when `node scripts/resolve-answer.mjs githubRelease false` resolves `true`.
+Missing/false ⇒ skip Step 6 entirely (leave the local artifacts in place).
 
 **IMPORTANT: Upload assets in small chunks (2-3 at a time).** GitHub's upload API returns 404 on bulk uploads with large files. Create the release first with a few small assets, then upload remaining assets separately.
 
@@ -208,6 +257,10 @@ The release should include 9 assets:
 ```bash
 sh scripts/sync-prism-plugin.sh
 ```
+
+**Headless (R10) — destructive (force-push to mirror), fail-closed:** if `PRISM_NONINTERACTIVE` is
+set, run the mirror sync **only** when `node scripts/resolve-answer.mjs syncMirror false` resolves
+`true`. Missing/false ⇒ skip.
 
 Pushes the six plugin dirs to `TheDigitalGriot/prism-plugin` (plugin-only, source ".", single fresh
 commit per sync). Claude Desktop's marketplace points at the mirror — the full monorepo
@@ -296,6 +349,12 @@ git commit --amend --no-edit
 git tag -f v${VERSION}
 ```
 
+**Headless (R11):** this rewrites the release commit and force-moves the tag. Run it only inside the
+same push-gated envelope — i.e. only after Step 4 proceeded (`dryRun:false`). If the push already
+happened (`push:true`), the amend re-tags and the re-push in the release flow keeps the remote in
+sync; if `push:false`, the amend/tag-force stays local and reversible. Under a `dryRun` short-circuit
+this step is never reached.
+
 ### Step 9: Report results
 
 Print a summary with the release URL, snapshot path, and eval case counts.
@@ -316,4 +375,8 @@ Print a summary with the release URL, snapshot path, and eval case counts.
   reports "already installed" when present). Do NOT skip the NSIS assets or ask the user just
   because `makensis` isn't on `PATH`.
 - If git push fails: report the error, do NOT force-push
-- If `gh release create` fails because the tag already exists: ask the user if they want to delete and recreate
+- If `gh release create` fails because the tag already exists: ask the user if they want to delete and recreate.
+  **Headless (R5):** if `PRISM_NONINTERACTIVE` is set, do not ask — resolve
+  `node scripts/resolve-answer.mjs tagCollision abort`. The default `abort` halts the run; never
+  auto delete+recreate a tag unless the answers file explicitly says so (it could clobber a real
+  prior release).
