@@ -32,6 +32,14 @@ commands/agents → their reference pages, count changes → `plugin/statistics.
 - A source documentation file exists at `.prism/shared/docs/PRISM-DOCUMENTATION-[version].md`
 - The `prism-docs/` VitePress site exists with its current structure
 
+## Headless mode (PRISM_NONINTERACTIVE)
+
+**If the `PRISM_NONINTERACTIVE` environment variable is set**, this skill runs unattended: resolve
+the gates below from the release-answers file (`node scripts/resolve-answer.mjs <key> <safeDefault>`)
+instead of prompting. **If it is unset, every gate prompts exactly as today** (the answers file is
+ignored — purely additive). Step 0's source-file selection is already automatic and needs no answer.
+Schema + full key map: `skills/prism-release/references/answers-resolution.md`.
+
 ## Workflow
 
 ### Step 0: Identify Source File
@@ -89,6 +97,9 @@ Proceed with updates?
 
 Wait for user approval before proceeding.
 
+**Headless (D-B):** if `PRISM_NONINTERACTIVE` is set, do not wait. Resolve
+`node scripts/resolve-answer.mjs docs.proceed true` and proceed when it returns `true`.
+
 ### Step 4: Apply Updates
 
 For each page that needs updating, use the appropriate tool:
@@ -111,6 +122,11 @@ If the source doc contains sections that don't map to any existing VitePress pag
 1. Create the new `.md` file in the appropriate directory
 2. Add VitePress frontmatter (title, description, outline)
 3. Update `prism-docs/docs/.vitepress/config.ts` to add the page to the sidebar navigation
+
+**Headless (D-C):** any `config.ts` edit (this sidebar change **and** the Step 6.5 version bump) is
+gated. If `PRISM_NONINTERACTIVE` is set, only edit `config.ts` when
+`node scripts/resolve-answer.mjs docs.editConfig false` returns `true`; otherwise skip the config
+edit (leave it un-bumped and note it) rather than modifying `config.ts` unattended.
 
 ### Step 6: Verify
 
@@ -150,6 +166,10 @@ grep -rn "[0-9]\+\.[0-9]\+\.[0-9]\+" prism-docs/docs/.vitepress/config.ts   # fi
 
 Set every occurrence to `$(cat VERSION)`. If the version appears in a user-facing surface (homepage hero,
 footer, a `themeConfig` field), update those too.
+
+**Headless (D-C):** this bump edits `config.ts`, so it obeys the same `docs.editConfig` gate as
+Step 5 — under `PRISM_NONINTERACTIVE`, apply it only when `docs.editConfig` resolves `true`; else
+skip and report the site version left un-bumped.
 
 ### Step 7: Update the root CHANGELOG (required — most-missed surface)
 

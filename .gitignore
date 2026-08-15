@@ -16,6 +16,9 @@ cmd/prism-cli/prism-cli.exe
 # Go build cache (go.sum is committed for reproducible CI builds)
 # Prism local artifacts (not committed)
 .prism/local/
+# Headless release answers — machine-specific, possibly secret-adjacent; never commit.
+# (covered by .prism/local/ above; kept explicit so the intent is greppable.)
+.prism/local/release-answers.json
 
 # Dev-only MCP config — not shipped with the plugin
 .mcp.json
@@ -56,3 +59,5 @@ _to_delete/
 # ICM: vendor the method source (methodology + paper + README); ignore only generated brains + harness results (rebuild.py regenerates brains)
 icm/cost-of-remembering/
 icm/brains/
+
+.prism/*-progress.txt

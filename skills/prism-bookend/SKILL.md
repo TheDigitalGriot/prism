@@ -17,6 +17,17 @@ Finalize a release cycle with context-aware version bumping, documentation sync,
 - PRISM-DOCUMENTATION-[current-version].md exists in `.prism/shared/docs/`
 - `/prism-docs-update` and `/prism-release` skills available
 
+## Headless mode (PRISM_NONINTERACTIVE)
+
+**If the `PRISM_NONINTERACTIVE` environment variable is set**, this skill runs unattended (Cowork
+cloud / `claude -p` / CI): at each gate below, resolve the answer from the release-answers file
+instead of prompting — `node scripts/resolve-answer.mjs <key> <safeDefault>`. **If it is unset,
+every gate prompts exactly as today** (the answers file is ignored entirely — this mode is purely
+additive). Schema, discovery precedence, and the full per-gate key map:
+`skills/prism-release/references/answers-resolution.md`. Honor `dryRun` (default true) — a dry run
+rehearses up to but not including the release. Decide the version **once** here and carry it
+forward; do not re-derive per phase.
+
 ## Step 1: Analyze Changes
 
 Detect what changed since last version to suggest semantic bump:
@@ -73,6 +84,12 @@ Accept user input:
 - If user provides version: validate semver format (X.Y.Z), use that version
 - Default to suggested version if ambiguous
 
+**Headless (B1):** if `PRISM_NONINTERACTIVE` is set, do not prompt. Resolve
+`node scripts/resolve-answer.mjs version` — if a semver string is returned, use it (via
+`bump-version.py --set`); else resolve `confirmVersion` and accept the suggested bump **only** when
+it is `true`. If neither an explicit `version` nor `confirmVersion:true` is provided, halt (do not
+auto-bump silently).
+
 ## Step 3: Create Documentation Snapshot
 
 Before version bump, archive current docs as [old-version]:
@@ -107,6 +124,11 @@ The skill will:
 
 Present the plan to user before proceeding.
 
+**Headless (B2/B3):** if `PRISM_NONINTERACTIVE` is set, do not wait for plan approval. Resolve
+`node scripts/resolve-answer.mjs docs.proceed true` (proceed on true) and gate VitePress
+config/sidebar edits on `node scripts/resolve-answer.mjs docs.editConfig false` (skip config edits
+unless explicitly `true`).
+
 ## Step 6: Create Release
 
 Invoke `/prism-release` with the new version:
@@ -138,7 +160,7 @@ The skill will:
 3. **Context-aware** — If no version provided, analyze commits and suggest increment
 4. **Validate semver** — Ensure new version follows semantic versioning (X.Y.Z)
 5. **Chain workflows** — Explicitly invoke `/prism-docs-update` then `/prism-release` as sub-steps
-6. **Stop at gates** — Get user approval before each major phase (version bump, docs sync, release)
+6. **Stop at gates** — Get user approval before each major phase (version bump, docs sync, release). Under `PRISM_NONINTERACTIVE`, resolve each phase's answer via `scripts/resolve-answer.mjs` (see the Headless mode section) instead of pausing; destructive steps stay fail-closed.
 
 ## Semantic Version Guide
 

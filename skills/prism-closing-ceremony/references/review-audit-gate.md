@@ -46,6 +46,9 @@ v4.5.8 shipped off a feature branch, untagged, and `main` drifted two releases b
 - Fix — or have the user fix — every **High**, then re-run B + C until clean.
 - **Do not proceed to Bookend with an unresolved High.** This is the ceremony's fail-fast contract.
 - A human may override a specific High to proceed, but the override must be explicit and logged in the
-  release notes / bookend snapshot (never a silent bypass).
+  release notes / bookend snapshot (never a silent bypass). **Headless (`PRISM_NONINTERACTIVE`):**
+  resolve `node scripts/resolve-answer.mjs review.overrideHigh false` — the default `false` keeps the
+  fail-fast halt; an override fires only when the answers file explicitly sets it `true`, and it must
+  still be logged. Schema: `skills/prism-release/references/answers-resolution.md`.
 
 Only when the gate is clean (or explicitly overridden) does the ceremony continue to Bookend → Docs → Release.
