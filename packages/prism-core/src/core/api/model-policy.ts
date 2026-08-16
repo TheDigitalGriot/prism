@@ -398,3 +398,38 @@ export function emitModelEvent(
     return null
   }
 }
+
+// ---------------------------------------------------------------------------
+// Writer
+// ---------------------------------------------------------------------------
+
+/**
+ * Persist a policy to `<projectRoot>/.prism/local/model-policy.json` (pretty
+ * JSON, trailing newline), creating `.prism/local` if needed. The single write
+ * path reused by any surface that lets a user change a model's approval mode
+ * (VS Code chip, tray, mobile) so the store's location stays defined in one
+ * place. Unlike `emitModelEvent`, this THROWS on failure — a lost policy write
+ * must be surfaced to the user, not swallowed. Returns the written file path.
+ */
+export function writeModelPolicy(projectRoot: string, policy: Policy): string {
+  const file = path.join(projectRoot, ".prism", "local", "model-policy.json")
+  fs.mkdirSync(path.dirname(file), { recursive: true })
+  fs.writeFileSync(file, JSON.stringify(policy, null, 2) + "\n", "utf8")
+  return file
+}
+
+/**
+ * Convenience: set a single model's approval mode and persist. Reads the current
+ * policy (or its safe default / legacy-derived fallback), updates
+ * `models[model].mode`, writes it back, and returns the persisted policy.
+ */
+export function setModelMode(
+  projectRoot: string,
+  model: string,
+  mode: ApprovalMode,
+): Policy {
+  const policy = readModelPolicy(projectRoot)
+  policy.models = { ...policy.models, [model]: { mode } }
+  writeModelPolicy(projectRoot, policy)
+  return policy
+}

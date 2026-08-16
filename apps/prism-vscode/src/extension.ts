@@ -1,11 +1,18 @@
 import * as vscode from "vscode"
+import * as path from "path"
 import { VscodeWebviewProvider } from "./hosts/vscode/VscodeWebviewProvider"
 import { PrismPanelProvider } from "./hosts/vscode/PrismPanelProvider"
 import { ResearchTreeDataProvider } from "./providers/research-tree"
 import { PlansTreeDataProvider } from "./providers/plans-tree"
 import { StoriesTreeDataProvider } from "./providers/stories-tree"
 import { WorkflowStatusBar } from "./providers/workflow-status"
+import { ModelStatusBar, ModelDecisionsProvider } from "./providers/model-status"
 import { BrainstormViewerWatcher } from "./prism/brainstormViewerWatcher"
+import {
+  readModelPolicy,
+  setModelMode,
+  type ApprovalMode,
+} from "@prism-core/core/api/model-policy"
 
 let _provider: VscodeWebviewProvider | undefined
 let _panelProvider: PrismPanelProvider | undefined
@@ -29,15 +36,50 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const plansTree = new PlansTreeDataProvider()
   const storiesTree = new StoriesTreeDataProvider()
   const statusBar = new WorkflowStatusBar()
+  const modelStatusBar = new ModelStatusBar()
+  const modelDecisions = new ModelDecisionsProvider()
 
-  context.subscriptions.push(researchTree, plansTree, storiesTree, statusBar)
+  context.subscriptions.push(
+    researchTree,
+    plansTree,
+    storiesTree,
+    statusBar,
+    modelStatusBar,
+    modelDecisions,
+  )
 
   // Register tree views
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider("prism.research", researchTree),
     vscode.window.registerTreeDataProvider("prism.plans", plansTree),
     vscode.window.registerTreeDataProvider("prism.stories", storiesTree),
+    vscode.window.registerTreeDataProvider("prism.modelDecisions", modelDecisions),
   )
+
+  // ---------------------------------------------------------------------------
+  // Model Control Plane — chip + receipts wired to the shared bus events file.
+  // ---------------------------------------------------------------------------
+  const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
+  modelStatusBar.setRoot(workspaceRoot)
+  modelDecisions.setRoot(workspaceRoot)
+  if (workspaceRoot) {
+    // Model-decision events land under .prism/local/gavel/<session>/state/events
+    // (the session dir is dynamic), so watch the whole gavel subtree for `events`.
+    const eventsWatcher = vscode.workspace.createFileSystemWatcher(
+      new vscode.RelativePattern(
+        path.join(workspaceRoot, ".prism", "local", "gavel"),
+        "**/events",
+      ),
+    )
+    const onModelEvent = (): void => {
+      modelStatusBar.refresh()
+      modelDecisions.refresh()
+    }
+    eventsWatcher.onDidChange(onModelEvent)
+    eventsWatcher.onDidCreate(onModelEvent)
+    eventsWatcher.onDidDelete(onModelEvent)
+    context.subscriptions.push(eventsWatcher)
+  }
 
   // Subscribe to file changes → refresh relevant tree + panel webviews
   context.subscriptions.push(
@@ -109,6 +151,57 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(
     vscode.commands.registerCommand("prism.openSidebar", async () => {
       await vscode.commands.executeCommand("prism.sidebar.focus")
+    }),
+
+    // Model Control Plane — set a premium model's approval mode via QuickPick.
+    vscode.commands.registerCommand("prism.model.setMode", async () => {
+      const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
+      if (!root) {
+        void vscode.window.showWarningMessage(
+          "Prism: open a workspace folder to set a model policy.",
+        )
+        return
+      }
+      const modelPick = await vscode.window.showQuickPick(
+        [
+          { label: "opus5", description: "Opus 5" },
+          { label: "fable5", description: "Fable 5 — capped weekly Max allowance" },
+        ],
+        { placeHolder: "Set approval mode for which premium model?" },
+      )
+      if (!modelPick) return
+      const current = readModelPolicy(root).models[modelPick.label]?.mode ?? "ask"
+      const modeHints: Record<ApprovalMode, string> = {
+        ask: "prompt for confirmation each call",
+        allow: "run; emit a bus event (monitored)",
+        deny: "block; downgrade to the next runnable model",
+        skip: "run without approval (bypass)",
+      }
+      const modePick = await vscode.window.showQuickPick(
+        (["ask", "allow", "deny", "skip"] as ApprovalMode[]).map((m) => ({
+          label: m,
+          description: m === current ? `current — ${modeHints[m]}` : modeHints[m],
+        })),
+        { placeHolder: `Approval mode for ${modelPick.label} (current: ${current})` },
+      )
+      if (!modePick) return
+      try {
+        setModelMode(root, modelPick.label, modePick.label as ApprovalMode)
+        modelStatusBar.refresh()
+        modelDecisions.refresh()
+        void vscode.window.showInformationMessage(
+          `Prism: ${modelPick.label} → ${modePick.label}`,
+        )
+      } catch (err) {
+        void vscode.window.showErrorMessage(
+          `Prism: failed to write model policy — ${String(err)}`,
+        )
+      }
+    }),
+
+    vscode.commands.registerCommand("prism.modelDecisions.refresh", () => {
+      modelDecisions.refresh()
+      modelStatusBar.refresh()
     }),
 
     vscode.commands.registerCommand("prism.research", async () => {
