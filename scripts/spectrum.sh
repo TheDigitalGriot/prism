@@ -12,6 +12,10 @@
 #   SPECTRUM_VERBOSE:           Enable verbose output (default: false)
 #   SPECTRUM_PAUSE:             Seconds between iterations (default: 2)
 #
+# Deterministic subagent caps — passed explicitly to each worker (Claude Code >= 2.1.217):
+#   CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS:  Max subagents a worker runs at once (default: 3)
+#   CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH:  Max subagent spawn depth (default: 2)
+#
 # Approval hook (spectrum-approval.sh) env vars — passed explicitly to each worker:
 #   SPECTRUM_SUPERVISED:        Set to any non-empty value (e.g. "1") to enable the
 #                               controller approval protocol. Unset = unsupervised
@@ -397,11 +401,17 @@ SHIM
     # and SPECTRUM_APPROVAL_TIMEOUT must be explicit here — relying on ambient env
     # inheritance is fragile (the hook runs inside the spawned Claude session, not in
     # the user's shell). Using --print to capture output for signal checking.
+    # Deterministic subagent caps (CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS /
+    # CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH) are pinned explicitly so a worker's fan-out is
+    # bounded and reproducible run-to-run. Requires Claude Code >= 2.1.217 (older versions
+    # ignore these vars harmlessly). Override via the environment to widen or tighten.
     if [[ "$VERBOSE" == "true" ]]; then
         output=$(cd "$PROJECT_DIR" && \
             SPECTRUM_WORKER_STORY_ID="$story_id" \
             SPECTRUM_SUPERVISED="${SPECTRUM_SUPERVISED:-}" \
             SPECTRUM_APPROVAL_TIMEOUT="${SPECTRUM_APPROVAL_TIMEOUT:-3}" \
+            CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS="${CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS:-3}" \
+            CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH="${CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH:-2}" \
             PRISM_PROJECT_DIR="$PROJECT_DIR" \
             "$shim_path" "$prompt" 2>&1 | tee /dev/stderr) || exit_code=$?
     else
@@ -409,6 +419,8 @@ SHIM
             SPECTRUM_WORKER_STORY_ID="$story_id" \
             SPECTRUM_SUPERVISED="${SPECTRUM_SUPERVISED:-}" \
             SPECTRUM_APPROVAL_TIMEOUT="${SPECTRUM_APPROVAL_TIMEOUT:-3}" \
+            CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS="${CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS:-3}" \
+            CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH="${CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH:-2}" \
             PRISM_PROJECT_DIR="$PROJECT_DIR" \
             "$shim_path" "$prompt" 2>&1) || exit_code=$?
     fi

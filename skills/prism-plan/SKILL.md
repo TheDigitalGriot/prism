@@ -37,6 +37,8 @@ Do NOT invoke any implementation skill, write any production code, scaffold any 
 
 ## Workflow
 
+> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
+
 ### 1. Load Context
 
 If research document exists:

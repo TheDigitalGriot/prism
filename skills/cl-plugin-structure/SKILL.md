@@ -254,11 +254,12 @@ For the four-leaks audit framing, full routing-table syntax, room-file examples,
 
 ## Model Configuration (Claude Code current model line)
 
-As of July 2026, all four tiers are enabled — three for routine routing, plus Fable 5 as a HITL-gated escalation:
+As of July 2026, all five tiers are enabled — four for routine routing, plus Fable 5 as a HITL-gated escalation:
 
 | Tier | Frontmatter | When to reach for it |
 |---|---|---|
-| **Opus 4.8** | `model: opus` | Deep analysis, planning, critical reasoning — the **routine ceiling** for all standard work |
+| **Opus 5** | `model: opus5` | Deep analysis, planning, critical reasoning — the **routine ceiling** for all standard work (parallel `opus5` key; `opus`/`best` flip here later) |
+| **Opus 4.8** | `model: opus` | Reachable A/B target just below the ceiling — `opus`/`best` stay pinned here until the flip |
 | **Sonnet 4.6** | `model: sonnet` | General work, implementation, pattern-finding |
 | **Haiku 4.5** | `model: haiku` | Fast lookups, locators, mechanical commands |
 | **Fable 5** | `model: claude-fable-5` | **Gated escalation only** — enabled under Max subscription, but reached via the HITL gate, never a resting agent default (see below) |
@@ -267,7 +268,7 @@ As of July 2026, all four tiers are enabled — three for routine routing, plus 
 
 For the Opus/Sonnet/Haiku aliases: from Claude 4.6 onward, dateless IDs like `claude-opus-4-8` are **pinned snapshots**, not evergreen aliases — use the alias form (`model: opus`) for auto-updates, the full ID for pinning.
 
-Effort levels on Opus 4.7+: `low`, `medium`, `high`, `xhigh`, `max`. Default on Opus 4.8 is `high`. Set `effort: xhigh` in agent frontmatter for heavier reasoning; reserve `max` for one-shot critical work (it's session-only). The `ultrathink` keyword anywhere in a prompt triggers deeper reasoning on a single turn without changing session effort.
+Effort levels on Opus 4.7+ (including Opus 5): `low`, `medium`, `high`, `xhigh`, `max`. Default on Opus 5 and Opus 4.8 is `high`. On **Opus 5**, `low`/`medium` are strong enough for most routine dispatch — lower the effort dial for cost rather than dropping to a weaker tier, and keep thinking ON. Set `effort: xhigh` in agent frontmatter for heavier reasoning; reserve `max` for one-shot critical work (it's session-only). On Opus 5, `effort: xhigh|max` triggers a **one-shot confirm** — a per-call effort guard (headless-aware, always emits a visibility event), categorically **not** a Fable-style model gate; Opus 5 has no gate and no flag. The `ultrathink` keyword anywhere in a prompt triggers deeper reasoning on a single turn without changing session effort.
 
 For long-session work, append `[1m]` to the alias or pinned ID: `model: opus[1m]` opens the 1M-token context window. Fable 5 always uses 1M context — no suffix needed.
 

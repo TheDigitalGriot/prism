@@ -18,6 +18,8 @@ Execute a plan task-by-task in **this session** using fresh implementer subagent
 | 10+ stories, autonomous overnight | [prism-spectrum](../prism-spectrum/SKILL.md) |
 | Parallel investigation of unrelated failures | [prism-debug](../prism-debug/SKILL.md) |
 
+> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
+
 ## Core Loop
 
 1. **Pre-flight** — the **work-definition is `.prism/stories/stories.json`** (emitted from the plan; schema at `.prism/shared/contracts/stories-contract.md`). Seed [state.json](references/state-schema.md) from it: **one story = one task, keyed by the story `id`**, carrying each story's `files`, `steps`, `priority`, and `blockedBy`. `state.json` holds only runtime status — it never redefines the tasks. If `stories.json` is missing (a legacy plan), run `decompose_plan` on the plan to emit stories first, then seed. (The legacy `python ${CLAUDE_PLUGIN_ROOT}/scripts/extract-tasks.py <plan-path>` path parses a plan straight into a **non-story-keyed** `state.json` — treat it as degraded / manual-reconciliation only, never an equivalent to `decompose_plan`, since its tasks carry no story `id`.) Review and adjust before dispatching.
@@ -29,7 +31,7 @@ Execute a plan task-by-task in **this session** using fresh implementer subagent
    5. Dispatch **quality-reviewer** with diff + story context
    6. On reviewer ❌ → fix loop bounded by [retry-ladder](references/retry-ladder.md)
    7. Update state.json, mark complete
-3. **Final pass** — single full-implementation reviewer → hand off to [prism-finish](../prism-finish/SKILL.md)
+3. **Hand off** — once every task has passed its two-stage review, hand off to [prism-finish](../prism-finish/SKILL.md). No separate final full-implementation re-review pass: the per-task `spec-reviewer` and `quality-reviewer` already provide independent cross-review of each implementer's diff, and under Opus 5 a blanket re-verify-the-whole-thing pass is redundant self-verification.
 
 ## Iron Laws
 

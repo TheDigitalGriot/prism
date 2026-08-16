@@ -29,6 +29,8 @@ This skill applies the chunking discipline from [Iterative Development](https://
 - **No requirement is dropped during chunking.** Every behavioral requirement maps to exactly one story — partial coverage is a failure mode, not an acceptable tradeoff.
 - **Epics are execution-context containers.** An epic is a set of stories that fit within a single spectrum session (≈200K context: stories.json + progress.md + CLAUDE.md + one story at a time). When requirements exceed this, split into multiple epics with explicit dependency ordering.
 
+> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
+
 ## Process
 
 ### Step 1: Read the Full Spec

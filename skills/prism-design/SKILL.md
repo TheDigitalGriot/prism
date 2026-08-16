@@ -67,6 +67,8 @@ Default `true` — ledger is required. If no ledger exists in `.prism/shared/bra
 
 ## Workflow
 
+> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
+
 ### 1. Load Ledger
 
 Read the most recent (or user-named) ledger from `.prism/shared/brainstorms/`. Error and redirect if `require_brainstorm: true` and none found.

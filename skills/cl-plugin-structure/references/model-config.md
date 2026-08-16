@@ -25,7 +25,8 @@ As of **June 2026**:
 | Model | Full Model ID | Alias | Pricing (in / out per MTok) | Context | Effort levels |
 |---|---|---|---|---|---|
 | **Fable 5** | `claude-fable-5` | none — use pinned ID | $10 / $50 | 1M (default = max) | low, medium, high, xhigh, max (via `output_config.effort` — see §5) |
-| **Opus 4.8** | `claude-opus-4-8` | `opus`, `best` | $5 / $25 | 1M | low, medium, high (default), xhigh, max |
+| **Opus 5** | `claude-opus-5` | `opus5` (parallel key; `opus`/`best` roll here on flip — see §2) | $5 / $25 | 1M (128K output) | low, medium, high (default), xhigh, max |
+| **Opus 4.8** | `claude-opus-4-8` | `opus`, `best` (A/B — until flip) | $5 / $25 | 1M | low, medium, high (default), xhigh, max |
 | **Sonnet 4.6** | `claude-sonnet-4-6` | `sonnet` | $3 / $15 | 1M | low, medium, high (default), max |
 | **Haiku 4.5** | `claude-haiku-4-5-20251001` | `haiku` (also `claude-haiku-4-5`) | $1 / $5 | 200K | none (no adaptive thinking) |
 
@@ -35,7 +36,9 @@ As of **June 2026**:
 
 > **Mythos 5** (`claude-mythos-5`) — identical to Fable 5 in capabilities, pricing, and API surface. Available only through Project Glasswing. Succeeds the deprecated `claude-mythos-preview`. Everything in §5 applies to both models.
 
-**Opus 4.8** was released May 28, 2026 and is the current Anthropic API default for `opus`. It fixes the verbosity and tool-calling regressions found in Opus 4.7, and is the **right default for most plugin work** — reaches Fable-class quality on all standard RPIV workflows at ~38% of the cost.
+**Opus 4.8** was released May 28, 2026 and is the current Anthropic API default for `opus`. It fixes the verbosity and tool-calling regressions found in Opus 4.7, and is the **right default for most plugin work** — reaches Fable-class quality on all standard RPIV workflows at ~38% of the cost. It stays reachable as a **parallel A/B target** (`opus`/`best` remain pinned to it) while Opus 5 rolls out under its own `opus5` key.
+
+**Opus 5** (`claude-opus-5`) is the **routine ceiling** for standard Prism work on this line — it supersedes Opus 4.8 on capability at the same $5 / $25 price, adds a 128K max-output ceiling on the 1M context window, and defaults to `high` effort with a re-swept low/medium that are now strong enough for most routine dispatch (§4). It ships as a **parallel `opus5` key**: `opus`/`best` stay pinned to Opus 4.8 so both models are reachable for A/B eval until we flip the aliases (§2). Its API surface is Opus-family — **no Fable-style HITL gate** and no `opus5.flag`; the only add-on is a light effort guard: `effort: xhigh|max` triggers a **one-shot confirm** (§4), a per-call effort control, not a model-level gate.
 
 ---
 
@@ -54,6 +57,8 @@ As of **June 2026**:
 
 This change matters most for plugin authors. A plugin shipping `model: claude-opus-4-6` in 2025 used to drift forward automatically; today the same string is pinned to the 4.6 release. Update intentionally.
 
+**Opus 5 rollout — parallel `opus5` key.** Opus 5 ships under its own pinned key `opus5 → claude-opus-5` while the `opus`/`best` aliases stay pinned to `claude-opus-4-8`, so both models are reachable side-by-side for A/B eval. Agents that should ride the routine ceiling stay on the `opus` alias and roll forward **only when we flip** it (`opus`/`best` → `claude-opus-5`); the runtime map is pinned, so nothing moves silently. When the flip lands, `opus → claude-opus-5` and the parallel `opus5` key can be retired.
+
 ---
 
 ## 3. Per-Provider Alias Resolution
@@ -67,6 +72,8 @@ Aliases resolve differently per provider — the same `model: opus` runs a diffe
 | Bedrock / Vertex AI / Microsoft Foundry | Opus 4.6 | Sonnet 4.5 | not available |
 
 **Fable 5 has no alias** — always use the full pinned ID `claude-fable-5` in agent/skill frontmatter. Fable 5 is not available on Bedrock, Vertex AI, or Microsoft Foundry; requests there will fail.
+
+**Opus 5** resolves via the parallel `opus5` key (`opus5 → claude-opus-5`) on the Anthropic API (direct); until the alias flip (§2), `opus`/`best` continue to resolve as the table above shows. When shipping to third-party providers, pin explicitly — `export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-5'` once the ceiling flips — rather than relying on alias roll-forward.
 
 **If you ship plugins to third-party providers**, set the env vars rather than rely on alias resolution:
 
@@ -87,6 +94,7 @@ The `effort` field in agent or skill frontmatter controls adaptive reasoning. Hi
 | Model | Supported effort levels |
 |---|---|
 | **Fable 5**, Mythos 5 | `low`, `medium`, `high`, `xhigh`, `max` — via `output_config.effort` API param (see §5) |
+| **Opus 5** | `low`, `medium`, `high`, `xhigh`, `max` — via frontmatter `effort` (`xhigh`/`max` trigger a one-shot confirm — see below) |
 | **Opus 4.8**, Opus 4.7 | `low`, `medium`, `high`, `xhigh`, `max` — via frontmatter `effort` |
 | Opus 4.6, Sonnet 4.6 | `low`, `medium`, `high`, `max` — via frontmatter `effort` |
 | Earlier / Haiku | typically none |
@@ -94,11 +102,16 @@ The `effort` field in agent or skill frontmatter controls adaptive reasoning. Hi
 **Defaults:**
 
 - Fable 5: `medium` (the `output_config.effort` default; Fable is powerful enough that medium covers most tasks)
+- Opus 5: `high` — but its `low`/`medium` are now **strong enough for most routine dispatch** (see the re-sweep note below); keep thinking ON and lower the effort dial for cost rather than dropping to a weaker model
 - Opus 4.8: `high`
 - Opus 4.7: `xhigh`
 - Opus 4.6 / Sonnet 4.6: `high`
 
 If you set a level the active model doesn't support, Claude Code falls through to the highest supported level at or below it. Example: `xhigh` runs as `high` on Opus 4.6.
+
+**Opus 5 effort re-sweep (cost discipline).** Opus 5's `low` and `medium` reach what took `high`/`xhigh` on prior Opus tiers, so the cheaper way to save spend is to **lower the effort dial, not disable thinking or route to a weaker tier**. Re-baseline routine dispatch toward `medium` and reserve `high`+ for genuine architectural judgment. This is the "keep thinking ON, lower effort for cost" rule from the Opus 5 prompting guide.
+
+**`effort: xhigh|max` one-shot confirm (Opus 5 visibility add-on).** On Opus 5, requesting `xhigh` or `max` triggers a **one-shot confirm** — a per-call effort guard, categorically different from Fable's model-level HITL gate (there is **no** Fable-style gate on Opus 5, and no `opus5.flag`). The confirm is an **app-surface control**: it is **headless-aware** — in non-interactive runs it auto-resolves via the `resolve-answer.mjs` pattern rather than blocking — and it **always emits a visibility event** to the file bus so the escalation is legible on the Cowork/headless surface (never silent). The interactive control itself is built on the app surface; this section is the documentation of its contract.
 
 **Usage in plugin agent/skill frontmatter (Opus-tier):**
 
@@ -235,6 +248,9 @@ The `[1m]` suffix only applies when the underlying model supports it. Claude Cod
 | `xhigh` effort level | v2.1.111 |
 | `/model` saves default | v2.1.153 |
 | Sonnet 4.6 1M context | latest stable |
+| Deterministic subagent caps (`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`, `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`) | v2.1.217 |
+
+**Deterministic subagent caps.** `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` and `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` bound how many subagents a run spawns at once and how deep the spawn tree goes, making fan-out reproducible run-to-run. Set them in the launcher env (Prism pins them in `scripts/spectrum.sh`, defaults `3` / `2`). They require **Claude Code ≥ 2.1.217**; older versions ignore the vars harmlessly. This is part of the Opus 5 prompting-guide sweep — pair the caps with the effort re-sweep (§4) rather than leaving concurrency unbounded.
 
 Run `claude update` before relying on the newest model. If you're shipping a plugin that targets Opus 4.8 features, document the minimum version in your README.
 

@@ -34,6 +34,7 @@ import {
   mapTaskNotificationUserContentToToolCall,
 } from "./claude/task-notification-tool-call.js";
 import { getClaudeModels, normalizeClaudeRuntimeModelId } from "./claude/claude-models.js";
+import { emitModelEvent, policyKeyForModel, resolveModelDecision } from "../model-policy.js";
 import { parsePartialJsonObject } from "./claude/partial-json.js";
 import { ClaudeSidechainTracker } from "./claude/sidechain-tracker.js";
 import {
@@ -2331,6 +2332,32 @@ class ClaudeAgentSession implements AgentSession {
       base.model = this.config.model;
     }
     this.lastOptionsModel = base.model ?? null;
+
+    // Model Control Plane — govern this dispatch lane through the shared policy so
+    // NON-Anthropic lanes (gemini, gpt, local GriotModel, kimi) become visible +
+    // governable by the same `<cwd>/.prism/local/model-policy.json`, keyed by
+    // provider + model. Emitting the decision surfaces it in the CLI statusline and
+    // the VS Code receipts view alongside every other surface. Best-effort: policy
+    // resolution / telemetry must never break a dispatch.
+    if (base.model && this.config.cwd) {
+      try {
+        const decision = resolveModelDecision({
+          requested: policyKeyForModel(this.provider, base.model),
+          surface: "paseo",
+          projectRoot: this.config.cwd,
+          env: process.env,
+        });
+        emitModelEvent(this.config.cwd, {
+          requested: decision.requested,
+          resolved: decision.model,
+          mode: decision.mode,
+          surface: "paseo",
+          downgradedFrom: decision.downgradedFrom,
+        });
+      } catch {
+        // governance / telemetry must never break a dispatch
+      }
+    }
     if (this.claudeSessionId) {
       base.resume = this.claudeSessionId;
     }

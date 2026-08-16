@@ -19,6 +19,9 @@ cmd/prism-cli/prism-cli.exe
 # Headless release answers — machine-specific, possibly secret-adjacent; never commit.
 # (covered by .prism/local/ above; kept explicit so the intent is greppable.)
 .prism/local/release-answers.json
+# Model Control Plane policy store — per-machine; see committed model-policy.example.json.
+# (covered by .prism/local/ above; kept explicit so the intent is greppable.)
+.prism/local/model-policy.json
 
 # Dev-only MCP config — not shipped with the plugin
 .mcp.json

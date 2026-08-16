@@ -63,6 +63,11 @@
           "id": "prism.stories",
           "name": "Stories",
           "when": "prism.hasStoriesJson"
+        },
+        {
+          "id": "prism.modelDecisions",
+          "name": "Model Decisions",
+          "when": "prism.hasPrismDir"
         }
       ],
       "prism-panel": [
@@ -250,6 +255,17 @@
         "command": "prism.workspaces.deleteWorktree",
         "title": "Delete Worktree",
         "category": "Prism"
+      },
+      {
+        "command": "prism.model.setMode",
+        "title": "Set Model Approval Mode",
+        "category": "Prism"
+      },
+      {
+        "command": "prism.modelDecisions.refresh",
+        "title": "Refresh Model Decisions",
+        "category": "Prism",
+        "icon": "$(refresh)"
       }
     ],
     "menus": {
@@ -267,6 +283,11 @@
         {
           "command": "prism.stories.refresh",
           "when": "view == prism.stories",
+          "group": "navigation"
+        },
+        {
+          "command": "prism.modelDecisions.refresh",
+          "when": "view == prism.modelDecisions",
           "group": "navigation"
         }
       ],

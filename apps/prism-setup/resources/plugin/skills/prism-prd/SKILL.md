@@ -37,6 +37,8 @@ Task(subagent_type="prism-locator")
 
 If found, incorporate insights into the PRD.
 
+> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
+
 ### Step 2: Invoke the Generate PRD Command
 
 Use the `/generate_prd` command to create the document:
