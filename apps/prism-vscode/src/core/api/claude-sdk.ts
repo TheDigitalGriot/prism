@@ -23,6 +23,7 @@ import {
 
 export const MODEL_IDS = {
   opus: "claude-opus-4-8",
+  opus5: "claude-opus-5",
   sonnet: "claude-sonnet-4-6",
   haiku: "claude-haiku-4-5-20251001",
   fable: "claude-fable-5",
