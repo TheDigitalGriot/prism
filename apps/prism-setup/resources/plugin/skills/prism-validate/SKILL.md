@@ -28,6 +28,8 @@ git diff HEAD~N..HEAD --stat
 make check test  # or npm test, etc.
 ```
 
+> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
+
 ### 1a. Verify Story Coverage (plan ↔ stories parity)
 
 The executors run `stories.json`, not the plan — so validate the two agree:
@@ -47,9 +49,9 @@ For each phase in plan:
 3. **Run commands** - Execute verification from plan
 4. **Document** - Note pass/fail/deviations
 
-### 2a. Independent Verification (Distrust Pattern)
+### 2a. Independent Verification (against the plan)
 
-**Do NOT trust self-reported completion.** Implementation phases may report success while missing requirements, over-building beyond scope, or misunderstanding intent. Verify independently.
+Validate the implementation against the plan — an **independent artifact**, so this is a cross-check of one thing (the code) against another (the plan), not a model re-reviewing its own reasoning. Under Opus 5 a clean self-reported completion is reliable and is the expected case, not something to distrust: still confirm each requirement maps to real code and flag over-building or scope drift, but run it as a light confirmation pass rather than a suspicion sweep.
 
 ### For Each Plan Phase:
 
@@ -187,7 +189,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 "Violating the letter of this rule while adhering to the spirit" is violating the spirit.
 
-Every claim of "passing" or "complete" must be backed by command output from THIS session. Stale checkboxes, memory of previous runs, and "it worked before" are not evidence. When a validation gate ambiguously passes, ultrathink whether the success criteria were genuinely met or just papered over.
+Every claim of "passing" or "complete" must be backed by **objective command output** from THIS session — evidence from an independent tool (the test runner, the build), not the model re-checking its own reasoning. Stale checkboxes, memory of previous runs, and "it worked before" are not evidence; fresh tool output is. This is objective-evidence discipline, not self-distrust: under Opus 5, do not add a redundant "re-verify your own work" loop on top of a green command — the command output is the verification.
 
 | Claim | Required Evidence |
 |-------|------------------|

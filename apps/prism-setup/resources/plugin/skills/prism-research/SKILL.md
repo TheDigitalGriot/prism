@@ -47,6 +47,8 @@ When the research scope is narrow (single file, specific function), consider ove
 
 ## Workflow
 
+> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
+
 ### 0. Read Mentioned Files First
 
 If the user mentions specific files, read them FULLY before spawning agents:

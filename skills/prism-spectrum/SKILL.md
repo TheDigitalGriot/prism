@@ -12,6 +12,8 @@ Execute a single story from the backlog with quality verification and atomic com
 
 > **Context requirement:** Uses `sonnet[1m]` for the 1M context window needed to hold full session state during autonomous multi-story runs without compaction risk. Requires Max/Team/Enterprise plan for included 1M Sonnet context, or usage credits on Pro. Disable globally with `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` if needed.
 
+> **Deterministic subagent caps:** `scripts/spectrum.sh` pins `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` (default `3`) and `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` (default `2`) on every worker so a story's fan-out is bounded and reproducible run-to-run. **Requires Claude Code ≥ 2.1.217** (older versions ignore the vars harmlessly). Override via the environment to widen or tighten. See [cl-plugin-structure/references/model-config.md §8](../cl-plugin-structure/references/model-config.md).
+
 ## Philosophy
 
 1. **Fresh Start**: Each session starts clean - load all context from files
@@ -35,6 +37,8 @@ The stories path and progress path are provided in the prompt. Use the exact pat
 **Path structure:** Stories and progress support both flat and epic-scoped layouts:
 - Flat: `.prism/stories/stories.json` + `.prism/shared/spectrum/progress.md`
 - Epic: `.prism/stories/<epic>/stories.json` + `.prism/shared/spectrum/<epic>/progress.md`
+
+> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
 
 ## Workflow
 
@@ -219,6 +223,8 @@ make test
 ## 5a. Two-Stage Review
 
 After quality gates pass, dispatch two reviewer agents sequentially. This catches scope drift and quality issues that automated gates cannot detect.
+
+> **Opus 5 note.** This two-stage review is **independent cross-review** — each reviewer sees a *different* agent's diff (the implementer's), never the controller's own work — so it stays required. What Opus 5 makes redundant is any *additional* pass where an agent re-verifies its **own** output; do not layer one on top of these stages. The fix-and-re-dispatch loop below is cross-review, not self-verification.
 
 ### Stage 1: Spec Compliance
 

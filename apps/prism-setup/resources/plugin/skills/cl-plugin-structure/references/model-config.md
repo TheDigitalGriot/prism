@@ -248,6 +248,9 @@ The `[1m]` suffix only applies when the underlying model supports it. Claude Cod
 | `xhigh` effort level | v2.1.111 |
 | `/model` saves default | v2.1.153 |
 | Sonnet 4.6 1M context | latest stable |
+| Deterministic subagent caps (`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`, `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`) | v2.1.217 |
+
+**Deterministic subagent caps.** `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` and `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` bound how many subagents a run spawns at once and how deep the spawn tree goes, making fan-out reproducible run-to-run. Set them in the launcher env (Prism pins them in `scripts/spectrum.sh`, defaults `3` / `2`). They require **Claude Code ≥ 2.1.217**; older versions ignore the vars harmlessly. This is part of the Opus 5 prompting-guide sweep — pair the caps with the effort re-sweep (§4) rather than leaving concurrency unbounded.
 
 Run `claude update` before relying on the newest model. If you're shipping a plugin that targets Opus 4.8 features, document the minimum version in your README.
 
