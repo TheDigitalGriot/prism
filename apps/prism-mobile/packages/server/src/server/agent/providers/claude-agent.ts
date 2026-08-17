@@ -2366,7 +2366,10 @@ class ClaudeAgentSession implements AgentSession {
           const sdkIdForPolicyKey: Record<string, string> = {
             fable5: "claude-fable-5",
             opus5: "claude-opus-5",
-            opus: "opus",
+            // Floor of the downgrade chain: the bare policy key "opus" must map to a
+            // concrete Anthropic model id the SDK will accept — a bare "opus" alias is
+            // not a valid API model id. Matches the VS Code surface's MODEL_IDS.opus.
+            opus: "claude-opus-4-8",
           };
           const substitute = sdkIdForPolicyKey[decision.model];
           if (substitute) base.model = substitute;
