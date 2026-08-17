@@ -2354,6 +2354,23 @@ class ClaudeAgentSession implements AgentSession {
           surface: "paseo",
           downgradedFrom: decision.downgradedFrom,
         });
+        // Apply the governance decision, not just observe it. When the policy
+        // DENIED a premium request (opus5 / fable5), the resolver returns a
+        // downgrade target in the shared chain; map that policy key back to the
+        // concrete Claude model id and substitute it so a `deny` actually stops
+        // the model from running (this is the "claude" provider — base.model is
+        // always an Anthropic id). Only the deny→downgrade case substitutes:
+        // allow/skip/ask-resolved decisions carry `decision.model === requested`
+        // in policy-key space, which must NOT overwrite the real base.model.
+        if (decision.downgradedFrom === "opus5" || decision.downgradedFrom === "fable5") {
+          const sdkIdForPolicyKey: Record<string, string> = {
+            fable5: "claude-fable-5",
+            opus5: "claude-opus-5",
+            opus: "opus",
+          };
+          const substitute = sdkIdForPolicyKey[decision.model];
+          if (substitute) base.model = substitute;
+        }
       } catch {
         // governance / telemetry must never break a dispatch
       }
