@@ -111,7 +111,7 @@ Initializes the `.prism/` directory structure in any project:
 | `worktree-setup.sh` | Bash | WorktreeCreate | Auto-setup: gitignore check, deps install, config copy, `.prism/shared` symlink |
 | `worktree-cleanup.sh` | Bash | WorktreeRemove | Warns on uncommitted changes, removes `.prism/shared` symlink |
 | `log-agent.py` | Python | SubagentStart/Stop | Logs agent dispatches to `.prism/local/agent-log.jsonl` |
-| `fable-gate.sh` | Bash | **PreToolUse** (Task) | **v4.1.0** — HITL gate for Fable 5 (`claude-fable-5`) Task dispatches. Only `fable` / `claude-fable-5` models are gated (every other model passes through); reads the app's `.prism/local/fable.flag` — flag ON (`enabled === true`) → **ask** (human confirm), flag OFF / missing / malformed → **deny**. Payload parsed with node (no `jq` dependency); POSIX-sh hardened for dash/busybox |
+| `fable-gate.sh` | Bash | **PreToolUse** (Task) | **v4.1.0**, generalized **v4.11.0** — the Model Control Plane gate for Task dispatches. Governs `opus5` + `fable5` through the shared policy (per-model **ask** / **allow** / **deny** / **skip**), reading `.prism/local/model-policy.json` (back-compat: derives from a legacy `.prism/local/fable.flag` when absent). Emits a JSONL model-decision event; every non-policy model passes through untouched. Fail-open — telemetry never breaks a dispatch. Payload parsed with node (no `jq` dependency); POSIX-sh hardened for dash/busybox |
 | `detect-changes-gate.sh` | Bash | PostToolUse (Write\|Edit) | **v4.1.0** — Non-blocking codemem change-impact advisory. Runs `codebase-memory-mcp cli detect_changes`; when the accumulated blast radius is HIGH/CRITICAL, surfaces an advisory via both a top-level `systemMessage` and `hookSpecificOutput.additionalContext`. LOW / MEDIUM / none / any error → no output; never blocks the tool (exits 0 on every path) |
 
 ### Other Scripts
@@ -147,6 +147,18 @@ The release-cycle skills (`prism-bookend`, `prism-docs-update`, `prism-release`,
 | `release-answers.full-push.example.json` | JSON | Documented example of a full real-release intent (all destructive gates `true`) — authored by the orchestration, never a skill default |
 
 The per-gate key map (which interactive gate reads which answers key, with each safe default) lives in `skills/prism-release/references/answers-resolution.md`. The `.prism/local/release-answers.json` file is gitignored (machine-specific); the two example templates ship tracked.
+
+### Model Control Plane (v4.11.0)
+
+Per-model **approval modes** (`ask` / `allow` / `deny` / `skip`) generalizing the single `fable.flag` boolean, resolved through one shared core (`packages/prism-core/src/core/api/model-policy.ts`) and surfaced on every dispatch surface. The store lives at `.prism/local/model-policy.json` (gitignored; a tracked `model-policy.example.json` documents the shape). A `deny` downgrades to the next runnable model in the shared chain (`fable5 → opus5 → opus`) and emits a bus event naming the substitution.
+
+| Script | Type | Description |
+|--------|------|-------------|
+| `statusline-model.sh` | Bash/Node | **v4.11.0** — Claude Code `statusLine` command rendering the active model + its approval mode as a compact segment, printed **loud** (ember / red ANSI) when a premium model (opus5 / fable5) is active so a costly model never runs silently. Reads the same `.prism/local/model-policy.json` (mirrors `model-policy.ts` `readModelPolicy` / `effectiveMode` for the `cli` surface). Fail-safe: no stdin / no node / malformed policy prints a quiet segment rather than crashing. Enable via `settings.json` `statusLine`; see `cl-plugin-structure/references/statusline-model.md` |
+| `fable-gate.sh` | Bash | (see Hook Scripts) — generalized in v4.11.0 to govern `opus5` + `fable5` through the plane and emit model-decision events |
+| `spectrum.sh` | Bash | Emits a model-decision event per autonomous iteration so Spectrum runs surface their active model alongside every other surface |
+
+The VS Code surface adds a status-bar chip + a decisions-receipts TreeView (`apps/prism-vscode/src/providers/model-status.ts`), and the Paseo mobile daemon governs its dispatch lane through the same policy file — so non-Anthropic providers (which extend `claude` via `ANTHROPIC_BASE_URL`) become visible and governable by one `.prism/local/model-policy.json`.
 
 ### Test Scripts (v3.4.0)
 

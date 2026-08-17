@@ -4,6 +4,22 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.11.0] - 2026-08-17
+
+### Added
+
+- **Model Control Plane.** A per-model **approval mode** (`ask` / `allow` / `deny` / `skip`) generalizes the single `fable.flag` boolean into an agentic-permission-style control, resolved through one shared core (`packages/prism-core/src/core/api/model-policy.ts`). A `deny` downgrades to the next runnable model in a shared chain (`fable5 → opus5 → opus`) and emits a bus event naming the substitution. The store lives at `.prism/local/model-policy.json` (gitignored); when absent, a back-compatible policy is derived from a legacy `fable.flag`, and a tracked `model-policy.example.json` documents the shape. The resolver core (`resolveModelDecision`) is pure and injectable — a surface may supply a `confirm` fn, else it falls back to `headlessDefault` (overridable via `PRISM_MODEL_HEADLESS_DEFAULT`).
+- **Multi-surface adapters.** The plane is made visible everywhere a model dispatches: a **CLI statusline** (`scripts/statusline-model.sh`) that prints loud when a premium model is active; **Task-hook governance + JSONL model events** (`scripts/fable-gate.sh` generalized to `opus5`+`fable5`, `scripts/spectrum.sh` per-iteration events); a **VS Code** status-bar chip + decisions-receipts TreeView + QuickPick (`apps/prism-vscode/src/providers/model-status.ts`, with `fable-gate.ts` delegating to `resolveModelDecision`); and the **Paseo mobile** daemon governing its dispatch lane so non-Anthropic providers become visible and governable by the same policy file. Covered by `model-policy.test.ts` (all four modes, headless/interactive resolution, env + surface overrides, legacy-flag back-compat).
+- **Opus 5 as the routine ceiling.** `model-config.md` adds **Opus 5** (`claude-opus-5`) under a **parallel `opus5` key** — `opus`/`best` stay pinned to Opus 4.8 for A/B eval until the alias flip, so nothing rolls forward silently. Opus-family API surface (no HITL gate, no `opus5.flag`) with a per-call `xhigh`/`max` effort confirm; routine dispatch re-baselined toward `medium` (`prism-spectrum/references/model-selection.md`).
+- **ICM run-contract fused into the pipeline.** A canonical reference + stage-CONTEXT template (`skills/icm-architect/references/prism-run-contract.md`, `assets/templates/prism-stage-CONTEXT.md`) and a top-of-Workflow pointer added to the nine Prism pipeline skills (research/plan/decompose/design/prd/implement/subagent/spectrum/validate) so every stage can drive a headless ICM stage-walk (thin router prompt → `*-CONTEXT.md` → heartbeat tokens).
+- **Fragment conformance B14–B18** (`fragment-sync/references/conformance-checklist.md`) — emitted "Prism-image" projects are born ICM- and code-intel-aware (routing-table `CLAUDE.md` with an ICM stage-walk, a stage-CONTEXT template, meta-skills carrying the run-contract pointer, a `.gitnexus/` stub + "Code-intel first" routing, and an MCP `icm_prism_run` detached launcher); **B3** updated to the Opus 5 ceiling with effort re-baselined toward `medium`.
+
+### Fixed
+
+- **Paseo deny-downgrade floor.** The mobile claude provider's downgrade-substitution map sent a bare `"opus"` alias (not a valid Anthropic API id) for the chain floor; it now maps to the concrete `claude-opus-4-8`, matching the VS Code surface's `MODEL_IDS.opus`, so a `deny` substitutes a runnable model when the branch is reached. (Path is currently unreachable on the mobile surface — catalog tops out at `claude-opus-4-7` — so this hardens it for when the catalog grows; found by the closing-ceremony Step-0 review.)
+
+> Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-4.11.0.md`. Known follow-ups: a cross-copy conformance check for the downgrade-chain logic now mirrored in three places (core / `fable-gate.sh` / mobile server); and the `opus`→`claude-opus-5` alias flip when Opus 5 becomes the resting default.
+
 ## [4.10.0] - 2026-08-15
 
 ### Added
