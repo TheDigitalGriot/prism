@@ -4,6 +4,12 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.12.0] - 2026-08-24
+
+### Changed
+
+- **cl-plugin-structure: Cloud / device resource resolution.** Added a new section (v0.7.5) documenting the two-axis matrix for resolving a skill's bundled `references/` `scripts/` `assets/` across Cowork cloud vs desktop/CLI. Standalone skills (shipped via `save_skill` — SKILL.md only) resolve both read and execute device-side; plugin skills read via `PLUGIN_ROOT/<path>` but still execute device-side because Cowork has no Bash tool. Any resource-bundled skill must now carry the matching `Resources — cloud / device resolution` block, and `create-fragment` emits the correct variant for scaffolded skills.
+
 ## [4.11.0] - 2026-08-17
 
 ### Added
