@@ -11,7 +11,7 @@
       "name": "prism",
       "source": ".",
       "description": "Structured 6-phase development workflow (Ideate -> Research -> Plan -> Design -> Implement -> Validate)",
-      "version": "4.12.0"
+      "version": "4.12.1"
     }
   ]
 }

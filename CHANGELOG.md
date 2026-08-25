@@ -4,6 +4,12 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.12.1] - 2026-08-24
+
+### Changed
+
+- **fragment-sync: conformance checklist B19.** Tracks the new cl-plugin-structure standard (v0.7.5, shipped in 4.12.0): emitted bundled-resource skills must carry the plugin-variant `Resources — cloud / device resolution` block. Fragment's `create-fragment` v4.7.0 now emits it (Claude adapter only, idempotent; ChatGPT excluded). Bumps `fragment-sync` skill 0.2.1 -> 0.2.2.
+
 ## [4.12.0] - 2026-08-24
 
 ### Changed
