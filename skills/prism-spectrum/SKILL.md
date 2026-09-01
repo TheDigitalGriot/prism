@@ -14,6 +14,7 @@ Execute a single story from the backlog with quality verification and atomic com
 
 > **Deterministic subagent caps:** `scripts/spectrum.sh` pins `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` (default `3`) and `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` (default `2`) on every worker so a story's fan-out is bounded and reproducible run-to-run. **Requires Claude Code ≥ 2.1.217** (older versions ignore the vars harmlessly). Override via the environment to widen or tighten. See [cl-plugin-structure/references/model-config.md §8](../cl-plugin-structure/references/model-config.md).
 
+> **Stuck Protocol (device/cloud recovery — non-negotiable):** if any device/cloud tool returns empty/`[]`/"not connected"/"no DOM"/403 or fails first-call, do NOT report it blocked. Retry 2-3x -> switch surface (built-in pane <-> Claude-in-Chrome; native Windows PowerShell when the sandbox has no route; the Gmail *browser* when the *connector* is the wrong account) -> replay the logs (session_info -> last successful run -> copy its exact tool sequence) -> then ask Gavin ONE direct question. Gavin's word about his own machine is GROUND TRUTH. "Blocked" without those steps is a DEFINED ERROR; a forced skip = INCOMPLETE run. Full ladder: this plugin's CLAUDE.md "Stuck Protocol" section.
 ## Philosophy
 
 1. **Fresh Start**: Each session starts clean - load all context from files

@@ -8,6 +8,7 @@ model: sonnet
 
 Run evaluations against Prism plugin skill versions — either a single version or a side-by-side comparison between two versions.
 
+> **Stuck Protocol (device/cloud recovery — non-negotiable):** if any device/cloud tool returns empty/`[]`/"not connected"/"no DOM"/403 or fails first-call, do NOT report it blocked. Retry 2-3x -> switch surface (built-in pane <-> Claude-in-Chrome; native Windows PowerShell when the sandbox has no route; the Gmail *browser* when the *connector* is the wrong account) -> replay the logs (session_info -> last successful run -> copy its exact tool sequence) -> then ask Gavin ONE direct question. Gavin's word about his own machine is GROUND TRUTH. "Blocked" without those steps is a DEFINED ERROR; a forced skip = INCOMPLETE run. Full ladder: this plugin's CLAUDE.md "Stuck Protocol" section.
 ## Two Modes
 
 **Single version**: `"run evals for v2.4.9"` — runs all eval cases for that version and grades them against expectations.

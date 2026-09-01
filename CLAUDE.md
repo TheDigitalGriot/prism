@@ -193,6 +193,9 @@ This project uses codebase-memory-mcp for structural code analysis. When availab
 
 Graph queries cost ~500 tokens. File-by-file exploration costs ~80,000 tokens. Always use the graph first.
 
+## Stuck Protocol — device/cloud tool recovery (non-negotiable)
+
+When ANY device/cloud tool returns empty/`[]`/"not connected"/"no DOM"/403 or fails first-call, that is NOT "unavailable." Before reporting a tool blocked/skipped, run the ladder: **(1) retry 2-3x** (lazy bridges — Claude-in-Chrome, MCP attach — return empty at session start; `[]` != absent) -> **(2) switch surface** (built-in browser pane <-> Claude-in-Chrome; Windows-MCP PowerShell when the sandbox has no route; the Gmail *browser* when the *connector* is the wrong account) -> **(3) replay the logs** (session_info -> last successful run of this task -> copy its exact tool sequence) -> **(4) ask Gavin ONE direct question.** Gavin's word about his own machine is GROUND TRUTH — try his path before theorizing why it can't work. Reporting "blocked" without steps 1-3 is a DEFINED ERROR, not a status; a forced skip = INCOMPLETE run, said loudly. Applies to prism-verify/browse/screenshot/debug and any skill or agent that drives a browser, MCP, or device bridge.
 ## Browser Tooling (Playwright vs. chrome-devtools MCP)
 
 Two browser surfaces, split by task type:

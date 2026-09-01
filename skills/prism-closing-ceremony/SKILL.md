@@ -7,6 +7,7 @@ description: Run the full Prism end-of-cycle closing ceremony in one pass — a 
 
 A **Review & Audit gate**, then the three end-of-cycle skills, run back-to-back in the correct order — so a release both **proves itself** and wraps in one command instead of four separate asks.
 
+> **Stuck Protocol (device/cloud recovery — non-negotiable):** if any device/cloud tool returns empty/`[]`/"not connected"/"no DOM"/403 or fails first-call, do NOT report it blocked. Retry 2-3x -> switch surface (built-in pane <-> Claude-in-Chrome; native Windows PowerShell when the sandbox has no route; the Gmail *browser* when the *connector* is the wrong account) -> replay the logs (session_info -> last successful run -> copy its exact tool sequence) -> then ask Gavin ONE direct question. Gavin's word about his own machine is GROUND TRUTH. "Blocked" without those steps is a DEFINED ERROR; a forced skip = INCOMPLETE run. Full ladder: this plugin's CLAUDE.md "Stuck Protocol" section.
 ## Sequence (run in order — do not skip or reorder)
 
 0. **Review & Audit gate** — the release hardens its own output before anything ships. Run the independent
