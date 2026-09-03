@@ -4,6 +4,24 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.13.1] - 2026-09-03
+
+### Fixed
+
+- **`cl-plugin-structure/parse-frontmatter.sh` strips a leading UTF-8 BOM** before frontmatter extraction, fixing recurring false `No frontmatter found` failures on Windows-authored (BOM'd) skills. Root fix — the *separate* skills repo (`~/.claude/skills`, commit `903d06f`) also gained a **versioned pre-commit BOM-strip hook** (`core.hooksPath=hooks`) plus `.gitattributes` (`*.md`/`*.sh text eol=lf`), so BOMs are removed at commit time rather than merely tolerated at parse time.
+
+### Known open — logged from the Review & Audit gate
+
+This patch ran the closing ceremony's Step-0 gate. The deterministic audit was **clean** (`pre-release-audit.mjs`: `claude plugin validate .` + all four `verify-*.mjs` + structural checks over 412 changed files). The two-stage review confirmed three BOM-related gaps that this release deliberately does **not** close — recorded here rather than silently bypassed:
+
+- **High — the sibling validators are still BOM-intolerant.** `validate-agent.sh` (the `head -1` "must start with `---`" gate at :33 and the raw `sed` extraction at :48) and `validate-settings.sh:55` still use the pre-fix raw parse. A BOM-prefixed file makes the first line literally `<BOM>---`, so `validate-agent.sh` still hard-fails on exactly the files this fix targets — the bug remains user-visible one script downstream in the same validation flow.
+- **Medium — the in-repo distribution mirror is stale.** `apps/prism-setup/resources/plugin/skills/cl-plugin-structure/scripts/parse-frontmatter.sh` still carries the pre-fix line. The shipped NSIS artifact is unaffected — `.github/workflows/prism-setup-release.yml` re-copies all six plugin dirs from a fresh checkout at build time — so this is tracked-source drift, not a broken artifact. It is the same mirror drift recorded in `PRISM-DOCUMENTATION-4.12.2.md` §4.
+- **Low — `\xEF\xBB\xBF` is a GNU-sed extension.** Under BSD/macOS sed the strip is a silent no-op (no corruption, no diagnostic), so the fix does not deliver the cross-platform intent stated in `references/component-patterns.md`.
+
+> Eval snapshots under `.prism/shared/evals/v*-snapshot/` retain the pre-fix line **by design** — historical records are intentionally untouched.
+
+Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-4.13.1.md`.
+
 ## [4.13.0] - 2026-09-02
 
 ### Added

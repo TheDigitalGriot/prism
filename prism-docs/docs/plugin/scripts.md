@@ -138,6 +138,24 @@ The deterministic half of the closing-ceremony **Review & Audit gate** — run b
 | `verify-ceremony-gate.mjs` | Node | Static guard that the closing ceremony actually wires the Review & Audit gate **ahead of** bookend (gate = Sequence step 0, bookend = step 1) and references `spec-reviewer`, `quality-reviewer`, `pre-release-audit`, and `review-audit-gate` |
 | `verify-story-unification.mjs` | Node | Static guard that the plan → story → execute flow stays unified on `stories.json`. Phased checks: generation (default), `--check-consumers` (implement/subagent), `--check-coherence` (iterate/validate), `--all` (every phase) |
 
+### `cl-plugin-structure` Validator Scripts
+
+Shipped under `skills/cl-plugin-structure/scripts/` and invoked while authoring or validating plugin components (not by the release gate). They parse YAML frontmatter out of `SKILL.md` / agent / command files with `sed`.
+
+| Script | Type | Description |
+|--------|------|-------------|
+| `parse-frontmatter.sh` | Bash | Extracts a field from a component's YAML frontmatter. **v4.13.1** — strips a leading UTF-8 BOM (`EF BB BF`) on line 1 before extraction. Without it a BOM'd file's first line is `<BOM>---`, the `/^---$/` range never opens, and the script reports the misleading `Error: No frontmatter found` even though the frontmatter is present — the recurring failure mode on Windows-authored skills |
+| `validate-agent.sh` | Bash | Validates agent frontmatter + system prompt. **Known open (v4.13.1):** still BOM-intolerant — its `head -1` check against `"---"` hard-fails on a BOM'd file before the frontmatter is ever parsed |
+| `validate-settings.sh` | Bash | Validates `.local.md` settings frontmatter. **Known open (v4.13.1):** same raw parse, no BOM strip |
+| `validate-hook-schema.sh`, `hook-linter.sh`, `test-hook.sh` | Bash | Hook schema validation, linting, and a local hook test harness |
+
+::: warning BOM tolerance is not uniform yet
+Only `parse-frontmatter.sh` strips the BOM as of v4.13.1. The upstream fix is to keep files BOM-less at
+authoring time — the skills repo does this with a versioned pre-commit hook (`core.hooksPath=hooks`) plus
+`.gitattributes` (`*.md`/`*.sh text eol=lf`). Note also that the `\xEF\xBB\xBF` sed escape is a GNU
+extension: under BSD/macOS sed the strip silently no-ops.
+:::
+
 ### Headless Release Cycle (v4.10.0)
 
 The release-cycle skills (`prism-bookend`, `prism-docs-update`, `prism-release`, `prism-closing-ceremony`) can run unattended under `claude -p` / Cowork cloud / CI. Each interactive gate resolves its answer from a static answers file when `PRISM_NONINTERACTIVE` is set; when it is unset, every gate prompts exactly as before and the answers file is ignored (purely additive — no interactive run changes).
