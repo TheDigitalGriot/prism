@@ -210,14 +210,14 @@ A skill's bundled `references/` `scripts/` `assets/` are not equally reachable e
 
 | | Read a bundled doc | Run a bundled script |
 |---|---|---|
-| **Standalone skill** (distributed via `save_skill` -> SKILL.md only) | device-side · `Get-Content C:\Users\digit\.claude\skills\<name>\<path>` | device-side · Windows-MCP PowerShell / `claude.exe -p` |
+| **Standalone skill** (distributed via `save_skill` -> SKILL.md only) | device-side · `Get-Content ~/.claude/skills/<name>/<path>` | device-side · Windows-MCP PowerShell / `claude.exe -p` |
 | **Plugin skill** (installed via a plugin) | `PLUGIN_ROOT/<path>` — ships with the plugin, present in the cloud | device-side · Cowork has **no Bash tool** |
 
 Why: (1) `save_skill` uploads only the SKILL.md, so a standalone skill's bundled files never travel to the cloud account — they live on-device (`~/.claude/skills/<name>/`) and in the source repo. A plugin ships its whole folder, so its files resolve via `PLUGIN_ROOT`. (2) Cowork has **no Bash tool** (see the Components table), so **no** skill can *execute* a bundled script in-cloud — scripts always run device-side via the Windows-MCP PowerShell bridge or `claude.exe -p` headless. On **desktop / CLI** everything is local and the resolution is a no-op.
 
 **Required block.** Any skill that bundles files MUST carry a short "Resources — cloud / device resolution" block near the top, in the variant that matches how it is distributed:
 
-- **Standalone variant** (skills shipped via `save_skill`): read + execute both route device-side to `C:\Users\digit\.claude\skills\<name>\…`.
+- **Standalone variant** (skills shipped via `save_skill`): read + execute both route device-side to `~/.claude/skills/<name>/…`.
 - **Plugin variant** (skills shipped inside a plugin): read via `PLUGIN_ROOT/<path>`; execute device-side (Cowork has no Bash). Never assume a relative `scripts/…` path executes in the cloud.
 
 If the device bridge is unavailable, say so and fall back to the inline instructions — never silently fail. `create-fragment` emits the correct variant automatically for scaffolded skills.
