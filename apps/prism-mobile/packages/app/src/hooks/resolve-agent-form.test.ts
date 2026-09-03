@@ -112,12 +112,12 @@ describe("resolveDefaultModel", () => {
 describe("resolveThinkingOptionId", () => {
   it("returns empty string when model has no thinking options", () => {
     const modelsWithoutThinking: AgentModelDefinition[] = [
-      { provider: "claude", id: "claude-sonnet-4-6", label: "Sonnet 4.6", isDefault: true },
+      { provider: "claude", id: "claude-sonnet-5", label: "Sonnet 5", isDefault: true },
     ];
     expect(
       resolveThinkingOptionId({
         availableModels: modelsWithoutThinking,
-        modelId: "claude-sonnet-4-6",
+        modelId: "claude-sonnet-5",
         requestedThinkingOptionId: "",
       }),
     ).toBe("");
@@ -220,7 +220,7 @@ describe("mergeSelectedComposerPreferences", () => {
               thinkingByModel: { "gpt-5.4-mini": "medium" },
               featureValues: { fast_mode: true },
             },
-            claude: { model: "claude-sonnet-4-6" },
+            claude: { model: "claude-sonnet-5" },
           },
           favoriteModels: [{ provider: "codex", modelId: "gpt-5.4-mini" }],
         },
@@ -236,7 +236,7 @@ describe("mergeSelectedComposerPreferences", () => {
           thinkingByModel: { "gpt-5.4-mini": "medium" },
           featureValues: { fast_mode: true },
         },
-        claude: { model: "claude-sonnet-4-6" },
+        claude: { model: "claude-sonnet-5" },
       },
       favoriteModels: [{ provider: "codex", modelId: "gpt-5.4-mini" }],
     });

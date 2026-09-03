@@ -10,7 +10,7 @@
  *             logs a bus event.
  *   - allow — the model runs; a bus event is emitted (monitored, not blocked).
  *   - deny  — the model does NOT run; it is downgraded to the next freely
- *             runnable model in the chain (fable5 -> opus5 -> opus/4.8) and a
+ *             runnable model in the chain (fable5 -> opus5 -> opus48) and a
  *             bus event names the downgrade.
  *   - skip  — bypass all approvals (like --dangerously-skip-permissions): runs,
  *             still emits a bus event.
@@ -21,7 +21,7 @@
  * `model-policy.example.json` documents the shape.
  *
  * Reader robustness mirrors `fable-flag.ts`: any missing / malformed input
- * degrades to safe defaults (opus5 + fable5 = "ask") rather than throwing.
+ * degrades to safe defaults (opus5 = "allow", fable5 = "ask") rather than throwing.
  *
  * Headless auto-resolution is the injection seam for `scripts/resolve-answer.mjs`
  * (the release-cycle answer-injection helper): a surface may supply a `confirm`
@@ -51,7 +51,7 @@ export interface Policy {
   version: number
   /** Mode applied when an "ask" model is hit in a headless run (no confirm). */
   headlessDefault: ApprovalMode
-  /** Per-model policy. Keys are policy model ids ("opus5", "fable5", ...). */
+  /** Per-model policy. Keys are policy model ids ("fable5", "opus5", "opus48"). */
   models: Record<string, ModelPolicyEntry>
   /** Optional per-surface override: surface -> { model -> { mode } }. */
   surfaces: Record<string, Record<string, ModelPolicyEntry>>
@@ -110,15 +110,30 @@ export interface ModelEvent {
 /**
  * Downgrade chain, most-capable first. A denied (or unconfirmed) model walks
  * FORWARD to the first entry that runs freely ("allow"/"skip"), terminating at
- * the always-allowed floor `opus` (Opus 4.8), which is never policy-listed.
+ * the always-allowed floor `opus48` (Opus 4.8), which is never policy-listed.
+ *
+ * NAMESPACE NOTE: these are POLICY keys, not SDK aliases. The bare key `opus`
+ * was renamed to `opus48` so a policy key can never silently mean "whichever
+ * Opus is current" — the SDK alias `opus` (claude-sdk.ts MODEL_IDS) resolves to
+ * Opus 5 and is a separate namespace. See cl-plugin-structure/references/
+ * model-config.md §2.
  */
-export const DOWNGRADE_CHAIN = ["fable5", "opus5", "opus"] as const
+export const DOWNGRADE_CHAIN = ["fable5", "opus5", "opus48"] as const
 
 /** The always-runnable floor the chain terminates at. */
-export const FLOOR_MODEL = "opus"
+export const FLOOR_MODEL = "opus48"
 
-/** Safe defaults when no store and no legacy flag exist. */
+/**
+ * Safe defaults when no store and no legacy flag exist.
+ *
+ * `opus5` defaults to "allow", NOT "ask": Opus 5 is the routine ceiling and is
+ * governed by the effort dial plus the xhigh|max one-shot confirm, never by a
+ * model-level gate (locked in icm-fuse-CONTEXT.md, icm-fuse-opus5-PLAN.md, and
+ * OPUS5-INCORPORATION-PLAN.md). A bus event is still emitted on every decision,
+ * so un-gating does not reduce visibility. Only `fable5` carries the HITL gate.
+ */
 const DEFAULT_MODE: ApprovalMode = "ask"
+const DEFAULT_OPUS5_MODE: ApprovalMode = "allow"
 const DEFAULT_HEADLESS: ApprovalMode = "allow"
 
 const VALID_MODES: ReadonlySet<string> = new Set(["ask", "allow", "deny", "skip"])
@@ -133,13 +148,13 @@ function normalizeMode(value: unknown): ApprovalMode | undefined {
     : undefined
 }
 
-/** Safe-default policy: opus5 + fable5 = "ask", allow headless, no overrides. */
+/** Safe-default policy: opus5 = "allow", fable5 = "ask", allow headless, no overrides. */
 function defaultPolicy(): Policy {
   return {
     version: 1,
     headlessDefault: DEFAULT_HEADLESS,
     models: {
-      opus5: { mode: DEFAULT_MODE },
+      opus5: { mode: DEFAULT_OPUS5_MODE },
       fable5: { mode: DEFAULT_MODE },
     },
     surfaces: {},
@@ -207,7 +222,7 @@ function coerceSurfaces(
  * Precedence:
  *   1. `<projectRoot>/.prism/local/model-policy.json`  (validated, defaults filled)
  *   2. legacy `<projectRoot>/.prism/local/fable.flag`  (derived, back-compat)
- *   3. safe defaults                                    (opus5 + fable5 = "ask")
+ *   3. safe defaults                          (opus5 = "allow", fable5 = "ask")
  *
  * Never throws: any missing / malformed input degrades to the next fallback.
  */
@@ -254,7 +269,7 @@ function effectiveMode(
     const surfMode = policy.surfaces[surface]?.[model]?.mode
     if (surfMode) return surfMode
   }
-  // Non-policy-listed models (e.g. the "opus" floor) run freely.
+  // Non-policy-listed models (e.g. the "opus48" floor) run freely.
   return policy.models[model]?.mode ?? "allow"
 }
 

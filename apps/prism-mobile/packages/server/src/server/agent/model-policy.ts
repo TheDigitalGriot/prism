@@ -57,8 +57,11 @@ interface ModelDecisionInput {
   env?: Record<string, string | undefined>;
 }
 
-const DOWNGRADE_CHAIN = ["fable5", "opus5", "opus"] as const;
-const FLOOR_MODEL = "opus";
+// Mirrors packages/prism-core/src/core/api/model-policy.ts. The bare policy key
+// `opus` was renamed `opus48` so a policy key can never silently mean "whichever
+// Opus is current" — SDK aliases are a separate namespace.
+const DOWNGRADE_CHAIN = ["fable5", "opus5", "opus48"] as const;
+const FLOOR_MODEL = "opus48";
 const VALID_MODES: ReadonlySet<string> = new Set(["ask", "allow", "deny", "skip"]);
 
 function normalizeMode(value: unknown): ApprovalMode | undefined {
@@ -68,7 +71,9 @@ function normalizeMode(value: unknown): ApprovalMode | undefined {
 function defaultPolicy(): Policy {
   return {
     headlessDefault: "allow",
-    models: { opus5: { mode: "ask" }, fable5: { mode: "ask" } },
+    // opus5 = "allow": Opus 5 is the routine ceiling, governed by the effort dial
+    // plus the xhigh|max one-shot confirm, never by a model-level gate.
+    models: { opus5: { mode: "allow" }, fable5: { mode: "ask" } },
     surfaces: {},
   };
 }
@@ -227,7 +232,11 @@ export function emitModelEvent(
  * key so it becomes governable by adding an entry to the same policy file.
  */
 export function policyKeyForModel(provider: string, model: string): string {
-  if (model === "fable" || model === "claude-fable-5") return "fable5";
+  // Fable matches by PREFIX. An exact "claude-fable-5" test silently fails to gate
+  // point releases like "claude-fable-5-1", letting a premium model run ungated.
+  if (model === "fable" || model === "claude-fable-5" || model.startsWith("claude-fable-5-"))
+    return "fable5";
   if (model === "opus5" || model === "claude-opus-5") return "opus5";
+  if (model === "opus48" || model === "claude-opus-4-8") return "opus48";
   return `${provider}:${model}`;
 }

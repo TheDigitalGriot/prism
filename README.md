@@ -32,7 +32,7 @@ claude --plugin-dir /path/to/prism-plugin
 
 ## Requirements
 
-- **Claude Code v2.1.154 or later** — required for Opus 4.8 features, native `EnterWorktree`/`ExitWorktree` support, and `effort: xhigh` skills (`prism-brainstorm`, `prism-plan`, `prism-prd`, `prism-design`, `prism-subagent`, `prism-iterate`). v2.1.80+ required for brainstorm active wake mode. Run `claude update` if on an older version.
+- **Claude Code v2.1.257 or later** — required for Fable 5.1 (`claude-fable-5-1`), the gated escalation tier. Lower floors if you do not use Fable: **v2.1.219** for Opus 5 (the routine ceiling), **v2.1.197** for Sonnet 5, **v2.1.217** for the deterministic subagent caps, **v2.1.154** for native `EnterWorktree`/`ExitWorktree` support, and **v2.1.111** for `effort: xhigh` skills (`prism-brainstorm`, `prism-plan`, `prism-prd`, `prism-design`, `prism-subagent`, `prism-iterate`). v2.1.80+ required for brainstorm active wake mode. Run `claude update` if on an older version.
 - **codebase-memory-mcp on PATH** (new in v3.4.0) — enables the graph-first intelligence layer (`graph-navigator` agent, blast-radius analysis in `prism-plan`, structural validation in `prism-validate`, graph verification in `prism-spectrum`). Without it, all graph steps no-op gracefully. Verify: `codebase-memory-mcp --version` (should return `0.6.0+`).
 - **bun** — required for the `digital-griot-mcp` MCP server (the shared Griot wake channel behind the visual companion wake mode). Install: `npm install -g bun` or `curl -fsSL https://bun.sh/install | bash`.
 - **jq** — required for `spectrum.sh` JSON parsing. Install: `brew install jq` (macOS) or `apt install jq` (Linux).

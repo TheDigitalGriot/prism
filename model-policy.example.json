@@ -2,7 +2,7 @@
   "version": 1,
   "headlessDefault": "allow",
   "models": {
-    "opus5": { "mode": "ask" },
+    "opus5": { "mode": "allow" },
     "fable5": { "mode": "ask" }
   },
   "surfaces": {}

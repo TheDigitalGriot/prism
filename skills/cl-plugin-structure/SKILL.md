@@ -111,7 +111,7 @@ For detailed component patterns: [references/component-patterns.md](./references
 name: my-agent
 description: When to invoke this agent — name 2-4 trigger scenarios (proactive + reactive)
 model: inherit         # REQUIRED — inherit | sonnet | opus | haiku  (inherit = same as parent, recommended)
-                       #   (claude-fable-5 is enabled but HITL-gated — never a resting default; see Model Configuration below)
+                       #   (claude-fable-5-1 is enabled but HITL-gated — never a resting default; see Model Configuration below)
 color: cyan            # REQUIRED — blue | cyan | green | yellow | magenta | red  (UI identifier)
 effort: medium         # low | medium | high
 maxTurns: 15           # haiku: 5-8, sonnet: 12-18, opus: 12-15
@@ -272,27 +272,29 @@ For the four-leaks audit framing, full routing-table syntax, room-file examples,
 
 ## Model Configuration (Claude Code current model line)
 
-As of July 2026, all five tiers are enabled — four for routine routing, plus Fable 5 as a HITL-gated escalation:
+As of September 2026, all five tiers are enabled — four for routine routing, plus Fable 5.1 as a HITL-gated escalation:
 
 | Tier | Frontmatter | When to reach for it |
 |---|---|---|
-| **Opus 5** | `model: opus5` | Deep analysis, planning, critical reasoning — the **routine ceiling** for all standard work (parallel `opus5` key; `opus`/`best` flip here later) |
-| **Opus 4.8** | `model: opus` | Reachable A/B target just below the ceiling — `opus`/`best` stay pinned here until the flip |
-| **Sonnet 4.6** | `model: sonnet` | General work, implementation, pattern-finding |
-| **Haiku 4.5** | `model: haiku` | Fast lookups, locators, mechanical commands |
-| **Fable 5** | `model: claude-fable-5` | **Gated escalation only** — enabled under Max subscription, but reached via the HITL gate, never a resting agent default (see below) |
+| **Opus 5** | `model: opus` | Deep analysis, planning, critical reasoning — the **routine ceiling** for all standard work (`opus`/`best` now resolve here; the flip has landed) |
+| **Opus 4.8** | `model: opus48` | Legacy, kept explicitly reachable for A/B eval and reproducible pins — not a routing target |
+| **Sonnet 5** | `model: sonnet` | General work, implementation, pattern-finding — now **$2 / $10**, a 33% cut vs Sonnet 4.6 |
+| **Haiku 4.5** | `model: haiku` | Fast lookups, locators, mechanical commands — the only tier with **no** effort support |
+| **Fable 5.1** | `model: claude-fable-5-1` | **Gated escalation only** — enabled under Max subscription, but reached via the HITL gate, never a resting agent default (see below) |
 
-> ⚠️ **Fable 5 is enabled but HITL-gated — never a resting default.** It is reachable under the Max/Team Premium subscription, but every use passes a human-in-the-loop gate (`.prism/local/fable.flag` + a confirm/deny modal in the app, and the `fable-gate.sh` PreToolUse hook on Task dispatches). No agent or skill sets `model: claude-fable-5` as a resting default, and nothing in routing auto-escalates to it — it is a deliberate, confirmed escalation. Opus 4.8 stays the routine ceiling. Fable has **no alias** (always pin the full ID), a different API surface (always-on thinking, `refusal` stop reason, new tokenizer, 30-day retention) — read [references/model-config.md §5](./references/model-config.md) first — and draws on a *capped weekly Max allowance* (≈2.6× Opus 4.8 if metered on the API), which is exactly what the gate protects.
+> ⚠️ **Fable 5.1 is enabled but HITL-gated — never a resting default.** It is reachable under the Max/Team Premium subscription, but every use passes a human-in-the-loop gate (`.prism/local/fable.flag` + a confirm/deny modal in the app, and the `fable-gate.sh` PreToolUse hook on Task dispatches). No agent or skill sets `model: claude-fable-5-1` as a resting default, and nothing in routing auto-escalates to it — it is a deliberate, confirmed escalation. Opus 5 stays the routine ceiling. Fable has **no alias** (always pin the full ID), a different API surface (always-on thinking, `refusal` stop reason, current tokenizer, 30-day retention) — read [references/model-config.md §5](./references/model-config.md) first — and draws on a *capped weekly Max allowance* (≈2.6× Opus 5 if metered on the API), which is exactly what the gate protects. The gate must match Fable IDs by **prefix**, not exact string, or a point release like `claude-fable-5-1` slips through ungated.
 
-For the Opus/Sonnet/Haiku aliases: from Claude 4.6 onward, dateless IDs like `claude-opus-4-8` are **pinned snapshots**, not evergreen aliases — use the alias form (`model: opus`) for auto-updates, the full ID for pinning.
+For the Opus/Sonnet/Haiku aliases: from Claude 4.6 onward, dateless IDs like `claude-opus-5` are **pinned snapshots**, not evergreen aliases — use the alias form (`model: opus`) for auto-updates, the full ID for pinning. Haiku is the only current tier that still has real alias→dated-snapshot indirection. **Keep the two `opus` namespaces distinct:** policy keys are `fable5` / `opus5` / `opus48` (no bare `opus`); SDK aliases keep `opus` → Opus 5.
 
-Effort levels on Opus 4.7+ (including Opus 5): `low`, `medium`, `high`, `xhigh`, `max`. Default on Opus 5 and Opus 4.8 is `high`. On **Opus 5**, `low`/`medium` are strong enough for most routine dispatch — lower the effort dial for cost rather than dropping to a weaker tier, and keep thinking ON. Set `effort: xhigh` in agent frontmatter for heavier reasoning; reserve `max` for one-shot critical work (it's session-only). On Opus 5, `effort: xhigh|max` triggers a **one-shot confirm** — a per-call effort guard (headless-aware, always emits a visibility event), categorically **not** a Fable-style model gate; Opus 5 has no gate and no flag. The `ultrathink` keyword anywhere in a prompt triggers deeper reasoning on a single turn without changing session effort.
+Effort levels: `low`, `medium`, `high`, `xhigh`, `max` on Fable 5.1, Opus 5, Opus 4.8, and **Sonnet 5** (`xhigh` is new in Sonnet 5). **Haiku 4.5 supports none.** Default is `high` everywhere it is supported — but `high` is **not comparable across models**; Anthropic re-allocated the tokens behind each label, so re-sweep rather than porting a setting between tiers. On **Opus 5**, `low`/`medium` are strong enough for most routine dispatch — lower the effort dial for cost rather than dropping to a weaker tier, and keep thinking ON. Note that effort no longer reliably shortens *visible* output on Opus 5 — prompt explicitly for concision as a second lever. Reserve `max` for one-shot critical work (it's session-only). On Opus 5, `effort: xhigh|max` triggers a **one-shot confirm** — a per-call effort guard (headless-aware, always emits a visibility event), categorically **not** a Fable-style model gate; Opus 5 has no gate and no flag. The `ultrathink` keyword anywhere in a prompt triggers deeper reasoning on a single turn without changing session effort.
 
-For long-session work, append `[1m]` to the alias or pinned ID: `model: opus[1m]` opens the 1M-token context window. Fable 5 always uses 1M context — no suffix needed.
+Every current tier except Haiku 4.5 ships a **native 1M context window**, so the `[1m]` suffix is now a no-op on this line — it only matters when pinning an older model that gated 1M behind it (e.g. `claude-sonnet-4-6[1m]`).
 
-**Fable 5 requires Claude Code v2.1.173+. Opus 4.8 requires v2.1.154+.** Run `claude update` before relying on either.
+⚠️ **Thinking is ON by default on Opus 5** where Opus 4.8 defaulted to off. Thinking tokens bill as output *and* count against `max_tokens` — a workload tuned for a no-thinking baseline can now **truncate**, not merely cost more. Re-baseline `max_tokens` before flipping anything to Opus 5.
 
-For the full per-provider alias resolution table, dateless-snapshot rule, effort-level matrix, Fable 5 API differences, currency-check protocol, and provider-specific env-var pins: [references/model-config.md](./references/model-config.md).
+**Fable 5.1 requires Claude Code v2.1.257+. Opus 5 requires v2.1.219+. Sonnet 5 requires v2.1.197+.** Run `claude update` before relying on any of them.
+
+For the full per-provider alias resolution table, dateless-snapshot rule, effort-level matrix, Fable 5.1 API differences, the Mythos 5.1 non-routable note, currency-check protocol, and provider-specific env-var pins: [references/model-config.md](./references/model-config.md).
 ## Harness Architecture (load when building composed systems)
 
 When building or optimizing a **harness** — a composed system of skills + agents + hooks + modes + workspaces + tool policies — load [references/component-patterns.md § Harness Architecture](./references/component-patterns.md) for the full architectural framework and observation hook patterns.

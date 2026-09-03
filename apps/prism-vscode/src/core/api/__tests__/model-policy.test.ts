@@ -70,7 +70,10 @@ describe("readModelPolicy", () => {
   test("safe defaults when store + legacy flag are absent", () => {
     const root = makeProject()
     const policy = readModelPolicy(root)
-    expect(policy.models.opus5.mode).toBe("ask")
+    // opus5 = "allow", NOT "ask": Opus 5 is the routine ceiling and carries no
+    // model-level gate (locked in icm-fuse-CONTEXT.md / OPUS5-INCORPORATION-PLAN.md).
+    // Only fable5 is HITL-gated.
+    expect(policy.models.opus5.mode).toBe("allow")
     expect(policy.models.fable5.mode).toBe("ask")
     expect(policy.headlessDefault).toBe("allow")
     expect(policy.surfaces).toEqual({})
@@ -80,7 +83,7 @@ describe("readModelPolicy", () => {
     const root = makeProject({ policy: "{ not valid json " })
     const policy = readModelPolicy(root)
     expect(policy.models.fable5.mode).toBe("ask")
-    expect(policy.models.opus5.mode).toBe("ask")
+    expect(policy.models.opus5.mode).toBe("allow")
   })
 
   test("reads an explicit store and fills missing default models", () => {
@@ -96,7 +99,7 @@ describe("readModelPolicy", () => {
     expect(policy.headlessDefault).toBe("deny")
     expect(policy.models.fable5.mode).toBe("deny")
     // opus5 not in the file → filled from safe defaults.
-    expect(policy.models.opus5.mode).toBe("ask")
+    expect(policy.models.opus5.mode).toBe("allow")
     expect(policy.surfaces.vscode.fable5.mode).toBe("skip")
   })
 
@@ -152,12 +155,22 @@ describe("resolveModelDecision — modes", () => {
     expect(d.mode).toBe("skip")
   })
 
-  test("deny: downgrades past ask'd opus5 to the opus floor", async () => {
+  test("deny: downgrades past ask'd opus5 to the opus48 floor", async () => {
     const root = policyRoot({ fable5: "deny", opus5: "ask" })
     const d = await resolveModelDecision({ requested: "fable5", projectRoot: root, env: {} })
-    expect(d.model).toBe("opus")
+    expect(d.model).toBe("opus48")
     expect(d.downgradedFrom).toBe("fable5")
     expect(d.mode).toBe("deny")
+  })
+
+  test("deny: with DEFAULT policy, fable5 lands on opus5 (not the floor)", async () => {
+    // Regression guard for the un-gating decision: because opus5 now defaults to
+    // "allow", a denied fable5 stops at the ceiling instead of falling all the way
+    // through to legacy Opus 4.8. If opus5 ever regresses to "ask", this fails.
+    const root = policyRoot({ fable5: "deny" })
+    const d = await resolveModelDecision({ requested: "fable5", projectRoot: root, env: {} })
+    expect(d.model).toBe("opus5")
+    expect(d.downgradedFrom).toBe("fable5")
   })
 
   test("deny: downgrades to opus5 when opus5 is allow", async () => {
@@ -178,7 +191,7 @@ describe("resolveModelDecision — modes", () => {
   test("ask headless (no confirm): headlessDefault=deny downgrades", async () => {
     const root = policyRoot({ fable5: "ask", opus5: "ask" }, "deny")
     const d = await resolveModelDecision({ requested: "fable5", projectRoot: root, env: {} })
-    expect(d.model).toBe("opus")
+    expect(d.model).toBe("opus48")
     expect(d.downgradedFrom).toBe("fable5")
   })
 
@@ -189,7 +202,7 @@ describe("resolveModelDecision — modes", () => {
       projectRoot: root,
       env: { PRISM_MODEL_HEADLESS_DEFAULT: "deny" },
     })
-    expect(d.model).toBe("opus")
+    expect(d.model).toBe("opus48")
   })
 
   test("ask interactive: confirm=true runs the model", async () => {
@@ -215,7 +228,7 @@ describe("resolveModelDecision — modes", () => {
       env: {},
       confirm,
     })
-    expect(d.model).toBe("opus")
+    expect(d.model).toBe("opus48")
     expect(d.downgradedFrom).toBe("fable5")
   })
 
@@ -250,7 +263,7 @@ describe("emitModelEvent", () => {
       root,
       {
         requested: "fable5",
-        resolved: "opus",
+        resolved: "opus48",
         mode: "deny",
         surface: "vscode",
         downgradedFrom: "fable5",
@@ -263,7 +276,7 @@ describe("emitModelEvent", () => {
     expect(events[0]).toMatchObject({
       type: "model-decision",
       requested: "fable5",
-      resolved: "opus",
+      resolved: "opus48",
       mode: "deny",
       surface: "vscode",
       downgradedFrom: "fable5",
@@ -310,11 +323,11 @@ describe("decision + event emission", () => {
       },
       {},
     )
-    expect(d.model).toBe("opus")
+    expect(d.model).toBe("opus48")
     const events = readEvents(root)
     expect(events).toHaveLength(1)
     expect(events[0].downgradedFrom).toBe("fable5")
-    expect(events[0].resolved).toBe("opus")
+    expect(events[0].resolved).toBe("opus48")
   })
 
   test("an ask model auto-resolves headlessly AND writes an event", async () => {

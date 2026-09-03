@@ -5,7 +5,8 @@
 # Code pipes a status JSON to this script on stdin on every prompt. The JSON carries
 # the ACTIVE model ({model:{id,display_name}}) and the workspace dir. This segment:
 #   - maps the active model to a policy model id (claude-opus-5 -> opus5,
-#     claude-fable-5 -> fable5);
+#     claude-fable-5 / claude-fable-5-1 -> fable5; the /fable-?5/ test matches
+#     point releases by prefix, so 5.1 is never missed);
 #   - reads that model's approval mode from `.prism/local/model-policy.json`
 #     (mirroring model-policy.ts readModelPolicy / effectiveMode minimally — a
 #     statusLine script cannot import the TypeScript core);
@@ -55,11 +56,11 @@ let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{
     try{
       const f=JSON.parse(fs.readFileSync(path.join(root,".prism","local","fable.flag"),"utf8"));
       const on=f&&typeof f==="object"&&f.enabled===true;
-      models={opus5:{mode:"ask"},fable5:{mode:on?"ask":"deny"}};
-    }catch(e2){models={opus5:{mode:"ask"},fable5:{mode:"ask"}};}
+      models={opus5:{mode:"allow"},fable5:{mode:on?"ask":"deny"}};
+    }catch(e2){models={opus5:{mode:"allow"},fable5:{mode:"ask"}};}
   }
   const so=surfaces.cli&&surfaces.cli[pm]&&norm(surfaces.cli[pm].mode);
-  const mode=so||(models[pm]&&norm(models[pm].mode))||"ask";
+  const mode=so||(models[pm]&&norm(models[pm].mode))||(pm==="opus5"?"allow":"ask");
   const color=mode==="deny"?"\x1b[1;38;5;196m":"\x1b[1;38;5;208m";
   process.stdout.write(color+"◆ "+pm+" · "+mode+"\x1b[0m");
 });

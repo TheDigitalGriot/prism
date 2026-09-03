@@ -56,14 +56,19 @@ describe("resolveGatedModel", () => {
     expect(showWarningMessage).not.toHaveBeenCalled()
   })
 
-  test("flag OFF + fable -> opus, no modal", async () => {
+  // A denied Fable now stops at the CEILING (opus5), not the legacy opus48 floor,
+  // because opus5 defaults to "allow" — the chain returns the first freely runnable
+  // entry. Previously opus5 defaulted to "ask" and the walk fell through to Opus 4.8.
+  test("flag OFF + fable -> opus5, no modal", async () => {
     const root = makeWorkspace(JSON.stringify({ enabled: false }))
     roots.push(root)
-    await expect(resolveGatedModel("fable", root)).resolves.toBe("opus")
+    await expect(resolveGatedModel("fable", root)).resolves.toBe("opus5")
     expect(showWarningMessage).not.toHaveBeenCalled()
   })
 
   test("no workspace root + fable -> opus, no modal", async () => {
+    // No workspace => no policy store to consult, so this takes the early-return
+    // path and yields the `opus` SDK alias (which now resolves to Opus 5).
     await expect(resolveGatedModel("fable", undefined)).resolves.toBe("opus")
     expect(showWarningMessage).not.toHaveBeenCalled()
   })
@@ -75,25 +80,25 @@ describe("resolveGatedModel", () => {
     await expect(resolveGatedModel("fable", root)).resolves.toBe("fable")
     expect(showWarningMessage).toHaveBeenCalledTimes(1)
     expect(showWarningMessage).toHaveBeenCalledWith(
-      expect.stringContaining("Fable 5"),
+      expect.stringContaining("Fable 5.1"),
       { modal: true },
       "Confirm",
       "Deny",
     )
   })
 
-  test("flag ON + fable + Deny -> opus", async () => {
+  test("flag ON + fable + Deny -> opus5", async () => {
     const root = makeWorkspace(JSON.stringify({ enabled: true }))
     roots.push(root)
     showWarningMessage.mockResolvedValueOnce("Deny")
-    await expect(resolveGatedModel("fable", root)).resolves.toBe("opus")
+    await expect(resolveGatedModel("fable", root)).resolves.toBe("opus5")
     expect(showWarningMessage).toHaveBeenCalledTimes(1)
   })
 
-  test("flag ON + fable + dismissed (undefined) -> opus", async () => {
+  test("flag ON + fable + dismissed (undefined) -> opus5", async () => {
     const root = makeWorkspace(JSON.stringify({ enabled: true }))
     roots.push(root)
     showWarningMessage.mockResolvedValueOnce(undefined)
-    await expect(resolveGatedModel("fable", root)).resolves.toBe("opus")
+    await expect(resolveGatedModel("fable", root)).resolves.toBe("opus5")
   })
 })

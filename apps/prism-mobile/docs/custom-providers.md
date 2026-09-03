@@ -222,7 +222,7 @@ You can also combine profiles with model overrides to pin specific models per pr
       "claude-fast": {
         "extends": "claude",
         "label": "Claude (Fast)",
-        "models": [{ "id": "claude-sonnet-4-6", "label": "Sonnet 4.6", "isDefault": true }]
+        "models": [{ "id": "claude-sonnet-5", "label": "Sonnet 5", "isDefault": true }]
       },
       "claude-smart": {
         "extends": "claude",

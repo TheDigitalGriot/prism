@@ -32,9 +32,9 @@ describe("mergeProviderPreferences", () => {
           provider: "claude",
           providerPreferences: {
             claude: {
-              model: "claude-sonnet-4-6",
+              model: "claude-sonnet-5",
               thinkingByModel: {
-                "claude-sonnet-4-6": "medium",
+                "claude-sonnet-5": "medium",
               },
             },
           },
@@ -50,9 +50,9 @@ describe("mergeProviderPreferences", () => {
       provider: "claude",
       providerPreferences: {
         claude: {
-          model: "claude-sonnet-4-6",
+          model: "claude-sonnet-5",
           thinkingByModel: {
-            "claude-sonnet-4-6": "medium",
+            "claude-sonnet-5": "medium",
             "claude-opus-4-6": "high",
           },
         },
@@ -110,7 +110,7 @@ describe("favorite model preferences", () => {
           provider: "claude",
           providerPreferences: {
             claude: {
-              model: "claude-sonnet-4-6",
+              model: "claude-sonnet-5",
             },
           },
         },
@@ -121,7 +121,7 @@ describe("favorite model preferences", () => {
       provider: "claude",
       providerPreferences: {
         claude: {
-          model: "claude-sonnet-4-6",
+          model: "claude-sonnet-5",
         },
       },
       favoriteModels: [

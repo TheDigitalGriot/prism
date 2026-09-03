@@ -10,7 +10,7 @@
  * - Any non-policy model passes through unchanged (no modal, no event).
  * - Policy models are resolved per their mode (ask / allow / deny / skip). In
  *   VS Code an "ask" model prompts a native modal; a denial (or a dismissed
- *   modal) downgrades along the chain fable5 -> opus5 -> opus/4.8.
+ *   modal) downgrades along the chain fable5 -> opus5 -> opus48.
  * - Fable 5 keeps its default rationale (capped weekly Max allowance) and, with
  *   no policy store present, back-compat derives its mode from the legacy
  *   `fable.flag` so nothing regresses.
@@ -34,17 +34,21 @@ const MODELNAME_TO_POLICY: Partial<Record<ModelName, string>> = {
 const POLICY_TO_MODELNAME: Record<string, ModelName> = {
   fable5: "fable",
   opus5: "opus5",
-  opus: "opus",
+  opus48: "opus48",
 }
 
 /**
  * Per-model confirm rationale for the native modal. Fable's wording is
  * preserved verbatim (its default rationale is the capped weekly Max allowance).
+ *
+ * `opus5` has NO entry: Opus 5 is the routine ceiling and defaults to "allow",
+ * governed by the effort dial plus the xhigh|max one-shot confirm rather than a
+ * model-level gate. The entry is only reached if a user deliberately sets
+ * opus5 -> "ask" in their own policy store, which the fallback wording covers.
  */
 const RATIONALE: Record<string, string> = {
   fable5:
-    "Fable 5 requested — draws on your capped weekly Max allowance for this call.",
-  opus5: "Opus 5 requested — approval required by model policy.",
+    "Fable 5.1 requested — draws on your capped weekly Max allowance for this call.",
 }
 
 /**

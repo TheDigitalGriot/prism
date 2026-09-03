@@ -150,7 +150,7 @@ The per-gate key map (which interactive gate reads which answers key, with each 
 
 ### Model Control Plane (v4.11.0)
 
-Per-model **approval modes** (`ask` / `allow` / `deny` / `skip`) generalizing the single `fable.flag` boolean, resolved through one shared core (`packages/prism-core/src/core/api/model-policy.ts`) and surfaced on every dispatch surface. The store lives at `.prism/local/model-policy.json` (gitignored; a tracked `model-policy.example.json` documents the shape). A `deny` downgrades to the next runnable model in the shared chain (`fable5 → opus5 → opus`) and emits a bus event naming the substitution.
+Per-model **approval modes** (`ask` / `allow` / `deny` / `skip`) generalizing the single `fable.flag` boolean, resolved through one shared core (`packages/prism-core/src/core/api/model-policy.ts`) and surfaced on every dispatch surface. The store lives at `.prism/local/model-policy.json` (gitignored; a tracked `model-policy.example.json` documents the shape). A `deny` downgrades to the next runnable model in the shared chain (`fable5 → opus5 → opus48`) and emits a bus event naming the substitution. Default modes: `fable5` = **ask** (HITL-gated), `opus5` = **allow** (the routine ceiling — governed by the effort dial plus the `xhigh|max` one-shot confirm, never a model-level gate).
 
 | Script | Type | Description |
 |--------|------|-------------|

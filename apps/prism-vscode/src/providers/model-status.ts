@@ -96,7 +96,7 @@ export class ModelStatusBar implements vscode.Disposable {
     if (!last) {
       // No decision recorded yet — surface the configured premium modes.
       const policy = readModelPolicy(this._root)
-      const o = policy.models.opus5?.mode ?? "ask"
+      const o = policy.models.opus5?.mode ?? "allow"
       const f = policy.models.fable5?.mode ?? "ask"
       this._item.text = `$(shield) opus5:${o} · fable5:${f}`
       this._item.backgroundColor = undefined

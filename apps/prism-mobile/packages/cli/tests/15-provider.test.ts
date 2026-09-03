@@ -46,6 +46,26 @@ interface ProviderListRow {
 
 const EXPECTED_CLAUDE_MODELS = [
   {
+    id: "claude-fable-5-1",
+    model: "Fable 5.1",
+    descriptionFragment: "Gated escalation",
+  },
+  {
+    id: "claude-opus-5",
+    model: "Opus 5",
+    descriptionFragment: "Routine ceiling",
+  },
+  {
+    id: "claude-sonnet-5",
+    model: "Sonnet 5",
+    descriptionFragment: "Best for everyday tasks",
+  },
+  {
+    id: "claude-opus-4-8",
+    model: "Opus 4.8",
+    descriptionFragment: "Legacy",
+  },
+  {
     id: "claude-opus-4-7[1m]",
     model: "Opus 4.7 1M",
     descriptionFragment: "1M context window",
@@ -63,12 +83,12 @@ const EXPECTED_CLAUDE_MODELS = [
   {
     id: "claude-sonnet-4-6",
     model: "Sonnet 4.6",
-    descriptionFragment: "Best for everyday tasks",
+    descriptionFragment: "Legacy",
   },
   {
     id: "claude-opus-4-6",
     model: "Opus 4.6",
-    descriptionFragment: "Most capable",
+    descriptionFragment: "Legacy",
   },
   {
     id: "claude-haiku-4-5",
@@ -366,7 +386,7 @@ try {
       "--quiet should print the current Claude catalog IDs",
     );
     assert(
-      claudeModelsFromJson.some((m) => m.id === "claude-sonnet-4-6"),
+      claudeModelsFromJson.some((m) => m.id === "claude-sonnet-5"),
       "captured --json output should include the current Claude everyday model id",
     );
     console.log("✓ provider models --quiet outputs model IDs only\n");

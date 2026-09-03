@@ -164,13 +164,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       }
       const modelPick = await vscode.window.showQuickPick(
         [
-          { label: "opus5", description: "Opus 5" },
-          { label: "fable5", description: "Fable 5 — capped weekly Max allowance" },
+          { label: "opus5", description: "Opus 5 — routine ceiling (default: allow)" },
+          { label: "fable5", description: "Fable 5.1 — capped weekly Max allowance" },
         ],
         { placeHolder: "Set approval mode for which premium model?" },
       )
       if (!modelPick) return
-      const current = readModelPolicy(root).models[modelPick.label]?.mode ?? "ask"
+      const current =
+        readModelPolicy(root).models[modelPick.label]?.mode ??
+        (modelPick.label === "opus5" ? "allow" : "ask")
       const modeHints: Record<ApprovalMode, string> = {
         ask: "prompt for confirmation each call",
         allow: "run; emit a bus event (monitored)",

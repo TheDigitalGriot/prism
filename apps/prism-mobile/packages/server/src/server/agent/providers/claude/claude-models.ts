@@ -7,6 +7,7 @@ const CLAUDE_THINKING_OPTIONS = [
   { id: "max", label: "Max" },
 ] as const;
 
+/** Models that support the full five-level effort ladder (includes `xhigh`). */
 const CLAUDE_OPUS_4_7_THINKING_OPTIONS = [
   { id: "low", label: "Low" },
   { id: "medium", label: "Medium" },
@@ -16,6 +17,35 @@ const CLAUDE_OPUS_4_7_THINKING_OPTIONS = [
 ] as const;
 
 const CLAUDE_MODELS: AgentModelDefinition[] = [
+  {
+    provider: "claude",
+    id: "claude-fable-5-1",
+    label: "Fable 5.1",
+    description: "Fable 5.1 · Gated escalation — capped weekly Max allowance",
+    thinkingOptions: [...CLAUDE_OPUS_4_7_THINKING_OPTIONS],
+  },
+  {
+    provider: "claude",
+    id: "claude-opus-5",
+    label: "Opus 5",
+    description: "Opus 5 · Routine ceiling for complex work",
+    isDefault: true,
+    thinkingOptions: [...CLAUDE_OPUS_4_7_THINKING_OPTIONS],
+  },
+  {
+    provider: "claude",
+    id: "claude-sonnet-5",
+    label: "Sonnet 5",
+    description: "Sonnet 5 · Best for everyday tasks",
+    thinkingOptions: [...CLAUDE_OPUS_4_7_THINKING_OPTIONS],
+  },
+  {
+    provider: "claude",
+    id: "claude-opus-4-8",
+    label: "Opus 4.8",
+    description: "Opus 4.8 · Legacy, kept reachable for A/B eval",
+    thinkingOptions: [...CLAUDE_OPUS_4_7_THINKING_OPTIONS],
+  },
   {
     provider: "claude",
     id: "claude-opus-4-7[1m]",
@@ -41,15 +71,14 @@ const CLAUDE_MODELS: AgentModelDefinition[] = [
     provider: "claude",
     id: "claude-opus-4-6",
     label: "Opus 4.6",
-    description: "Opus 4.6 · Most capable for complex work",
-    isDefault: true,
+    description: "Opus 4.6 · Legacy",
     thinkingOptions: [...CLAUDE_THINKING_OPTIONS],
   },
   {
     provider: "claude",
     id: "claude-sonnet-4-6",
     label: "Sonnet 4.6",
-    description: "Sonnet 4.6 · Best for everyday tasks",
+    description: "Sonnet 4.6 · Legacy",
     thinkingOptions: [...CLAUDE_THINKING_OPTIONS],
   },
   {
@@ -79,9 +108,12 @@ export function normalizeClaudeRuntimeModelId(value: string | null | undefined):
     return trimmed;
   }
 
-  // Match: claude-{family}-{major}-{minor}[1m]? possibly followed by a date suffix
+  // Match: claude-{family}-{major}[-{minor}][1m]? possibly followed by a date suffix.
+  // The minor segment is OPTIONAL: major-version releases from the 5 generation on
+  // omit it entirely (claude-opus-5, claude-sonnet-5). A required-minor pattern
+  // silently returns null for those, which strands the whole current model line.
   const runtimeMatch = trimmed.match(
-    /(?:claude-)?(opus|sonnet|haiku)[-_ ]+(\d+)[-.](\d+)(\[1m\])?/i,
+    /(?:claude-)?(opus|sonnet|haiku|fable)[-_ ]+(\d+)(?:[-.](\d+))?(\[1m\])?/i,
   );
   if (!runtimeMatch) {
     return null;
@@ -91,5 +123,6 @@ export function normalizeClaudeRuntimeModelId(value: string | null | undefined):
   const major = runtimeMatch[2];
   const minor = runtimeMatch[3];
   const suffix = runtimeMatch[4] ?? "";
-  return `claude-${family}-${major}-${minor}${suffix}`;
+  const base = minor ? `claude-${family}-${major}-${minor}` : `claude-${family}-${major}`;
+  return `${base}${suffix}`;
 }

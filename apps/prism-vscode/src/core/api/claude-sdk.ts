@@ -21,12 +21,31 @@ import {
 // Model IDs
 // ---------------------------------------------------------------------------
 
+/**
+ * SDK alias -> pinned API model ID (Sept 2026 line).
+ *
+ * NAMESPACE NOTE: these are SDK aliases, NOT policy keys. `opus` here is the
+ * user-facing alias that agent frontmatter depends on, and the flip has landed —
+ * it now resolves to Opus 5. The POLICY namespace (model-policy.ts) has no bare
+ * `opus`; its keys are fable5 / opus5 / opus48. Keep the two straight; conflating
+ * them is how config drift starts. See cl-plugin-structure/references/
+ * model-config.md §2.
+ *
+ * Every ID below is a PINNED SNAPSHOT — from the 4.6 generation on, a dateless ID
+ * is not an evergreen pointer. Haiku is the only tier left with real
+ * alias -> dated-snapshot indirection.
+ */
 export const MODEL_IDS = {
-  opus: "claude-opus-4-8",
+  /** Routine ceiling. `opus`/`best` resolve here as of the Sept 2026 flip. */
+  opus: "claude-opus-5",
+  /** Explicit synonym for the ceiling — same model as `opus`. */
   opus5: "claude-opus-5",
-  sonnet: "claude-sonnet-4-6",
+  /** Legacy, kept reachable for A/B eval and reproducible pins. Not a routing target. */
+  opus48: "claude-opus-4-8",
+  sonnet: "claude-sonnet-5",
   haiku: "claude-haiku-4-5-20251001",
-  fable: "claude-fable-5",
+  /** HITL-gated escalation only — never a resting default. */
+  fable: "claude-fable-5-1",
 } as const
 
 export type ModelName = keyof typeof MODEL_IDS
@@ -76,7 +95,13 @@ export class PrismApiHandler {
       this._client = null
     }
     this._model = MODEL_IDS[options.model ?? "sonnet"]
-    this._maxTokens = options.maxTokens ?? 8192
+    // 32768, not 8192: this handler never sends a `thinking` parameter, and from
+    // Opus 5 on that means ADAPTIVE THINKING IS ON BY DEFAULT (on Opus 4.8 the
+    // same omission meant thinking off). Thinking tokens bill as output AND count
+    // against max_tokens, so an 8192 cap tuned for a no-thinking baseline can
+    // TRUNCATE a response mid-flight, not merely cost more. Callers that know
+    // their output is short may still pass a lower value explicitly.
+    this._maxTokens = options.maxTokens ?? 32768
   }
 
   /** Which credential is in use: 'subscription' (Max) or 'api-key' (metered). */

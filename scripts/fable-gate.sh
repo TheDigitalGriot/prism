@@ -10,12 +10,17 @@
 # longer silent about which premium model ran.
 #
 #   - The requested model comes from tool_input.model (an explicit Task override).
-#   - fable / claude-fable-5 -> policy model "fable5"; opus5 / claude-opus-5 -> "opus5".
+#   - fable / claude-fable-5 / claude-fable-5-* -> policy model "fable5";
+#     opus5 / claude-opus-5 -> "opus5".
 #     Every other model passes through untouched (no gate, no event).
+#     NOTE: Fable matching is by PREFIX, deliberately. An exact-string match on
+#     "claude-fable-5" silently FAILS to gate point releases like
+#     "claude-fable-5-1", letting a premium model dispatch completely ungated.
+#     Never narrow this back to an exact match.
 #   - mode allow|skip -> permissionDecision "allow" (runs; event emitted).
 #   - mode ask        -> permissionDecision "ask"   (human confirms; event emitted).
 #   - mode deny       -> permissionDecision "deny"  (blocked; event names the
-#     downgrade target from the fable5 -> opus5 -> opus chain).
+#     downgrade target from the fable5 -> opus5 -> opus48chain).
 #
 # Reads the PreToolUse payload ({tool_name, tool_input, ...}) as JSON on stdin.
 # JSON is parsed with node (no jq dependency; robust on Windows Git Bash), matching
@@ -53,8 +58,8 @@ fi
 # Map the requested model id to a policy model id. Empty => not policy-governed.
 POLICY_MODEL=""
 case "$MODEL" in
-  fable|claude-fable-5) POLICY_MODEL="fable5" ;;
-  opus5|claude-opus-5)  POLICY_MODEL="opus5" ;;
+  fable|claude-fable-5|claude-fable-5-*) POLICY_MODEL="fable5" ;;
+  opus5|claude-opus-5)                   POLICY_MODEL="opus5" ;;
 esac
 
 # Fail-safe net: if node was unavailable OR its precise parse missed on a genuinely
@@ -62,7 +67,7 @@ esac
 # so a governed dispatch always enters the gate. grep's no-match exit (1) must not
 # abort under `set -e`, so it is confined to these `if` conditions.
 if [ -z "$POLICY_MODEL" ] && [ -n "$PAYLOAD" ]; then
-  if printf '%s' "$PAYLOAD" | grep -Eq '"model"[[:space:]]*:[[:space:]]*"(fable|claude-fable-5)"'; then
+  if printf '%s' "$PAYLOAD" | grep -Eq '"model"[[:space:]]*:[[:space:]]*"(fable|claude-fable-5(-[0-9]+)*)"'; then
     POLICY_MODEL="fable5"
   elif printf '%s' "$PAYLOAD" | grep -Eq '"model"[[:space:]]*:[[:space:]]*"(opus5|claude-opus-5)"'; then
     POLICY_MODEL="opus5"
@@ -86,7 +91,7 @@ fi
 # Resolve the decision + emit the event via node. This block MIRRORS
 # model-policy.ts minimally: readModelPolicy precedence (model-policy.json ->
 # legacy fable.flag -> safe defaults), effectiveMode (surface "cli" override wins),
-# the fable5 -> opus5 -> opus downgrade chain, resolveStateDir precedence, and the
+# the fable5 -> opus5 -> opus48downgrade chain, resolveStateDir precedence, and the
 # {type:"model-decision",...} event shape. It is wrapped in try/catch so ANY error
 # degrades to an "allow" decision (fail-open) while still attempting the event.
 # It prints the full hookSpecificOutput JSON to stdout (the hook decision channel).
@@ -108,9 +113,9 @@ function readPolicy(){
     try{
       const f=JSON.parse(fs.readFileSync(path.join(root,".prism","local","fable.flag"),"utf8"));
       const on=f&&typeof f==="object"&&f.enabled===true;
-      return {headlessDefault:"allow",models:{opus5:{mode:"ask"},fable5:{mode:on?"ask":"deny"}},surfaces:{}};
+      return {headlessDefault:"allow",models:{opus5:{mode:"allow"},fable5:{mode:on?"ask":"deny"}},surfaces:{}};
     }catch(e2){
-      return {headlessDefault:"allow",models:{opus5:{mode:"ask"},fable5:{mode:"ask"}},surfaces:{}};
+      return {headlessDefault:"allow",models:{opus5:{mode:"allow"},fable5:{mode:"ask"}},surfaces:{}};
     }
   }
 }
@@ -138,7 +143,7 @@ function out(decision,reason){
 }
 try{
   const policy=readPolicy();
-  const CHAIN=["fable5","opus5","opus"];
+  const CHAIN=["fable5","opus5","opus48"];
   const eff=m=>{
     const s=policy.surfaces[surface]&&policy.surfaces[surface][m]&&norm(policy.surfaces[surface][m].mode);
     if(s) return s;
@@ -147,7 +152,7 @@ try{
   const nextRunnable=req=>{
     const i=CHAIN.indexOf(req);const start=i<0?0:i+1;
     for(let k=start;k<CHAIN.length;k++){const mm=eff(CHAIN[k]);if(mm==="allow"||mm==="skip") return CHAIN[k];}
-    return "opus";
+    return "opus48";
   };
   const mode=eff(model);
   let resolved=model,downgradedFrom,decision;

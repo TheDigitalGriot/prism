@@ -181,7 +181,7 @@ const claudeEntry: ProviderSnapshotEntry = {
   modes: [],
   models: [
     { provider: "claude", id: "claude-opus-4-7", label: "Claude Opus 4.7" },
-    { provider: "claude", id: "claude-sonnet-4-6", label: "Claude Sonnet 4.6" },
+    { provider: "claude", id: "claude-sonnet-5", label: "Claude Sonnet 5" },
     { provider: "claude", id: "claude-haiku-4-5", label: "Claude Haiku 4.5" },
   ],
 };
