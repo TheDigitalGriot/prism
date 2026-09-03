@@ -4,6 +4,44 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.13.2] - 2026-09-03
+
+### Fixed
+
+Closes all three BOM residuals logged from the v4.13.1 Review & Audit gate. Routed through **`/prism:cl-plugin-structure`** rather than hand-scripted — the v4.13.1 fix was applied by a raw PowerShell one-liner, which is how the mirror drift and the GNU-only strip got in.
+
+- **Low → closed — the BOM strip is now portable.** `\xEF\xBB\xBF` is a GNU-sed extension; BSD/macOS sed has no `\xNN` escape and reads the pattern as the literal text `xEFxBBxBF`, making the v4.13.1 strip a **silent no-op** off-GNU. Replaced with POSIX primitives only — the BOM is materialized from `printf` *octal* escapes (`\357\273\277`), compared against `head -c 3`, and dropped with `tail -c +4`. No regex dialect is involved, so there is no dialect to be wrong about.
+- **High → closed — the sibling validators tolerate a leading BOM.** `validate-agent.sh` (the `head -1` "must start with `---`" gate **and** the `sed`/`awk` extraction) and `validate-settings.sh` (the `grep -c '^---$'` marker count, the `sed` extraction, and the `awk` body read) all normalize through a BOM-free scan copy. Reproduced first as a failing baseline: pre-fix, a BOM'd *valid* file failed `validate-agent.sh` with `File must start with YAML frontmatter (---)` and `validate-settings.sh` with `found 1 '---' markers`. A `💡 Leading UTF-8 BOM detected` line now reports the strip instead of it happening invisibly.
+- **Medium → closed — the distribution mirror is synced.** `apps/prism-setup/resources/plugin/skills/cl-plugin-structure/scripts/` now matches source for all three scripts. The sweep also covered the deployed copies under `~/.agents/skills/{cl-plugin-structure,plugin-settings}/scripts/` and `~/.claude/skills/plugin-settings/scripts/` — nine files total, verified byte-identical by checksum. One of those copies had drifted to CRLF and is normalized back to LF.
+
+The scan-copy approach is deliberate: under `set -o pipefail`, piping each read through a strip filter lets `head -1` / `grep -q` exit early and SIGPIPE the writer, which would abort the very scripts being fixed.
+
+### Fixed — surfaced by the validation gate, not previously known
+
+- **`validate-agent.sh` aborted at its first warning and had never reported one.** Two `set -euo pipefail` interactions made the script structurally unable to do its job:
+  - `((error_count++))` / `((warning_count++))` — an arithmetic *command* takes its exit status from the expression's value, and post-increment yields the **old** value `0` on the first bump → status 1 → `set -e` fires. All 18 sites now use `count=$((count + 1))`, which is an assignment and always returns 0.
+  - The five `FIELD=$(echo "$FRONTMATTER" | grep '^field:' | …)` extractions — `grep` exiting 1 on no-match is an *answer*, not an error, but `pipefail` promoted it to pipeline failure and `set -e` made it fatal. So the script died on exactly the condition it exists to report (`❌ Missing required field: …`), and on any agent omitting the optional `tools:`. All five are now `|| true`-guarded.
+  - Net effect before this patch: the script could only ever print `✅ All checks passed!` or exit 1 with no diagnostic and no summary block. `validate-settings.sh` had the same class in its field-listing pipeline (`… | while read …`, fatal when frontmatter has no lowercase keys); also guarded.
+
+  These are not BOM bugs, but the gate's own success criterion — *all three validators exit 0 on a BOM'd valid file* — is unverifiable while one of them aborts before printing a verdict, so they are fixed here rather than worked around with a hand-tuned fixture.
+
+### Verified
+
+- 14-case validation matrix, **14/14 pass**: three validators × {valid-clean, valid-BOM'd, malformed-no-frontmatter, malformed-no-frontmatter + BOM, malformed-unclosed + BOM}. BOM'd valid files exit 0; genuinely malformed files are still rejected with the correct diagnostic in every case.
+- Pre-fix baseline reproduced from `git show HEAD:` copies, to confirm the failures were real before claiming them fixed.
+- `claude plugin validate .` — PASS. `scripts/pre-release-audit.mjs` — **AUDIT CLEAN** (all four `verify-*.mjs` plus structural checks over 425 changed files).
+- All version surfaces consistent at 4.13.2 (`bump-version.py --strict` discovery sweep clean; one straggler at `prism-docs/docs/.vitepress/config.ts:203` corrected).
+
+### Known open — logged from this patch's gate
+
+- **All 14 repo agents omit the required `color:` field.** `cl-plugin-structure/SKILL.md` states plainly that `model` and `color` are **required** in agent frontmatter; every `agents/*.md` declares `model`, none declares `color`. This was invisible until now — `validate-agent.sh` died before it could print `❌ Missing required field: color`. Now that it reports, all 14 agents fail validation on it. **Deliberately not fixed here:** `color` is a user-visible UI identifier, choosing 14 of them is a design decision rather than a patch, and it is outside this patch's BOM scope. Repro: `bash skills/cl-plugin-structure/scripts/validate-agent.sh agents/codebase-locator.md`.
+- **CRLF intolerance is the same bug class as BOM, still unaddressed.** Every `^---$` match in all three validators fails on CRLF-terminated files (the marker becomes `---\r`). Not in this patch's scope; recorded so it is not rediscovered as a surprise.
+- **`validate-agent.sh`'s model allow-list is stale** — it accepts only `inherit|sonnet|opus|haiku` and warns on `opus5`, `claude-fable-5-1`, and every id added in 4.13.0. Out of scope here; it needs to track `references/model-config.md`.
+
+> Eval snapshots under `.prism/shared/evals/v*-snapshot/` retain the pre-fix lines **by design** — historical records stay untouched.
+
+Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-4.13.2.md`.
+
 ## [4.13.1] - 2026-09-03
 
 ### Fixed
