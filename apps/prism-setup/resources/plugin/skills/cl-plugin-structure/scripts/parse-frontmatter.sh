@@ -33,8 +33,28 @@ if [ ! -f "$FILE" ]; then
   exit 1
 fi
 
+# --- Portable UTF-8 BOM tolerance --------------------------------------------
+# Windows editors (Notepad, PowerShell `>` redirection, some Git clients) prepend
+# a 3-byte UTF-8 BOM (EF BB BF). It makes the first line literally `<BOM>---`, so
+# every `^---$` match fails and frontmatter parsing reports "none" on a valid file.
+#
+# `sed '1s/^\xEF\xBB\xBF//'` fixes this on GNU sed ONLY. BSD/macOS sed has no \xNN
+# escape and reads the pattern as the literal text `xEFxBBxBF`, so the strip is a
+# silent no-op there. Build the BOM from POSIX printf octal escapes instead and
+# drop it with `tail -c +4` — no regex dialect involved, portable everywhere.
+BOM=$(printf '\357\273\277')
+
+# strip_bom <file> — emit the file with a leading UTF-8 BOM removed.
+strip_bom() {
+  if [ "$(head -c 3 "$1" 2>/dev/null || true)" = "$BOM" ]; then
+    tail -c +4 "$1"
+  else
+    cat "$1"
+  fi
+}
+
 # Extract frontmatter
-FRONTMATTER=$(sed -n '/^---$/,/^---$/{ /^---$/d; p; }' "$FILE")
+FRONTMATTER=$(strip_bom "$FILE" | sed -n '/^---$/,/^---$/{ /^---$/d; p; }')
 
 if [ -z "$FRONTMATTER" ]; then
   echo "Error: No frontmatter found in $FILE" >&2

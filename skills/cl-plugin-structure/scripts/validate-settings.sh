@@ -37,8 +37,29 @@ if [ ! -r "$SETTINGS_FILE" ]; then
 fi
 echo "✅ File is readable"
 
+# --- Portable UTF-8 BOM tolerance --------------------------------------------
+# Windows editors (Notepad, PowerShell `>` redirection, some Git clients) prepend
+# a 3-byte UTF-8 BOM (EF BB BF). It makes the first line literally `<BOM>---`, so
+# the opening marker never matches `^---$` and a valid file fails Check 3 with
+# "found 1 '---' markers".
+#
+# `sed '1s/^\xEF\xBB\xBF//'` fixes this on GNU sed ONLY. BSD/macOS sed has no \xNN
+# escape and reads the pattern as the literal text `xEFxBBxBF`, so the strip is a
+# silent no-op there. Detect the BOM with POSIX printf octal escapes instead and
+# drop it with `tail -c +4` — no regex dialect involved, portable everywhere.
+#
+# Normalize once into a scan copy so the grep/sed/awk reads below stay unchanged.
+BOM=$(printf '\357\273\277')
+SCAN_FILE="$SETTINGS_FILE"
+if [ "$(head -c 3 "$SETTINGS_FILE" 2>/dev/null || true)" = "$BOM" ]; then
+  SCAN_FILE=$(mktemp)
+  trap 'rm -f "$SCAN_FILE"' EXIT
+  tail -c +4 "$SETTINGS_FILE" > "$SCAN_FILE"
+  echo "💡 Leading UTF-8 BOM detected — stripped for validation"
+fi
+
 # Check 3: Has frontmatter markers
-MARKER_COUNT=$(grep -c '^---$' "$SETTINGS_FILE" 2>/dev/null || echo "0")
+MARKER_COUNT=$(grep -c '^---$' "$SCAN_FILE" 2>/dev/null || echo "0")
 
 if [ "$MARKER_COUNT" -lt 2 ]; then
   echo "❌ Invalid frontmatter: found $MARKER_COUNT '---' markers (need at least 2)"
@@ -52,7 +73,7 @@ fi
 echo "✅ Frontmatter markers present"
 
 # Check 4: Extract and validate frontmatter
-FRONTMATTER=$(sed -n '/^---$/,/^---$/{ /^---$/d; p; }' "$SETTINGS_FILE")
+FRONTMATTER=$(sed -n '/^---$/,/^---$/{ /^---$/d; p; }' "$SCAN_FILE")
 
 if [ -z "$FRONTMATTER" ]; then
   echo "❌ Empty frontmatter (nothing between --- markers)"
@@ -68,9 +89,11 @@ fi
 # Check 6: Look for common fields
 echo ""
 echo "Detected fields:"
+# `|| true`: grep exits 1 when no key:value line matches, which under
+# `set -e` + `pipefail` would abort the run instead of just listing nothing.
 echo "$FRONTMATTER" | grep '^[a-z_][a-z0-9_]*:' | while IFS=':' read -r key value; do
   echo "  - $key: ${value:0:50}"
-done
+done || true
 
 # Check 7: Validate common boolean fields
 for field in enabled strict_mode; do
@@ -83,7 +106,7 @@ for field in enabled strict_mode; do
 done
 
 # Check 8: Check body exists
-BODY=$(awk '/^---$/{i++; next} i>=2' "$SETTINGS_FILE")
+BODY=$(awk '/^---$/{i++; next} i>=2' "$SCAN_FILE")
 
 echo ""
 if [ -n "$BODY" ]; then
