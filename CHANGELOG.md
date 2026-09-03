@@ -4,6 +4,36 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.13.0] - 2026-09-02
+
+### Added
+
+- **Sept 2026 Claude model line.** Verified live against `platform.claude.com` rather than from memory: **Opus 5** (`claude-opus-5`, GA 2026-07-24, $5/$25, 1M/128K) is the routine ceiling; **Sonnet 5** (`claude-sonnet-5`) replaces Sonnet 4.6 at **$2/$10 — a 33% price cut** plus native 1M context and `xhigh` support that 4.6 never had; **Fable 5.1** (`claude-fable-5-1`) replaces Fable 5 as the HITL-gated escalation; **Haiku 4.5** unchanged and documented as the only tier with **no** effort support. Claude Code minimums corrected against primary release tags — Fable 5.1 **v2.1.257**, Opus 5 **v2.1.219**, Sonnet 5 **v2.1.197**; Haiku 4.5 and bare `effort: max` are recorded as *not documented* rather than guessed.
+- **Mythos 5.1 recorded as non-routable.** `claude-mythos-5-1` is a confirmed API id (identical to Fable 5.1) but is invitation-only under Project Glasswing, so it is documented as a footnote and deliberately kept out of the tier table, `MODEL_IDS`, and the policy chain.
+
+### Fixed
+
+- **SECURITY — Fable gate bypass.** `fable-gate.sh` matched Fable by **exact string** (`fable|claude-fable-5`), so the rename to `claude-fable-5-1` would have let the premium model dispatch **completely ungated**, defeating the HITL policy. Fable is now matched by **prefix** in all three copies of the logic (shell `case` glob, the grep fail-safe, and the mobile `policyKeyForModel`). Verified against four live cases: 5.1 gates, legacy 5 still gates, `opus5` allows, non-premium models pass through untouched.
+- **Opus 5 model gate removed — restores a locked decision.** `icm-fuse-CONTEXT.md`, `icm-fuse-opus5-PLAN.md`, and `OPUS5-INCORPORATION-PLAN.md` all specify **no model-level gate on Opus 5**, but the shipped code defaulted `opus5` to `"ask"`. That was drift. `opus5` now defaults to `"allow"`; model-decision bus events still fire on every dispatch, so visibility is unchanged. Fable 5.1 keeps its gate; Opus 5's only guard remains the `xhigh|max` one-shot confirm.
+- **`maxTokens` truncation risk.** Prism never sends a `thinking` parameter — which meant thinking-*off* on Opus 4.8 but **adaptive thinking on by default** from Opus 5. Thinking bills as output *and* counts against `max_tokens`, so the old `8192` default risked truncating responses, not merely costing more. Raised to `32768`.
+- **Mobile runtime-model normalizer.** The regex required a minor segment (`{major}-{minor}`), so it returned `null` for major-only ids like `claude-opus-5` / `claude-sonnet-5` — stranding the entire current model line. The minor segment is now optional, with a regression test.
+- **Version drift across the repo.** v4.12.0–4.12.2 bumped only `plugin.json`/`marketplace.json`, leaving root `VERSION` at 4.12.1 and every app (vscode, electron, mobile, installer, tauri, CLI, prism-core, prism-ui) pinned at 4.11.0. All nine version locations are now consistent at 4.13.0.
+
+### Changed
+
+- **The `opus`/`best` alias flip has LANDED** — the follow-up flagged in 4.11.0. `opus`/`best` now resolve to `claude-opus-5`; Opus 4.8 stays reachable as an explicit legacy pin for A/B eval.
+- **Policy-key namespace split.** The bare policy key `opus` is renamed **`opus48`** so a policy key can never silently mean "whichever Opus is current"; SDK aliases (`MODEL_IDS`) keep `opus` as the user-facing alias, now resolving to Opus 5. Downgrade chain is `fable5 → opus5 → opus48`.
+- **Effort posture re-baselined.** Anthropic's recommended start dropped from `xhigh` (Opus 4.7/4.8) to `high` with `low`/`medium` as the primary cost control on Opus 5, and `high` is documented as **not comparable across models**. `codebase-analyzer` and `prism-analyzer` move `high → medium`. Effort no longer reliably shortens *visible* output on Opus 5, so concision must be prompted for separately.
+- **Cost ratios re-baselined** (`prism-spectrum/references/model-selection.md`) — Sonnet is now **2x** haiku, not the stale 3-5x, and ratios are split into list price vs effective (token-volume) multipliers.
+
+> Historical records intentionally untouched: `.prism/shared/{evals,docs,research,handoffs}` and the prism-gavel shipped-roadmap entries are time capsules.
+
+## [4.12.2] - 2026-08-24
+
+### Changed
+
+- **Stuck Protocol — device/cloud tool recovery.** Documented the retry → switch-surface → replay-the-logs → ask ladder across `CLAUDE.md` and the bridge skills/commands/agents, so an empty `[]`, a "not connected", or a first-call failure is treated as a routing problem to work through rather than a blocker to report. (Released as a docs patch; this entry backfills a CHANGELOG gap — the tag shipped without one.)
+
 ## [4.12.1] - 2026-08-24
 
 ### Changed

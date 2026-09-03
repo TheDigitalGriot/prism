@@ -1,57 +1,55 @@
 {
-    "productName":  "Prism Setup",
-    "version":  "4.11.0",
-    "identifier":  "com.thedigitalgriot.prism-setup",
-    "build":  {
-                  "beforeBuildCommand":  "npm run build",
-                  "beforeDevCommand":  "npm run dev",
-                  "devUrl":  "http://localhost:1420",
-                  "frontendDist":  "../dist"
-              },
-    "app":  {
-                "windows":  [
-                                {
-                                    "label":  "main",
-                                    "title":  "Prism Setup",
-                                    "width":  520,
-                                    "height":  600,
-                                    "resizable":  false,
-                                    "maximizable":  false,
-                                    "decorations":  false,
-                                    "titleBarStyle":  "Overlay",
-                                    "hiddenTitle":  true,
-                                    "center":  true
-                                }
-                            ],
-                "security":  {
-                                 "csp":  null
-                             }
-            },
-    "bundle":  {
-                   "active":  true,
-                   "targets":  [
-
-                               ],
-                   "icon":  [
-                                "icons/32x32.png",
-                                "icons/128x128.png",
-                                "icons/128x128@2x.png",
-                                "icons/icon.icns",
-                                "icons/icon.ico"
-                            ],
-                   "windows":  {
-                                   "webviewInstallMode":  {
-                                                              "type":  "skip"
-                                                          }
-                               },
-                   "macOS":  {
-                                 "dmg":  {
-                                             "windowSize":  {
-                                                                "width":  660,
-                                                                "height":  400
-                                                            }
-                                         },
-                                 "minimumSystemVersion":  "10.15"
-                             }
-               }
+  "productName": "Prism Setup",
+  "version": "4.13.0",
+  "identifier": "com.thedigitalgriot.prism-setup",
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Prism Setup",
+        "width": 520,
+        "height": 600,
+        "resizable": false,
+        "maximizable": false,
+        "decorations": false,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "skip"
+      }
+    },
+    "macOS": {
+      "dmg": {
+        "windowSize": {
+          "width": 660,
+          "height": 400
+        }
+      },
+      "minimumSystemVersion": "10.15"
+    }
+  }
 }
