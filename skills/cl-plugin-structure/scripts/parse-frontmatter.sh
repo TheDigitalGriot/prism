@@ -34,7 +34,7 @@ if [ ! -f "$FILE" ]; then
 fi
 
 # Extract frontmatter
-FRONTMATTER=$(sed -n '/^---$/,/^---$/{ /^---$/d; p; }' "$FILE")
+FRONTMATTER=$(sed '1s/^\xEF\xBB\xBF//' "$FILE" | sed -n '/^---$/,/^---$/{ /^---$/d; p; }')
 
 if [ -z "$FRONTMATTER" ]; then
   echo "Error: No frontmatter found in $FILE" >&2
