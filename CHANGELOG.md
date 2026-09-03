@@ -38,6 +38,8 @@ The scan-copy approach is deliberate: under `set -o pipefail`, piping each read 
 - **CRLF intolerance is the same bug class as BOM, still unaddressed.** Every `^---$` match in all three validators fails on CRLF-terminated files (the marker becomes `---\r`). Not in this patch's scope; recorded so it is not rediscovered as a surprise.
 - **`validate-agent.sh`'s model allow-list is stale** — it accepts only `inherit|sonnet|opus|haiku` and warns on `opus5`, `claude-fable-5-1`, and every id added in 4.13.0. Out of scope here; it needs to track `references/model-config.md`.
 
+- **`verify-branch-integrated.mjs` is RED until v4.13.1 and v4.13.2 are tagged.** `pre-release-audit.mjs` was **AUDIT CLEAN** before this patch's commits and reports **1 failure** after. Expected, not a regression: the gate permits exactly **one** in-flight untagged release (`verify-branch-integrated.mjs:52`), and v4.13.1 also stopped before tagging, so it already held that slot. Two untagged releases flips `inFlight` false and fails Checks 2 and 3. The only remedy is `git tag`, which this run is explicitly barred from — it clears with `git tag v4.13.1 4881512 && git tag v4.13.2 7359d87`. Every other audit check still passes.
+
 > Eval snapshots under `.prism/shared/evals/v*-snapshot/` retain the pre-fix lines **by design** — historical records stay untouched.
 
 Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-4.13.2.md`.

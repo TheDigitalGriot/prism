@@ -127,3 +127,36 @@ All surfaces consistent at **4.13.2**. `bump-version.py patch --strict` updated 
 ## 8. Release status
 
 **Local commits only.** No tag, no push, no GitHub release, no native build — the hard stop was specified up front and is honored. Staged for Gavin to take the remaining ceremony steps.
+
+| Commit | Subject |
+|---|---|
+| `79a5370` | `fix(cl-plugin-structure):` close the three v4.13.1 BOM residuals in the bundled validators |
+| `7359d87` | `chore(release):` v4.13.2 — patch bump across all version surfaces |
+| `16936c2` | `docs(v4.13.2):` CHANGELOG, documentation snapshot, and the stage contract |
+
+### ⚠️ `verify-branch-integrated.mjs` is now RED — and only tagging can clear it
+
+`pre-release-audit.mjs` ran **AUDIT CLEAN** before these commits and **1 AUDIT FAILURE** after. This is a direct, expected consequence of stacking a second hard-stopped release on top of an untagged one — **not** a defect introduced by this patch.
+
+`scripts/verify-branch-integrated.mjs:52` permits exactly **one** in-flight untagged release:
+
+```js
+const inFlight = uniqUntagged.length === 1 && uniqUntagged[0] === VERSION;
+```
+
+v4.13.1 also stopped before tagging, so it was already the one legitimate in-flight release. v4.13.2 makes two, `inFlight` goes false, and both Check 2 and Check 3 fail:
+
+```
+[FAIL] base version v4.13.2 has no reachable tag and no matching in-flight release commit
+[FAIL] untagged release commits since v4.13.0: v4.13.2, v4.13.1
+```
+
+**This cannot be resolved from inside the hard stop** — the gate's only remedy is `git tag`, which is explicitly out of bounds for this run. It clears the moment Gavin tags both:
+
+```sh
+git tag v4.13.1 4881512
+git tag v4.13.2 7359d87
+node scripts/verify-branch-integrated.mjs   # expect 0 failures
+```
+
+Everything else in the audit still passes: `claude plugin validate .`, `verify-ceremony-gate.mjs`, `verify-model-policy-conformance.mjs`, `verify-story-unification.mjs`, and the structural checks.
