@@ -51,10 +51,16 @@ jobs:
         continue-on-error: true
 
       - name: Copy plugin files
+        # Must copy ALL SIX plugin dirs, matching scripts/sync-prism-plugin.sh.
+        # Copying only commands+agents (the pre-2026-09 behavior) left the
+        # installer shipping the committed-but-stale skills/ and .claude-plugin/,
+        # so the NSIS artifact declared plugin version 4.11.0 while the product
+        # was 4.13.0. A fresh checkout has no skills/generated/ (gitignored), so
+        # this ships the same skill set as the marketplace mirror.
         run: |
           mkdir -p apps/prism-setup/resources/plugin
-          cp -r commands apps/prism-setup/resources/plugin/
-          cp -r agents apps/prism-setup/resources/plugin/
+          cp -r commands agents skills hooks scripts .claude-plugin \
+            apps/prism-setup/resources/plugin/
 
       - uses: actions/upload-artifact@v4
         with:

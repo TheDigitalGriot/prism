@@ -24,9 +24,21 @@ import type { ModelName } from "./claude-sdk"
 
 const SURFACE = "vscode"
 
-/** ModelName -> policy model id. Only these ModelNames are policy-gated. */
+/**
+ * ModelName -> policy model id. Only these ModelNames are policy-gated.
+ *
+ * `opus` MUST be listed. Before the Sept 2026 alias flip it resolved to Opus 4.8
+ * — the un-listed, always-runnable floor — so omitting it was correct. Post-flip
+ * `opus` and `opus5` resolve to the SAME concrete id (claude-opus-5), so leaving
+ * `opus` unmapped made every dispatch through the default alias skip the control
+ * plane entirely: no mode applied and, worse, NO bus event. That silently broke
+ * the invariant that every premium dispatch is observable.
+ *
+ * `opus48` is deliberately absent — it is the chain floor and runs freely.
+ */
 const MODELNAME_TO_POLICY: Partial<Record<ModelName, string>> = {
   fable: "fable5",
+  opus: "opus5",
   opus5: "opus5",
 }
 
@@ -72,8 +84,8 @@ export async function resolveGatedModel(
   }
 
   // Without a workspace root there is no policy store to read and nowhere to
-  // write events: preserve the legacy fall-back to Opus for Fable, otherwise
-  // let the request through unchanged.
+  // write events: fall Fable back to the ceiling (`opus` -> claude-opus-5),
+  // otherwise let the request through unchanged.
   if (!workspaceRoot) {
     return requested === "fable" ? "opus" : requested
   }
@@ -106,6 +118,13 @@ export async function resolveGatedModel(
     surface: SURFACE,
     downgradedFrom: decision.downgradedFrom,
   })
+
+  // Preserve the caller's ModelName when the policy did NOT downgrade. `opus` and
+  // `opus5` resolve to the same concrete id, so rewriting one to the other would
+  // be a confusing no-op substitution; only a real downgrade changes the model.
+  if (!decision.downgradedFrom) {
+    return requested
+  }
 
   return POLICY_TO_MODELNAME[decision.model] ?? "opus"
 }

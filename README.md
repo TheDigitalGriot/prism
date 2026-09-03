@@ -56,6 +56,38 @@ Say "help me build [feature]" or "implement [task]" to trigger the full Prism wo
 | `/prism:prism-iterate` | Update plan based on feedback |
 | `/prism:prism-spectrum` | Autonomous story execution (used with spectrum.sh) |
 | `/prism:prism-debug` | Debug investigation with parallel agents |
+| `/prism:prism-subagent` | Same-session subagent execution with two-stage review |
+| `/prism:prism-dispatch` | Route a task to the right execution model |
+| `/prism:prism-decompose` | Convert an approved plan into executable stories |
+| `/prism:prism-finish` | Wrap a branch — cleanup, PR description, handoff |
+| `/prism:prism-init` | Scaffold the `.prism/` directory in a project |
+
+### Release & Ceremony Skills
+
+The end-of-cycle arc. `prism-closing-ceremony` runs the whole sequence in one pass.
+
+| Skill | Purpose |
+|---------|---------|
+| `/prism:prism-closing-ceremony` | Review & Audit gate → bookend → docs-update → release, fail-fast |
+| `/prism:prism-bookend` | Analyze commits, propose the semver bump, update the doc snapshot |
+| `/prism:prism-docs-update` | Sync the VitePress site from a `PRISM-DOCUMENTATION-*.md` snapshot |
+| `/prism:prism-release` | Build all artifacts, commit, tag, push, publish the GitHub release |
+| `/prism:prism-sideload` | Build a Cowork sideload zip |
+| `/prism:prism-eval` | Run skill evals against a version snapshot |
+
+### Plugin & Standards Skills
+
+| Skill | Purpose |
+|---------|---------|
+| `/prism:cl-plugin-structure` | The plugin-authoring gold standard — manifests, components, model config |
+| `/prism:fragment-sync` | Reconcile Fragment's scaffolder to the current Prism standard |
+| `/prism:icm-architect` | Build ICM workspaces + headless stage contracts |
+| `/prism:prism-gavel` | Decision cockpit — the browser-driven gavel surface |
+| `/prism:prism-brand` | Brand matrix and identity work |
+| `/prism:prism-capture` | Capture a session into structured `.prism/` artifacts |
+| `/prism:prism-verify` | Browser verification via Playwright |
+| `/prism:prism-visual-docs` | Visual documentation generation |
+| `/prism:prism-codex-plan-sync` | Sync plans across the Codex surface |
 
 ### Spectrum Autonomous Execution
 
@@ -235,6 +267,22 @@ prism-visual-docs  ──────────────▶ /generate_user_
 | `log-investigator` | Analyze logs for errors | haiku |
 | `state-investigator` | Check app state and config | haiku |
 | `git-investigator` | Analyze git history | haiku |
+
+#### Review & Verification Agents
+
+The two-stage review pair used by `prism-subagent` and the closing ceremony.
+
+| Agent | Purpose | Model |
+|-------|---------|-------|
+| `spec-reviewer` | Stage 1 — does the diff match the story exactly? | sonnet |
+| `quality-reviewer` | Stage 2 — architecture, testing, maintainability | sonnet |
+| `browser-verifier` | Screenshots + console-error assertions via Playwright | haiku |
+| `visual-regression-grader` | Judge a visual diff: regression vs intentional | sonnet |
+| `graph-navigator` | Structural queries over the code graph | haiku |
+
+> Agents declare **aliases** (`opus` / `sonnet` / `haiku`), never pinned model IDs, so a
+> family roll-forward never requires touching agent frontmatter. See
+> [Model Assignment](https://prism.digitalgriot.studio/plugin/model-assignment).
 
 ## Key Principles
 

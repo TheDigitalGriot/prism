@@ -1,7 +1,7 @@
 ---
 name: cl-plugin-structure
 description: Use when creating, scaffolding, structuring, or validating plugins for Claude Code or Claude Cowork. Covers the .claude-plugin/plugin.json + marketplace manifest, component organization (agents, skills, slash commands, hooks, MCP/LSP servers, channels), agent/command/hook frontmatter, the .local.md per-project settings pattern, portable paths, surface compatibility, bundled validator scripts, and development workflow. Use this whenever the user mentions building a plugin, a skill, a slash command, a hook, an MCP server, a marketplace, or asks about plugin.json/SKILL.md structure — even if they don't say "plugin" explicitly.
-version: 0.7.5
+version: 0.7.6
 ---
 
 # Plugin Structure for Claude Code and Cowork

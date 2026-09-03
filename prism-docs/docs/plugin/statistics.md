@@ -6,6 +6,19 @@ outline: [2, 3]
 
 # Plugin Statistics
 
+## Component Counts <small>(v4.13.0)</small>
+
+Counted from the tracked tree at v4.13.0. `skills/generated/` is excluded — those are regenerable artifacts (`scripts/prism-sync-skills.py`) and ship in neither distribution channel.
+
+| Category | Files | Change from v3.4.0 |
+|----------|-------|---------------------|
+| Plugin manifests | 2 | — |
+| Commands | 26 | +1 |
+| Agents | 14 | — |
+| Skills (SKILL.md) | 31 | +8 |
+| Scripts (top-level) | 24 | +10 |
+| MCP servers | 2 | — |
+
 ## Component Counts <small>(v3.4.0)</small>
 
 | Category | Files | Total Lines | Change from v3.2.0 |

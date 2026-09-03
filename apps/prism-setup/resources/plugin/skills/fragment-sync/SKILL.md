@@ -1,7 +1,7 @@
 ---
 name: fragment-sync
 description: Use when Fragment (the create-fragment scaffolder / fragment-plugin) has drifted from the current cl-plugin-structure / Prism standard and needs re-syncing — after Prism advances, before exposing Fragment anywhere, or when scaffolded projects look stale (missing Cowork awareness, channels, or the current model line). Reconciles Fragment so it once again emits "Prism-image" projects. Triggers on "sync fragment", "update fragment", "fragment fell behind", "conform fragment", "fragment is stale".
-version: 0.2.1
+version: 0.2.2
 ---
 
 # Fragment Sync

@@ -35,6 +35,12 @@ graphify-out/
 
 # Generated community skills (regenerate with: python scripts/prism-sync-skills.py)
 skills/generated/
+# ...and the same under the prism-setup mirror. The mirror is populated by
+# `cp -r`, which ignores .gitignore, so without this second (unanchored) rule the
+# 169 generated skills get committed there while staying untracked at root — which
+# made the installer and the marketplace mirror ship DIFFERENT skill sets at the
+# same version. Both channels must ship the tracked set only.
+**/resources/plugin/skills/generated/
 
 # Local scratch: logs, archives, dry-run output (never committed)
 *.log
@@ -64,3 +70,7 @@ icm/cost-of-remembering/
 icm/brains/
 
 .prism/*-progress.txt
+
+# Python bytecode
+__pycache__/
+*.pyc
