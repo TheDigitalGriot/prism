@@ -661,6 +661,50 @@
   .grail.thin .qg-ghead .gname,.grail.thin .qg-ghead .gcount{display:none}
   .grail.thin .qg-ghead{justify-content:center;padding:5px 0}
 
+
+
+  /* superseded — decided once, then replaced by a later decision */
+  .qg-row.superseded .qg-dot{border-style:solid;border-color:var(--footstep);background:transparent}
+  .qg-row.superseded .qg-txt{color:var(--footstep);text-decoration:line-through;
+                             text-decoration-thickness:1px;text-decoration-color:var(--rim-15)}
+  .qg-bdg.sup{color:var(--footstep)}
+  .qg-group[data-layer="superseded"] .qg-ghead .chev{color:var(--footstep)}
+  .qg-group[data-layer="inbound"] .qg-ghead .chev{color:var(--voltage)}
+  .qg-group[data-layer="adjacent"] .qg-ghead .chev{color:var(--neural)}
+
+
+
+  /* timeline mode — a question collapses its own sub-thread */
+  .qg-itemhead{display:flex;align-items:center;gap:2px}
+  .qg-itemhead .qg-row{flex:1}
+  .kid-toggle{
+    flex:0 0 14px;width:14px;height:22px;cursor:pointer;border:0;background:transparent;
+    color:var(--footstep);font-size:8px;line-height:1;padding:0;
+    transition:transform .2s var(--tale),color .15s ease;
+  }
+  .kid-toggle:hover{color:var(--iris,#22D3EE)}
+  .qg-item.collapsed .kid-toggle{transform:rotate(-90deg)}
+  .qg-kids{overflow:hidden;transition:max-height .22s var(--tale),opacity .18s ease}
+  .qg-item.collapsed .qg-kids{max-height:0;opacity:0}
+  .qg-item.has-kids.collapsed .qg-itemhead .qg-row::after{
+    content:"\2026";margin-left:6px;color:var(--footstep);font-size:9px;
+  }
+
+  /* a node with nothing to open should not look clickable */
+  .qg-row.no-screen{cursor:default}
+  .qg-row.no-screen:hover{background:transparent}
+  .qg-row.no-screen .qg-txt{opacity:.85}
+
+  /* an empty layer still shows — absence is information */
+  .qg-group.empty .qg-ghead{opacity:.5}
+  .qg-group.empty .gcount{background:transparent;border:1px dashed var(--rim-10)}
+  .qg-none{
+    font-family:var(--font-code);font-size:9px;font-style:italic;
+    color:var(--footstep);padding:4px 6px 6px 22px;opacity:.7;
+  }
+  .fchip.zero{opacity:.5}
+  .fchip.zero b{color:var(--footstep)}
+
   /* viewing an earlier screen from the graph */
   .qg-history{
     display:flex;align-items:center;gap:12px;margin-bottom:22px;padding:9px 14px;
@@ -787,9 +831,11 @@
     </div>
     <div class="grail-filters" id="grail-filters" hidden>
       <button class="fchip" data-f="done">decided <b>0</b></button>
+      <button class="fchip" data-f="superseded">superseded <b>0</b></button>
       <button class="fchip" data-f="outbound">outbound <b>0</b></button>
+      <button class="fchip" data-f="inbound">inbound <b>0</b></button>
+      <button class="fchip" data-f="adjacent">adjacent <b>0</b></button>
       <button class="fchip" data-f="parked">parked <b>0</b></button>
-      <button class="fchip" data-f="external">external <b>0</b></button>
       <button class="fchip" data-f="open">open <b>0</b></button>
     </div>
     <div class="grail-body"><div id="qrail-graph"></div></div>

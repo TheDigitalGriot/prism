@@ -169,28 +169,38 @@
       if (out.length) return dirBadge('out', '&rarr;', out);
       if (inb.length) return dirBadge('in', '&larr;', inb);
       if (o.maps > 1) return '<span class="qg-bdg adj">&harr; ' + o.maps + '</span>';
+      if (o.supersededBy) return '<span class="qg-bdg sup">&#8676; ' + escapeHtml(o.supersededBy) + '</span>';
       if (o.resolvedAt) return '<span class="qg-bdg back">&crarr; ' + escapeHtml(o.resolvedAt) + '</span>';
       return '';
     }
     function isSplinter(q) { return /^Q\s*\d+\.\d/i.test(String(q || '')); }
     function row(cls, q, text, title, o) {
       var scr = (o && o.screen) ? ' data-screen="' + escapeHtml(o.screen) + '"' : '';
-      return '<div class="qg-row ' + cls + (isSplinter(q) ? ' splinter' : '') +
+      // A node with no screen has nothing to navigate to (an unasked question).
+      // Mark it so the click handler can say so instead of looking broken.
+      var noscr = scr ? '' : ' no-screen';
+      return '<div class="qg-row ' + cls + (isSplinter(q) ? ' splinter' : '') + noscr +
              '" data-q="' + escapeHtml(q) + '"' + scr +
-             ' title="' + escapeHtml(title || text) + '">' +
+             ' title="' + escapeHtml(title || text) + (scr ? '' : ' \u2014 not rendered yet') + '">' +
              '<span class="qg-dot"></span><span class="qg-txt">' + escapeHtml(text) + '</span>' +
              badge(o) + '</div>';
     }
 
     // LAYERS — every layer collapses and filters independently. Spine order is
     // preserved INSIDE each layer, so grouping never scrambles sequence.
-    var L = { done: [], outbound: [], parked: [], external: [], open: [] };
+    var L = { done: [], superseded: [], outbound: [], inbound: [], adjacent: [],
+              parked: [], open: [] };
 
     orderDecisions(decisions).forEach(function (d) {
       var q = String(d.q || '');
       var text = q + (d.label ? ' \u00b7 ' + d.label : '');
-      var bucket = (many(d.source).length || d.maps > 1) ? 'external' : 'done';
-      L[bucket].push(row('done', q, text, d.summary || d.label, d));
+      var bucket = d.supersededBy ? 'superseded'
+                 : many(d.source).length ? 'inbound'
+                 : d.maps > 1 ? 'adjacent'
+                 : 'done';
+      L[bucket].push(row(bucket === 'superseded' ? 'superseded' : 'done', q, text,
+                         d.supersededBy ? (d.label || '') + ' \u2014 superseded by ' + d.supersededBy
+                                        : (d.summary || d.label), d));
     });
 
     orderParked(parked).forEach(function (pk) {
@@ -199,22 +209,30 @@
         ? (pk.label || '') + ' \u2014 resolved at ' + pk.resolvedAt + (pk.resolution ? ': ' + pk.resolution : '')
         : (pk.concern || pk.label || '');
       var bucket = many(pk.destination).length ? 'outbound'
-                 : (many(pk.source).length || pk.maps > 1) ? 'external'
+                 : many(pk.source).length ? 'inbound'
+                 : pk.maps > 1 ? 'adjacent'
                  : pk.resolvedAt ? 'done' : 'parked';
       L[bucket].push(row(cls + ' splinter', pk.fromQ || '', pk.label || 'parked', tip, pk));
     });
 
     upcoming.forEach(function (u) {
       var q = (typeof u === 'string') ? u : (u.q || '');
+      // the live node is rendered separately; never render it twice
+      if (q && q === current) return;
       var lab = (typeof u === 'string') ? u : (q + (u.label ? ' \u00b7 ' + u.label : ''));
       L.open.push(row('open', q, lab, 'not answered yet', (typeof u === 'object' ? u : null)));
     });
 
+    // Every decision state gets a layer, and every layer renders even at zero.
+    // inbound and adjacent are deliberately SEPARATE: inbound arrived and lands
+    // here; adjacent lives elsewhere permanently and never resolves here.
     var LAYERS = [
       { key: 'done', label: 'Decided' },
+      { key: 'superseded', label: 'Superseded' },
       { key: 'outbound', label: 'Outbound' },
+      { key: 'inbound', label: 'Inbound' },
+      { key: 'adjacent', label: 'Adjacent' },
       { key: 'parked', label: 'Parked' },
-      { key: 'external', label: 'External' },
       { key: 'open', label: 'Open' }
     ];
 
@@ -243,13 +261,27 @@
           return row(cls + ' splinter', pk.fromQ || '', pk.label || 'parked', tip, pk);
         }).join('');
       }
+      // Each parent Q owns its children so a whole question collapses to one
+      // line — scan Q1, Q2, Q3 without the sub-threads in the way.
+      function item(parentRow, q) {
+        var children = kids(q);
+        if (!children) return '<div class="qg-item">' + parentRow + '</div>';
+        return '<div class="qg-item has-kids" data-parent="' + escapeHtml(q) + '">' +
+                 '<div class="qg-itemhead">' +
+                   '<button class="kid-toggle" data-parent="' + escapeHtml(q) + '"' +
+                     ' title="Collapse sub-items">\u25be</button>' +
+                   parentRow +
+                 '</div>' +
+                 '<div class="qg-kids">' + children + '</div>' +
+               '</div>';
+      }
       var seq = [];
       orderDecisions(decisions).forEach(function (d) {
         var q = String(d.q || '');
-        seq.push(row('done', q, q + (d.label ? ' \u00b7 ' + d.label : ''), d.summary || d.label, d));
-        seq.push(kids(q));
+        seq.push(item(row('done', q, q + (d.label ? ' \u00b7 ' + d.label : ''),
+                          d.summary || d.label, d), q));
       });
-      if (current) seq.push(kids(current));
+      if (current) { var ck = kids(current); if (ck) seq.push('<div class="qg-kids">' + ck + '</div>'); }
       upcoming.forEach(function (u) {
         var q = (typeof u === 'string') ? u : (u.q || '');
         var lab = (typeof u === 'string') ? u : (q + (u.label ? ' \u00b7 ' + u.label : ''));
@@ -261,20 +293,25 @@
       });
       host.innerHTML = html + '<div class="qg-spine">' + seq.join('') + '</div>';
       applyLayerPrefs();
+      applyItemPrefs();
       return;
     }
 
     LAYERS.forEach(function (g) {
       var rows = L[g.key];
-      if (!rows.length) return;
+      // Empty layers still render. "Parked 0" is information — it says nothing
+      // is un-dispositioned. A missing group says nothing at all.
+      var empty = rows.length === 0;
       html +=
-        '<section class="qg-group" data-layer="' + g.key + '">' +
+        '<section class="qg-group' + (empty ? ' empty' : '') + '" data-layer="' + g.key + '">' +
           '<button class="qg-ghead" data-layer="' + g.key + '">' +
             '<span class="chev">\u25be</span>' +
             '<span class="gname">' + g.label + '</span>' +
             '<span class="gcount">' + rows.length + '</span>' +
           '</button>' +
-          '<div class="qg-gbody"><div class="qg-spine">' + rows.join('') + '</div></div>' +
+          '<div class="qg-gbody"><div class="qg-spine">' +
+            (empty ? '<div class="qg-none">none</div>' : rows.join('')) +
+          '</div></div>' +
         '</section>';
     });
     host.innerHTML = html;
@@ -308,6 +345,32 @@
     if (ff && viewMode() === 'time') ff.style.display = 'none';
   }
 
+  // ---------- per-question collapse (timeline mode) ----------
+  function itemPrefs() {
+    try { return JSON.parse(sessionStorage.getItem('qg-items') || '{}'); } catch (e) { return {}; }
+  }
+  function applyItemPrefs() {
+    var prefs = itemPrefs();
+    document.querySelectorAll('#qrail-graph .qg-item.has-kids').forEach(function (it) {
+      it.classList.toggle('collapsed', prefs[it.getAttribute('data-parent')] === 'c');
+    });
+  }
+  function wireItemCollapse() {
+    var host = document.getElementById('qrail-graph');
+    if (!host) return;
+    host.addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('.kid-toggle') : null;
+      if (!btn) return;
+      e.stopPropagation();
+      e.preventDefault();
+      var k = btn.getAttribute('data-parent');
+      var prefs = itemPrefs();
+      prefs[k] = prefs[k] === 'c' ? '' : 'c';
+      try { sessionStorage.setItem('qg-items', JSON.stringify(prefs)); } catch (err) {}
+      applyItemPrefs();
+    }, true);
+  }
+
   // ---------- layer collapse + filter chips ----------
   function layerPrefs() {
     try { return JSON.parse(sessionStorage.getItem('qg-layers') || '{}'); } catch (e) { return {}; }
@@ -331,7 +394,7 @@
       var n = sec ? sec.querySelectorAll('.qg-row').length : 0;
       var b = c.querySelector('b');
       if (b) b.textContent = n;
-      c.hidden = n === 0;
+      c.classList.toggle('zero', n === 0);
     });
   }
   function wireLayerControls() {
@@ -402,11 +465,17 @@
       row.classList.add('sel');
       var screen = row.getAttribute('data-screen');
       var label = (row.querySelector('.qg-txt') || row).textContent.trim();
-      if (screen) showScreen(screen, label);
-      sendEvent({ type: 'graph-nav', q: row.getAttribute('data-q') || '', label: label });
       var ind = document.getElementById('indicator-text');
-      if (ind) ind.innerHTML = 'Jump to <span class="selected-text">' +
-        escapeHtml((row.textContent || '').trim()) + '</span> — returning to the terminal';
+      if (screen) {
+        showScreen(screen, label);
+      } else if (ind) {
+        // honest: nothing to open. Do not imply a navigation happened.
+        ind.innerHTML = '<span class="selected-text">' + escapeHtml(label) +
+          '</span> has no screen yet \u2014 it has not been asked';
+      }
+      sendEvent({ type: 'graph-nav', q: row.getAttribute('data-q') || '',
+                  label: label, hasScreen: !!screen });
+
     });
   }
 
@@ -734,6 +803,7 @@
     wireResizers();
     wireLayerControls();
     wireViewMode();
+    wireItemCollapse();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setupAllControls);
