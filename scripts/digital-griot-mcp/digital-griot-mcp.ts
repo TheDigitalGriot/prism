@@ -246,6 +246,56 @@ const GAVEL_TOOLS = [
       additionalProperties: false,
     },
   },
+  {
+    // ── griot_assert — the Griot assertion facade (Q4/Option B) ──────────────
+    // ONE verb, TWO phases. Called without `result` it RESOLVES: picks a rung by
+    // mechanical capability detection and returns the action to perform. Called
+    // WITH `result` it RECORDS: writes the verdict through to plain files.
+    // A facade, never a proxy — MCP servers are siblings and cannot call each
+    // other, so this uses the same resolve-and-return contract as gavel_open.
+    name: "griot_assert",
+    description:
+      "Assert something about a RUNNING application and record the verdict. Phase 1 (no `result`): " +
+      "returns which backend rung to use and the exact action to run. Phase 2 (with `result`): " +
+      "writes the verdict through to disk so it survives the session. Never fakes a pass — when no " +
+      "rung can execute, the verdict is 'unverified'.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        claim: {
+          type: "string",
+          description: "What is being asserted, in plain language. e.g. 'the header is frosted glass'.",
+        },
+        expression: {
+          type: "string",
+          description:
+            "JS expression to evaluate in the page for the mcp rung, e.g. " +
+            "getComputedStyle(document.querySelector('.top')).backdropFilter",
+        },
+        expect: {
+          description: "Expected value. Omit for an observation with no pass/fail.",
+        },
+        target: { type: "string", description: "URL or context the assertion runs against." },
+        result: {
+          type: "object",
+          description:
+            "PHASE 2 — the observed outcome. Supply { actual, passed } to record the verdict.",
+          properties: {
+            actual: { description: "The observed value." },
+            passed: { type: "boolean", description: "Whether the assertion held." },
+            rung: { type: "string", description: "Which rung actually executed." },
+          },
+          additionalProperties: true,
+        },
+        state_dir: {
+          type: "string",
+          description: "Optional explicit STATE_DIR override for where evidence is written.",
+        },
+      },
+      required: ["claim"],
+      additionalProperties: false,
+    },
+  },
 ] as const
 
 // ===========================================================================
@@ -775,7 +825,154 @@ function errJson(text: string) {
   return { isError: true, content: [{ type: "text" as const, text }] }
 }
 
-// tools/list — advertise the six gavel tools.
+// ===========================================================================
+// griot_assert — the assertion facade.
+//
+// Contract: .prism/shared/plans/2026-09-04-assert-facade-CONTEXT.md
+//
+// Two invariants keep this infrastructure glass-box rather than opaque:
+//   1. WRITE-THROUGH — a recorded verdict lands as a plain file. Kill the
+//      server and the evidence survives. An assertion that exists only in a
+//      tool response is treated as not having happened.
+//   2. MECHANICAL LADDER — resolveAssertRung() reads environment FACTS only
+//      (env vars, file existence). It never branches on model judgment; that
+//      is the line between a facade and a framework.
+// ===========================================================================
+
+type AssertRung = "mcp" | "bridge" | "cli" | "none"
+
+/** Capability detection ONLY — env vars and file existence. No judgment. */
+function resolveAssertRung(): { rung: AssertRung; why: string } {
+  const forced = String(process.env.GRIOT_ASSERT_RUNG ?? "").trim()
+  if (forced === "mcp" || forced === "bridge" || forced === "cli" || forced === "none") {
+    return { rung: forced, why: "GRIOT_ASSERT_RUNG override" }
+  }
+  if (process.env.GRIOT_DEVICE_BRIDGE) {
+    return { rung: "bridge", why: "GRIOT_DEVICE_BRIDGE present — dispatch device-side" }
+  }
+  // chrome-devtools is declared per-project in .mcp.json; its presence there is
+  // a mechanical fact we can read off disk.
+  for (const root of [process.env.CLAUDE_PROJECT_DIR, process.cwd()]) {
+    if (!root) continue
+    try {
+      const cfg = path.join(root, ".mcp.json")
+      if (fs.existsSync(cfg) && fs.readFileSync(cfg, "utf-8").includes("chrome-devtools")) {
+        return { rung: "mcp", why: ".mcp.json declares chrome-devtools" }
+      }
+    } catch {
+      /* unreadable config is simply not evidence */
+    }
+  }
+  if (process.env.SHELL || process.env.ComSpec) {
+    return { rung: "cli", why: "a shell exists but no browser MCP was found" }
+  }
+  return { rung: "none", why: "no execution path available" }
+}
+
+/** Where evidence lands. Explicit arg → env → project .prism/local → cwd. */
+function assertEvidenceDir(args: Record<string, unknown>): string {
+  const explicit = String(args.state_dir ?? "").trim()
+  if (explicit) return explicit
+  if (process.env.GRIOT_ASSERT_DIR) return process.env.GRIOT_ASSERT_DIR
+  const root = process.env.CLAUDE_PROJECT_DIR || process.cwd()
+  return path.join(root, ".prism", "local", "assertions")
+}
+
+function handleGriotAssert(args: Record<string, unknown>) {
+  const claim = String(args.claim ?? "").trim()
+  if (!claim) return okJson({ ok: false, tool: "griot_assert", error: "claim is required" })
+
+  const expression = String(args.expression ?? "").trim()
+  const target = String(args.target ?? "").trim()
+  const hasExpect = Object.prototype.hasOwnProperty.call(args, "expect")
+  const result = args.result as Record<string, unknown> | undefined
+
+  // ── PHASE 1 · RESOLVE ────────────────────────────────────────────────────
+  if (!result) {
+    const { rung, why } = resolveAssertRung()
+    const action =
+      rung === "mcp"
+        ? "run_evaluate_script"
+        : rung === "bridge"
+          ? "dispatch_device_side"
+          : rung === "cli"
+            ? "run_cli_equivalent"
+            : "record_unverified"
+    return okJson({
+      ok: true,
+      tool: "griot_assert",
+      phase: "resolve",
+      rung,
+      why,
+      action,
+      claim,
+      target: target || null,
+      expression: expression || null,
+      expect: hasExpect ? args.expect : null,
+      instruction:
+        rung === "mcp"
+          ? "Evaluate `expression` in the page via chrome-devtools evaluate_script, then call " +
+            "griot_assert again with result={actual,passed,rung:'mcp'} to record the verdict."
+          : rung === "bridge"
+            ? "Dispatch the evaluation device-side over the passive file bus, then call griot_assert " +
+              "again with result={actual,passed,rung:'bridge'}."
+            : rung === "cli"
+              ? "Run the CLI equivalent, then call griot_assert again with result={actual,passed,rung:'cli'}."
+              : "No rung can execute. Call griot_assert again with result={passed:false,rung:'none'} " +
+                "to record this as UNVERIFIED. Do not report a pass.",
+    })
+  }
+
+  // ── PHASE 2 · RECORD (write-through) ─────────────────────────────────────
+  const rung = String(result.rung ?? resolveAssertRung().rung)
+  const verdict = rung === "none" ? "unverified" : result.passed === true ? "pass" : "fail"
+  const when = new Date().toISOString()
+  const record = {
+    when,
+    claim,
+    target: target || null,
+    expression: expression || null,
+    expect: hasExpect ? args.expect : null,
+    actual: result.actual ?? null,
+    rung,
+    verdict,
+  }
+
+  const dir = assertEvidenceDir(args)
+  let written: string[] = []
+  try {
+    fs.mkdirSync(dir, { recursive: true })
+    const jsonl = path.join(dir, "assertions.jsonl")
+    fs.appendFileSync(jsonl, JSON.stringify(record) + "\n", "utf-8")
+    written.push(jsonl)
+
+    // a human-readable twin — the point of write-through is that you can read it
+    // with no tooling at all
+    const md = path.join(dir, "assertions.md")
+    if (!fs.existsSync(md)) {
+      fs.writeFileSync(md, "# Assertions\n\n| when | verdict | rung | claim | actual |\n|---|---|---|---|---|\n", "utf-8")
+    }
+    const cell = (v: unknown) => String(v ?? "").replace(/\|/g, "\\|").replace(/\n/g, " ").slice(0, 120)
+    fs.appendFileSync(
+      md,
+      `| ${when} | **${verdict}** | ${cell(rung)} | ${cell(claim)} | ${cell(record.actual)} |\n`,
+      "utf-8",
+    )
+    written.push(md)
+  } catch (err) {
+    return okJson({
+      ok: false,
+      tool: "griot_assert",
+      phase: "record",
+      error: `write-through failed: ${String(err)}`,
+      record,
+    })
+  }
+
+  return okJson({ ok: true, tool: "griot_assert", phase: "record", verdict, record, written })
+}
+
+// tools/list — advertise the gavel tools plus the assertion facade.
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: GAVEL_TOOLS.map((t) => ({
     name: t.name,
@@ -802,6 +999,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return handleGavelCommit(args)
       case "gavel_decide":
         return handleGavelDecide(args)
+      case "griot_assert":
+        return handleGriotAssert(args)
       default:
         return errJson(`Unknown tool: ${name}`)
     }

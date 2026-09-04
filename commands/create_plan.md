@@ -42,9 +42,12 @@ Then wait for the user's input.
    - Research documents
    - Related implementation plans
    - Any JSON/data files mentioned
-   - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
-   - **CRITICAL**: DO NOT spawn sub-tasks before reading these files yourself in the main context
-   - **NEVER** read files partially - if a file is mentioned, read it completely
+   - **IMPORTANT**: Delegate bulk reading. Dispatch a discovery agent and take back a map
+     (file:line references), not file contents.
+   - **CRITICAL**: DO NOT pull large files into the main context. The orchestrator holds the
+     map; agents hold the contents.
+   - Read directly only when the file is small (< ~200 lines), you must edit it, or the user
+     explicitly asked for a verbatim read.
 
 2. **Spawn initial research tasks to gather context**:
    Before asking the user any questions, use specialized agents to research in parallel:

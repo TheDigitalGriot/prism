@@ -45,7 +45,7 @@
       if (data.type === 'reload') {
         window.location.reload();
       } else if (data.type === 'state-update') {
-        renderDrawer(data.payload);
+        renderState(data.payload);
       }
     };
 
@@ -65,9 +65,28 @@
       .replace(/'/g, '&#39;');
   }
 
+  // ---------- Shared ordering ----------
+  // One rule, used by BOTH the graph rail and the drawer, so the two panes can
+  // never disagree about sequence. "Q3.1" sorts after "Q3" and before "Q4";
+  // un-numbered ids (standing decisions like "D·slices") keep their relative
+  // order and sit after the numbered spine. Array#sort is stable, so ties hold.
+  function qKey(q) {
+    var m = String(q || '').match(/^Q\s*(\d+)(?:\.(\d+))?/i);
+    return m ? [parseInt(m[1], 10), m[2] ? parseInt(m[2], 10) : 0]
+             : [Number.MAX_SAFE_INTEGER, 0];
+  }
+  function byQ(field) {
+    return function (a, b) {
+      var ka = qKey(a[field]), kb = qKey(b[field]);
+      return (ka[0] - kb[0]) || (ka[1] - kb[1]);
+    };
+  }
+  function orderDecisions(list) { return list.slice().sort(byQ('q')); }
+  function orderParked(list) { return list.slice().sort(byQ('fromQ')); }
+
   function renderDrawer(state) {
-    const decisions = (state && Array.isArray(state.decisions)) ? state.decisions : [];
-    const parked = (state && Array.isArray(state.parked)) ? state.parked : [];
+    const decisions = orderDecisions((state && Array.isArray(state.decisions)) ? state.decisions : []);
+    const parked = orderParked((state && Array.isArray(state.parked)) ? state.parked : []);
 
     const dList = document.getElementById('decisions-list');
     const dEmpty = document.getElementById('decisions-empty');
@@ -99,9 +118,16 @@
         pList.innerHTML = parked.map(function (p) {
           var fromQ = escapeHtml(p.fromQ || '');
           var label = escapeHtml(p.label || '');
+          var merged = !!p.resolvedAt;
           var concern = p.concern ? '<span class="concern">' + escapeHtml(p.concern) + '</span>' : '';
-          var revisit = p.revisit ? '<span class="revisit">revisit: ' + escapeHtml(p.revisit) + '</span>' : '';
-          return '<li class="parked-item"><span class="q">from ' + fromQ + '</span><span class="label">' + label + '</span>' + concern + revisit + '</li>';
+          // a resolved tangent shows where it merged back instead of a revisit note
+          var tail = merged
+            ? '<span class="revisit">resolved at ' + escapeHtml(p.resolvedAt) +
+              (p.resolution ? ' — ' + escapeHtml(p.resolution) : '') + '</span>'
+            : (p.revisit ? '<span class="revisit">revisit: ' + escapeHtml(p.revisit) + '</span>' : '');
+          return '<li class="parked-item' + (merged ? ' merged' : '') + '">' +
+                 '<span class="q">' + (merged ? '↵ ' : 'from ') + fromQ + '</span>' +
+                 '<span class="label">' + label + '</span>' + concern + tail + '</li>';
         }).join('');
       }
     }
@@ -111,11 +137,457 @@
     }
   }
 
+  // ---------- Question graph (multi-state rail) ----------
+  // Renders the session as a vertical git-lane spine from the SAME state file
+  // the drawer uses. Trunk = decisions in order. Parked items hang off their
+  // fromQ as dangling branches (raised, never merged). Optional `current` and
+  // `upcoming[]` render the live node and the road ahead.
+  function renderGraph(state) {
+    var host = document.getElementById('qrail-graph');
+    if (!host) return;
+
+    var decisions = (state && Array.isArray(state.decisions)) ? state.decisions : [];
+    var parked = (state && Array.isArray(state.parked)) ? state.parked : [];
+    var current = (state && state.current) ? String(state.current) : '';
+    var upcoming = (state && Array.isArray(state.upcoming)) ? state.upcoming : [];
+
+    if (!decisions.length && !parked.length && !current && !upcoming.length) {
+      host.innerHTML = '<div class="qg-empty">No questions yet</div>';
+      return;
+    }
+
+    function many(v) { return Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []); }
+    function dirBadge(cls, arrow, list) {
+      if (!list.length) return '';
+      var extra = list.length > 1 ? ' +' + (list.length - 1) : '';
+      return '<span class="qg-bdg ' + cls + '" title="' + escapeHtml(list.join(', ')) + '">' +
+             arrow + ' ' + escapeHtml(list[0]) + extra + '</span>';
+    }
+    function badge(o) {
+      if (!o) return '';
+      var out = many(o.destination), inb = many(o.source);
+      if (out.length) return dirBadge('out', '&rarr;', out);
+      if (inb.length) return dirBadge('in', '&larr;', inb);
+      if (o.maps > 1) return '<span class="qg-bdg adj">&harr; ' + o.maps + '</span>';
+      if (o.resolvedAt) return '<span class="qg-bdg back">&crarr; ' + escapeHtml(o.resolvedAt) + '</span>';
+      return '';
+    }
+    function isSplinter(q) { return /^Q\s*\d+\.\d/i.test(String(q || '')); }
+    function row(cls, q, text, title, o) {
+      var scr = (o && o.screen) ? ' data-screen="' + escapeHtml(o.screen) + '"' : '';
+      return '<div class="qg-row ' + cls + (isSplinter(q) ? ' splinter' : '') +
+             '" data-q="' + escapeHtml(q) + '"' + scr +
+             ' title="' + escapeHtml(title || text) + '">' +
+             '<span class="qg-dot"></span><span class="qg-txt">' + escapeHtml(text) + '</span>' +
+             badge(o) + '</div>';
+    }
+
+    // LAYERS — every layer collapses and filters independently. Spine order is
+    // preserved INSIDE each layer, so grouping never scrambles sequence.
+    var L = { done: [], outbound: [], parked: [], external: [], open: [] };
+
+    orderDecisions(decisions).forEach(function (d) {
+      var q = String(d.q || '');
+      var text = q + (d.label ? ' \u00b7 ' + d.label : '');
+      var bucket = (many(d.source).length || d.maps > 1) ? 'external' : 'done';
+      L[bucket].push(row('done', q, text, d.summary || d.label, d));
+    });
+
+    orderParked(parked).forEach(function (pk) {
+      var cls = pk.resolvedAt ? 'done' : 'parked';
+      var tip = pk.resolvedAt
+        ? (pk.label || '') + ' \u2014 resolved at ' + pk.resolvedAt + (pk.resolution ? ': ' + pk.resolution : '')
+        : (pk.concern || pk.label || '');
+      var bucket = many(pk.destination).length ? 'outbound'
+                 : (many(pk.source).length || pk.maps > 1) ? 'external'
+                 : pk.resolvedAt ? 'done' : 'parked';
+      L[bucket].push(row(cls + ' splinter', pk.fromQ || '', pk.label || 'parked', tip, pk));
+    });
+
+    upcoming.forEach(function (u) {
+      var q = (typeof u === 'string') ? u : (u.q || '');
+      var lab = (typeof u === 'string') ? u : (q + (u.label ? ' \u00b7 ' + u.label : ''));
+      L.open.push(row('open', q, lab, 'not answered yet', (typeof u === 'object' ? u : null)));
+    });
+
+    var LAYERS = [
+      { key: 'done', label: 'Decided' },
+      { key: 'outbound', label: 'Outbound' },
+      { key: 'parked', label: 'Parked' },
+      { key: 'external', label: 'External' },
+      { key: 'open', label: 'Open' }
+    ];
+
+    var html = '';
+    // the live node is never grouped and never filtered away
+    if (current) {
+      html += '<div class="qg-spine now-wrap">' +
+              row('now', current, current, 'you are here', { screen: state.currentScreen || null }) +
+              '</div>';
+    }
+
+    // ── TIMELINE MODE — the original chronological spine. Same records, read
+    //    in sequence instead of by layer. Splinters stay nested under parents.
+    if (viewMode() === 'time') {
+      var branches = {};
+      orderParked(parked).forEach(function (pk) {
+        var k = String(pk.fromQ || '');
+        (branches[k] = branches[k] || []).push(pk);
+      });
+      function kids(q) {
+        return (branches[q] || []).map(function (pk) {
+          var cls = pk.resolvedAt ? 'done' : 'parked';
+          var tip = pk.resolvedAt
+            ? (pk.label || '') + ' \u2014 resolved at ' + pk.resolvedAt
+            : (pk.concern || pk.label || '');
+          return row(cls + ' splinter', pk.fromQ || '', pk.label || 'parked', tip, pk);
+        }).join('');
+      }
+      var seq = [];
+      orderDecisions(decisions).forEach(function (d) {
+        var q = String(d.q || '');
+        seq.push(row('done', q, q + (d.label ? ' \u00b7 ' + d.label : ''), d.summary || d.label, d));
+        seq.push(kids(q));
+      });
+      if (current) seq.push(kids(current));
+      upcoming.forEach(function (u) {
+        var q = (typeof u === 'string') ? u : (u.q || '');
+        var lab = (typeof u === 'string') ? u : (q + (u.label ? ' \u00b7 ' + u.label : ''));
+        seq.push(row('open', q, lab, 'not answered yet', (typeof u === 'object' ? u : null)));
+      });
+      Object.keys(branches).forEach(function (k) {
+        var seen = decisions.some(function (d) { return String(d.q || '') === k; }) || current === k;
+        if (!seen) seq.push(kids(k));
+      });
+      host.innerHTML = html + '<div class="qg-spine">' + seq.join('') + '</div>';
+      applyLayerPrefs();
+      return;
+    }
+
+    LAYERS.forEach(function (g) {
+      var rows = L[g.key];
+      if (!rows.length) return;
+      html +=
+        '<section class="qg-group" data-layer="' + g.key + '">' +
+          '<button class="qg-ghead" data-layer="' + g.key + '">' +
+            '<span class="chev">\u25be</span>' +
+            '<span class="gname">' + g.label + '</span>' +
+            '<span class="gcount">' + rows.length + '</span>' +
+          '</button>' +
+          '<div class="qg-gbody"><div class="qg-spine">' + rows.join('') + '</div></div>' +
+        '</section>';
+    });
+    host.innerHTML = html;
+    applyLayerPrefs();
+  }
+
+  // ---------- view mode: layers | time ----------
+  function viewMode() {
+    try { return sessionStorage.getItem('qg-view') === 'time' ? 'time' : 'layers'; }
+    catch (e) { return 'layers'; }
+  }
+  function setViewMode(m) {
+    try { sessionStorage.setItem('qg-view', m); } catch (e) {}
+    document.querySelectorAll('.vchip').forEach(function (c) {
+      c.classList.toggle('on', c.getAttribute('data-v') === m);
+    });
+    var fb = document.getElementById('grail-filters');
+    var ff = document.getElementById('grail-filter');
+    // filters group layers; in timeline mode there are no groups to filter
+    if (ff) ff.style.display = m === 'time' ? 'none' : '';
+    if (fb && m === 'time') { fb.hidden = true; if (ff) ff.classList.remove('on'); }
+    fetch('/state/decisions.json').then(function (r) { return r.json(); })
+      .then(renderState).catch(function () {});
+  }
+  function wireViewMode() {
+    document.querySelectorAll('.vchip').forEach(function (c) {
+      c.addEventListener('click', function () { setViewMode(c.getAttribute('data-v')); });
+      c.classList.toggle('on', c.getAttribute('data-v') === viewMode());
+    });
+    var ff = document.getElementById('grail-filter');
+    if (ff && viewMode() === 'time') ff.style.display = 'none';
+  }
+
+  // ---------- layer collapse + filter chips ----------
+  function layerPrefs() {
+    try { return JSON.parse(sessionStorage.getItem('qg-layers') || '{}'); } catch (e) { return {}; }
+  }
+  function saveLayerPrefs(p) {
+    try { sessionStorage.setItem('qg-layers', JSON.stringify(p)); } catch (e) {}
+  }
+  function applyLayerPrefs() {
+    var prefs = layerPrefs();
+    document.querySelectorAll('#qrail-graph .qg-group').forEach(function (sec) {
+      var k = sec.getAttribute('data-layer');
+      sec.classList.toggle('collapsed', prefs[k] === 'c');
+      sec.classList.toggle('filtered-out', prefs['hide-' + k] === 1);
+    });
+    var bar = document.getElementById('grail-filters');
+    if (!bar) return;
+    bar.querySelectorAll('.fchip').forEach(function (c) {
+      var k = c.getAttribute('data-f');
+      c.classList.toggle('off', prefs['hide-' + k] === 1);
+      var sec = document.querySelector('#qrail-graph .qg-group[data-layer="' + k + '"]');
+      var n = sec ? sec.querySelectorAll('.qg-row').length : 0;
+      var b = c.querySelector('b');
+      if (b) b.textContent = n;
+      c.hidden = n === 0;
+    });
+  }
+  function wireLayerControls() {
+    var host = document.getElementById('qrail-graph');
+    if (host) {
+      host.addEventListener('click', function (e) {
+        var head = e.target.closest ? e.target.closest('.qg-ghead') : null;
+        if (!head) return;
+        e.stopPropagation();
+        var k = head.getAttribute('data-layer');
+        var prefs = layerPrefs();
+        prefs[k] = prefs[k] === 'c' ? '' : 'c';
+        saveLayerPrefs(prefs);
+        applyLayerPrefs();
+      }, true);
+    }
+    var fbtn = document.getElementById('grail-filter');
+    var fbar = document.getElementById('grail-filters');
+    if (fbtn && fbar) {
+      fbtn.addEventListener('click', function () {
+        fbar.hidden = !fbar.hidden;
+        fbtn.classList.toggle('on', !fbar.hidden);
+      });
+      fbar.addEventListener('click', function (e) {
+        var chip = e.target.closest('.fchip');
+        if (!chip) return;
+        var k = chip.getAttribute('data-f');
+        var prefs = layerPrefs();
+        prefs['hide-' + k] = prefs['hide-' + k] === 1 ? 0 : 1;
+        saveLayerPrefs(prefs);
+        applyLayerPrefs();
+      });
+    }
+  }
+
+  // Pull a stored screen into the content area. Screens are usually fragments;
+  // a few older ones are full documents, so unwrap the body when needed.
+  function showScreen(file, label) {
+    var host = document.getElementById('claude-content');
+    if (!host) return;
+    fetch('/files/' + encodeURIComponent(file))
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+      .then(function (html) {
+        var t = html.trimStart().toLowerCase();
+        if (t.indexOf('<!doctype') === 0 || t.indexOf('<html') === 0) {
+          var m = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+          if (m) html = m[1];
+        }
+        host.innerHTML = '<div class="qg-history">Viewing <b>' + escapeHtml(label || file) +
+          '</b><button id="qg-latest">back to current</button></div>' + html;
+        host.scrollIntoView({ block: 'start' });
+        var b = document.getElementById('qg-latest');
+        if (b) b.addEventListener('click', function () { location.reload(); });
+      })
+      .catch(function () {
+        host.insertAdjacentHTML('afterbegin',
+          '<div class="qg-history">Could not load ' + escapeHtml(file) + '</div>');
+      });
+  }
+
+  function wireGraphClicks() {
+    var host = document.getElementById('qrail-graph');
+    if (!host) return;
+    host.addEventListener('click', function (e) {
+      var row = e.target.closest ? e.target.closest('.qg-row') : null;
+      if (!row) return;
+      host.querySelectorAll('.qg-row').forEach(function (r) { r.classList.remove('sel'); });
+      row.classList.add('sel');
+      var screen = row.getAttribute('data-screen');
+      var label = (row.querySelector('.qg-txt') || row).textContent.trim();
+      if (screen) showScreen(screen, label);
+      sendEvent({ type: 'graph-nav', q: row.getAttribute('data-q') || '', label: label });
+      var ind = document.getElementById('indicator-text');
+      if (ind) ind.innerHTML = 'Jump to <span class="selected-text">' +
+        escapeHtml((row.textContent || '').trim()) + '</span> — returning to the terminal';
+    });
+  }
+
+  function wireRailModes() {
+    var modes = document.querySelectorAll('.qrail-mode');
+    if (!modes.length) return;
+    modes.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var want = btn.getAttribute('data-mode');
+        modes.forEach(function (b) { b.classList.toggle('on', b === btn); });
+        document.querySelectorAll('.qrail-pane').forEach(function (p) {
+          p.hidden = p.getAttribute('data-mode') !== want;
+        });
+      });
+    });
+  }
+
+  // ---------- Companion agent (rail "agent" state) ----------
+  // Posts to /api/chat, which shells out to the local `claude` CLI — the same
+  // subscription path the Cinopsis companion uses. No API key, no streaming.
+  function wireAgent() {
+    var log = document.getElementById('ag-log');
+    var box = document.getElementById('ag-text');
+    var btn = document.getElementById('ag-send');
+    if (!log || !box || !btn) return;
+
+    function add(cls, text) {
+      var d = document.createElement('div');
+      d.className = 'ag-msg ' + cls;
+      d.textContent = text;
+      log.appendChild(d);
+      log.scrollTop = log.scrollHeight;
+      return d;
+    }
+
+    function send() {
+      var msg = (box.value || '').trim();
+      if (!msg || btn.disabled) return;
+      box.value = '';
+      btn.disabled = true;
+      add('you', msg);
+      var pending = add('think', 'thinking…');
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          pending.remove();
+          if (d && d.reply) add('bot', d.reply);
+          else add('err', (d && d.error) || 'No reply.');
+        })
+        .catch(function (e) {
+          pending.remove();
+          add('err', 'Chat failed: ' + e.message);
+        })
+        .then(function () { btn.disabled = false; box.focus(); });
+    }
+
+    btn.addEventListener('click', send);
+    box.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+    });
+  }
+
+  // ---------- Rail collapse (graph -> thin spine, agent -> tab) ----------
+  // A dragged rail carries an INLINE width, which CSS collapse rules can never
+  // beat. So collapsing must strip the inline size (and expanding restores the
+  // width the user dragged to).
+  function stashAndClearWidth(el, key) {
+    var w = el.style.flexBasis || el.style.width;
+    if (w) { try { sessionStorage.setItem(key, parseInt(w, 10) || ''); } catch (e) {} }
+    el.style.flexBasis = ''; el.style.width = '';
+  }
+  function restoreWidth(el, key) {
+    try {
+      var w = sessionStorage.getItem(key);
+      if (w) { el.style.flexBasis = w + 'px'; el.style.width = w + 'px'; }
+    } catch (e) {}
+  }
+
+  function wireRailCollapse() {
+    var grail = document.getElementById('grail');
+    var gtog = document.getElementById('grail-toggle');
+    if (grail && gtog) {
+      function applyThin(thin) {
+        grail.classList.toggle('thin', thin);
+        if (thin) stashAndClearWidth(grail, 'railw-grail');
+        else restoreWidth(grail, 'railw-grail');
+        gtog.title = thin ? 'Expand graph' : 'Collapse to spine';
+        try { sessionStorage.setItem('grail-thin', thin ? '1' : '0'); } catch (e) {}
+      }
+      gtog.addEventListener('click', function () {
+        applyThin(!grail.classList.contains('thin'));
+      });
+      try { if (sessionStorage.getItem('grail-thin') === '1') applyThin(true); } catch (e) {}
+    }
+
+    var arail = document.getElementById('arail');
+    var atab = document.getElementById('arail-tab');
+    if (arail && atab) {
+      function applyAgent(collapsed) {
+        arail.classList.toggle('collapsed', collapsed);
+        atab.classList.toggle('collapsed-state', collapsed);
+        if (collapsed) stashAndClearWidth(arail, 'railw-arail');
+        else restoreWidth(arail, 'railw-arail');
+        atab.innerHTML = collapsed ? '▶' : '◀';
+        atab.title = collapsed ? 'Show agent' : 'Hide agent';
+        try { sessionStorage.setItem('arail-collapsed', collapsed ? '1' : '0'); } catch (e) {}
+      }
+      atab.addEventListener('click', function () {
+        applyAgent(!arail.classList.contains('collapsed'));
+      });
+      // agent starts collapsed — the graph is the always-on state
+      var st = null;
+      try { st = sessionStorage.getItem('arail-collapsed'); } catch (e) {}
+      applyAgent(st === null ? true : st === '1');
+    }
+  }
+
+  // ---------- Drag-to-resize rails ----------
+  function wireResizers() {
+    document.querySelectorAll('.rail-resizer').forEach(function (rz) {
+      var el = document.getElementById(rz.getAttribute('data-target'));
+      if (!el) return;
+      var fromRight = rz.getAttribute('data-side') === 'right';
+      var key = 'railw-' + rz.getAttribute('data-target');
+
+      try {
+        var saved = sessionStorage.getItem(key);
+        if (saved) { el.style.flexBasis = saved + 'px'; el.style.width = saved + 'px'; }
+      } catch (e) {}
+
+      var dragging = false, startX = 0, startW = 0;
+      rz.addEventListener('pointerdown', function (e) {
+        dragging = true; startX = e.clientX;
+        startW = el.getBoundingClientRect().width;
+        el.style.transition = 'none';
+        rz.classList.add('dragging');
+        document.body.classList.add('resizing');
+        try { rz.setPointerCapture(e.pointerId); } catch (err) {}
+        e.preventDefault();
+      });
+      rz.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        var dx = e.clientX - startX;
+        var w = fromRight ? startW - dx : startW + dx;
+        w = Math.max(40, Math.min(620, w));
+        el.style.flexBasis = w + 'px';
+        el.style.width = w + 'px';
+      });
+      function end() {
+        if (!dragging) return;
+        dragging = false;
+        el.style.transition = '';
+        rz.classList.remove('dragging');
+        document.body.classList.remove('resizing');
+        try {
+          sessionStorage.setItem(key, String(Math.round(el.getBoundingClientRect().width)));
+        } catch (e) {}
+      }
+      rz.addEventListener('pointerup', end);
+      rz.addEventListener('pointercancel', end);
+      rz.addEventListener('dblclick', function () {
+        el.style.flexBasis = ''; el.style.width = '';
+        try { sessionStorage.removeItem(key); } catch (e) {}
+      });
+    });
+  }
+
+  function renderState(state) {
+    renderDrawer(state);
+    renderGraph(state);
+  }
+
   function fetchInitialDrawer() {
     fetch('/state/decisions.json')
       .then(function (r) { return r.json(); })
-      .then(renderDrawer)
-      .catch(function () { renderDrawer({ decisions: [], parked: [] }); });
+      .then(renderState)
+      .catch(function () { renderState({ decisions: [], parked: [] }); });
   }
 
   function sendEvent(event) {
@@ -214,12 +686,12 @@
         applyDrawerState(collapsed);
         try { sessionStorage.setItem('drawer-collapsed', collapsed ? '1' : ''); } catch (e) {}
       });
-      // Restore drawer state from sessionStorage
+      // Drawer starts COLLAPSED by default — the graph rail carries orientation
+      // now, and the drawer is reserved for future uses. '0' means the user
+      // explicitly opened it this session.
       try {
-        if (sessionStorage.getItem('drawer-collapsed') === '1') {
-          applyDrawerState(true);
-        }
-      } catch (e) {}
+        applyDrawerState(sessionStorage.getItem('drawer-collapsed') !== '0');
+      } catch (e) { applyDrawerState(true); }
     }
 
     // Item expand/collapse (click a decision or parked item to show details)
@@ -253,10 +725,20 @@
   }
 
   // Run after DOM is ready (helper.js is injected before </body>)
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupDrawerControls);
-  } else {
+  function setupAllControls() {
     setupDrawerControls();
+    wireRailModes();
+    wireGraphClicks();
+    wireAgent();
+    wireRailCollapse();
+    wireResizers();
+    wireLayerControls();
+    wireViewMode();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupAllControls);
+  } else {
+    setupAllControls();
   }
 
   connect();

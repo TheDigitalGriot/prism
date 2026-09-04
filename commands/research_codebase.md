@@ -22,8 +22,9 @@ Then wait for the user's research query.
 
 1. **Read any directly mentioned files first:**
    - If the user mentions specific files (tickets, docs, JSON), read them FULLY first
-   - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
-   - **CRITICAL**: Read these files yourself in the main context before spawning any sub-tasks
+   - **IMPORTANT**: Delegate bulk reading — dispatch a discovery agent and take back a map
+     (file:line references), not file contents.
+   - **CRITICAL**: DO NOT pull large files into the main context.
    - This ensures you have full context before decomposing the research
 
 2. **Analyze and decompose the research question:**

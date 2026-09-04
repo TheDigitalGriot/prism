@@ -50,11 +50,18 @@ When the research scope is narrow (single file, specific function), consider ove
 
 > **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
 
-### 0. Read Mentioned Files First
+### 0. Delegate Bulk Reading — Do NOT Read Large Files in the Main Thread
 
-If the user mentions specific files, read them FULLY before spawning agents:
-- Use the Read tool WITHOUT limit/offset parameters
-- This ensures you have full context before decomposing the research
+If the user mentions specific files, **dispatch an agent to map them**; do not read them
+into this context. The main thread holds the *map*, never the contents.
+
+- **Small files (< ~200 lines)** — read directly. Cheap, no delegation needed.
+- **Anything larger** — dispatch `codebase-analyzer` (how it works) or `codebase-locator`
+  (where things are) and require a distilled map **with file:line references, not file contents**.
+- Reading a 2,000-line file into the main thread costs ~25k tokens and poisons every later
+  step. The same read, delegated, returns a ~1k-token map. Measured on a real session:
+  **~560k tokens read inside agents returned ~12k to the orchestrator — 45:1.**
+- Exception: a file the user explicitly asks you to read verbatim, or a file you must edit.
 
 ### 1. Check Existing Knowledge
 
@@ -115,6 +122,32 @@ Key sections:
 - Component Analysis (how things work)
 - Patterns Found (with file:line refs)
 - Open Questions (for TodoWrite)
+
+## Research Output Contract (non-negotiable)
+
+Two rules make research usable later instead of evaporating with the session.
+
+### 1. Write-through — always emit the document
+After presenting findings in chat, **always** write
+`.prism/shared/research/YYYY-MM-DD-<topic>.md`. This is not optional and not a separate ask.
+Research that lives only in a conversation dies at the next compaction. The chat is the
+presentation; the file is the record.
+
+### 2. Verdict contract — a decision, not a survey
+Every research brief must name a **falsifiable question** and a **deliverable shape**, and the
+answer must end in a verdict. Without this you get an encyclopedia entry; with it you get a
+decision.
+
+A brief that works:
+- states the question so it *can* come back "no" — e.g. *"Is a git-lane graph sufficient, or a
+  poor fit that will break down? If nothing beats it, say so plainly."*
+- names the deliverable — *"a table of X vs Y, the specific conventions worth stealing, an
+  honest verdict, primary-source citations."*
+- demands **primary sources** — specs, canonical papers, official docs. Never a summary blog.
+
+Report structure: findings table -> recommendation with reasoning -> concrete details worth
+reusing -> honest verdict -> cited sources.
+
 
 ## Rules
 

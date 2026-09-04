@@ -142,10 +142,74 @@ function getNewestScreen() {
   return files.length > 0 ? files[0].path : null;
 }
 
+// POST /api/chat — the companion agent.
+// Mirrors the Cinopsis claude_sub path: shell out to the local `claude` CLI so
+// this runs on the Max subscription with no API key. The session's decisions +
+// parked items are passed as context so the agent answers about THIS brainstorm
+// rather than in a vacuum. Failures return a message; they never crash a screen.
+function handleChat(req, res) {
+  let body = '';
+  req.on('data', (c) => { body += c; if (body.length > 1e6) req.destroy(); });
+  req.on('end', () => {
+    let msg = '';
+    try { msg = String(JSON.parse(body || '{}').message || '').trim(); } catch (e) { msg = ''; }
+    if (!msg) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: 'message required' }));
+    }
+
+    let ctx = 'You are the companion agent inside a Prism brainstorm session. '
+            + 'Answer briefly and concretely about this session.\n';
+    try {
+      const df = path.join(STATE_DIR, 'decisions.json');
+      if (fs.existsSync(df)) {
+        const s = JSON.parse(fs.readFileSync(df, 'utf-8'));
+        const d = (s.decisions || []).map((x) => '- ' + x.q + ': ' + x.label + ' -> ' + (x.choice || '')).join('\n');
+        const p = (s.parked || []).map((x) => '- (from ' + x.fromQ + ') ' + x.label).join('\n');
+        ctx += '\nDECISIONS SO FAR:\n' + (d || '(none)') + '\n\nPARKED:\n' + (p || '(none)') + '\n';
+      }
+    } catch (e) { /* context is best-effort */ }
+
+    const { spawn } = require('child_process');
+    let out = '', err = '', done = false;
+    const finish = (code) => {
+      if (done) return; done = true;
+      const text = out.trim() || (err.trim()
+        ? 'Agent error: ' + err.trim().split('\n').slice(-2).join(' ')
+        : 'No response (claude CLI exited ' + code + ').');
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ reply: text }));
+    };
+
+    // The prompt goes over STDIN, never as a shell argument. On Windows,
+    // shell:true joins argv into a command string and a multi-line prompt with
+    // quotes gets shredded — the CLI then sees an empty message. Same lesson as
+    // the headless launcher's "quote-free instructions file" rule.
+    let child;
+    try {
+      child = spawn('claude', ['-p'],
+        { shell: true, stdio: ['pipe', 'pipe', 'pipe'] });
+    } catch (e) { return finish(-1); }
+    try {
+      child.stdin.write(ctx + '\nQUESTION: ' + msg + '\n');
+      child.stdin.end();
+    } catch (e) { /* close handler still reports */ }
+
+    const timer = setTimeout(() => { try { child.kill(); } catch (e) {} finish(-2); }, 120000);
+    child.stdout.on('data', (c) => { out += c; });
+    child.stderr.on('data', (c) => { err += c; });
+    child.on('error', () => { clearTimeout(timer); finish(-1); });
+    child.on('close', (code) => { clearTimeout(timer); finish(code); });
+  });
+}
+
 // ========== HTTP Request Handler ==========
 
 function handleRequest(req, res) {
   touchActivity();
+  if (req.method === 'POST' && req.url === '/api/chat') {
+    return handleChat(req, res);
+  }
   if (req.method === 'GET' && req.url === '/') {
     const screenFile = getNewestScreen();
     let html = screenFile

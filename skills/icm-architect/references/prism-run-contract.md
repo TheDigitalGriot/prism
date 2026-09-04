@@ -60,3 +60,38 @@ the altitude the contract asks: prefer the smallest correct edit, do not restate
 not summarize files you did not change. Keep thinking ON and lower the effort dial for cost rather
 than dropping to a weaker tier (see `skills/cl-plugin-structure/references/model-config.md` §4). This
 concision rule applies pipeline-wide because every stage points here.
+
+## Sliced source artifacts (`.prism/local/slices/`)
+
+When a stage needs part of a large file, **carve the slice to disk and work from the slice** —
+do not carry the whole file in context.
+
+```
+.prism/local/slices/<source-stem>/<what-it-is>.<ext>
+```
+
+Rules:
+- Name the slice for **what it is**, not where it came from — `proto-css.css`, not `part2.txt`.
+- Record the origin (path + line range) in the stage heartbeat, so the slice is traceable.
+- Slices are **derived artifacts**: regenerate freely, never hand-edit, never treat as truth.
+  The source file remains the truth.
+- A slice survives compaction. Re-reading a 40-line slice costs nothing; re-deriving it costs
+  the original read again.
+
+Worked example: a 220KB recovered prototype split into `proto-css.css` (464 lines),
+`proto-markup.html` (235), `proto-js.js` (215) — the 122KB base64 blob discarded. Every later
+stage read only the slice it needed.
+
+## Heartbeat applies to every run, not only ICM runs
+
+The heartbeat is **not** conditional on a stage contract existing. Any multi-step run appends one
+timestamped token line per step to `.prism/local/<stage>-progress.txt`.
+
+- With a contract: use the contract's declared tokens.
+- Without one: use `<verb>-<noun>` tokens of your own — `RESEARCH-DONE`, `IMPL-header`,
+  `VERIFY-themes`.
+
+Why it is unconditional: the heartbeat is what lets a *supervising* session — or a future you —
+see where a run got to without attaching to it, and it is the cheapest possible compaction
+insurance. An interactive run that heartbeats zero times is indistinguishable from one that
+never happened.
