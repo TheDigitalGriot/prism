@@ -33,9 +33,18 @@ re-parsing plan phases.
 
 > **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
 
-### 2. Read the Story's Files
+### 2. Load the Story's Files — delegate the bulk
 
-Before changes, read ALL files listed in the current story's `files`:
+Before changes, get oriented on the current story's `files` — but **hold the map, not the
+contents**:
+
+- **Small files (< ~200 lines) or files you are about to EDIT** — read directly. You need the
+  exact text to change it.
+- **Anything larger you only need to UNDERSTAND** — dispatch `codebase-analyzer` and take back a
+  distilled map with file:line references. A 2,000-line read costs ~25k tokens and degrades every
+  later step in the phase.
+
+Original list for reference:
 - Files to modify
 - Files to create (if updating existing)
 

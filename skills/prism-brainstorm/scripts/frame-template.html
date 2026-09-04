@@ -625,6 +625,8 @@
   .grail-filters{
     flex:0 0 auto;display:flex;flex-wrap:wrap;gap:5px;padding:0 10px 10px;
   }
+  /* an author `display` beats the UA [hidden] rule — say it explicitly */
+  .grail-filters[hidden],.qrail-pane[hidden],[hidden]{display:none !important}
   .fchip{
     cursor:pointer;font-family:var(--font-code);font-size:9px;letter-spacing:.04em;
     padding:4px 8px;border-radius:var(--r-pill);
@@ -694,6 +696,39 @@
   .qg-row.no-screen{cursor:default}
   .qg-row.no-screen:hover{background:transparent}
   .qg-row.no-screen .qg-txt{opacity:.85}
+
+
+  /* ---- layer identity: coloured light + icon + count ---- */
+  .qg-ghead .glight{
+    width:8px;height:8px;border-radius:50%;flex-shrink:0;
+    background:var(--layer-c,var(--footstep));
+    box-shadow:0 0 8px 0 var(--layer-c,transparent);
+  }
+  .qg-ghead .gicon{
+    font-size:11px;line-height:1;flex-shrink:0;
+    color:var(--layer-c,var(--footstep));
+  }
+  .qg-group[data-layer="done"]       { --layer-c:var(--bio) }
+  .qg-group[data-layer="superseded"] { --layer-c:var(--footstep) }
+  .qg-group[data-layer="outbound"]   { --layer-c:var(--bio-hot) }
+  .qg-group[data-layer="inbound"]    { --layer-c:var(--voltage) }
+  .qg-group[data-layer="adjacent"]   { --layer-c:var(--neural) }
+  .qg-group[data-layer="parked"]     { --layer-c:var(--solar) }
+  .qg-group[data-layer="open"]       { --layer-c:var(--footstep) }
+  .qg-group.empty .glight{box-shadow:none;opacity:.45}
+
+  /* COLLAPSED RAIL — light + icon + number, nothing else */
+  .grail.thin .qg-ghead{
+    flex-direction:column;gap:3px;justify-content:center;padding:7px 0;
+  }
+  .grail.thin .qg-ghead .chev,
+  .grail.thin .qg-ghead .gname{display:none}
+  .grail.thin .qg-ghead .gicon{font-size:13px}
+  .grail.thin .qg-ghead .gcount{
+    padding:0;background:transparent;font-size:10px;color:var(--layer-c,var(--whisper));
+  }
+  .grail.thin .qg-group{margin-bottom:2px}
+  .grail.thin .qg-gbody{display:none}
 
   /* an empty layer still shows — absence is information */
   .qg-group.empty .qg-ghead{opacity:.5}
@@ -822,14 +857,14 @@
   <aside class="grail" id="grail">
     <div class="grail-head">
       <span class="lbl">Workgraph</span>
-      <button class="grail-filter" id="grail-filter" title="Filter layers">&#9776;</button>
+      <button class="grail-filter on" id="grail-filter" title="Show/hide the layer filters">&#9776;</button>
       <button class="grail-toggle" id="grail-toggle" title="Collapse to spine">&#9664;</button>
     </div>
     <div class="grail-views">
       <button class="vchip on" data-v="layers" title="Group by layer">layers</button>
       <button class="vchip" data-v="time" title="Chronological spine">timeline</button>
     </div>
-    <div class="grail-filters" id="grail-filters" hidden>
+    <div class="grail-filters" id="grail-filters">
       <button class="fchip" data-f="done">decided <b>0</b></button>
       <button class="fchip" data-f="superseded">superseded <b>0</b></button>
       <button class="fchip" data-f="outbound">outbound <b>0</b></button>

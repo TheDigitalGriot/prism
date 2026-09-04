@@ -226,14 +226,16 @@
     // Every decision state gets a layer, and every layer renders even at zero.
     // inbound and adjacent are deliberately SEPARATE: inbound arrived and lands
     // here; adjacent lives elsewhere permanently and never resolves here.
+    // Each layer carries an icon so the COLLAPSED rail still reads:
+    // coloured light + icon + count, with no labels.
     var LAYERS = [
-      { key: 'done', label: 'Decided' },
-      { key: 'superseded', label: 'Superseded' },
-      { key: 'outbound', label: 'Outbound' },
-      { key: 'inbound', label: 'Inbound' },
-      { key: 'adjacent', label: 'Adjacent' },
-      { key: 'parked', label: 'Parked' },
-      { key: 'open', label: 'Open' }
+      { key: 'done',       label: 'Decided',    icon: '\u2713' },
+      { key: 'superseded', label: 'Superseded', icon: '\u21e4' },
+      { key: 'outbound',   label: 'Outbound',   icon: '\u2192' },
+      { key: 'inbound',    label: 'Inbound',    icon: '\u2190' },
+      { key: 'adjacent',   label: 'Adjacent',   icon: '\u2194' },
+      { key: 'parked',     label: 'Parked',     icon: '\u25cc' },
+      { key: 'open',       label: 'Open',       icon: '\u25cb' }
     ];
 
     var html = '';
@@ -304,8 +306,11 @@
       var empty = rows.length === 0;
       html +=
         '<section class="qg-group' + (empty ? ' empty' : '') + '" data-layer="' + g.key + '">' +
-          '<button class="qg-ghead" data-layer="' + g.key + '">' +
+          '<button class="qg-ghead" data-layer="' + g.key + '" title="' +
+              escapeHtml(g.label + ' \u00b7 ' + rows.length) + '">' +
             '<span class="chev">\u25be</span>' +
+            '<span class="glight"></span>' +
+            '<span class="gicon">' + g.icon + '</span>' +
             '<span class="gname">' + g.label + '</span>' +
             '<span class="gcount">' + rows.length + '</span>' +
           '</button>' +
@@ -342,6 +347,8 @@
       c.classList.toggle('on', c.getAttribute('data-v') === viewMode());
     });
     var ff = document.getElementById('grail-filter');
+    var fb2 = document.getElementById('grail-filters');
+    if (ff && fb2) ff.classList.toggle('on', !fb2.hidden);
     if (ff && viewMode() === 'time') ff.style.display = 'none';
   }
 
