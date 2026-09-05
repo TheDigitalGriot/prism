@@ -4,6 +4,34 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.15.0] - 2026-09-05
+
+### Added
+- **I7 - a fix is preceded by an OBSERVATION, not an inference.** The failure it catches: editing
+  something to fix a reported symptom without ever observing the symptom. Four occurrences in a single
+  session. Computable form: a session that produced edits must also have produced recorded verdicts.
+  **This is what finally gives `griot_assert` a real consumer** - satisfying I7 requires recording
+  verdicts, and recording verdicts is what `griot_assert` exists for.
+- **I8 - no soft fixes.** "SOFT FIXES ROT" was written into the ontology and nothing checked it, which
+  made the anti-soft-fix principle itself a soft fix. I8 is the check: no helper may have zero callers.
+
+### Changed
+- **I3 now computes.** It previously reported *"no read-size telemetry exists; not computable
+  post-hoc"* - a claim that was never checked and was wrong. The session transcript records every
+  `Read` with its `file_path`, so main-thread read sizes are recoverable. It line-counts them, and
+  **honours a windowed read** (`offset`/`limit`): charging a 30-line window the file's full 1002 lines
+  flags the disciplined case and makes the check cry wolf.
+- I8 searches the **whole repo** for callers, not just `scripts/` - a helper invoked from a `SKILL.md`
+  is not dead. Both refinements were made because a check that cries wolf is worse than no check.
+
+### Notes
+- **I7's first run reported UNVERIFIED against the session that authored it.** Hours of verification
+  happened and not one verdict was written through. The check caught its own author.
+- Result: **7 pass, 0 fail, 1 unverified.**
+- Paired written half (ASK WHEN UNSURE / VISUAL POLISH = SCREENSHOT / verification leaves no residue)
+  is in the agent ontology and propagated globally. A principle with no check is the soft fix this
+  release exists to kill.
+
 ## [4.14.0] - 2026-09-05
 
 ### Added

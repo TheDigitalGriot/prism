@@ -337,3 +337,70 @@ LICENSE. Renaming it would break attribution. Untouched.
    session exists to kill.
 4. **Finish the Prism ceremony** - docs-update, native builds, and the second review stage.
 5. **Q6 gavel batch** - prepared; the first live `gavel_commit` is Gavin's to trigger.
+
+
+---
+
+# FINAL — the invariant pairs landed (2026-09-05)
+
+## The four written+invariant pairs are DONE
+
+Gavin's call was that a written principle and a computable check ship together - *"written+invariant
+combos, that is the signal in the noise we are finding."* All four are now paired.
+
+| Written (agent-ontology) | Invariant (Prism `scripts/verify-invariants.mjs`) |
+|---|---|
+| **ASK WHEN UNSURE** - a guess is a defect, not a shortcut | **I7** - a fix is preceded by an OBSERVATION, not an inference |
+| **VISUAL POLISH = SCREENSHOT** - never reason about what a screen looks like | folded into I7's observation requirement |
+| **Verification leaves no residue** | folded into I7 |
+| **SOFT FIXES ROT** (already written; had no check) | **I8** - nothing documented has zero instances; no helper has zero callers |
+| I3 said *"no read-size telemetry exists"* | **I3 now COMPUTES** - the session transcript records every `Read` with its `file_path` |
+
+```
+I1 PASS  I2 PASS  I3 PASS  I4 PASS  I5 PASS  I6 PASS  I7 UNVERIFIED  I8 PASS
+7 pass - 0 fail - 1 unverified
+```
+
+### The result worth keeping
+
+**I7 reported UNVERIFIED against the very session that authored it.** Hours of verification happened
+- screenshots, computed styles, driving real click handlers - and **not one verdict was written
+through `griot_assert`**. The check caught its own author on its first run.
+
+That also closes a loop from earlier in the session: `griot_assert` had no consumers, which Gavin
+correctly called useless. **I7 is its consumer.** Satisfying I7 requires recording verdicts, and
+recording verdicts is what `griot_assert` is for.
+
+### Two checks were WRONG on first run and were fixed, not reported
+
+Both would have cried wolf, which is worse than no check:
+- **I3** flagged `helper.js:1002` for a read that used `offset`/`limit` and touched ~30 lines. It now
+  honours a WINDOWED read - charging a window the file's full length flags the *disciplined* case.
+- **I8** flagged two live `worktree-*.sh` helpers as orphans because it only searched `scripts/`. A
+  helper invoked from a SKILL.md is not dead; it now searches the whole repo.
+
+## RISK worth Gavin's attention
+
+**`GriotMeta/agent-ontology` is NOT a git repository.** The most load-bearing file in the ecosystem -
+the one 15 projects inherit - has no version history, no diff, no revert. Today's changes exist as
+bytes on disk plus a propagated copy at `~/.claude/CLAUDE.md`. **An accidental overwrite is
+unrecoverable.** Pre-existing, not introduced. `git init` is one command.
+
+## Still open - Gavin undecided, do not assume
+
+1. **`icm/` directory** - verbatim MIT third-party port with its own LICENSE. Renaming breaks
+   attribution. **Untouched pending his ruling.**
+2. **`git init` on agent-ontology** - flagged above, not actioned.
+
+## THE NEXT SESSION: the Spectrum migration
+
+Deliberately NOT started - it needs a fresh context that opens by writing the stage contract, because
+a half-applied 386-reference migration is the worst possible outcome.
+
+Everything it needs is on disk and pushed:
+- Q5 decision (`spectrum` + `spectrum-architect`) - this file, section A1
+- The Ralph-loop vs ICM stage-walk table - RELEASE RECORD section
+- The additive constraint (386 refs, **I6** trips on a hard rename)
+- `.prism/shared/brainstorms/2026-09-04-Q5-naming-binding-note.md`
+
+**Order:** contract first -> additive rename -> re-found the skill off the loop -> ceremony.
