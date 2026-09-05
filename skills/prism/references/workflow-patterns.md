@@ -192,10 +192,10 @@ Spectrum spawns fresh AI instances in a loop, with memory persisting through fil
 ```
 spectrum.sh (Bash Loop)
     │
-    ├── Iteration 1: claude --skill prism-spectrum
+    ├── Iteration 1: claude --skill spectrum
     │   └── Execute Story 1 → Commit → Update State
     │
-    ├── Iteration 2: claude --skill prism-spectrum
+    ├── Iteration 2: claude --skill spectrum
     │   └── Execute Story 2 → Commit → Update State
     │
     └── ... until <promise>COMPLETE</promise>

@@ -44,7 +44,7 @@ store per executor:
 - Because state.json is gitignored and per-run, **harvest it before the local dir is cleaned** —
   locate the run by newest `last_updated` under `.prism/local/subagent/`.
 
-`prism-dispatch` / `prism-spectrum` runs still leave git commits + (for spectrum) per-branch state;
+`prism-dispatch` / `spectrum` runs still leave git commits + (for spectrum) per-branch state;
 fall back to the git-scope walk as the common denominator.
 
 ## Normalize, then amend with evidence

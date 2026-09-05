@@ -124,7 +124,7 @@ Use ISO date prefix for chronological ordering:
 - `/prism-plan` - Start planning phase
 - `/prism-implement` - Start implementation phase
 - `/prism-validate` - Start validation phase
-- `/prism-spectrum` - Autonomous story execution
+- `/spectrum` - Autonomous story execution
 """, encoding="utf-8")
         print("  [+] Created .prism/shared/README.md")
 
@@ -138,7 +138,7 @@ Use Prism for complex tasks:
 - `/prism-plan` - Create phased implementation plan
 - `/prism-implement` - Execute plan phase by phase
 - `/prism-validate` - Verify against success criteria
-- `/prism-spectrum` - Autonomous multi-story execution
+- `/spectrum` - Autonomous multi-story execution
 
 Prism locations:
 - Stories: `.prism/stories/`

@@ -71,6 +71,6 @@ Required keys per story: `id`, `title`, `description`, `priority`, `status`, `bl
 | `prism-decompose` | engine (big specs) | a 500K+ spec | multi-epic `stories.json` |
 | `prism-implement` | consumer | `stories.json` (+ `plan.md` for narrative) | code, TodoWrite |
 | `prism-subagent` | consumer | `stories.json` | code, `state.json` (status by story id) |
-| `prism-spectrum` | consumer | `stories.json` | code, `progress.md` (status by story id) |
+| `spectrum` | consumer | `stories.json` | code, `progress.md` (status by story id) |
 | `iterate_plan` | maintainer | `plan.md` + `stories.json` | re-emitted `stories.json` (stable ids) |
 | `validate_plan` | guard | `plan.md` + `stories.json` | pass/fail (coverage + stable ids) |

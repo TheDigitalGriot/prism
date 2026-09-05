@@ -12,7 +12,7 @@ Use Prism for complex tasks:
 - `/prism-plan` - Create phased implementation plan
 - `/prism-implement` - Execute plan phase by phase
 - `/prism-validate` - Verify against success criteria
-- `/prism-spectrum` - Autonomous multi-story execution
+- `/spectrum` - Autonomous multi-story execution
 
 Prism locations:
 - Stories: `.prism/stories/`

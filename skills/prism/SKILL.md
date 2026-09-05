@@ -22,7 +22,7 @@ Focus complexity through specialized agents to produce clear, quality code.
 | Verify UI | `/prism-verify` | `.prism/local/verifications/{date}-{context}/` |
 | Validate | `/prism-validate` | `.prism/shared/validation/YYYY-MM-DD-report.md` |
 | Iterate | `/prism-iterate` | Updated plan + continued implementation |
-| Spectrum | `/prism-spectrum` | Autonomous story execution via `spectrum.sh` |
+| Spectrum | `/spectrum` | Autonomous story execution via `spectrum.sh` |
 | Debug | `/prism-debug` | Debug investigation report |
 | Brainstorm | `/prism-brainstorm` | `.prism/shared/brainstorms/YYYY-MM-DD-<topic>.md` (decision ledger) |
 | Design | `/prism-design` | `.prism/shared/designs/YYYY-MM-DD-<topic>-design.md` + `.pen` (dual output) |
@@ -145,7 +145,7 @@ Verify implementation matches plan.
 
 Update plan and continue when changes needed.
 
-### Spectrum Autonomous Execution (`/prism-spectrum`)
+### Spectrum Autonomous Execution (`/spectrum`)
 
 For autonomous multi-story execution without human intervention.
 

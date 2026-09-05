@@ -31,7 +31,7 @@ re-parsing plan phases.
 - If no `stories.json` exists yet (a legacy plan), prompt to run the emit step (`decompose_plan`)
   rather than silently parsing the plan's phases.
 
-> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
+> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/spectrum-architect/references/prism-run-contract.md`.
 
 ### 2. Load the Story's Files — delegate the bulk
 

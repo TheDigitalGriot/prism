@@ -64,8 +64,14 @@ Skills (Orchestrators)  →  Commands (Operations)  →  Agents (Specialists)
 Additional skills:
 - **Brainstorm** (`/prism-brainstorm`): Open-ended ideation before committing to a plan.
 - **Design** (`/prism-design`): UI/UX design exploration and specification.
-- **Subagent** (`/prism-subagent`): Same-session subagent-driven plan execution with two-stage review, bounded retries, and domain-aware context priming. Sits between `/prism-implement` (single phase) and `/prism-spectrum` (autonomous overnight).
+- **Subagent** (`/prism-subagent`): Same-session subagent-driven plan execution with two-stage review, bounded retries, and domain-aware context priming. Sits between `/prism-implement` (single phase) and `/spectrum` (autonomous overnight).
 - **Finish** (`/prism-finish`): Wraps up a development branch (cleanup, PR description, handoff).
+
+> **Skill renames (additive, 2026-09-05).** `prism-spectrum` -> **`spectrum`** and `icm-architect` ->
+> **`spectrum-architect`**. Both old names are kept as deprecation aliases and still resolve; nothing
+> was deleted. Prefer the new names. The rename is mechanical and changes no behavior -- re-founding
+> Spectrum off the Ralph loop and onto ICM is a separate, proposed change
+> (`.prism/shared/plans/2026-09-05-spectrum-refounding-PROPOSAL.md`).
 
 ## Routing Table
 
@@ -77,7 +83,7 @@ Per-task file loads — read only what's needed, skip the rest.
 | Implement an approved plan | Relevant plan in `.prism/shared/plans/` | Unrelated skill SKILL.md files | `/prism-implement`, `/prism-subagent` |
 | Hook or plugin config change | `hooks/hooks.json`, `skills/griot-agent-architect/references/hook-events.md` | `.prism/shared/ref/` | (direct edit) |
 | Model config / skill enrichment | `apps/prism-vscode/src/core/api/claude-sdk.ts`, `skills/griot-agent-architect/references/model-config.md` | `.prism/shared/evals/` | (direct edit) |
-| Spectrum / story execution | `stories.json`, `.prism/shared/spectrum/progress.md`, `CLAUDE.md` | `apps/` | `/prism-spectrum` |
+| Spectrum / story execution | `stories.json`, `.prism/shared/spectrum/progress.md`, `CLAUDE.md` | `apps/` | `/spectrum` |
 
 ## Execution Models
 

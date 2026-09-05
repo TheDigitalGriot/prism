@@ -1,6 +1,6 @@
 ---
 name: prism-decompose
-description: "Decompose large specifications (500k+ tokens) into user stories, bundle into epics, emit a spectrum-ready work queue. Use after a Greenfield-style spec generation, before /prism-spectrum. Triggers on 'decompose this spec', 'turn this into stories', 'epic this', 'break down this spec'."
+description: "Decompose large specifications (500k+ tokens) into user stories, bundle into epics, emit a spectrum-ready work queue. Use after a Greenfield-style spec generation, before /spectrum. Triggers on 'decompose this spec', 'turn this into stories', 'epic this', 'break down this spec'."
 model: opus
 color: cyan
 effort: xhigh
@@ -17,7 +17,7 @@ Turn a large specification into a structured, spectrum-ready work queue. One beh
 |----------|-----|
 | Large spec (500k+ tokens) → stories.json for autonomous execution | **prism-decompose** ← here |
 | Approved plan (normal size) → stories.json | [`decompose_plan` command](../../commands/decompose_plan.md) |
-| Single story → implementation | [`prism-spectrum`](../prism-spectrum/SKILL.md) or [`prism-implement`](../prism-implement/SKILL.md) |
+| Single story → implementation | [`spectrum`](../spectrum/SKILL.md) or [`prism-implement`](../prism-implement/SKILL.md) |
 
 The key distinction: `decompose_plan` takes a Prism plan document (the output of `/prism-plan`) and parses its tasks into stories. `prism-decompose` takes a large, potentially unstructured specification — a greenfield design doc, a Figma export, a product requirements document — and extracts behavioral requirements from it at scale.
 
@@ -29,7 +29,7 @@ This skill applies the chunking discipline from [Iterative Development](https://
 - **No requirement is dropped during chunking.** Every behavioral requirement maps to exactly one story — partial coverage is a failure mode, not an acceptable tradeoff.
 - **Epics are execution-context containers.** An epic is a set of stories that fit within a single spectrum session (≈200K context: stories.json + progress.md + CLAUDE.md + one story at a time). When requirements exceed this, split into multiple epics with explicit dependency ordering.
 
-> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
+> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/spectrum-architect/references/prism-run-contract.md`.
 
 ## Process
 
@@ -174,9 +174,9 @@ EPICS ARE SIZED FOR SPECTRUM'S CONTEXT WINDOW. 200K TOKENS MAX PER EPIC.
 
 ## Integration
 
-- **Precedes:** `/prism-spectrum` — run spectrum against each epic's `stories.json` in dependency order
+- **Precedes:** `/spectrum` — run spectrum against each epic's `stories.json` in dependency order
 - **Use instead of:** `decompose_plan` when the input is a large/unstructured spec rather than a Prism plan
 - **Graph-aware:** if codebase-memory-mcp is available, blast radius informs story ordering within epics
 
-> See also: [prism-spectrum](../prism-spectrum/SKILL.md) — the execution engine that processes the output of this skill.
+> See also: [spectrum](../spectrum/SKILL.md) — the execution engine that processes the output of this skill.
 > Reference: [Iterative Development](https://github.com/prime-radiant-inc/iterative-development) — chunking discipline origin.

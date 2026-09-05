@@ -49,7 +49,7 @@ The pipeline, in order (details + exact schemas in the reference):
    without stories is incomplete.
 5. **Route the executor from the story graph** (do not hard-wire one): disjoint `files[]` + all
    `blockedBy:null` → `prism-dispatch` (parallel, ≤5/wave); any file overlap or dep → `prism-subagent`
-   (serial, isolated+reviewed) for 3-10 stories, `prism-implement` for a single phase, `prism-spectrum`
+   (serial, isolated+reviewed) for 3-10 stories, `prism-implement` for a single phase, `spectrum`
    for 10+. Recommend, then hand off.
 
 ## Reverse: build → codex  → `references/reverse.md`

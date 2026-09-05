@@ -37,7 +37,7 @@ Do NOT invoke any implementation skill, write any production code, scaffold any 
 
 ## Workflow
 
-> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
+> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/spectrum-architect/references/prism-run-contract.md`.
 
 ### 1. Load Context
 
@@ -116,7 +116,7 @@ Use TodoWrite to track phases.
 ### 6. Emit Stories (the executable work-definition)
 
 A plan is not finished until it has emitted its **stories** — the single work-definition every
-executor (`prism-implement`, `prism-subagent`, `prism-spectrum`) reads. Do NOT leave this as a
+executor (`prism-implement`, `prism-subagent`, `spectrum`) reads. Do NOT leave this as a
 separate step the user must remember; the plan doc and the stories are produced together, from
 the same plan.
 

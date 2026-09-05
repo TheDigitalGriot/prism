@@ -33,10 +33,10 @@ claude --plugin-dir /path/to/prism-plugin
 ## Requirements
 
 - **Claude Code v2.1.257 or later** — required for Fable 5.1 (`claude-fable-5-1`), the gated escalation tier. Lower floors if you do not use Fable: **v2.1.219** for Opus 5 (the routine ceiling), **v2.1.197** for Sonnet 5, **v2.1.217** for the deterministic subagent caps, **v2.1.154** for native `EnterWorktree`/`ExitWorktree` support, and **v2.1.111** for `effort: xhigh` skills (`prism-brainstorm`, `prism-plan`, `prism-prd`, `prism-design`, `prism-subagent`, `prism-iterate`). v2.1.80+ required for brainstorm active wake mode. Run `claude update` if on an older version.
-- **codebase-memory-mcp on PATH** (new in v3.4.0) — enables the graph-first intelligence layer (`graph-navigator` agent, blast-radius analysis in `prism-plan`, structural validation in `prism-validate`, graph verification in `prism-spectrum`). Without it, all graph steps no-op gracefully. Verify: `codebase-memory-mcp --version` (should return `0.6.0+`).
+- **codebase-memory-mcp on PATH** (new in v3.4.0) — enables the graph-first intelligence layer (`graph-navigator` agent, blast-radius analysis in `prism-plan`, structural validation in `prism-validate`, graph verification in `spectrum`). Without it, all graph steps no-op gracefully. Verify: `codebase-memory-mcp --version` (should return `0.6.0+`).
 - **bun** — required for the `digital-griot-mcp` MCP server (the shared Griot wake channel behind the visual companion wake mode). Install: `npm install -g bun` or `curl -fsSL https://bun.sh/install | bash`.
 - **jq** — required for `spectrum.sh` JSON parsing. Install: `brew install jq` (macOS) or `apt install jq` (Linux).
-- **Max / Team / Enterprise plan recommended** for `prism-spectrum` (uses `sonnet[1m]` for 1M context autonomous execution). Pro users require usage credits for 1M context.
+- **Max / Team / Enterprise plan recommended** for `spectrum` (uses `sonnet[1m]` for 1M context autonomous execution). Pro users require usage credits for 1M context.
 
 ## Usage
 
@@ -54,7 +54,8 @@ Say "help me build [feature]" or "implement [task]" to trigger the full Prism wo
 | `/prism:prism-implement` | Execute approved plan |
 | `/prism:prism-validate` | Verify implementation against plan |
 | `/prism:prism-iterate` | Update plan based on feedback |
-| `/prism:prism-spectrum` | Autonomous story execution (used with spectrum.sh) |
+| `/prism:spectrum` | Autonomous story execution (used with spectrum.sh) |
+| `/prism:prism-spectrum` | *Deprecation alias* -> `spectrum` (still resolves) |
 | `/prism:prism-debug` | Debug investigation with parallel agents |
 | `/prism:prism-subagent` | Same-session subagent execution with two-stage review |
 | `/prism:prism-dispatch` | Route a task to the right execution model |
@@ -81,7 +82,8 @@ The end-of-cycle arc. `prism-closing-ceremony` runs the whole sequence in one pa
 |---------|---------|
 | `/prism:griot-agent-architect` | The plugin- and agent-architecture gold standard — manifests, components, model config _(alias: `/prism:cl-plugin-structure`, still resolves)_ |
 | `/prism:fragment-sync` | Reconcile Fragment's scaffolder to the current Prism standard |
-| `/prism:icm-architect` | Build ICM workspaces + headless stage contracts |
+| `/prism:spectrum-architect` | Build ICM workspaces + headless stage contracts |
+| `/prism:icm-architect` | *Deprecation alias* -> `spectrum-architect` (still resolves) |
 | `/prism:prism-gavel` | Decision cockpit — the browser-driven gavel surface |
 | `/prism:prism-brand` | Brand matrix and identity work |
 | `/prism:prism-capture` | Capture a session into structured `.prism/` artifacts |
@@ -108,7 +110,7 @@ Spectrum spawns fresh Claude sessions in a loop, executing one story per iterati
 
 | Command | Purpose |
 |---------|---------|
-| `/prism:prism-spectrum` | Single-story execution (called by spectrum.sh) |
+| `/prism:spectrum` | Single-story execution (called by spectrum.sh) |
 | `/prism:decompose_plan` | Convert plan into stories.json |
 
 ### Debug Skill
@@ -213,7 +215,7 @@ User Request
 │                    spectrum.sh (Bash Loop)                    │
 │                                                              │
 │  for iteration in 1..MAX_ITERATIONS; do                      │
-│      claude --skill prism-spectrum                           │
+│      claude --skill spectrum                                 │
 │      if output contains "<promise>COMPLETE</promise>"        │
 │          break                                               │
 │  done                                                        │

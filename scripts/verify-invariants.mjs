@@ -181,7 +181,16 @@ const newestFile = (p) => {
   const PROPER = [
     { name: 'dgs-plan-update skill', path: join(process.env.USERPROFILE || process.env.HOME || '', '.claude', 'skills', 'dgs-plan-update', 'SKILL.md') },
     { name: 'digital-griot-mcp', path: join(ROOT, 'scripts', 'digital-griot-mcp', 'digital-griot-mcp.ts') },
-    { name: 'icm-architect skill', path: join(ROOT, 'skills', 'icm-architect', 'SKILL.md') },
+    // additive rename 2026-09-05: icm-architect -> spectrum-architect, prism-spectrum -> spectrum.
+    // BOTH names must resolve for BOTH renames. minBytes on the canonicals: a hollowed-out
+    // canonical is a silent kill (the alias would point at nothing). The aliases are thin by
+    // design, so their floor only catches truncation.
+    { name: 'spectrum-architect skill (canonical)', minBytes: 5000, path: join(ROOT, 'skills', 'spectrum-architect', 'SKILL.md') },
+    { name: 'icm-architect skill (deprecation alias)', minBytes: 500, path: join(ROOT, 'skills', 'icm-architect', 'SKILL.md') },
+    { name: 'spectrum skill (canonical)', minBytes: 10000, path: join(ROOT, 'skills', 'spectrum', 'SKILL.md') },
+    { name: 'prism-spectrum skill (deprecation alias)', minBytes: 500, path: join(ROOT, 'skills', 'prism-spectrum', 'SKILL.md') },
+    // the run-contract is reached by a DEEP path from 8 skills; the alias dir does not carry it.
+    { name: 'spectrum-architect run-contract (deep path target)', minBytes: 1000, path: join(ROOT, 'skills', 'spectrum-architect', 'references', 'prism-run-contract.md') },
     { name: 'griot-agent-architect skill (canonical)', path: join(ROOT, 'skills', 'griot-agent-architect', 'SKILL.md') },
     // additive rename 2026-09-05: cl-plugin-structure MUST keep resolving as a deprecation alias.
     { name: 'cl-plugin-structure skill (deprecation alias)', path: join(ROOT, 'skills', 'cl-plugin-structure', 'SKILL.md') },

@@ -104,6 +104,6 @@ For Option 3: keep the worktree intact.
 ## Integration
 
 - **Follows:** `/prism-validate` (after implementation is verified)
-- **Follows:** `/prism-spectrum` (after all stories are complete)
+- **Follows:** `/spectrum` (after all stories are complete)
 - **Pairs with:** `/describe_pr` (for Option 2)
 - **Pairs with:** `/worktree` (cleanup)

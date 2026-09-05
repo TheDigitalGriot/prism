@@ -108,7 +108,7 @@ and recommend:
 | single phase / quick fix | `prism-implement` (serial, in-conversation) |
 | 3–10 stories, any file overlap OR any `blockedBy` edge | `prism-subagent` (serial, fresh-context-isolated + 2-stage review + retry/escalation) |
 | disjoint `files[]` **and** all `blockedBy: null` | `prism-dispatch` (real fan-out, ≤5 agents/wave) |
-| 10+ autonomous stories | `prism-spectrum` (per-branch/worktree) |
+| 10+ autonomous stories | `spectrum` (per-branch/worktree) |
 
 **Note the correction:** `prism-subagent` is NOT parallel — its Iron Law is "one implementer at a
 time" (files overlap). Its edge over `prism-implement` is isolation + review, not concurrency. True

@@ -287,7 +287,7 @@ After structure approval:
 ### Step 4.5: Emit Stories (executable work-definition)
 
 A plan is not complete until it emits its **stories** — the single work-definition every executor
-(`prism-implement`, `prism-subagent`, `prism-spectrum`) reads. Emit them together with the plan, not
+(`prism-implement`, `prism-subagent`, `spectrum`) reads. Emit them together with the plan, not
 as a separate step the user must remember:
 
 1. Add an `epic:` id to the plan front-matter (kebab-slug of the plan filename) — the stable

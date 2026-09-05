@@ -309,7 +309,7 @@ For each skill directory in `$SNAPSHOT_DIR/skills/*/`:
    - **Behavioral compliance eval** — tests new workflow steps or behavioral changes vs the previous version
    - **Regression eval** — tests that core behaviors from the previous version are still present
 
-4. If the skill uses test fixtures (like stories.json for prism-spectrum), create them under `fixtures/`
+4. If the skill uses test fixtures (like stories.json for spectrum), create them under `fixtures/`
 
 The `evals.json` schema:
 
@@ -337,7 +337,7 @@ The `evals.json` schema:
 
 Write eval cases that are specific to what the skill does — not generic. For example:
 - **prism-research**: "Research the [X] system in this codebase" → expects file:line refs, research template, no suggestions
-- **prism-spectrum**: "Execute the next story from [fixture]" → expects state loading, quality gates, correct signals
+- **spectrum**: "Execute the next story from [fixture]" → expects state loading, quality gates, correct signals
 - **prism-plan**: "Create a plan for [feature]" → expects interactive approval, two-category success criteria
 - **prism-debug**: "Debug this [error]" → expects parallel investigators spawned
 

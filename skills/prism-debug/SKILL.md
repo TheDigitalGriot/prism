@@ -24,7 +24,7 @@ Orchestrate parallel debug investigation to diagnose issues during development o
 ```
 
 ### Spectrum Integration
-Automatically invoked when quality gates fail during `/prism-spectrum` execution.
+Automatically invoked when quality gates fail during `/spectrum` execution.
 
 ### Workflow Position
 ```

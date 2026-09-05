@@ -10,7 +10,7 @@ Convert an existing Prism implementation plan into Spectrum-compatible `stories.
 > **This is the canonical plan→stories engine.** `/prism-plan` and `/create_plan` both call this as
 > their final "emit stories" step, and it can be run standalone against any existing plan — one parser,
 > two entry points. The emitted `.prism/stories/stories.json` is the **single work-definition** every
-> executor reads (`prism-implement`, `prism-subagent`, `prism-spectrum`). Schema + the plan→stories
+> executor reads (`prism-implement`, `prism-subagent`, `spectrum`). Schema + the plan→stories
 > mapping rules are the contract at [`.prism/shared/contracts/stories-contract.md`](../.prism/shared/contracts/stories-contract.md):
 > one behavioral requirement per story · zero requirements dropped · story `id`s stable across re-emits
 > (hash the requirement text so an unchanged requirement keeps its id when a plan is iterated).
@@ -272,7 +272,7 @@ Map each story step to a requirement:
 - `contracts_to_read` / `contracts_to_write`: populated if the story has cross-domain dependencies (see Step 9d)
 - `passes`: `false` (initial state)
 
-See `skills/prism-spectrum/references/story-manifest-schema.md` for the full schema.
+See `skills/spectrum/references/story-manifest-schema.md` for the full schema.
 
 ### 9d. Initialize Contracts (if applicable)
 
@@ -283,7 +283,7 @@ Only create contracts when:
 - A story's output is consumed by a later story across a domain boundary
 - The plan explicitly identifies shared contracts or interfaces
 
-See `skills/prism-spectrum/references/contracts-convention.md` for the convention.
+See `skills/spectrum/references/contracts-convention.md` for the convention.
 
 **Create `.prism/shared/spectrum/progress.md`**:
 ```markdown

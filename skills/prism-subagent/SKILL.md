@@ -7,7 +7,7 @@ effort: xhigh
 
 # Prism Subagent
 
-Execute a plan task-by-task in **this session** using fresh implementer subagents with two-stage review (`spec-reviewer` then `quality-reviewer`). Same-session sibling to `prism-spectrum`.
+Execute a plan task-by-task in **this session** using fresh implementer subagents with two-stage review (`spec-reviewer` then `quality-reviewer`). Same-session sibling to `spectrum`.
 
 > **Stuck Protocol (device/cloud recovery — non-negotiable):** if any device/cloud tool returns empty/`[]`/"not connected"/"no DOM"/403 or fails first-call, do NOT report it blocked. Retry 2-3x -> switch surface (built-in pane <-> Claude-in-Chrome; native Windows PowerShell when the sandbox has no route; the Gmail *browser* when the *connector* is the wrong account) -> replay the logs (session_info -> last successful run -> copy its exact tool sequence) -> then ask Gavin ONE direct question. Gavin's word about his own machine is GROUND TRUTH. "Blocked" without those steps is a DEFINED ERROR; a forced skip = INCOMPLETE run. Full ladder: this plugin's CLAUDE.md "Stuck Protocol" section.
 ## When To Use
@@ -16,10 +16,10 @@ Execute a plan task-by-task in **this session** using fresh implementer subagent
 |---|---|
 | Single phase / quick fix | [prism-implement](../prism-implement/SKILL.md) |
 | 3–10 tasks, mostly independent, stay in session | **prism-subagent** ← here |
-| 10+ stories, autonomous overnight | [prism-spectrum](../prism-spectrum/SKILL.md) |
+| 10+ stories, autonomous overnight | [spectrum](../spectrum/SKILL.md) |
 | Parallel investigation of unrelated failures | [prism-debug](../prism-debug/SKILL.md) |
 
-> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/icm-architect/references/prism-run-contract.md`.
+> **ICM run-contract — read first.** If this run was launched with a stage contract (a `*-CONTEXT.md` in `.prism/shared/plans/`, or the path in `$PRISM_ICM_CONTRACT`), read it first and honor its Inputs / Locked Decisions / Success criteria before anything else. See `skills/spectrum-architect/references/prism-run-contract.md`.
 
 ## Core Loop
 
@@ -68,8 +68,8 @@ Audit of v3.4.0 (2026-06-03) — classification of every subagent dispatched by 
 
 | Agent | Dispatched by | Role type | Demotable to inline checklist? |
 |-------|--------------|-----------|-------------------------------|
-| `spec-reviewer` | prism-subagent, prism-spectrum | Cross-entity reviewer (reviews implementer's diff, never the controller's own work) | **No** — reviews code produced by a different agent |
-| `quality-reviewer` | prism-subagent, prism-spectrum | Cross-entity reviewer (same) | **No** — same rationale; diff-only access enforces independence |
+| `spec-reviewer` | prism-subagent, spectrum | Cross-entity reviewer (reviews implementer's diff, never the controller's own work) | **No** — reviews code produced by a different agent |
+| `quality-reviewer` | prism-subagent, spectrum | Cross-entity reviewer (same) | **No** — same rationale; diff-only access enforces independence |
 | `visual-regression-grader` | prism-validate, prism-verify | Artifact judge (judges playwright diff images) | **No** — requires image interpretation of playwright output the lead AI doesn't produce |
 | `browser-verifier` | prism-verify | Tool executor (runs playwright-cli via Bash) | **No** — Bash tool required; lead AI cannot run playwright-cli inline |
 | eval runners | prism-eval | Isolated execution (runs skills in fresh session context) | **No** — isolation IS the point; inline execution would contaminate the eval |

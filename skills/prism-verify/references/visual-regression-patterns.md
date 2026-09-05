@@ -108,7 +108,7 @@ When baselines exist for a story, `prism-verify` auto-runs visual regression aft
 
 Visual regression runs as a "Tier 1.5" gate between automated quality gates (Tier 1) and browser verification (Tier 2). A grader verdict of `regression` counts as a validation failure.
 
-### From `prism-spectrum`
+### From `spectrum`
 
 For stories modifying UI files (`.tsx`, `.jsx`, `.css`, `.scss`, `.html`), visual regression runs automatically after quality gates pass. A regression triggers `<spectrum-retry>`.
 

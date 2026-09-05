@@ -379,7 +379,7 @@ run_iteration() {
     local exit_code=0
 
     # Build the prompt — story is pre-selected by spectrum.sh, not by Claude
-    local prompt="Execute story $story_id from $STORIES_FILE using the /prism-spectrum workflow. Progress file (consolidated patterns — read this): $PROGRESS_FILE. Progress log (iteration history — append entries here, do NOT read): $PROGRESS_LOG_FILE. The story has been pre-selected — do not pick a different story."
+    local prompt="Execute story $story_id from $STORIES_FILE using the /spectrum workflow (formerly /prism-spectrum; both names resolve). Progress file (consolidated patterns — read this): $PROGRESS_FILE. Progress log (iteration history — append entries here, do NOT read): $PROGRESS_LOG_FILE. The story has been pre-selected — do not pick a different story."
 
     log "Executing story: $story_id"
 
