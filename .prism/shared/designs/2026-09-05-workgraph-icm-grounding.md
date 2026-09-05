@@ -151,3 +151,12 @@ B: POSIX rename() (Open Group); Nix content-addressed outputs; Bazel remote cach
 C: GNU Make, Bazel, Airflow, Dagster, Snakemake cycle detection; Chandy-Misra-Haas distributed deadlock.
 Identity/aggregation/aging: W3C PROV-DM (specializationOf/alternateOf, bundles); RFC 9562 UUID;
 git-bug; log4brains; local-first software (Kleppmann); PARA; FSRS; JSON Canvas; Kumu.
+
+## 9. Resolved 2026-09-05 (Gavin) - zero open workgraph items
+
+- D. standing decisions: their own standing/doctrine lane, tagged adjacent (Layer 3, the factory, not the per-session spine).
+- git-log: a separate view, not a fourth channel (one job per view; the spine stays at three channels).
+- aging: per-state. Outbound ~2 weeks untouched resurfaces at origin, parked ~4 weeks, adjacent and resolved never; staleness computed from last_touched at the gavel, at origin, with the global view scoped to active/recent.
+- global view: read-only. Re-disposition happens at origin; the gavel writes the record where it lives and the global index regenerates.
+
+Also closed this session: the spectrum re-founding questions Q1/Q2/Q4/Q5 at recommendation B (stage-walk wraps stories; measure the token claim Prism-side; spectrum-architect canonical with icm-architect a permanent alias; parking lifts on Gavin's recorded trigger).
