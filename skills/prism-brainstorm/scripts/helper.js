@@ -188,17 +188,38 @@
 
     // LAYERS — every layer collapses and filters independently. Spine order is
     // preserved INSIDE each layer, so grouping never scrambles sequence.
-    var L = { done: [], superseded: [], outbound: [], inbound: [], adjacent: [],
-              parked: [], open: [] };
+    // TWO PANELS, ONE DATA SET.
+    //   L = lanes by STATE      (where a thing stands)
+    //   D = lanes by DIRECTION  (where it points)
+    // These are ORTHOGONAL axes, so an item legitimately appears in one lane of
+    // each -- a parked item that spawns work in Cinopsis is BOTH parked AND
+    // outbound. It is not double-counting: the panels are two views, like the
+    // Explorer and Outline views of the same file in VS Code.
+    //
+    // The previous build bucketed on direction FIRST, so any parked item with a
+    // destination silently left the Parked lane -- "Parked 0" was shown while five
+    // parked items existed. Splitting the panels is what lets both axes be true.
+    var L = { done: [], superseded: [], parked: [], open: [] };
+    var D = { outbound: [], inbound: [], adjacent: [] };
+    function dirOf(o) {
+      if (!o) return 'local';
+      return many(o.destination).length ? 'outbound'
+           : many(o.source).length      ? 'inbound'
+           : o.maps > 1                 ? 'adjacent'
+           : 'local';
+    }
+    function fileIt(stateKey, o, rowHtml) {
+      if (L[stateKey]) L[stateKey].push(rowHtml);
+      var dk = dirOf(o);
+      if (D[dk]) D[dk].push(rowHtml);
+    }
 
     orderDecisions(decisions).forEach(function (d) {
       var q = String(d.q || '');
       var text = q + (d.label ? ' \u00b7 ' + d.label : '');
-      var bucket = d.supersededBy ? 'superseded'
-                 : many(d.source).length ? 'inbound'
-                 : d.maps > 1 ? 'adjacent'
-                 : 'done';
-      L[bucket].push(row(bucket === 'superseded' ? 'superseded' : 'done', q, text,
+      // Same rule as parked below: STATE decides the lane, never direction.
+      var bucket = d.supersededBy ? 'superseded' : 'done';
+      fileIt(bucket, d, row(bucket, q, text,
                          d.supersededBy ? (d.label || '') + ' \u2014 superseded by ' + d.supersededBy
                                         : (d.summary || d.label), d));
     });
@@ -208,11 +229,13 @@
       var tip = pk.resolvedAt
         ? (pk.label || '') + ' \u2014 resolved at ' + pk.resolvedAt + (pk.resolution ? ': ' + pk.resolution : '')
         : (pk.concern || pk.label || '');
-      var bucket = many(pk.destination).length ? 'outbound'
-                 : many(pk.source).length ? 'inbound'
-                 : pk.maps > 1 ? 'adjacent'
-                 : pk.resolvedAt ? 'done' : 'parked';
-      L[bucket].push(row(cls + ' splinter', pk.fromQ || '', pk.label || 'parked', tip, pk));
+      // STATE decides the lane. Direction is a SEPARATE axis, carried by badge()
+      // on the row. Bucketing on direction first is what emptied the Parked lane:
+      // five parked items existed, three had a destination and one had maps>1, so
+      // they were filed as outbound/adjacent and "Parked 0" was displayed. That
+      // inverted the Q3.4 lock (border = state, badge = direction).
+      var bucket = pk.resolvedAt ? 'done' : 'parked';
+      fileIt(bucket, pk, row(cls + ' splinter', pk.fromQ || '', pk.label || 'parked', tip, pk));
     });
 
     upcoming.forEach(function (u) {
@@ -220,23 +243,67 @@
       // the live node is rendered separately; never render it twice
       if (q && q === current) return;
       var lab = (typeof u === 'string') ? u : (q + (u.label ? ' \u00b7 ' + u.label : ''));
-      L.open.push(row('open', q, lab, 'not answered yet', (typeof u === 'object' ? u : null)));
+      var uo = (typeof u === 'object') ? u : null;
+      fileIt('open', uo, row('open', q, lab, 'not answered yet', uo));
     });
 
     // Every decision state gets a layer, and every layer renders even at zero.
     // inbound and adjacent are deliberately SEPARATE: inbound arrived and lands
     // here; adjacent lives elsewhere permanently and never resolves here.
     // Each layer carries an icon so the COLLAPSED rail still reads:
-    // coloured light + icon + count, with no labels.
-    var LAYERS = [
-      { key: 'done',       label: 'Decided',    icon: '\u2713' },
-      { key: 'superseded', label: 'Superseded', icon: '\u21e4' },
-      { key: 'outbound',   label: 'Outbound',   icon: '\u2192' },
-      { key: 'inbound',    label: 'Inbound',    icon: '\u2190' },
-      { key: 'adjacent',   label: 'Adjacent',   icon: '\u2194' },
-      { key: 'parked',     label: 'Parked',     icon: '\u25cc' },
-      { key: 'open',       label: 'Open',       icon: '\u25cb' }
+    // icon + count, with no labels.
+    //
+    // ---- ICON SET - INTERIM: Lucide (ISC / MIT) ----------------------------
+    // THE CANONICAL DGS ICON SET IS AN OPEN DECISION.
+    //   research: .prism/shared/research/2026-09-04-icon-system-decision.md
+    //   field:    Streamline (449k, paid) / Phosphor (6 weights) / Tabler /
+    //             Lucide / Iconoir / Heroicons / Material Symbols
+    //   constraint: Morphicons (already on the Potluck shelf) morphs only
+    //             STROKE-BASED icons -- that rules out variable fonts and solid sets.
+    //   why Lucide for now: lowest regret. Permissive, Morphicons names it first,
+    //             and Streamline BUNDLES Lucide -- so a later move is a migration
+    //             INWARD, not a rewrite.
+    //
+    // TO SWAP THE SUITE'S GLYPHS, EDIT ONLY THIS MAP. Nothing else references an
+    // icon. An "interim" with scattered call sites is a permanent decision wearing
+    // a temporary label, so there is exactly one call site.
+    // Paths are verbatim from lucide-icons/lucide@main/icons/<name>.svg
+    function glyph(inner) {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+             'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ' +
+             'aria-hidden="true" focusable="false">' + inner + '</svg>';
+    }
+    var LAYER_ICONS = {
+      /* circle-check */
+      done:       glyph('<circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/>'),
+      /* rotate-ccw - decided once, then turned back and replaced */
+      superseded: glyph('<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>'),
+      /* arrow-up-right - spawns work elsewhere */
+      outbound:   glyph('<path d="M7 7h10v10"/><path d="M7 17 17 7"/>'),
+      /* arrow-down-left - work arriving from elsewhere */
+      inbound:    glyph('<path d="M17 7 7 17"/><path d="M17 17H7V7"/>'),
+      /* arrow-left-right - related in both directions, never resolves here */
+      adjacent:   glyph('<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>'),
+      /* circle-pause - deliberately held */
+      parked:     glyph('<circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="15" y2="9"/><line x1="14" x2="14" y1="15" y2="9"/>'),
+      /* circle-dashed - not yet closed */
+      open:       glyph('<path d="M10.1 2.182a10 10 0 0 1 3.8 0"/><path d="M13.9 21.818a10 10 0 0 1-3.8 0"/><path d="M17.609 3.721a10 10 0 0 1 2.69 2.7"/><path d="M2.182 13.9a10 10 0 0 1 0-3.8"/><path d="M20.279 17.609a10 10 0 0 1-2.7 2.69"/><path d="M21.818 10.1a10 10 0 0 1 0 3.8"/><path d="M3.721 6.391a10 10 0 0 1 2.7-2.69"/><path d="M6.391 20.279a10 10 0 0 1-2.69-2.7"/>')
+    };
+
+    // Panel 1 - STATES. Panel 2 - RELATIONS. Every lane renders even at zero:
+    // "Inbound 0" is information; a missing lane says nothing at all.
+    var STATE_LAYERS = [
+      { key: 'done',       label: 'Decided',    icon: LAYER_ICONS.done },
+      { key: 'superseded', label: 'Superseded', icon: LAYER_ICONS.superseded },
+      { key: 'parked',     label: 'Parked',     icon: LAYER_ICONS.parked },
+      { key: 'open',       label: 'Open',       icon: LAYER_ICONS.open }
     ];
+    var DIR_LAYERS = [
+      { key: 'outbound',   label: 'Outbound',   icon: LAYER_ICONS.outbound },
+      { key: 'inbound',    label: 'Inbound',    icon: LAYER_ICONS.inbound },
+      { key: 'adjacent',   label: 'Adjacent',   icon: LAYER_ICONS.adjacent }
+    ];
+    var LAYERS = STATE_LAYERS.concat(DIR_LAYERS);   // filter chips still see all 7
 
     var html = '';
     // the live node is never grouped and never filtered away
@@ -299,12 +366,23 @@
       return;
     }
 
-    LAYERS.forEach(function (g) {
-      var rows = L[g.key];
+    function renderPanel(title, defs, store) {
+      var total = defs.reduce(function (n, g) { return n + (store[g.key] || []).length; }, 0);
+      var out = '<section class="qg-panel" data-panel="' + title.toLowerCase() + '">' +
+        '<button class="qg-phead" data-panel="' + title.toLowerCase() + '">' +
+          // No caret, no dot. A section TITLE is not a row -- giving it a glyph
+          // made it read as another lane instead of a heading above the lanes.
+          '<span class="pname">' + title + '</span>' +
+          '<span class="pcount">' + total + '</span>' +
+        '</button><div class="qg-pbody">';
+      defs.forEach(function (g) { out += groupHtml(g, store[g.key] || []); });
+      return out + '</div></section>';
+    }
+    function groupHtml(g, rows) {
       // Empty layers still render. "Parked 0" is information — it says nothing
       // is un-dispositioned. A missing group says nothing at all.
       var empty = rows.length === 0;
-      html +=
+      return '' +
         '<section class="qg-group' + (empty ? ' empty' : '') + '" data-layer="' + g.key + '">' +
           '<button class="qg-ghead" data-layer="' + g.key + '" title="' +
               escapeHtml(g.label + ' \u00b7 ' + rows.length) + '">' +
@@ -318,9 +396,14 @@
             (empty ? '<div class="qg-none">none</div>' : rows.join('')) +
           '</div></div>' +
         '</section>';
-    });
+    }
+    html += renderPanel('STATES', STATE_LAYERS, L);
+    html += '<div class="qg-panel-split"></div>';
+    html += renderPanel('RELATIONS', DIR_LAYERS, D);
     host.innerHTML = html;
     applyLayerPrefs();
+    applyPanelPrefs();
+    wirePanelSplit();
   }
 
   // ---------- view mode: layers | time ----------
@@ -350,6 +433,74 @@
     var fb2 = document.getElementById('grail-filters');
     if (ff && fb2) ff.classList.toggle('on', !fb2.hidden);
     if (ff && viewMode() === 'time') ff.style.display = 'none';
+  }
+
+  // ---------- the STATES/RELATIONS splitter (drag to redistribute) ------
+  // The divider between the two sections is a real handle, like a VS Code sidebar
+  // section boundary: drag it to give one panel more room. The height lands on
+  // the STATES body; RELATIONS simply flows beneath it.
+  function wirePanelSplit() {
+    var split = document.querySelector('#qrail-graph .qg-panel-split');
+    var body  = document.querySelector('#qrail-graph .qg-panel[data-panel="states"] .qg-pbody');
+    if (!split || !body) return;
+
+    try {
+      var saved = sessionStorage.getItem('qg-states-h');
+      if (saved) body.style.maxHeight = saved + 'px';
+    } catch (e) {}
+
+    var startY = 0, startH = 0;
+    function move(ev) {
+      var h = Math.max(70, Math.min(window.innerHeight - 180,
+                                    startH + (ev.clientY - startY)));
+      body.style.maxHeight = h + 'px';
+      try { sessionStorage.setItem('qg-states-h', String(Math.round(h))); } catch (e) {}
+    }
+    function up() {
+      document.body.classList.remove('resizing-v');
+      split.classList.remove('dragging');
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseup', up);
+    }
+    split.addEventListener('mousedown', function (ev) {
+      startY = ev.clientY;
+      startH = body.getBoundingClientRect().height;
+      document.body.classList.add('resizing-v');
+      split.classList.add('dragging');
+      document.addEventListener('mousemove', move);
+      document.addEventListener('mouseup', up);
+      ev.preventDefault();
+    });
+    // double-click restores the default share
+    split.addEventListener('dblclick', function () {
+      body.style.maxHeight = '';
+      try { sessionStorage.removeItem('qg-states-h'); } catch (e) {}
+    });
+  }
+
+  // ---------- panel collapse (VS Code-style stacked sections) ----------
+  function panelPrefs() {
+    try { return JSON.parse(sessionStorage.getItem('qg-panels') || '{}'); } catch (e) { return {}; }
+  }
+  function applyPanelPrefs() {
+    var prefs = panelPrefs();
+    document.querySelectorAll('#qrail-graph .qg-panel').forEach(function (s) {
+      s.classList.toggle('collapsed', prefs[s.getAttribute('data-panel')] === 'c');
+    });
+  }
+  function wirePanelCollapse() {
+    var host = document.getElementById('qrail-graph');
+    if (!host) return;
+    host.addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('.qg-phead') : null;
+      if (!btn) return;
+      e.stopPropagation(); e.preventDefault();
+      var k = btn.getAttribute('data-panel');
+      var prefs = panelPrefs();
+      prefs[k] = prefs[k] === 'c' ? '' : 'c';
+      try { sessionStorage.setItem('qg-panels', JSON.stringify(prefs)); } catch (err) {}
+      applyPanelPrefs();
+    }, true);
   }
 
   // ---------- per-question collapse (timeline mode) ----------
@@ -582,15 +733,28 @@
       try { if (sessionStorage.getItem('grail-thin') === '1') applyThin(true); } catch (e) {}
     }
 
+    // lucide: bot-message-square (interim set -- see LAYER_ICONS for the
+    // canonical-icon decision this is standing in for)
+    var AGENT_TAB_BOT = '<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 6V2H8\"/><path d=\"M15 11v2\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"M20 16a2 2 0 0 1-2 2H8.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 4 20.286V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z\"/><path d=\"M9 11v2\"/></svg>';
     var arail = document.getElementById('arail');
     var atab = document.getElementById('arail-tab');
     if (arail && atab) {
       function applyAgent(collapsed) {
+        // ORDER IS LOad-BEARING: apply the real class FIRST, then release the
+        // pre-paint guard. Releasing first leaves one frame where neither rule
+        // applies, so the rail snaps out to its 268px default and animates shut
+        // -- the visible "wonky" reload.
         arail.classList.toggle('collapsed', collapsed);
+        document.documentElement.classList.remove('pre-arail-collapsed');
         atab.classList.toggle('collapsed-state', collapsed);
         if (collapsed) stashAndClearWidth(arail, 'railw-arail');
         else restoreWidth(arail, 'railw-arail');
-        atab.innerHTML = collapsed ? '▶' : '◀';
+        // The JS owns this button's contents, so the glyph MUST be set here --
+        // markup added in frame-template.html is overwritten on the first toggle
+        // (which is exactly why the bot icon never appeared).
+        //   collapsed -> bot-message-square: says WHAT is behind the tab.
+        //   open      -> a caret: says what the click will DO.
+        atab.innerHTML = collapsed ? AGENT_TAB_BOT : '▶';
         atab.title = collapsed ? 'Show agent' : 'Hide agent';
         try { sessionStorage.setItem('arail-collapsed', collapsed ? '1' : '0'); } catch (e) {}
       }
@@ -614,7 +778,20 @@
 
       try {
         var saved = sessionStorage.getItem(key);
-        if (saved) { el.style.flexBasis = saved + 'px'; el.style.width = saved + 'px'; }
+        // NEVER restore a width onto a rail that is currently closed. An inline
+        // width beats the .collapsed / .thin class rule, so the pane ends up
+        // invisible (opacity:0) while STILL occupying its full width -- a dead
+        // gutter pushing the content across, which is what made a reload with the
+        // chat closed look broken. The width is re-applied by restoreWidth() at
+        // the moment the pane is re-opened, which is the only time it is wanted.
+        var target = rz.getAttribute('data-target');
+        var closed = el.classList.contains('collapsed') || el.classList.contains('thin');
+        // wireResizers() may run before the collapse wiring has applied classes,
+        // so consult the persisted flag too rather than trusting call order.
+        try {
+          if (target === 'arail' && sessionStorage.getItem('arail-collapsed') === '1') closed = true;
+        } catch (e2) {}
+        if (saved && !closed) { el.style.flexBasis = saved + 'px'; el.style.width = saved + 'px'; }
       } catch (e) {}
 
       var dragging = false, startX = 0, startW = 0;
@@ -811,6 +988,7 @@
     wireLayerControls();
     wireViewMode();
     wireItemCollapse();
+    wirePanelCollapse();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setupAllControls);

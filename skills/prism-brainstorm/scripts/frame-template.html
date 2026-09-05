@@ -698,15 +698,122 @@
   .qg-row.no-screen .qg-txt{opacity:.85}
 
 
-  /* ---- layer identity: coloured light + icon + count ---- */
-  .qg-ghead .glight{
-    width:8px;height:8px;border-radius:50%;flex-shrink:0;
-    background:var(--layer-c,var(--footstep));
-    box-shadow:0 0 8px 0 var(--layer-c,transparent);
+
+  /* ================= WORKGRAPH PANELS (VS Code-style stacked sections) =======
+     STATES and RELATIONS are two VIEWS of the same items, not two halves of a
+     split. State and direction are orthogonal: a parked item that spawns work in
+     Cinopsis is BOTH parked AND outbound, so it appears once in each panel. That
+     is why Outbound/Inbound/Adjacent can be populated while Parked stays honest.
+     ========================================================================= */
+  .qg-panel{margin-bottom:4px}
+  .qg-phead{
+    width:100%;display:flex;align-items:center;gap:7px;cursor:pointer;
+    padding:8px 7px;border:0;border-radius:7px;background:transparent;
+    font-family:var(--font-code);font-size:12px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--whisper);
   }
+  .qg-phead:hover{background:var(--haze-06);color:var(--voice)}
+  .qg-phead .pname{flex:1;text-align:left;font-weight:600}
+  .qg-phead .pcount{
+    font-size:11px;padding:1.5px 8px;border-radius:var(--r-pill);
+    background:var(--haze-06);color:var(--whisper);
+  }
+  .qg-phead .chev{font-size:9px;transition:transform .2s var(--tale)}
+  .qg-panel.collapsed .qg-phead .chev{transform:rotate(-90deg)}
+  .qg-pbody{overflow:hidden;transition:max-height .22s var(--tale),opacity .18s ease}
+  .qg-panel.collapsed .qg-pbody{max-height:0;opacity:0}
+  /* A FULL solid rule across the box -- and the drag handle between the two
+     sections. The ::after gives it a ~9px grab target without making the line
+     itself thick. */
+  .qg-panel-split{
+    height:1px;margin:10px 0 12px;width:100%;
+    background:var(--rim-15);
+    position:relative;cursor:row-resize;
+    transition:background .15s ease;
+  }
+  .qg-panel-split::after{
+    content:"";position:absolute;left:0;right:0;top:-5px;height:11px;
+  }
+  .qg-panel-split:hover,.qg-panel-split.dragging{background:var(--iris,#22D3EE)}
+  body.resizing-v{cursor:row-resize;user-select:none}
+  .qg-panel[data-panel="states"] .qg-pbody{
+    max-height:46vh;overflow-y:auto;
+  }
+  .grail.thin .qg-phead .pname{display:none}
+  .grail.thin .qg-phead{justify-content:center;padding:5px 0}
+  .grail.thin .qg-phead .pcount{background:transparent;padding:0;font-size:9px}
+  .grail.thin .qg-panel-split{margin:8px 0;cursor:default}
+  .grail.thin .qg-panel-split::after{display:none}
+  .grail.thin .qg-panel[data-panel="states"] .qg-pbody{max-height:none}
+
+  /* ================= TYPOGRAPHY — the rail was too small across the board ===
+     Every size below was raised together. Bumping one and leaving the rest makes
+     the rail read as inconsistent rather than bigger. ======================== */
+  .grail-head .lbl{font-size:11px;letter-spacing:.15em}
+  .qg-ghead{font-size:10.5px;letter-spacing:.11em;padding:7px 6px}
+  .qg-ghead .gcount{font-size:10.5px;padding:1.5px 7px}
+  .qg-ghead .gicon svg{width:14px;height:14px;stroke-width:2}
+  .qg-txt{font-size:12.5px;line-height:1.45}
+  .qg-bdg{font-size:10px;padding:1.5px 7px}
+  .qg-none{font-size:10.5px}
+  .grail-filter{font-size:10.5px}
+
+
+  /* ================= DRAG GUTTERS — gone when the pane is collapsed =========
+     A collapsed rail has no width to distribute, so a live resize handle beside
+     it can only produce a confusing no-op drag. display:none removes both the
+     affordance AND the behaviour in one move -- there is no disabled-but-present
+     state to get wrong. ====================================================== */
+  .grail.thin ~ .rail-resizer[data-target="grail"],
+  .arail.collapsed ~ .rail-resizer[data-target="arail"]{
+    display:none;
+  }
+
+  /* ================= CHAT TAB — arrow open, bot glyph closed ================ */
+  .arail-tab{display:flex;align-items:center;justify-content:center}
+  .arail-tab .tab-bot{display:none;align-items:center;justify-content:center}
+  .arail-tab svg,.arail-tab .tab-bot svg{width:15px;height:15px;display:block}
+  .arail-tab.collapsed-state .tab-arrow{display:none}
+  .arail-tab.collapsed-state .tab-bot{display:flex}
+  /* the arrow must point the way the pane will MOVE; the collapsed state shows a
+     bot instead of an arrow, so there is no direction left to get wrong there. */
+  .arail-tab.collapsed-state{transform:none}
+  /* SKEUOMORPHIC EDGE. Collapsed, the rail has zero width and the tab protrudes
+     RIGHT into the content area, so its free edge is the right one -- that is the
+     edge that should be rounded, with the joined left edge square. The borders
+     already encoded this (none on the left, 0.8px on right/top/bottom); only the
+     radius was mirrored, which made the tab read as if it hung off something to
+     its right. The expanded state is correct and is deliberately left alone. */
+  /* Pin BOTH states explicitly. Four rules were competing for this radius and an
+     unscoped `.arail-tab` one was winning for the open state too -- which flipped
+     the expanded tab that was already correct. Scoping both ends removes the
+     cascade race instead of adding another rule to it. */
+  html.no-anim .grail,html.no-anim .arail,html.no-anim .arail-tab{
+    transition:none !important;
+  }
+  html.pre-arail-collapsed .arail{
+    flex-basis:0;width:0;opacity:0;pointer-events:none;border-right:none;
+  }
+  html.pre-arail-collapsed .arail-tab{border-radius:0 6px 6px 0}
+  html.pre-arail-collapsed .rail-resizer[data-target="arail"]{display:none}
+  .arail-tab.collapsed-state{border-radius:0 6px 6px 0}
+
+  /* ---- layer identity: caret, light, icon, name, number ----
+     The caret STAYS -- it reads as a disclosure control, not a second dot.
+     (It was briefly hidden on a misread; restored deliberately.) */
+  /* The layer light is RETIRED. Once the glyph carries the layer colour there is
+     nothing left for a separate dot to say, and at any size it competed with
+     .qg-dot (~15px), which is a work node -- a different class of object.
+     Markup keeps the span so nothing downstream breaks. */
+  .qg-ghead .glight{display:none}
   .qg-ghead .gicon{
-    font-size:11px;line-height:1;flex-shrink:0;
+    font-size:11px;line-height:1;flex-shrink:0;display:flex;align-items:center;
     color:var(--layer-c,var(--footstep));
+  }
+  /* Lucide ships on a 24 grid with a 2px stroke; at 12px that renders ~1px and
+     goes soft, so the stroke is nudged up rather than the glyph scaled down. */
+  .qg-ghead .gicon svg{
+    width:12px;height:12px;display:block;stroke-width:2.15;
   }
   .qg-group[data-layer="done"]       { --layer-c:var(--bio) }
   .qg-group[data-layer="superseded"] { --layer-c:var(--footstep) }
@@ -717,17 +824,60 @@
   .qg-group[data-layer="open"]       { --layer-c:var(--footstep) }
   .qg-group.empty .glight{box-shadow:none;opacity:.45}
 
-  /* COLLAPSED RAIL — light + icon + number, nothing else */
+  /* COMPACT RAIL — a split glass pill.
+     LEFT  = the glyph, on a gradient of the layer's own colour, subtly glowing.
+     RIGHT = the count, clear glass — unless the layer is current, which takes
+             the iris tint so the active lane is findable at a glance.
+     The head itself becomes the pill; icon and count are its two segments. */
   .grail.thin .qg-ghead{
-    flex-direction:column;gap:3px;justify-content:center;padding:7px 0;
+    display:flex;flex-direction:row;gap:0;padding:0;margin:0 auto;
+    width:34px;border-radius:var(--r-pill);overflow:hidden;
+    border:1px solid var(--rim-10);
+    background:var(--haze-04);
+    backdrop-filter:var(--blur-frost,blur(10px) saturate(140%));
+    -webkit-backdrop-filter:var(--blur-frost,blur(10px) saturate(140%));
+    box-shadow:0 0 7px -2px var(--layer-c,transparent);
+  }
+  .grail.thin .qg-ghead:hover{
+    border-color:var(--rim-15);
+    box-shadow:0 0 11px -2px var(--layer-c,transparent);
   }
   .grail.thin .qg-ghead .chev,
-  .grail.thin .qg-ghead .gname{display:none}
-  .grail.thin .qg-ghead .gicon{font-size:13px}
-  .grail.thin .qg-ghead .gcount{
-    padding:0;background:transparent;font-size:10px;color:var(--layer-c,var(--whisper));
+  .grail.thin .qg-ghead .gname,
+  .grail.thin .qg-ghead .glight{display:none}
+
+  /* left segment — colour gradient carrying the layer identity */
+  .grail.thin .qg-ghead .gicon{
+    flex:1 1 auto;display:flex;align-items:center;justify-content:center;
+    padding:4px 0;font-size:10px;line-height:1;color:var(--voice);
+    border-right:1px solid var(--rim-10);
+    /* compact pill: slightly smaller glyph, slightly heavier stroke to hold up */
+    background:linear-gradient(135deg,
+      color-mix(in srgb, var(--layer-c,var(--footstep)) 58%, transparent),
+      color-mix(in srgb, var(--layer-c,var(--footstep)) 16%, transparent));
   }
-  .grail.thin .qg-group{margin-bottom:2px}
+  /* right segment — clear glass. display MUST be restated: an earlier rule
+     hides .gcount in thin mode, and a silent override is how the number
+     vanished before. */
+  .grail.thin .qg-ghead .gcount{
+    display:flex;flex:0 0 13px;align-items:center;justify-content:center;
+    padding:4px 0;border:0;border-radius:0;
+    font-size:8px;line-height:1;
+    background:rgba(255,255,255,.04);color:var(--whisper);
+  }
+  .grail.thin .qg-ghead .gicon svg{width:11px;height:11px;stroke-width:2.3}
+  /* the current lane — iris tint on the glass */
+  .grail.thin .qg-group.current .qg-ghead .gcount{
+    background:color-mix(in srgb, var(--iris,#22D3EE) 24%, transparent);
+    color:var(--iris,#22D3EE);
+  }
+  .grail.thin .qg-group.current .qg-ghead{
+    border-color:color-mix(in srgb, var(--iris,#22D3EE) 45%, transparent);
+  }
+  /* an empty layer dims but still renders — absence is information */
+  .grail.thin .qg-group.empty .qg-ghead{opacity:.42;box-shadow:none}
+  .grail.thin .qg-group.empty .gcount{border:0}
+  .grail.thin .qg-group{margin-bottom:5px}
   .grail.thin .qg-gbody{display:none}
 
   /* an empty layer still shows — absence is information */
@@ -878,7 +1028,23 @@
   <div class="rail-resizer" data-target="grail"></div>
 
   <!-- PANE 2 · agent / multi-state box — collapses to a tab -->
-  <aside class="arail" id="arail">
+  <script>
+/* PRE-PAINT COLLAPSE GUARD. The rail markup carries no `collapsed` class and the
+   CSS default is flex:0 0 268px, so on reload the chat rail PAINTS OPEN and is
+   only snapped shut later when helper.js runs -- a visible flash whenever it was
+   closed before the reload. This runs before the element paints and settles the
+   question up front. helper.js clears the flag as soon as it owns the state. */
+(function(){var d=document.documentElement;
+/* Suppress rail transitions for the first paint. Without this the rails ANIMATE
+   into their restored position on every load, which reads as a glitch rather
+   than as state being restored. Released after two frames, once layout settles. */
+d.classList.add('no-anim');
+try{var v=sessionStorage.getItem('arail-collapsed');
+if(v===null||v==='1'){d.classList.add('pre-arail-collapsed');}}catch(e){}
+requestAnimationFrame(function(){requestAnimationFrame(function(){
+  d.classList.remove('no-anim');});});})();
+</script>
+<aside class="arail" id="arail">
     <div class="arail-body">
       <div class="qrail-pane" data-mode="agent" id="qrail-agent">
         <div class="ag-log" id="ag-log">
@@ -899,7 +1065,7 @@
     </div>
   </aside>
   <div class="rail-resizer" data-target="arail"></div>
-  <button class="arail-tab" id="arail-tab" title="Hide agent">&#9664;</button>
+  <button class="arail-tab" id="arail-tab" title="Hide agent"><span class="tab-arrow">&#9654;</span><span class="tab-bot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6V2H8"/><path d="M15 11v2"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M20 16a2 2 0 0 1-2 2H8.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 4 20.286V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/><path d="M9 11v2"/></svg></span></button>
   <div class="main">
     <div id="claude-content">
       <!-- CONTENT -->
