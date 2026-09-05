@@ -4,6 +4,63 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.14.0] - 2026-09-05
+
+### Added
+- **`griot_assert`** - one MCP verb with a mechanical rung ladder (`mcp` -> `bridge` -> `cli` ->
+  `none`), write-through to `.prism/local/assertions/assertions.jsonl` + `.md`. It **never fakes a
+  pass**: with no way to execute, the verdict is `unverified`, because unverified is the absence of
+  evidence, not a failure.
+- **INVARIANTS I1-I6 + `scripts/verify-invariants.mjs`.** Everything in the ontology before this was
+  a *preference* - advisory, competing with the rest of context, and demonstrably skippable (a rule
+  was authored and then broken three times in the session that authored it). An **invariant** is a
+  proposition that can be *computed*. It does not constrain how the work is done; it constrains what
+  must be true to claim done, which is why it costs no flexibility. The runner is auto-discovered by
+  `pre-release-audit.mjs`, so it gates this very release. Current output: 5 pass, 0 fail,
+  1 unverified - I3 honestly reports that no read-size telemetry exists rather than greening itself.
+- **`.prism/shared/MISTAKES.md`** - the mistake ledger. Recurring pain was living only in Gavin's
+  memory, the one place it cannot be acted on. Entries carry their cost and whether they recurred; a
+  second occurrence promotes them (computable -> invariant, otherwise -> contract clause).
+- **Workgraph STATES/RELATIONS panels** in the brainstorm companion - two VS Code-style stacked
+  sections over one data set, plus a draggable divider, seven decision states, filter chips, and a
+  layers/timeline toggle.
+
+### Fixed
+- **The Parked lane was lying.** Five parked items existed and the rail displayed `Parked 0`. Items
+  were bucketed by DIRECTION first, so any parked item with a destination or `maps > 1` silently left
+  the lane. State and direction are orthogonal - a parked item that spawns work in Cinopsis is BOTH
+  parked and outbound - so state now decides the lane and direction is carried by badge and by its
+  own panel.
+- **Four rail bugs, one root cause: a pane's saved size outliving its collapsed state.** A closed
+  pane kept an inline width and ate 213px of layout (inline beats the class rule); drag handles
+  stayed live beside closed panes; collapse was applied after first paint, so a pane flashed open and
+  animated shut; and the tab rounded its joined edge instead of its free one. Extracted as R1-R5 in
+  `.prism/shared/designs/2026-09-05-griotwave-rail-pattern.md` and applied to Cinopsis v2.7.1.
+- **skill-guard blocked five legitimate writes in one day.** Its allowlist covered `.prism/shared/`
+  but not `.prism/local/`, and a bare skill-name match anywhere in the haystack scored block-grade -
+  including inside the 6000-char file *body*, so any document that merely **mentioned** Prism was
+  refused. Name matches in intent (the user's words or the target path) still score 100; a match in
+  the body scores 20 and must be corroborated. Verified in both directions.
+
+### Changed
+- **Reading discipline inverted** across `prism-research`, `prism-implement`, `create_plan.md` and
+  `research_codebase.md`: delegate the bulk read instead of reading every listed file. This is the
+  ~45:1 context compression (roughly 560k tokens read inside subagents, ~12k returned) that is the
+  mechanism behind the session this release came out of.
+- **Interim icon set: Lucide**, in one swappable `LAYER_ICONS` map. The canonical DGS icon decision
+  is open and researched in `.prism/shared/research/2026-09-04-icon-system-decision.md`.
+
+### Decided, not executed
+- **Q5:** `icm-architect` -> **`spectrum-architect`**, `prism-spectrum` -> **`spectrum`**. The rename
+  is trivial; re-founding `prism-spectrum` off the Ralph loop and onto ICM across 386 references is
+  its own contracted session. `icm/` keeps its name - it is a verbatim MIT port and that is
+  attribution, not preference.
+
+### Ceremony record
+- Deterministic audit **CLEAN** (`claude plugin validate` + all five `verify-*.mjs` + structural).
+- `spec-reviewer` **PASS**, no High findings.
+- `quality-reviewer` **UNVERIFIED** - dispatched, never reported. Recorded rather than assumed.
+
 ## [4.13.2] - 2026-09-03
 
 ### Fixed
