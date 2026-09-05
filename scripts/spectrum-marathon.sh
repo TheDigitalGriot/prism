@@ -33,6 +33,10 @@
 # Requires: bash (Git Bash / WSL / macOS / Linux) and the claude CLI.
 # ============================================================================
 
+# MARATHON STATES (emitted to the log; how adjacent sessions read this run):
+#   MARATHON-START . MARATHON-CONTINUE . STAGE-OK . STAGE-STALL . MARATHON-PAUSED . MARATHON-COMPLETE
+#   (MARATHON-WAITING is added by the coordination layer.)
+#
 set -euo pipefail
 
 WORKSPACE="${1:-$(pwd)}"
@@ -56,9 +60,27 @@ while IFS= read -r d; do stages+=("$d"); done < <(find "$WORKSPACE" -maxdepth 1 
 [ "${#stages[@]}" -gt 0 ] || { echo "spectrum-marathon: no numbered stage folders (NN_*) in $WORKSPACE" >&2; exit 1; }
 
 mode=$([ -n "$SUPERVISED" ] && echo "supervised" || echo "long-form")
-log "MARATHON-START ${#stages[@]} stages | mode=$mode | workspace=$WORKSPACE"
+
+# START vs CONTINUE are distinct states (The Marathon Continues -- ode to Nipsey
+# Hussle). Derived from the filesystem: any stage already carrying an output means
+# this is a continuation, not a first run. SPECTRUM_CONTINUE (set by
+# spectrum-marathon-continue) forces the CONTINUE state.
+done_count=0
+for _s in "${stages[@]}"; do stage_done "$_s" && done_count=$((done_count+1)); done
+if [ -n "${SPECTRUM_CONTINUE:-}" ] || [ "$done_count" -gt 0 ]; then
+  log "MARATHON-CONTINUE ${done_count}/${#stages[@]} stages already done | mode=$mode | workspace=$WORKSPACE"
+else
+  log "MARATHON-START ${#stages[@]} stages | mode=$mode | workspace=$WORKSPACE"
+fi
 
 for stage in "${stages[@]}"; do
+  # Pause control: enter the MARATHON-PAUSED state and stop cleanly before the next
+  # stage. Finished stages keep their outputs, so spectrum-marathon-continue re-runs nothing.
+  if [ -e "$WORKSPACE/.spectrum-marathon.pause" ]; then
+    log "MARATHON-PAUSED (pause requested). Resume: spectrum-marathon-continue $WORKSPACE"
+    exit 0
+  fi
+
   name="$(basename "$stage")"
   contract="$stage/CONTEXT.md"
 
