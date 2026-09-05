@@ -205,7 +205,7 @@ const newestFile = (p) => {
     for (const line of a.trim().split('\n')) {
       try {
         const r = JSON.parse(line)
-        const t = Date.parse(r.at || r.t || r.time || '')
+        const t = Date.parse(r.when || r.at || r.t || r.time || '')
         if (!isNaN(t) && t >= cutoff) recent++
       } catch { /* skip */ }
     }
