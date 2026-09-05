@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# ============================================================================
+# RETIRED 2026-09-05 -- the Ralph loop is retired (Spectrum re-founding, Q3).
+# The runner is now scripts/spectrum-walk.sh -- the ICM long-form walk:
+# it walks numbered stage contracts and advances when a stage output exists
+# (the filesystem is the state machine). No MAX_ITERATIONS, no lying-signal
+# verification, no story queue -- ICM makes all of that unnecessary.
+# This file is kept for reference; do not build on its loop.
+# ============================================================================
 # Spectrum Iterative Executor for Prism
 # Spawns fresh Claude Code sessions in a loop to execute stories autonomously
 #
