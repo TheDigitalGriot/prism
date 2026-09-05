@@ -79,7 +79,7 @@ The end-of-cycle arc. `prism-closing-ceremony` runs the whole sequence in one pa
 
 | Skill | Purpose |
 |---------|---------|
-| `/prism:cl-plugin-structure` | The plugin-authoring gold standard — manifests, components, model config |
+| `/prism:griot-agent-architect` | The plugin- and agent-architecture gold standard — manifests, components, model config _(alias: `/prism:cl-plugin-structure`, still resolves)_ |
 | `/prism:fragment-sync` | Reconcile Fragment's scaffolder to the current Prism standard |
 | `/prism:icm-architect` | Build ICM workspaces + headless stage contracts |
 | `/prism:prism-gavel` | Decision cockpit — the browser-driven gavel surface |

@@ -1,4 +1,4 @@
-# cl-plugin-structure-update
+# griot-agent-architect-update
 
 ## Overview
 

@@ -12,7 +12,9 @@
     "code-intelligence",
     "graph-navigator",
     "blast-radius",
-    "dead-code-detection"
+    "dead-code-detection",
+    "agent-architecture",
+    "griot-agent-architect"
   ],
   "author": {
     "name": "Digital Griot Studio"

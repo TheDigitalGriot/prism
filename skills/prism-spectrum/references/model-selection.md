@@ -22,7 +22,7 @@ When dispatching agents, select the model based on task complexity rather than a
 - Task requires understanding intent behind existing code
 - Task involves review or quality assessment
 
-> **Opus 5 is the routine ceiling.** `claude-opus-5` supersedes Opus 4.8 as the most capable routine tier at the **same $5 / $25 price**, so the ceiling is now cheaper-per-capability — `medium` effort on Opus 5 covers work that used to need `high`/`xhigh`. The `opus`/`best` alias flip has landed; Opus 4.8 stays reachable under the explicit `opus48` key for A/B eval (see [model-config.md §2](../../cl-plugin-structure/references/model-config.md)). Fable 5.1 remains the gated escalation above the ceiling, never a routing default.
+> **Opus 5 is the routine ceiling.** `claude-opus-5` supersedes Opus 4.8 as the most capable routine tier at the **same $5 / $25 price**, so the ceiling is now cheaper-per-capability — `medium` effort on Opus 5 covers work that used to need `high`/`xhigh`. The `opus`/`best` alias flip has landed; Opus 4.8 stays reachable under the explicit `opus48` key for A/B eval (see [model-config.md §2](../../griot-agent-architect/references/model-config.md)). Fable 5.1 remains the gated escalation above the ceiling, never a routing default.
 
 ### Fable 5.1 (Maximum Capability) — ENABLED, HITL-GATED
 > ⚠️ **`claude-fable-5-1` is opt-in and gated, never a routing default.** It is enabled under the Max/Team Premium subscription, but every use passes a human-in-the-loop gate: the workspace `.prism/local/fable.flag` + a confirm/deny modal in the app, and the `fable-gate.sh` PreToolUse hook on Task dispatches (which matches Fable IDs by **prefix**, so point releases cannot slip past ungated). No agent auto-selects it, no `role_defaults` targets it, and no agent frontmatter sets it as a resting default — it is reached only by explicit, confirmed escalation. Auto-selecting Fable during routine dispatch is still a defect; a deliberate, gated escalation is not.
@@ -33,7 +33,7 @@ The justification bar for escalating to Fable 5 (active):
 - Long-horizon agentic work where the model must hold a multi-step plan across many tool calls without losing the thread
 - One-shot critical decisions (security-sensitive refactor, irreversible migration) where the cost of getting it wrong dwarfs the spend
 
-**Never the default.** Fable draws on a *capped weekly Max allowance* (and is API-metered ≈2.6× Opus 5 on non-subscription surfaces), so the gate exists to protect that headroom — reach for it the way you'd reserve `effort: max`. Its API surface also differs (always-on thinking, `refusal` stop reason, 30-day retention, and 0.025× cache reads) — see [cl-plugin-structure/references/model-config.md §5](../../cl-plugin-structure/references/model-config.md). Everything routine stays on Opus 5 or below.
+**Never the default.** Fable draws on a *capped weekly Max allowance* (and is API-metered ≈2.6× Opus 5 on non-subscription surfaces), so the gate exists to protect that headroom — reach for it the way you'd reserve `effort: max`. Its API surface also differs (always-on thinking, `refusal` stop reason, 30-day retention, and 0.025× cache reads) — see [griot-agent-architect/references/model-config.md §5](../../griot-agent-architect/references/model-config.md). Everything routine stays on Opus 5 or below.
 
 ## Override Pattern
 
@@ -66,7 +66,7 @@ Task(subagent_type="codebase-analyzer")  # Uses default (opus)
 | spec-reviewer | sonnet | Config-only changes | Complex architectural review |
 | quality-reviewer | sonnet | Small mechanical changes | Large multi-file reviews |
 
-**Opus 5 is the routing ceiling for every dispatch.** `claude-opus-5` is the ceiling and the `opus` alias now resolves to it; Opus 4.8 stays reachable under the explicit `opus48` key for A/B eval, and both sit below the Fable escalation. The override table above never auto-selects Fable 5.1 — Fable is reached only through the explicit HITL gate (flag + modal/hook), as a deliberate escalation, not a routing decision. No row in this table auto-escalates up to Fable. Opus 5 carries **no Fable-style gate**; its only guard is a one-shot confirm on `effort: xhigh|max` (a per-call effort control, not a model gate — see [model-config.md §4](../../cl-plugin-structure/references/model-config.md)).
+**Opus 5 is the routing ceiling for every dispatch.** `claude-opus-5` is the ceiling and the `opus` alias now resolves to it; Opus 4.8 stays reachable under the explicit `opus48` key for A/B eval, and both sit below the Fable escalation. The override table above never auto-selects Fable 5.1 — Fable is reached only through the explicit HITL gate (flag + modal/hook), as a deliberate escalation, not a routing decision. No row in this table auto-escalates up to Fable. Opus 5 carries **no Fable-style gate**; its only guard is a one-shot confirm on `effort: xhigh|max` (a per-call effort control, not a model gate — see [model-config.md §4](../../griot-agent-architect/references/model-config.md)).
 
 ## Cost Impact
 

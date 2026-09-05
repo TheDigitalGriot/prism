@@ -2,7 +2,7 @@
 // pre-release-audit.mjs — the deterministic half of the closing-ceremony Review & Audit gate.
 // Run from the repo root:  node scripts/pre-release-audit.mjs
 // Runs `claude plugin validate .`, discovers + runs every scripts/verify-*.mjs, and checks a few
-// cl-plugin-structure best practices. Exits non-zero on any failure so the ceremony can gate on it.
+// griot-agent-architect best practices. Exits non-zero on any failure so the ceremony can gate on it.
 import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 
@@ -29,7 +29,7 @@ if (existsSync('scripts')) {
   }
 }
 
-// 3. Structural best practices (cl-plugin-structure) — SCOPED to this release's changed files.
+// 3. Structural best practices (griot-agent-architect) — SCOPED to this release's changed files.
 // A release gate blocks on what THIS release introduces, not the repo's whole backlog. Plugin-validate
 // and the verify-*.mjs scripts above already cover whole-plugin correctness.
 const walk = (dir) => existsSync(dir) ? readdirSync(dir, { withFileTypes: true }).flatMap(e => {

@@ -58,7 +58,7 @@ never half-edited.
 Opus 5 defaults to longer output; on this pipeline that reads as noise, not thoroughness. Answer at
 the altitude the contract asks: prefer the smallest correct edit, do not restate the task back, do
 not summarize files you did not change. Keep thinking ON and lower the effort dial for cost rather
-than dropping to a weaker tier (see `skills/cl-plugin-structure/references/model-config.md` §4). This
+than dropping to a weaker tier (see `skills/griot-agent-architect/references/model-config.md` §4). This
 concision rule applies pipeline-wide because every stage points here.
 
 ## Sliced source artifacts (`.prism/local/slices/`)

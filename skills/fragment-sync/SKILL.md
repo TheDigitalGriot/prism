@@ -1,25 +1,25 @@
 ---
 name: fragment-sync
-description: Use when Fragment (the create-fragment scaffolder / fragment-plugin) has drifted from the current cl-plugin-structure / Prism standard and needs re-syncing — after Prism advances, before exposing Fragment anywhere, or when scaffolded projects look stale (missing Cowork awareness, channels, or the current model line). Reconciles Fragment so it once again emits "Prism-image" projects. Triggers on "sync fragment", "update fragment", "fragment fell behind", "conform fragment", "fragment is stale".
+description: Use when Fragment (the create-fragment scaffolder / fragment-plugin) has drifted from the current griot-agent-architect / Prism standard and needs re-syncing — after Prism advances, before exposing Fragment anywhere, or when scaffolded projects look stale (missing Cowork awareness, channels, or the current model line). Reconciles Fragment so it once again emits "Prism-image" projects. Triggers on "sync fragment", "update fragment", "fragment fell behind", "conform fragment", "fragment is stale".
 version: 0.2.2
 ---
 
 # Fragment Sync
 
-Reconcile **Fragment** to the current **cl-plugin-structure / Prism** standard. Fragment is a *generator* (the `create-fragment` CLI + templates, plus the `fragment-plugin`) that should emit "Prism-image" projects — but it drifts whenever Prism advances and Fragment isn't updated in lockstep. This skill makes the reconciliation a single deliberate pass instead of a manual chore that gets forgotten.
+Reconcile **Fragment** to the current **griot-agent-architect / Prism** standard. Fragment is a *generator* (the `create-fragment` CLI + templates, plus the `fragment-plugin`) that should emit "Prism-image" projects — but it drifts whenever Prism advances and Fragment isn't updated in lockstep. This skill makes the reconciliation a single deliberate pass instead of a manual chore that gets forgotten.
 
-`cl-plugin-structure` is the source of truth. Fragment is downstream. This skill is the **spec → generator conformance bridge** between them.
+`griot-agent-architect` is the source of truth. Fragment is downstream. This skill is the **spec → generator conformance bridge** between them.
 
 ## Iron rule
 
 ```
-Fragment must EMIT what cl-plugin-structure TEACHES.
+Fragment must EMIT what griot-agent-architect TEACHES.
 If the standard gained a capability, the generator must emit it — and the plugin must model it.
 ```
 
 ## Inputs (read these first, completely)
 
-1. **The standard** — `../cl-plugin-structure/SKILL.md` (+ its `references/`). The authority. Note its version.
+1. **The standard** — `../griot-agent-architect/SKILL.md` (+ its `references/`). The authority. Note its version.
 2. **Prism's own manifest** — `../../.claude-plugin/plugin.json` — a live example of a current plugin (channels, current version).
 3. **The conformance checklist** — [references/conformance-checklist.md](references/conformance-checklist.md). The concrete item-by-item spec, distilled from the last full audit. Update it whenever the standard gains something new.
 4. **Fragment on disk** — default `<GriotApps>/fragment-ai-scaffold` (confirm the path). Two layers:
@@ -87,4 +87,4 @@ curl -s .../<tool>-plugin/scripts/<changed-file> | grep <the-fix>
 
 ## Authoring note
 
-When this skill (or Fragment) itself is edited, it is a Claude Code plugin skill — author it per `/cl-plugin-structure` and finish with `claude plugin validate .`.
+When this skill (or Fragment) itself is edited, it is a Claude Code plugin skill — author it per `/griot-agent-architect` and finish with `claude plugin validate .`.

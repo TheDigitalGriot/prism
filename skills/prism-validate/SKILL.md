@@ -207,4 +207,4 @@ Every claim of "passing" or "complete" must be backed by **objective command out
 4. **Severity matters** - Critical blocks, low follows up
 5. **Update the plan** - Mark actual completion
 
-> See also: [cl-plugin-structure/scripts/](../cl-plugin-structure/scripts/) for validator scripts (validate-agent.sh, validate-hook-schema.sh, validate-settings.sh) that can augment manual validation gates.
+> See also: [griot-agent-architect/scripts/](../griot-agent-architect/scripts/) for validator scripts (validate-agent.sh, validate-hook-schema.sh, validate-settings.sh) that can augment manual validation gates.

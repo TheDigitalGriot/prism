@@ -182,6 +182,9 @@ const newestFile = (p) => {
     { name: 'dgs-plan-update skill', path: join(process.env.USERPROFILE || process.env.HOME || '', '.claude', 'skills', 'dgs-plan-update', 'SKILL.md') },
     { name: 'digital-griot-mcp', path: join(ROOT, 'scripts', 'digital-griot-mcp', 'digital-griot-mcp.ts') },
     { name: 'icm-architect skill', path: join(ROOT, 'skills', 'icm-architect', 'SKILL.md') },
+    { name: 'griot-agent-architect skill (canonical)', path: join(ROOT, 'skills', 'griot-agent-architect', 'SKILL.md') },
+    // additive rename 2026-09-05: cl-plugin-structure MUST keep resolving as a deprecation alias.
+    { name: 'cl-plugin-structure skill (deprecation alias)', path: join(ROOT, 'skills', 'cl-plugin-structure', 'SKILL.md') },
   ]
   const missing = PROPER.filter(p => p.path && !existsSync(p.path))
   rec('I6', 'proper names still resolve', missing.length ? 'fail' : 'pass',

@@ -170,4 +170,4 @@ If user has follow-up questions:
 
 For bash-based exploration, see [references/exploration-patterns.md](references/exploration-patterns.md).
 
-> See also: [cl-plugin-structure/references/folder-architecture-routing.md](../cl-plugin-structure/references/folder-architecture-routing.md) for efficient context loading via the routing-table pattern (Layer 1/2/3).
+> See also: [griot-agent-architect/references/folder-architecture-routing.md](../griot-agent-architect/references/folder-architecture-routing.md) for efficient context loading via the routing-table pattern (Layer 1/2/3).

@@ -6,7 +6,7 @@ cycle run headless (Cowork cloud, `claude -p`, CI) **without touching the intera
 
 > Design provenance: `.prism/shared/research/2026-08-15-headless-release-cycle-research.md`
 > (gate inventory §1, mechanism §3, blast-radius §4) and the passive-bus / headless mandate in
-> `skills/cl-plugin-structure/references/channel-patterns.md:76-78`. This file is the concrete,
+> `skills/griot-agent-architect/references/channel-patterns.md:76-78`. This file is the concrete,
 > shippable form of that reference's durable target — a `run_device_skill(skill, args, answers)`
 > verb — with the answers file as the injected `answers` payload.
 

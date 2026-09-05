@@ -55,7 +55,7 @@ array length + field values, so you never hand-edit a count.
 The masters' git source of truth is `<GriotMeta>/griot-live-artifacts/live/`. Scans and
 git write-backs run **device-side via Windows-MCP PowerShell** — NOT `device_bash` (its VM has no
 GitHub network and times out on big trees) and NOT cloud egress (blocked). Prism plugin skills
-(`prism-plan`, `decompose_plan`, `prism-implement`, `cl-plugin-structure`) load only inside the repo;
+(`prism-plan`, `decompose_plan`, `prism-implement`, `griot-agent-architect`) load only inside the repo;
 run them device-side via headless `claude.exe -p` in `GriotApps\Prism` (the daemon is NOT required —
 it is mobile/remote-only). "Won't run here" is a routing problem, not a blocker.
 

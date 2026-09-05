@@ -221,4 +221,4 @@ git diff HEAD~5                 # Changes in last 5 commits
 | ENOENT | File not found | Check file paths, working directory |
 | ECONNREFUSED | Service down | Check if required services running |
 
-> See also: [cl-plugin-structure/references/cowork-compatibility.md](../cl-plugin-structure/references/cowork-compatibility.md) for surface-specific debugging when issues only reproduce on one surface (Claude Code vs Cowork — hooks and Bash are absent in Cowork).
+> See also: [griot-agent-architect/references/cowork-compatibility.md](../griot-agent-architect/references/cowork-compatibility.md) for surface-specific debugging when issues only reproduce on one surface (Claude Code vs Cowork — hooks and Bash are absent in Cowork).

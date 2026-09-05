@@ -80,7 +80,7 @@ Windows-MCP; counts verified with Node regex, never PowerShell `.Matches.Count`.
 ## Authoring / plugin fit
 
 This skill is authored via `skill-creator` and its plugin fit is verified with
-`/prism:cl-plugin-structure` (run device-side in the Prism repo). It ships no MCP channel in v1 -
+`/prism:griot-agent-architect` (run device-side in the Prism repo). It ships no MCP channel in v1 -
 the Gavel ceremony is an in-chat decision step; the future `close_decision(id, decision, role,
 stage)` MCP verb is noted for when the decision bus lands. Keep this SKILL.md lean; the three
 reference files carry the exact schemas and are loaded only for the direction being run.

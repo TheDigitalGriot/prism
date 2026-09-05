@@ -28,7 +28,7 @@
 # append all happen inside one node block that MIRRORS model-policy.ts minimally
 # (the shell hook cannot import the TypeScript module). Emits a PreToolUse
 # permission decision on stdout per the hook output protocol (see
-# cl-plugin-structure/references/hook-events.md).
+# griot-agent-architect/references/hook-events.md).
 #
 # Fail-open: a missing node, or any malformed policy, degrades to "allow" (with a
 # best-effort event) so model governance never breaks Task dispatch.

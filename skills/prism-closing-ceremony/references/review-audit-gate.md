@@ -29,7 +29,7 @@ Reviewers see diffs, not full files (the established prism-subagent review disci
 ```bash
 node scripts/pre-release-audit.mjs
 ```
-Runs `claude plugin validate .` (the mandatory cl-plugin-structure gate), discovers and runs every
+Runs `claude plugin validate .` (the mandatory griot-agent-architect gate), discovers and runs every
 `scripts/verify-*.mjs`, and checks structure (SKILL.md sizes, frontmatter presence, no hardcoded
 absolute plugin-resource paths). Exits non-zero on any failure.
 

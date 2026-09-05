@@ -165,4 +165,4 @@ Two paths can coexist — they serve different layers:
 | **Architecture** | `/prism-design` | Mermaid diagrams, interface contracts, visual layout (Pencil or Claude Design) |
 | **Visual prototype** | `idea_init` → emit | `design_prompt.yaml` → Claude Design — visual prototype + design system tokens |
 
-> See also: [cl-plugin-structure/references/model-config.md](../cl-plugin-structure/references/model-config.md) §5 for `ultrathink` keyword behavior — this skill uses it in Step 4 to trigger deeper divergent-thinking reasoning.
+> See also: [griot-agent-architect/references/model-config.md](../griot-agent-architect/references/model-config.md) §5 for `ultrathink` keyword behavior — this skill uses it in Step 4 to trigger deeper divergent-thinking reasoning.

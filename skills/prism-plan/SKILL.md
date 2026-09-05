@@ -209,4 +209,4 @@ Always separate into two categories:
 - [ ] Performance acceptable
 ```
 
-> See also: [cl-plugin-structure/references/component-patterns.md](../cl-plugin-structure/references/component-patterns.md) for multi-skill harness planning and component composition patterns.
+> See also: [griot-agent-architect/references/component-patterns.md](../griot-agent-architect/references/component-patterns.md) for multi-skill harness planning and component composition patterns.
