@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================================
-# spectrum-walk.sh -- the ICM long-form runner (Spectrum, re-founded on ICM)
+# spectrum-marathon.sh -- the ICM long-form runner (Spectrum, re-founded on ICM)
 # ----------------------------------------------------------------------------
 # Replaces the retired Ralph-loop spectrum.sh. It carries NONE of its machinery
 # -- no MAX_ITERATIONS, no lockfile-signal, no state-verification, no story
@@ -20,7 +20,7 @@
 #   the ICM-native replacement for the loop's one real job, autonomous runs.
 #   Each stage is a fresh, bounded agent; nothing is ever "reloaded".
 #
-# Usage:  spectrum-walk [workspace-dir]
+# Usage:  spectrum-marathon [workspace-dir]
 #   workspace-dir  a dir of numbered stage folders (default: current dir).
 #
 # Env:
@@ -36,12 +36,12 @@
 set -euo pipefail
 
 WORKSPACE="${1:-$(pwd)}"
-[ -d "$WORKSPACE" ] || { echo "spectrum-walk: no such workspace: $WORKSPACE" >&2; exit 1; }
+[ -d "$WORKSPACE" ] || { echo "spectrum-marathon: no such workspace: $WORKSPACE" >&2; exit 1; }
 WORKSPACE="$(cd "$WORKSPACE" && pwd)"
 
 CLAUDE="${SPECTRUM_CLAUDE:-claude}"
 SUPERVISED="${SPECTRUM_SUPERVISED:-}"
-LOG="$WORKSPACE/.spectrum-walk.log"
+LOG="$WORKSPACE/.spectrum-marathon.log"
 
 log(){ printf '%s  %s\n' "$(date -Is 2>/dev/null || date)" "$*" | tee -a "$LOG" >&2; }
 
@@ -53,10 +53,10 @@ stage_done(){ [ -d "$1/output" ] && [ -n "$(ls -A "$1/output" 2>/dev/null || tru
 # order (invariant 3). Renaming folders reorders the walk; that is the point.
 stages=()
 while IFS= read -r d; do stages+=("$d"); done < <(find "$WORKSPACE" -maxdepth 1 -type d -name '[0-9][0-9]_*' | sort)
-[ "${#stages[@]}" -gt 0 ] || { echo "spectrum-walk: no numbered stage folders (NN_*) in $WORKSPACE" >&2; exit 1; }
+[ "${#stages[@]}" -gt 0 ] || { echo "spectrum-marathon: no numbered stage folders (NN_*) in $WORKSPACE" >&2; exit 1; }
 
 mode=$([ -n "$SUPERVISED" ] && echo "supervised" || echo "long-form")
-log "WALK-START ${#stages[@]} stages | mode=$mode | workspace=$WORKSPACE"
+log "MARATHON-START ${#stages[@]} stages | mode=$mode | workspace=$WORKSPACE"
 
 for stage in "${stages[@]}"; do
   name="$(basename "$stage")"
@@ -98,7 +98,7 @@ EOF
   if stage_done "$stage"; then
     log "STAGE-OK $name (output present)"
   else
-    log "STAGE-STALL $name -- no output produced. Stopping. A human reads $stage/ and re-runs spectrum-walk to resume here."
+    log "STAGE-STALL $name -- no output produced. Stopping. A human reads $stage/ and re-runs spectrum-marathon to resume here."
     exit 2
   fi
 
@@ -114,4 +114,4 @@ EOF
   fi
 done
 
-log "WALK-COMPLETE all ${#stages[@]} stages have outputs -- the workspace is the record."
+log "MARATHON-COMPLETE all ${#stages[@]} stages have outputs -- the workspace is the record."
