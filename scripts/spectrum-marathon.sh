@@ -35,7 +35,7 @@
 
 # MARATHON STATES (emitted to the log; how adjacent sessions read this run):
 #   MARATHON-START . MARATHON-CONTINUE . STAGE-OK . STAGE-STALL . MARATHON-PAUSED . MARATHON-COMPLETE
-#   (MARATHON-WAITING is added by the coordination layer.)
+#   MARATHON-WAITING . MARATHON-WAIT-EXPIRED are added by the wait gate (spectrum-marathon-wait).
 #
 set -euo pipefail
 
@@ -46,6 +46,7 @@ WORKSPACE="$(cd "$WORKSPACE" && pwd)"
 CLAUDE="${SPECTRUM_CLAUDE:-claude}"
 SUPERVISED="${SPECTRUM_SUPERVISED:-}"
 LOG="$WORKSPACE/.spectrum-marathon.log"
+here="$(cd "$(dirname "$0")" && pwd)"
 
 log(){ printf '%s  %s\n' "$(date -Is 2>/dev/null || date)" "$*" | tee -a "$LOG" >&2; }
 
@@ -58,6 +59,32 @@ stage_done(){ [ -d "$1/output" ] && [ -n "$(ls -A "$1/output" 2>/dev/null || tru
 stages=()
 while IFS= read -r d; do stages+=("$d"); done < <(find "$WORKSPACE" -maxdepth 1 -type d -name '[0-9][0-9]_*' | sort)
 [ "${#stages[@]}" -gt 0 ] || { echo "spectrum-marathon: no numbered stage folders (NN_*) in $WORKSPACE" >&2; exit 1; }
+
+# Acyclic guard (ICM Pattern 3, lifted cross-workspace): refuse an obvious
+# mutual wait, where this stage awaits a peer stage's output while that peer
+# awaits ours. Deeper cycles are caught by SPECTRUM_WAIT_DEADLINE and ultimately
+# by the global Workgraph's generated index, which sees every project at once.
+inbound_line(){ grep -iE '^[[:space:]]*Inbound[[:space:]]*\(awaits\)[[:space:]]*:' "$1" 2>/dev/null | head -1 || true; }
+for _stage in "${stages[@]}"; do
+  _il="$(inbound_line "$_stage/CONTEXT.md")"; [ -n "$_il" ] || continue
+  _rest="${_il#*:}"; _oldifs="$IFS"; IFS=','
+  for _raw in $_rest; do
+    IFS="$_oldifs"
+    _tok="$(printf '%s' "$_raw" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//; s#/output/*$##')"
+    if [ -n "$_tok" ]; then
+      case "$_tok" in /*|[A-Za-z]:*) _peer="$_tok";; *) _peer="$_stage/$_tok";; esac
+      if [ -d "$_peer" ]; then
+        _pil="$(inbound_line "$_peer/CONTEXT.md")"
+        if [ -n "$_pil" ] && printf '%s' "$_pil" | grep -qF "$(basename "$_stage")/output"; then
+          echo "spectrum-marathon: CYCLE -- $(basename "$_stage") and $(basename "$_peer") await each other. Refusing to start (ICM one-way references)." >&2
+          exit 4
+        fi
+      fi
+    fi
+    IFS=','
+  done
+  IFS="$_oldifs"
+done
 
 mode=$([ -n "$SUPERVISED" ] && echo "supervised" || echo "long-form")
 
@@ -87,8 +114,15 @@ for stage in "${stages[@]}"; do
   if [ ! -f "$contract" ]; then log "SKIP $name (no CONTEXT.md contract)"; continue; fi
   if stage_done "$stage"; then log "DONE-ALREADY $name (output present -- resuming past it)"; continue; fi
 
+  # MARATHON-WAITING gate: hold until this stage's inbound worklane sources exist.
+  SPECTRUM_WORKSPACE="$WORKSPACE" "$here/spectrum-marathon-wait.sh" "$stage" || {
+    rc=$?
+    if [ "$rc" -eq 3 ]; then log "STAGE-STALL $name -- inbound wait expired. A human resolves the peer and re-runs."; exit 3; fi
+    if [ -e "$WORKSPACE/.spectrum-marathon.pause" ]; then log "MARATHON-PAUSED (during wait on $name)"; exit 0; fi
+  }
+
   log "STAGE-START $name"
-  mkdir -p "$stage/output"
+  mkdir -p "$stage/output.partial"
 
   # Thin router prompt. The agent loads ONLY this stage's contract and the
   # inputs it names -- never the whole workspace, never other stages.
@@ -100,7 +134,7 @@ It names your inputs (working + reference) and the outputs you must write.
 Load ONLY what the contract names -- do NOT read other stage folders or the
 whole workspace. Ground claims through Prism's discovery agents where available;
 query, never photocopy whole files. Write your output artifact(s) into:
-  $stage/output/
+  $stage/output.partial/
 exactly as the contract's Outputs / Success criteria specify. Append the
 contract's heartbeat tokens as you go. Do not ask questions. When the output
 exists on disk, stop.
@@ -114,6 +148,15 @@ EOF
   # posture -- never load it in the first place, rather than discard-and-retry.
   ( cd "$WORKSPACE" && "$CLAUDE" --dangerously-skip-permissions "${model_flag[@]}" -p "$prompt" ) >>"$LOG" 2>&1 \
     || log "STAGE-AGENT-EXIT nonzero for $name (verifying output regardless -- exit code is not the truth, the file is)"
+
+  # Atomic publish (ICM: a file cannot lie). Rename the completed partial into
+  # place so a peer waiter never sees a half-written output, then generate a
+  # content-hash manifest: a generated index, never a .done signal.
+  if [ -d "$stage/output.partial" ] && [ -n "$(ls -A "$stage/output.partial" 2>/dev/null || true)" ]; then
+    rm -rf "$stage/output" 2>/dev/null || true
+    mv "$stage/output.partial" "$stage/output"
+    ( cd "$stage/output" && command -v sha256sum >/dev/null 2>&1 && find . -type f ! -name '.manifest' -print0 2>/dev/null | xargs -0 sha256sum > .manifest 2>/dev/null ) || true
+  fi
 
   # Advance ONLY on output existence. If the stage produced nothing, stop the
   # walk cleanly -- a human reads the stage and re-runs. No blind retry.
