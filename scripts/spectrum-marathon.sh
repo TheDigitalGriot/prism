@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # ============================================================================
 # spectrum-marathon.sh -- the ICM long-form runner (Spectrum, re-founded on ICM)
 # ----------------------------------------------------------------------------
@@ -143,10 +143,11 @@ EOF
 
   model_flag=()
   [ -n "${SPECTRUM_MODEL:-}" ] && model_flag=(--model "$SPECTRUM_MODEL")
+  agent_flag=(); [ -n "${SPECTRUM_AGENT:-}" ] && agent_flag=(--agent "$SPECTRUM_AGENT")
 
   # One fresh, bounded agent for this stage. Fresh session each stage is the ICM
   # posture -- never load it in the first place, rather than discard-and-retry.
-  ( cd "$WORKSPACE" && "$CLAUDE" --dangerously-skip-permissions "${model_flag[@]}" -p "$prompt" ) >>"$LOG" 2>&1 \
+  ( cd "$WORKSPACE" && "$CLAUDE" --dangerously-skip-permissions "${agent_flag[@]}" "${model_flag[@]}" -p "$prompt" ) >>"$LOG" 2>&1 \
     || log "STAGE-AGENT-EXIT nonzero for $name (verifying output regardless -- exit code is not the truth, the file is)"
 
   # Atomic publish (ICM: a file cannot lie). Rename the completed partial into

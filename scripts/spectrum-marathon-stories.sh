@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # ============================================================================
 # spectrum-marathon-stories.sh -- run a stories.json queue AS a marathon (Q1)
 # ----------------------------------------------------------------------------
@@ -99,7 +99,8 @@ signal instead). Do not ask questions. When status is complete, stop.
 PROMPT
 )
   model_flag=(); [ -n "${SPECTRUM_MODEL:-}" ] && model_flag=(--model "$SPECTRUM_MODEL")
-  ( cd "$WORKSPACE" && "$CLAUDE" --dangerously-skip-permissions "${model_flag[@]}" -p "$prompt" ) >>"$LOG" 2>&1 \
+  agent_flag=(); [ -n "${SPECTRUM_AGENT:-}" ] && agent_flag=(--agent "$SPECTRUM_AGENT")
+  ( cd "$WORKSPACE" && "$CLAUDE" --dangerously-skip-permissions "${agent_flag[@]}" "${model_flag[@]}" -p "$prompt" ) >>"$LOG" 2>&1 \
     || log "STORY-WORKER-EXIT nonzero for $sid (verifying status regardless -- the file is the truth, not the exit code)"
 
   st="$(jq -r --arg id "$sid" '.stories[] | select(.id==$id) | .status' "$STORIES_FILE" 2>/dev/null || echo "")"
