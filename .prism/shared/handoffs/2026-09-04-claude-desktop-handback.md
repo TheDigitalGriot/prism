@@ -262,3 +262,78 @@ quality review never reported back. Computed bump **4.13.2 -> 4.14.0** (3 feat c
 Still open: Q6 gavel batch (Gavin triggers the first `gavel_commit`), the companion exit ceremony,
 and **the suite-wide ICM/invariant audit artifact in S5 above - which remains the highest-value
 item in this handback.**
+
+---
+
+# RELEASE RECORD — both pipelines complete (2026-09-05)
+
+## Shipped
+
+| Repo | Version | Release |
+|---|---|---|
+| **Cinopsis** | **v2.7.1** | https://github.com/TheDigitalGriot/cinopsis/releases/tag/v2.7.1 |
+| **Cinopsis** | v2.7.0 (earlier same session) | https://github.com/TheDigitalGriot/cinopsis/releases/tag/v2.7.0 |
+| **Prism** | **v4.14.0** | https://github.com/TheDigitalGriot/prism/releases/tag/v4.14.0 |
+
+All three are **pushed and verified** (`HEAD == origin/main` checked per repo). Cinopsis: 182 tests
+pass. Prism: `claude plugin validate` passes.
+
+## Prism ceremony record — what ran, and what did NOT
+
+| Gate / phase | Result |
+|---|---|
+| Step 0 · deterministic audit (`pre-release-audit.mjs`) | **CLEAN** — plugin validate + all five `verify-*.mjs` + structural |
+| Step 0 · `spec-reviewer` | **PASS**, no High findings |
+| Step 0 · `quality-reviewer` | **UNVERIFIED** — dispatched, never reported back |
+| Step 1 · bookend (version decided once) | **DONE** — 4.13.2 -> **4.14.0**, minor (3 feat commits, no breaking changes). VERSION, plugin.json, marketplace.json, CHANGELOG |
+| Step 2 · docs-update (VitePress sync) | **NOT RUN** |
+| Step 3 · release — commit, tag, push, GitHub release | **DONE** |
+| Step 3 · native artifact builds (CLI / VSIX / Electron / Tauri-NSIS) | **NOT RUN** |
+
+**Said plainly: this ceremony is PARTIAL.** Three of its steps did not run. Per the ceremony's own
+rule a forced skip means the run is INCOMPLETE and must be stated, not glossed. The release itself is
+sound - audited, reviewed, tagged, pushed - but **docs-update, the native installer builds, and the
+second review stage are outstanding** and should be completed from a fresh session.
+
+`verify-invariants.mjs` ran as a gate on its own release: **5 pass, 0 fail, 1 unverified.**
+
+## Q5 - decided this session
+
+**`icm-architect` -> `spectrum-architect`** and **`prism-spectrum` -> `spectrum`.**
+
+Gavin's reasoning: the authoring tool needs its OWN name so it can transform later, as RPIV did.
+The pair reads cleanly - **spectrum** runs contracts, **spectrum-architect** authors them.
+
+### The Ralph-loop re-founding (why the rename is the small half)
+
+`prism-spectrum` is built on the **Ralph loop**: run the same prompt repeatedly until the task looks
+done. `spectrum.sh` re-invokes the skill once per story until the backlog empties.
+
+| Ralph loop (today) | ICM stage-walk (what Spectrum must become) |
+|---|---|
+| Same prompt, repeated | **Named stages**, each with its own contract |
+| "Done" is the model's judgement | **Success criteria stated up front**, checkable |
+| No progress record | **Heartbeat** per step (I5) |
+| Reads whatever it needs, blows context | **Delegated reads** - the ~45:1 compression |
+| Nothing gates completion | **Invariants gate it** (I1-I6) |
+
+**The loop cannot distinguish "finished" from "gave up"** - which is precisely the failure the
+invariants exist to catch. Re-founding means Spectrum stops looping a prompt and starts *walking a
+contract*.
+
+**Scope:** 386 files reference `prism-spectrum`, so the migration must be ADDITIVE (new name
+resolves, old keeps working) or it trips **I6** on contact. This is its own contracted session, with
+the stage contract written FIRST.
+
+**Still Gavin's call:** the `icm/` directory is a verbatim MIT-licensed third-party port with its own
+LICENSE. Renaming it would break attribution. Untouched.
+
+## Highest-value items still open
+
+1. **The suite-wide ICM/invariant audit artifact** (S5 above) - still the highest-value item here.
+2. **The Spectrum re-founding** - contract first, then the additive migration.
+3. **The four written+invariant pairs** (A5): I7 ask-when-unsure, the screenshot rule, a real I3
+   check, and I8 the soft-fix detector. A principle without a check is the soft fix this whole
+   session exists to kill.
+4. **Finish the Prism ceremony** - docs-update, native builds, and the second review stage.
+5. **Q6 gavel batch** - prepared; the first live `gavel_commit` is Gavin's to trigger.
