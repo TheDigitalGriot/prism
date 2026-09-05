@@ -160,3 +160,23 @@ git-bug; log4brains; local-first software (Kleppmann); PARA; FSRS; JSON Canvas; 
 - global view: read-only. Re-disposition happens at origin; the gavel writes the record where it lives and the global index regenerates.
 
 Also closed this session: the spectrum re-founding questions Q1/Q2/Q4/Q5 at recommendation B (stage-walk wraps stories; measure the token claim Prism-side; spectrum-architect canonical with icm-architect a permanent alias; parking lifts on Gavin's recorded trigger).
+
+## 10. Q1 executed 2026-09-05 -- stories wired to the marathon (two run modes)
+
+Q1 is coded and committed (scripts/spectrum-marathon-stories.sh, commit 1c4ddcf). It walks the
+stories.json ready frontier (pending, unblocked by blockedBy, lowest priority: the same selection
+the retired loop made), runs a fresh spectrum-skill worker per story, and advances on the story's
+status becoming "complete" in stories.json (the file is the truth, no lying signal). It carries
+none of the loop machinery (no MAX_ITERATIONS, no signal verification); a story not complete after
+its worker STOPS the walk cleanly for a human.
+
+TWO RUN MODES, ONE WORKER, neither blocks the other:
+- Single-story (regular, non-long-form): invoke the spectrum skill directly on one story.
+  Interactive, one session, review, done. Untouched by this change; always available.
+- Long-form (the marathon): spectrum-marathon-stories walks the whole queue autonomously, using
+  that same spectrum skill as its per-story worker.
+The marathon replaced only the retired LOOP, which was the long-form path. The single-story run was
+never the loop, so it was never touched.
+
+Q2 (measure the ICM token claim Prism-side): accepted from lived experience rather than run as a
+paid benchmark; logged to the Suite Drift Codex as a later-measurement idea. Marked decided.
