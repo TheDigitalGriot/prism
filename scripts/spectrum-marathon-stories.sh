@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # ============================================================================
 # spectrum-marathon-stories.sh -- run a stories.json queue AS a marathon (Q1)
 # ----------------------------------------------------------------------------

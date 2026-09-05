@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # ============================================================================
 # spectrum-marathon.sh -- the ICM long-form runner (Spectrum, re-founded on ICM)
 # ----------------------------------------------------------------------------
