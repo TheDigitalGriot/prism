@@ -32,6 +32,20 @@ import {
 
 export const BROKER_VERSION = "0.1.0";
 
+/** How long a minted pairing token stays redeemable. Short by design: a QR is scanned in seconds. */
+export const PAIRING_TTL_MS = 5 * 60_000;
+
+/**
+ * A broker-minted token pair. `forward` is handed to the client; `backward` is the
+ * reverse-direction half, mirroring Puter's `(forward, backward)` connection record
+ * where each side holds one and names the other as its reverse.
+ */
+export interface Pairing {
+  forward: string;
+  backward: string;
+  expiresAt: number;
+}
+
 export interface BrokerOptions {
   registry?: Registry;
 }
@@ -77,6 +91,8 @@ export class Broker {
   private healthTimer?: NodeJS.Timeout;
   private relay?: RelayClient;
   private relayKeyPair?: KeyPair;
+  /** Live pairing registry — a minted token is only real if it is in here. */
+  private readonly pairings = new Map<string, Pairing>();
 
   constructor(opts: BrokerOptions = {}) {
     this.registry = opts.registry ?? new Registry();
@@ -175,10 +191,27 @@ export class Broker {
         return;
       }
       if (req.method === "POST" && url === "/register") {
-        const body = (await readJsonBody(req)) as RegisterInput;
+        const body = (await readJsonBody(req)) as RegisterInput & { pairingToken?: string };
         if (!body.id || !body.adapterType) {
           send(400, { ok: false, error: "register requires { id, adapterType }" });
           return;
+        }
+        // Pairing gate. Opt-in via PRISM_BROKER_REQUIRE_PAIRING=1 so existing
+        // local-only setups keep working; when on, a caller must present a token
+        // this broker actually minted. Previously ANY caller could register any id
+        // over the wildcard-CORS surface, because the minted token was discarded.
+        if (process.env.PRISM_BROKER_REQUIRE_PAIRING === "1") {
+          const hdr = req.headers["x-prism-pairing"];
+          const token = body.pairingToken ?? (Array.isArray(hdr) ? hdr[0] : hdr);
+          if (!this.redeemPairing(token)) {
+            // Answer explicitly — never leave the caller hanging (the Puter defect).
+            send(401, {
+              ok: false,
+              error: "UNAUTHORIZED",
+              message: "register requires a valid, unexpired pairing token from GET /pairing",
+            });
+            return;
+          }
         }
         const desc = await this.register(body);
         send(200, { ok: true, id: desc.id, status: desc.status });
@@ -383,9 +416,69 @@ export class Broker {
   /**
    * QR-encodable pairing payload. Always includes the daemon's public key (base64) so a
    * remote client can derive the shared key and reach this broker over the E2EE relay.
+   *
+   * PAIRED TOKENS — lifted from Puter's interop bus.
+   *
+   * Before 2026-09-06 this minted `randomUUID()` and threw it away: the token was
+   * never stored and never compared, so it authenticated nothing. Anyone could
+   * `POST /register` over the wildcard-CORS surface with any id.
+   *
+   * Puter's broker mints a `(forward, backward)` PAIR at launch and hands each side
+   * one half; every message then carries an id checked against a LIVE REGISTRY
+   * (`IPCService.add_connection`, `src/gui/src/services/IPCService.js:55-73`). The
+   * property worth lifting is not the UUID — it is that the id is a CAPABILITY
+   * issued by the broker and validated on every use, never a name a caller asserts
+   * about itself. Puter goes further and never discloses the child's real instance
+   * id, swapping it for the forward token (`ExecService.js:245-246`); the token is
+   * a bearer capability, not an identity.
+   *
+   * NOT copied from Puter, deliberately: its registry miss returns with NO reply,
+   * hanging the caller's promise (`IPC.js:98-101`), and its `connections_` map is
+   * never deleted from (no `connections_.delete` exists in that tree). We answer
+   * explicitly and we expire.
    */
-  pairingInfo(relayUrl: string): { relayUrl: string; token: string; pubKey: string } {
-    return { relayUrl, token: randomUUID(), pubKey: exportPublicKey(this.ensureRelayKeyPair().publicKey) };
+  pairingInfo(relayUrl: string): {
+    relayUrl: string;
+    token: string;
+    backward: string;
+    expiresAt: number;
+    pubKey: string;
+  } {
+    const forward = randomUUID();
+    const backward = randomUUID();
+    const expiresAt = Date.now() + PAIRING_TTL_MS;
+    this.pairings.set(forward, { forward, backward, expiresAt });
+    this.sweepPairings();
+    return {
+      relayUrl,
+      token: forward,
+      backward,
+      expiresAt,
+      pubKey: exportPublicKey(this.ensureRelayKeyPair().publicKey),
+    };
+  }
+
+  /**
+   * Validate a pairing token. Returns the pair on success, `null` otherwise —
+   * an explicit answer, never a hang. Single-use for the forward half: a redeemed
+   * token is consumed so a replayed QR cannot register twice.
+   */
+  redeemPairing(token: string | undefined): Pairing | null {
+    if (!token) return null;
+    const p = this.pairings.get(token);
+    if (!p) return null;
+    if (p.expiresAt <= Date.now()) {
+      this.pairings.delete(token);
+      return null;
+    }
+    this.pairings.delete(token);
+    return p;
+  }
+
+  /** Drop expired pairings. Puter's equivalent map is never cleaned; this one is. */
+  private sweepPairings(): void {
+    const now = Date.now();
+    for (const [k, p] of this.pairings) if (p.expiresAt <= now) this.pairings.delete(k);
   }
 
   private async handleStream(send: (obj: unknown) => void, env: BrokerEnvelope): Promise<void> {

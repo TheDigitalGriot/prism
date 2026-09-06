@@ -269,7 +269,16 @@ export function emitModelEvent(
       downgradedFrom: event.downgradedFrom,
       ts: new Date().toISOString(),
     };
-    fs.appendFileSync(file, `${JSON.stringify(line)}\n`, "utf8");
+    // O_APPEND handle: the kernel positions each write at EOF atomically, so two
+    // concurrent emitters cannot interleave partial lines. The bus previously had
+    // NO concurrency guarantee at all, and a torn line is unparseable JSONL —
+    // silently truncating the decision history the cockpit reads.
+    const fd = fs.openSync(file, "a");
+    try {
+      fs.writeSync(fd, `${JSON.stringify(line)}\n`);
+    } finally {
+      fs.closeSync(fd);
+    }
     return file;
   } catch {
     return null;

@@ -553,6 +553,36 @@ export function resolveEventsFile(
 }
 
 /**
+ * Append one JSONL line so a concurrent writer cannot interleave it.
+ *
+ * THE PROBLEM: the file bus had ZERO concurrency guarantees — no flock, no atomic
+ * rename, no O_EXCL anywhere. Two writers (the MCP server and a popout `server.cjs`)
+ * both `appendFileSync` to `$STATE_DIR/events`, and the file is `unlinkSync`-ed out
+ * from under readers on any new screen. A torn line is unparseable JSONL, which
+ * silently truncates the decision history the cockpit reads.
+ *
+ * THE FIX, cheapest form that actually holds: a single `appendFileSync` with an
+ * explicit `O_APPEND` handle. POSIX guarantees an O_APPEND write below PIPE_BUF is
+ * atomic w.r.t. other appenders, and Windows serialises appends on the handle. One
+ * JSONL line is far below that bound, so no lockfile is needed for the append path.
+ *
+ * A lock IS still required for read-modify-write callers (`gavel_decide` does one),
+ * which is tracked separately — this fixes the append path only, and says so.
+ *
+ * Never throws; a failed emit must not break model resolution.
+ */
+function appendLineAtomic(file: string, line: string): void {
+  // 'a' opens with O_APPEND: the kernel positions each write at EOF atomically,
+  // so two concurrent emitters cannot interleave partial lines.
+  const fd = fs.openSync(file, "a")
+  try {
+    fs.writeSync(fd, line)
+  } finally {
+    fs.closeSync(fd)
+  }
+}
+
+/**
  * Append one JSONL line to the digital-griot `$STATE_DIR/events` file. Never
  * throws — a failed emit must not break model resolution. Returns the events
  * file path on success, or `null` on failure.
@@ -576,7 +606,7 @@ export function emitModelEvent(
       blocked: event.blocked,
       ts: event.ts ?? new Date().toISOString(),
     }
-    fs.appendFileSync(file, JSON.stringify(line) + "\n", "utf8")
+    appendLineAtomic(file, JSON.stringify(line) + "\n")
     return file
   } catch {
     return null
