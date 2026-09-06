@@ -137,6 +137,29 @@ The deterministic half of the closing-ceremony **Review & Audit gate** — run b
 | `verify-branch-integrated.mjs` | Node | Release-integration guard — fails a release unless HEAD is `main`, the base version is tagged, and no finalized release is left untagged. Removes the "released off an unmerged branch, never tagged, main left stale" drift by requiring the branch be integrated to main and the release cut from there |
 | `verify-ceremony-gate.mjs` | Node | Static guard that the closing ceremony actually wires the Review & Audit gate **ahead of** bookend (gate = Sequence step 0, bookend = step 1) and references `spec-reviewer`, `quality-reviewer`, `pre-release-audit`, and `review-audit-gate` |
 | `verify-story-unification.mjs` | Node | Static guard that the plan → story → execute flow stays unified on `stories.json`. Phased checks: generation (default), `--check-consumers` (implement/subagent), `--check-coherence` (iterate/validate), `--all` (every phase) |
+| `verify-model-policy-conformance.mjs` | Node | Static guard that every dispatch surface resolves models through the shared model-policy core rather than re-implementing approval modes locally (see *Model Control Plane* below) |
+| `verify-invariants.mjs` | Node | **v4.14.0**, extended **v4.15.0** — the invariant runner. Computes the ontology's invariants (I1–I8) and reports `pass` / `fail` / `unverified` per invariant. Auto-discovered by `pre-release-audit.mjs` under the `verify-*.mjs` convention, so it gates every release |
+
+#### Invariants (v4.14.0, I3/I7/I8 in v4.15.0)
+
+Everything in the ontology before v4.14.0 was a **preference** — advisory, competing with the rest of context, and demonstrably skippable. An **invariant** is different: a proposition that can be *computed*. It does not constrain *how* work is done, only **what must be true to claim done** — which is why it costs no flexibility.
+
+| # | Invariant | Check |
+| --- | --- | --- |
+| I1 | The artifact being shown IS the one being discussed | newest served screen == `current` in state |
+| I2 | Every tool result that matters is written through to a file | the claimed result has a path on disk |
+| I3 | Bulk reading is delegated, not done in the main thread | no main-thread read of a file over ~800 lines |
+| I4 | A completion claim carries fresh evidence from THIS session | objective command output, not re-reasoning |
+| I5 | A run of more than one step leaves a heartbeat | `.prism/local/<stage>-progress.txt` exists and advanced |
+| I6 | Nothing renamed that is a proper name | the identifier still resolves |
+| I7 | A fix is preceded by an OBSERVATION, not an inference | a recorded verdict exists for the session that produced the edits |
+| I8 | Nothing documented has zero instances; no helper has zero callers | every script is referenced somewhere outside itself |
+
+**`unverified` is not `pass`.** With no way to execute a check, the verdict is `unverified` — the absence of evidence said out loud, never a green light. Unverified results are reported separately and never rolled into the pass count or the exit code, so they can neither silently clear nor silently fail a ceremony gate.
+
+- **I7** (v4.15.0) gives `griot_assert` its first real consumer: satisfying I7 requires recording verdicts, and recording verdicts is what `griot_assert` exists for. Its first run reported `unverified` against the very session that authored it.
+- **I8** (v4.15.0) is the check for "SOFT FIXES ROT" — a principle that had been written into the ontology with nothing enforcing it, which made the anti-soft-fix rule itself a soft fix. It searches the **whole repo** for callers, not just `scripts/`: a helper invoked from a `SKILL.md` is not dead.
+- **I3** (v4.15.0) now computes. It previously reported *"no read-size telemetry exists; not computable post-hoc"* — a claim never checked, and wrong. It line-counts main-thread reads from the session transcript and **honors a windowed read** (`offset`/`limit`), because charging a 30-line window the file's full length would flag the disciplined case and make the check cry wolf.
 
 ### `cl-plugin-structure` Validator Scripts
 
@@ -145,15 +168,31 @@ Shipped under `skills/cl-plugin-structure/scripts/` and invoked while authoring 
 | Script | Type | Description |
 |--------|------|-------------|
 | `parse-frontmatter.sh` | Bash | Extracts a field from a component's YAML frontmatter. **v4.13.1** — strips a leading UTF-8 BOM (`EF BB BF`) on line 1 before extraction. Without it a BOM'd file's first line is `<BOM>---`, the `/^---$/` range never opens, and the script reports the misleading `Error: No frontmatter found` even though the frontmatter is present — the recurring failure mode on Windows-authored skills |
-| `validate-agent.sh` | Bash | Validates agent frontmatter + system prompt. **Known open (v4.13.1):** still BOM-intolerant — its `head -1` check against `"---"` hard-fails on a BOM'd file before the frontmatter is ever parsed |
-| `validate-settings.sh` | Bash | Validates `.local.md` settings frontmatter. **Known open (v4.13.1):** same raw parse, no BOM strip |
+| `validate-agent.sh` | Bash | Validates agent frontmatter + system prompt. **v4.13.2** — BOM stripped once into a scan copy (these scripts read their input 3–4 times; piping each read through a filter would SIGPIPE the writer and die under `set -euo pipefail`). Also fixed two `set -e` interactions that made it structurally unable to report: `((count++))` returns the *old* value `0` on first bump → status 1 → `set -e` fires (18 sites), and `grep` exiting 1 on no-match was promoted to fatal by `pipefail` (5 sites) — so it could only ever print `All checks passed!` or exit 1 silently |
+| `validate-settings.sh` | Bash | Validates `.local.md` settings frontmatter. **v4.13.2** — same scan-copy BOM strip; same `pipefail` guard applied to its field-listing pipeline |
 | `validate-hook-schema.sh`, `hook-linter.sh`, `test-hook.sh` | Bash | Hook schema validation, linting, and a local hook test harness |
 
-::: warning BOM tolerance is not uniform yet
-Only `parse-frontmatter.sh` strips the BOM as of v4.13.1. The upstream fix is to keep files BOM-less at
-authoring time — the skills repo does this with a versioned pre-commit hook (`core.hooksPath=hooks`) plus
-`.gitattributes` (`*.md`/`*.sh text eol=lf`). Note also that the `\xEF\xBB\xBF` sed escape is a GNU
-extension: under BSD/macOS sed the strip silently no-ops.
+::: tip BOM tolerance is uniform as of v4.13.2
+All three validators now strip a leading UTF-8 BOM, verified by a 14-case matrix (three validators ×
+five fixture classes, 14/14). The strip uses POSIX primitives only — `BOM=$(printf '\357\273\277')`
+compared with `head -c 3`, sliced with `tail -c +4` — because `\xEF\xBB\xBF` is a **GNU sed extension**:
+BSD/macOS sed parses `\x` as a literal `x`, so the pattern degrades to `^xEFxBBxBF`, matches nothing,
+and emits no diagnostic. A fix that only *looks* applied is worse than no fix, because it stops anyone
+from looking again.
+
+The upstream fix is still to keep files BOM-less at authoring time — the skills repo does this with a
+versioned pre-commit hook (`core.hooksPath=hooks`) plus `.gitattributes` (`*.md`/`*.sh text eol=lf`).
+:::
+
+::: warning Still open after v4.13.2
+
+- **CRLF intolerance** — the same bug class as the BOM. Every `^---$` match in all three validators
+  fails on CRLF files (the marker becomes `---\r`).
+- **All 14 agents omit the required `color:` field.** Invisible until v4.13.2 because `validate-agent.sh`
+  died before it could print the error. `color` is a user-visible UI identifier, so picking 14 values is
+  a design decision, not a patch.
+- **Stale model allow-list** — `validate-agent.sh` accepts only `inherit|sonnet|opus|haiku` and warns on
+  everything added in v4.13.0+. It should track `references/model-config.md`.
 :::
 
 ### Headless Release Cycle (v4.10.0)
