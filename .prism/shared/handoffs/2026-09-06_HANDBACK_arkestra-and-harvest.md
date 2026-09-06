@@ -21,8 +21,14 @@ speech; "Model Control Plane" retired — it collided with MCP = Model Context P
 1. **I9 FAILS** — `verify-invariants.mjs` reports *7 decided but silent* decisions in an old
    brainstorm's `decisions.json` (`Q3.1`, `Q3.2`, `Q4`, +4). **Pre-existing, not from this
    session**, but the ceremony halts on a false invariant. Clear or defer them first.
-2. **4 ontology commits are UNPUSHED** on `main` in `GriotMeta/griot-ontology`
-   (`67d3d5d`, `2c15904`, `ffdaf2e`, `7ef7b84`). You never asked me to push; they are ready.
+2. **`griot-ontology` HAS NO REMOTE.** *(Corrected — I first wrote "4 commits unpushed"; that was
+   wrong, there is nowhere to push them.)* `git remote -v` is empty. The 4 commits from this
+   session (`67d3d5d`, `2c15904`, `ffdaf2e`, `7ef7b84`) are committed **locally only**, as is the
+   pre-existing `1454722`.
+   **This is a bigger risk than an unpushed branch:** the canonical doctrine substrate — the file
+   every repo now imports after the migration — exists **only on this machine**, plus two D-drive
+   snapshots (`ontology-rename_2026-09-05`, `ontology-import-migration_2026-09-06`). One disk
+   failure loses the ontology's history. Worth a remote.
 
 ---
 
