@@ -143,7 +143,14 @@ resolves truthy; skip and note otherwise.
 > stamped 4.13.2.
 
 #### 3a. Cross-compile CLI binaries
-`cd apps/prism-cli && make build-all` — produces 5 binaries in `apps/prism-cli/bin/`.
+`cd apps/prism-cli && make build-all VERSION={NEW_VERSION}` — produces 5 binaries in `apps/prism-cli/bin/`.
+
+> **Pass `VERSION=` explicitly — this is not optional.** The Makefile defaults to
+> `VERSION ?= $(shell git describe --tags --always --dirty)` and injects it with `-ldflags`. It does
+> **not** read the `VERSION` file or `main.go`. Because this step runs *before* the release
+> commit+tag (Step 4), a bare `make build-all` stamps the binaries with the **previous** tag plus
+> `-dirty` — e.g. `v4.15.1-4-g814b762-dirty` on what should be a 4.15.2 build. Caught by Step 3e on
+> the v4.15.2 cut; every release built without the override shipped mis-stamped CLI binaries.
 
 #### 3b. Package VSIX extension
 `npx @vscode/vsce package --no-dependencies -o prism-{NEW_VERSION}.vsix` from `apps/prism-vscode/`,

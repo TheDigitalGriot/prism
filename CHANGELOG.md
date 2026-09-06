@@ -4,6 +4,49 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.15.2] - 2026-09-06
+
+### Removed
+- **`apps/prism-setup` is retired**, superseded by the Tauri installer (`apps/prism-installer`).
+  `.github/workflows/prism-setup-release.yml` is deleted (it had already been tag-trigger-disabled
+  and marked DEPRECATED, so this completed a half-done sunset), the release ceremony no longer
+  routes the VSIX or CLI/plugin resources through `apps/prism-setup/resources/`, and the legacy
+  `makensis` step is dropped. **Both `apps/prism-setup/` and `installer/` are retained on disk for
+  rollback** — nothing was deleted from either tree — and `apps/prism-setup/DEPRECATED.md` now
+  states that in-tree, so the context does not live only in a commit message.
+
+### Fixed
+- **The VSIX had no working distribution channel; now it has one.** Sunsetting prism-setup surfaced
+  that the *shipped* Tauri installer could never have installed the extension. Three independent
+  facts: `tauri.conf.json` had never carried a `bundle.resources` key (`git log -S` returns
+  nothing), so CI's "Stage resources for Tauri" step copied into a directory Tauri ignored; the
+  installer invoked `install_all_extensions` against `%LOCALAPPDATA%\Prism\extensions\prism.vsix`,
+  a path only the legacy NSIS ever populated; and v4.15.0/v4.15.1 published no `prism.vsix` asset
+  at all. The VSIX is now a declared Tauri resource, resolved at runtime via
+  `resolveResource("extensions/prism.vsix")`, and ships as a standalone release asset. A missing
+  bundle now reports itself as a packaging error instead of a generic failure.
+- **`pre-release-audit.mjs` named the wrong failing gate.** The structural-checks verdict shared the
+  global `failed` counter, so any earlier `verify-*.mjs` failure stamped `[FAIL]` on the structural
+  line too — the gate misreported which check had actually broken. It now reports on its own result.
+
+### Changed
+- **`prism-release` hardened against the stale-artifact class.** The skill now requires cleaning
+  `bundle/nsis/` and `out/make/` before building, and adds a step that verifies each installer's
+  **embedded `ProductVersion`** rather than trusting its filename — the check that would have caught
+  v4.15.0 shipping artifacts stamped 4.13.2. Troubleshooting entries were added for the two silent
+  Tauri failure modes: `bundle.targets: []` (bundles nothing, still exits 0) and a missing declared
+  resource. `--bundles` is documented as mandatory on macOS.
+
+### Known issues
+- **I9 (7 silent brainstorm decisions) ships noted**, as in 4.15.0 and 4.15.1. It is the single
+  `verify-invariants` failure in the release gate and was explicitly accepted, not silently bypassed.
+- **The installer's CLI and plugin components still read from `installDir\binaries\` and
+  `installDir\plugin\`** — paths the legacy NSIS populated and nothing in the Tauri flow does. Only
+  the VSIX was migrated in this cut; the same `resolveResource` treatment is owed to both.
+- VSIX bundling is verified **mechanically** (resource staged at `target/release/extensions/prism.vsix`,
+  NSIS artifact grew 3,668,006 → 4,299,914 bytes) but **not** by an end-to-end install on a clean
+  machine.
+
 ## [4.15.1] - 2026-09-06
 
 ### Fixed

@@ -2658,7 +2658,7 @@ dependencies = [
 
 [[package]]
 name = "prism-installer"
-version = "4.15.1"
+version = "4.15.2"
 dependencies = [
  "futures-util",
  "reqwest 0.12.28",

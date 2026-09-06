@@ -138,9 +138,9 @@ The deterministic half of the closing-ceremony **Review & Audit gate** — run b
 | `verify-ceremony-gate.mjs` | Node | Static guard that the closing ceremony actually wires the Review & Audit gate **ahead of** bookend (gate = Sequence step 0, bookend = step 1) and references `spec-reviewer`, `quality-reviewer`, `pre-release-audit`, and `review-audit-gate` |
 | `verify-story-unification.mjs` | Node | Static guard that the plan → story → execute flow stays unified on `stories.json`. Phased checks: generation (default), `--check-consumers` (implement/subagent), `--check-coherence` (iterate/validate), `--all` (every phase) |
 | `verify-model-policy-conformance.mjs` | Node | Static guard that every dispatch surface resolves models through the shared model-policy core rather than re-implementing approval modes locally (see *Model Control Plane* below) |
-| `verify-invariants.mjs` | Node | **v4.14.0**, extended **v4.15.0** — the invariant runner. Computes the ontology's invariants (I1–I8) and reports `pass` / `fail` / `unverified` per invariant. Auto-discovered by `pre-release-audit.mjs` under the `verify-*.mjs` convention, so it gates every release |
+| `verify-invariants.mjs` | Node | **v4.14.0**, extended **v4.15.0** — the invariant runner. Computes the ontology's invariants (I1–I9) and reports `pass` / `fail` / `unverified` per invariant. Auto-discovered by `pre-release-audit.mjs` under the `verify-*.mjs` convention, so it gates every release |
 
-#### Invariants (v4.14.0, I3/I7/I8 in v4.15.0)
+#### Invariants (v4.14.0, I3/I7/I8 in v4.15.0, I9 current)
 
 Everything in the ontology before v4.14.0 was a **preference** — advisory, competing with the rest of context, and demonstrably skippable. An **invariant** is different: a proposition that can be *computed*. It does not constrain *how* work is done, only **what must be true to claim done** — which is why it costs no flexibility.
 
@@ -154,11 +154,13 @@ Everything in the ontology before v4.14.0 was a **preference** — advisory, com
 | I6 | Nothing renamed that is a proper name | the identifier still resolves |
 | I7 | A fix is preceded by an OBSERVATION, not an inference | a recorded verdict exists for the session that produced the edits |
 | I8 | Nothing documented has zero instances; no helper has zero callers | every script is referenced somewhere outside itself |
+| I9 | A recorded decision carries a commit or an explicit deferral | every decided item resolves to a commit or a logged deferral |
 
 **`unverified` is not `pass`.** With no way to execute a check, the verdict is `unverified` — the absence of evidence said out loud, never a green light. Unverified results are reported separately and never rolled into the pass count or the exit code, so they can neither silently clear nor silently fail a ceremony gate.
 
 - **I7** (v4.15.0) gives `griot_assert` its first real consumer: satisfying I7 requires recording verdicts, and recording verdicts is what `griot_assert` exists for. Its first run reported `unverified` against the very session that authored it.
 - **I8** (v4.15.0) is the check for "SOFT FIXES ROT" — a principle that had been written into the ontology with nothing enforcing it, which made the anti-soft-fix rule itself a soft fix. It searches the **whole repo** for callers, not just `scripts/`: a helper invoked from a `SKILL.md` is not dead.
+- **I9** catches the decision that was made and then went quiet — decided in a brainstorm, never committed and never explicitly deferred. As of v4.15.2 it reports **7 decided-but-silent items**, and it has been the single failing invariant across 4.15.0, 4.15.1, and 4.15.2. Each of those releases shipped with it **explicitly noted and accepted** rather than bypassed, which is the ceremony's override rule working as designed — an override is allowed, silence is not.
 - **I3** (v4.15.0) now computes. It previously reported *"no read-size telemetry exists; not computable post-hoc"* — a claim never checked, and wrong. It line-counts main-thread reads from the session transcript and **honors a windowed read** (`offset`/`limit`), because charging a 30-line window the file's full length would flag the disciplined case and make the check cry wolf.
 
 ### `cl-plugin-structure` Validator Scripts

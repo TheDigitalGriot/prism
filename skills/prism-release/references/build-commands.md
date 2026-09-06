@@ -5,10 +5,17 @@ Full bash commands for each build step in the prism-release pipeline.
 ## 3a. Cross-compile CLI binaries
 
 ```bash
-cd apps/prism-cli && make build-all
+cd apps/prism-cli && make build-all VERSION={NEW_VERSION}
 ```
 
-Verify: `ls -la apps/prism-cli/bin/` shows 5 binaries.
+Verify: `ls -la apps/prism-cli/bin/` shows 5 binaries, and
+`./bin/prism-cli-windows-amd64.exe --version` prints `{NEW_VERSION}`.
+
+> **`VERSION=` is mandatory.** `Makefile:3` defaults to
+> `VERSION ?= $(shell git describe --tags --always --dirty)` and injects it via `-ldflags` into
+> `main.version` — it never reads the `VERSION` file or `main.go`. Since this step runs before the
+> release commit+tag, a bare `make build-all` stamps binaries with the **previous** tag plus
+> `-dirty` (observed on the v4.15.2 cut: `v4.15.1-4-g814b762-dirty`).
 
 ## 3b. Package VSIX extension
 
