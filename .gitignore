@@ -78,3 +78,5 @@ __pycache__/
 # external agent-tool scaffolding (gitnexus skill drop, codex local config)
 .agents/
 .codex/
+
+.fuse_hidden*
