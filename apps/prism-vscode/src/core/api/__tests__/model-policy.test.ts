@@ -411,6 +411,9 @@ describe("Arkestra — the provider axis", () => {
   })
 
   test("an explicit provider on the entry overrides the key prefix", async () => {
+    // The key says nothing about a provider; the entry declares one. Without
+    // `coerceEntry` preserving `provider`, this resolves to "unknown" — which is
+    // the bug this test caught during the Arkestra commit.
     const root = makeProject({
       policy: {
         version: 1,
@@ -421,7 +424,24 @@ describe("Arkestra — the provider axis", () => {
     })
     const d = await resolveModelDecision({ requested: "weird", projectRoot: root })
     expect(d.provider).toBe("openai")
+    // openai HAS a chain, so this correctly downgrades within openai rather than
+    // blocking — and above all never lands on Anthropic.
+    expect(["fable5", "opus5", "opus48"]).not.toContain(d.model)
+  })
+
+  test("a provider with NO declared chain fails closed", async () => {
+    const root = makeProject({
+      policy: {
+        version: 1,
+        headlessDefault: "deny",
+        models: { "mistral:large": { mode: "deny" } },
+        surfaces: {},
+      },
+    })
+    const d = await resolveModelDecision({ requested: "mistral:large", projectRoot: root })
+    expect(d.provider).toBe("mistral")
     expect(d.blocked).toBe(true)
+    expect(d.reason).toMatch(/not crossing providers/i)
   })
 
   test("a credential-bound request is NEVER failed over, even within its provider", async () => {
@@ -460,5 +480,47 @@ describe("Arkestra — the provider axis", () => {
     const [e] = readEvents(root)
     expect(e.provider).toBe("gpt")
     expect(e.blocked).toBe(true)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// ARKESTRA — the Codex/OpenAI roster
+// ---------------------------------------------------------------------------
+describe("Arkestra — Codex roster", () => {
+  test("a denied Codex model downgrades WITHIN openai, never to Anthropic", async () => {
+    const root = makeProject({
+      policy: {
+        version: 1,
+        headlessDefault: "deny",
+        models: {
+          "openai:gpt-6-astra": { mode: "deny" },
+          "openai:gpt-5.6-sol": { mode: "allow" },
+        },
+        surfaces: {},
+      },
+    })
+    const d = await resolveModelDecision({ requested: "openai:gpt-6-astra", projectRoot: root })
+    expect(d.provider).toBe("openai")
+    expect(d.model).toBe("openai:gpt-5.6-sol")
+    expect(d.blocked).toBeFalsy()
+    expect(["fable5", "opus5", "opus48"]).not.toContain(d.model)
+  })
+
+  test("the openai chain terminates at its OWN floor, not Anthropic's", async () => {
+    const root = makeProject({
+      policy: {
+        version: 1,
+        headlessDefault: "deny",
+        models: {
+          "openai:gpt-6-astra": { mode: "deny" },
+          "openai:gpt-5.6-sol": { mode: "deny" },
+          "openai:gpt-5.6-terra": { mode: "deny" },
+        },
+        surfaces: {},
+      },
+    })
+    const d = await resolveModelDecision({ requested: "openai:gpt-6-astra", projectRoot: root })
+    expect(d.model.startsWith("openai:")).toBe(true)
+    expect(d.model).not.toBe("opus48")
   })
 })

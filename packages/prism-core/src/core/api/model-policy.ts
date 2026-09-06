@@ -33,6 +33,18 @@
  */
 import * as fs from "fs"
 import * as path from "path"
+import { chainFor } from "./model-roster"
+
+/**
+ * OpenAI/Codex chain + floor, derived from the roster at module load.
+ *
+ * Derived, not hand-listed: `chainFor` excludes anything whose `retiredOn` date
+ * has passed, so a retired id can never sit in a live chain. gpt-5.4 and
+ * gpt-5.4-mini retired 2026-08-31 and drop out automatically — the planning
+ * session still listed them as "retiring".
+ */
+const OPENAI_CHAIN: readonly string[] = chainFor("openai")
+const OPENAI_FLOOR: string = OPENAI_CHAIN[OPENAI_CHAIN.length - 1] ?? "openai:gpt-5.6-luna"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -200,11 +212,17 @@ export const FLOOR_MODEL = "opus48"
  */
 export const PROVIDER_CHAINS: Readonly<Record<string, readonly string[]>> = {
   anthropic: DOWNGRADE_CHAIN,
+  // OpenAI/Codex, derived from the roster so a retired id can never appear in a
+  // chain: `chainFor` filters by a DATE comparison, not a stale boolean.
+  // gpt-6-astra -> 5.6 sol -> terra -> luna. Terminates at luna; never crosses.
+  openai: OPENAI_CHAIN,
 }
 
 /** Per-provider floor. A chain terminates HERE or nowhere — never in another provider. */
 export const PROVIDER_FLOORS: Readonly<Record<string, string>> = {
   anthropic: FLOOR_MODEL,
+  // The cheapest current tier; the last entry the openai chain can reach.
+  openai: OPENAI_FLOOR,
 }
 
 /** The provider assumed for the three legacy keys that predate this axis. */
