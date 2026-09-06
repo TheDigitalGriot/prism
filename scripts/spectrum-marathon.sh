@@ -101,8 +101,10 @@ else
 fi
 
 for stage in "${stages[@]}"; do
-  # Pause control: enter the MARATHON-PAUSED state and stop cleanly before the next
-  # stage. Finished stages keep their outputs, so spectrum-marathon-continue re-runs nothing.
+  # Pause control: spectrum-marathon-pause writes the .spectrum-marathon.pause sentinel;
+  # between stages the marathon enters the MARATHON-PAUSED state and stops cleanly. Finished
+  # stages keep their outputs, so spectrum-marathon-continue re-runs nothing. (Companion runner:
+  # spectrum-marathon-stories drives a stories.json queue as a marathon.)
   if [ -e "$WORKSPACE/.spectrum-marathon.pause" ]; then
     log "MARATHON-PAUSED (pause requested). Resume: spectrum-marathon-continue $WORKSPACE"
     exit 0

@@ -22,7 +22,7 @@ If the standard gained a capability, the generator must emit it — and the plug
 1. **The standard** — `../griot-agent-architect/SKILL.md` (+ its `references/`). The authority. Note its version.
 2. **Prism's own manifest** — `../../.claude-plugin/plugin.json` — a live example of a current plugin (channels, current version).
 3. **The conformance checklist** — [references/conformance-checklist.md](references/conformance-checklist.md). The concrete item-by-item spec, distilled from the last full audit. Update it whenever the standard gains something new.
-4. **Fragment on disk** — default `<GriotApps>/fragment-ai-scaffold` (confirm the path). Two layers:
+4. **Fragment on disk** — default `<GriotApps>/Fragment` (confirm the path). Two layers:
    - **Layer A** — `plugins/fragment-plugin/` (the Claude Code plugin: `agents/`, `skills/`, `scripts/`, `.claude-plugin/`).
    - **Layer B** — `packages/create-fragment/` (the CLI + `templates/` — what Fragment *emits*).
 

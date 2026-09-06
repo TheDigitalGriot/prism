@@ -4,6 +4,31 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.15.1] - 2026-09-06
+
+### Fixed
+- **I3 now scopes transcript discovery to THIS repo.** `verify-invariants.mjs` read whichever Claude
+  Code project transcript was globally newest across `~/.claude/projects`, so a session in an
+  unrelated repo could make I3 report a verdict with nothing to do with this release. It now filters
+  project dirs to the one whose cwd-encoded name matches `ROOT`. (Code review, High.)
+- **I8 recognises helpers referenced by bare CLI name.** The caller search matched the full filename
+  including extension, so a helper documented by the name you type (`spectrum-marathon-continue`, not
+  `.sh`) read as "no caller" and would false-FAIL once documented correctly. It now also matches the
+  basename; and the marathon's `pause` / `stories` companions are documented by name. (Code review, Medium.)
+- **I3 reports its tail-only blind spot.** A PASS now states when only the last 4MB of a large
+  transcript was scanned, so it is not over-read as "whole session clean." Schema-coupling and
+  current-file-state caveats are noted in-code. (Code review, Mediums/Lows.)
+- **Version reconciled.** The v4.15.0 tag shipped app manifests at 4.13.2 (the per-app bump never
+  landed), so installers were stamped 4.13.2 for a 4.15.0 plugin. All manifests -- plugin, marketplace,
+  installer/tauri, electron, vscode -- are now 4.15.1.
+- **fragment-sync path.** The Prism `fragment-sync` skill pointed Fragment at the retired
+  `fragment-ai-scaffold` path; corrected to `Fragment`.
+
+### Added
+- **Regression tests for `verify-invariants.mjs`** (previously zero coverage): a golden-path smoke test
+  (all nine invariants report a verdict, no crash) and two I3 ROOT-scoping regressions via a fixtured
+  `PRISM_VERIFY_PROJECTS_DIR`.
+
 ## [4.15.0] - 2026-09-05
 
 ### Added

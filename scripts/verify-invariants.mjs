@@ -83,10 +83,17 @@ const newestFile = (p) => {
 {
   const BIG = 800
   const proj = process.env.USERPROFILE || process.env.HOME || ''
-  const projects = join(proj, '.claude', 'projects')
+  const projects = process.env.PRISM_VERIFY_PROJECTS_DIR || join(proj, '.claude', 'projects')
+  // I3 must reflect THIS repo's session, not whichever repo was touched last on
+  // the machine. Claude Code names each project dir from its cwd, replacing the
+  // path separators and the drive colon with '-' (C:\\Users\\x\\Prism -> C--Users-x-Prism).
+  // Scope discovery to the dir that decodes to ROOT, so a newer transcript from an
+  // unrelated repo can never stand in for this one.
+  const ROOTKEY = ROOT.replace(/[\\/:]/g, '-').toLowerCase()
   let newest = null
   try {
     for (const d of readdirSync(projects)) {
+      if (!d.toLowerCase().startsWith(ROOTKEY)) continue
       const dir = join(projects, d)
       let files = []
       try { files = readdirSync(dir).filter(f => f.endsWith('.jsonl')) } catch { continue }
@@ -99,15 +106,22 @@ const newestFile = (p) => {
   } catch { /* no transcripts */ }
 
   if (!newest) {
-    rec('I3', 'bulk reading is delegated', 'unverified', 'no session transcript found')
+    rec('I3', 'bulk reading is delegated', 'unverified', 'no session transcript for this repo (ROOT-scoped)')
   } else {
     // Tail only: a full transcript can be enormous, and reading it whole here
     // would be the very sin this invariant checks for.
     let text = ''
+    let tailNote = ''
     try {
       const size = statSync(newest.full).size
       const fd = readFileSync(newest.full)
-      text = fd.subarray(Math.max(0, size - 4_000_000)).toString('utf-8')
+      const CAP = 4_000_000
+      text = fd.subarray(Math.max(0, size - CAP)).toString('utf-8')
+      // Tail-only by design (reading the whole file would be the sin this checks
+      // for). Surface the blind spot: an offending read earlier in a long session
+      // that got pushed past this tail escapes -- a pass means "tail clean", not
+      // "whole session clean". Say so in the detail so a PASS is not over-read.
+      if (size > CAP) tailNote = ` (tail-only: last ${(CAP / 1e6) | 0}MB of ${(size / 1e6).toFixed(1)}MB scanned)`
     } catch { /* unreadable */ }
 
     // Capture the whole input object so `limit` is visible. A WINDOWED read
@@ -115,6 +129,10 @@ const newestFile = (p) => {
     // -- charging it the file's full length would flag the good case and make the
     // check cry wolf, which is worse than no check at all.
     const reads = []
+    // NOTE: coupled to Claude Code's current transcript JSON shape (name immediately
+    // before input; no nested braces in the input object). A schema change degrades
+    // to the looser fallback below, or to 'unverified' -- never a false pass -- but
+    // diagnose the coupling here first.
     const re = /"name"\s*:\s*"Read"\s*,\s*"input"\s*:\s*(\{[^}]*\})/g
     let m
     while ((m = re.exec(text)) !== null) {
@@ -139,6 +157,9 @@ const newestFile = (p) => {
         continue
       }
       try {
+        // Line count is the file's CURRENT state, not its length at read-time; a
+        // since-trimmed file could shift this. Acceptable: I3 flags egregious
+        // whole-file reads, where a few lines of drift never changes the verdict.
         const lines = readFileSync(r.f, 'utf-8').split('\n').length
         if (lines > BIG) offenders.push(`${r.f.split(/[\\/]/).pop()}:${lines} (whole file)`)
       } catch { /* gone or binary */ }
@@ -147,9 +168,9 @@ const newestFile = (p) => {
       rec('I3', 'bulk reading is delegated', 'unverified', 'no Read calls found in transcript tail')
     } else if (offenders.length) {
       rec('I3', 'bulk reading is delegated', 'fail',
-          `${offenders.length} main-thread read(s) over ${BIG} lines: ${offenders.slice(0, 3).join(', ')}`)
+          `${offenders.length} main-thread read(s) over ${BIG} lines: ${offenders.slice(0, 3).join(', ')}${tailNote}`)
     } else {
-      rec('I3', 'bulk reading is delegated', 'pass', `${paths.size} main-thread read(s), all under ${BIG} lines`)
+      rec('I3', 'bulk reading is delegated', 'pass', `${paths.size} main-thread read(s), all under ${BIG} lines${tailNote}`)
     }
   }
 }
@@ -283,7 +304,12 @@ const newestFile = (p) => {
     if (/^verify-.*\.mjs$/.test(f)) continue          // auto-discovered by the audit
     if (f === 'pre-release-audit.mjs') continue
     // a mention inside the file itself does not count as a caller
-    const referenced = haystack.some(x => !x.file.endsWith(f) && x.t.includes(f))
+    // Match the full filename OR the bare basename: an installed helper is usually
+    // referenced by the CLI name you type (spectrum-marathon-continue), not the file
+    // (spectrum-marathon-continue.sh). Without the basename fallback, documenting it
+    // correctly by bare name still reads as 'no caller' and false-FAILs the gate.
+    const base = f.replace(/\.[^.]+$/, '')
+    const referenced = haystack.some(x => !x.file.endsWith(f) && (x.t.includes(f) || (base.length > 6 && x.t.includes(base))))
     if (!referenced) problems.push(`${f}: no caller anywhere in the repo`)
   }
 
