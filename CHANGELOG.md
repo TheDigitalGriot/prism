@@ -4,6 +4,57 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.16.0] - 2026-09-06
+
+### Fixed
+- **A denied non-Anthropic model no longer becomes an Anthropic one.** `nextRunnable()` resolved
+  downgrades against a single global chain via `DOWNGRADE_CHAIN.indexOf(requested)`. That returns
+  `-1` for any `${provider}:${model}` key, so the walk restarted at the *top* of the Anthropic
+  chain. Executed against the real logic: `gpt:gpt-6-astra -> opus5`, `local:griotmodel -> opus5`.
+  Three consequences — a Codex request silently became an Anthropic one; it billed the Max
+  subscription instead of the Codex account; and a denied **local** model escaped to a **cloud**
+  model, breaking the local-first guarantee. It never reached the floor either, so the predicted
+  "falls back to `opus48`" was itself wrong. Reachable already, since the mobile lanes emit
+  provider-prefixed keys via `policyKeyForModel`.
+- **`Broker.pairingInfo()` minted a token and discarded it**, so the pairing token authenticated
+  nothing and any caller could `POST /register` any id over the wildcard-CORS surface.
+- **The bus had no concurrency guarantee.** `$STATE_DIR/events` was written with plain
+  `appendFileSync` from two possible writers — a torn line is unparseable JSONL, silently
+  truncating the decision history the cockpit reads.
+- **The vscode unit suites could not run at all.** No vitest config existed, so every suite
+  importing `@prism-core/*` died at import — including the tests for the model-policy module.
+  0 runnable -> 42/42 passing.
+
+### Added
+- **Arkestra provider axis** — `PROVIDER_CHAINS` / `PROVIDER_FLOORS`, `providerOf()`, and a
+  `blocked` fail-closed signal on `ModelDecision`. A chain walks *within* one provider and
+  terminates at that provider's floor, or fails closed; it never borrows another provider's chain.
+  A `credentialBound` request is never failed over at all (lifted from Weave Router's
+  `shouldFailover`). **Anthropic behaviour is byte-identical.**
+- **Codex/OpenAI roster** (`model-roster.ts`) with retirement as a **date comparison**, so a retired
+  id can never enter a derived chain. Five corrections to the planning assumptions, including two
+  effort values that do not exist (`light`, `extra-high` are UI labels) and two already-retired ids
+  that were missing entirely.
+- **`griot-harvest`** skill — ground an OSS repo against real code, then hand the decision to
+  `dgs-plan-update`. Accepts a repo URL, a Potluck shelf hit, or a Cinopsis result; never ingests
+  video.
+- **`prism-model-onboard`** skill — verify a model's facts today, place it on a provider chain,
+  write data not logic.
+- **`packages/prism-workgraph-mcp`** — the Spectrum workgraph over MCP on Arkestra's *additive*
+  always-on tier. Stateless Worker, zero runtime dependencies, wire schema produced by omission so
+  it cannot drift. Local-first is unchanged; nothing gates on deployment.
+- **Invariant I10** — the ontology edited is the canonical, never the generated mirror.
+- **`recall.env.example`** — the zero-code half of local-model recall (Ollama / LM Studio).
+
+### Changed
+- The paired token is now minted, **stored and compared**, single-use with a TTL, gated behind
+  `PRISM_BROKER_REQUIRE_PAIRING` (default off, so existing local setups are unchanged).
+- Bus appends go through an explicit `O_APPEND` handle in both copies. Proven under 8-way
+  concurrency: 1600 lines written, zero torn.
+- `verify-model-policy-conformance.mjs` asserts the provider axis and that no chain crosses
+  providers — negative-tested by restoring the old logic.
+- Repo roots now import `griot-ontology` directly; `agent-ontology` remains a generated mirror.
+
 ## [4.15.2] - 2026-09-06
 
 ### Removed
