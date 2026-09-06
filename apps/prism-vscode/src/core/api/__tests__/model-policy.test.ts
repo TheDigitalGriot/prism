@@ -524,3 +524,112 @@ describe("Arkestra — Codex roster", () => {
     expect(d.model).not.toBe("opus48")
   })
 })
+
+// ---------------------------------------------------------------------------
+// ARKESTRA — adversarial: try to BREAK the provider guarantee
+// ---------------------------------------------------------------------------
+// Written as the Step-0 release gate. The question is not "does the happy path
+// work" but "can any input still land a non-Anthropic request on an Anthropic
+// model" — the defect this release exists to fix.
+describe("Arkestra — adversarial provider-crossing attempts", () => {
+  const ANTHROPIC = ["fable5", "opus5", "opus48"]
+
+  test("a surface OVERRIDE cannot push a Codex model onto the Anthropic chain", async () => {
+    const root = makeProject({
+      policy: {
+        version: 1,
+        headlessDefault: "deny",
+        models: { "openai:gpt-6-astra": { mode: "allow" } },
+        surfaces: { cli: { "openai:gpt-6-astra": { mode: "deny" } } },
+      },
+    })
+    const d = await resolveModelDecision({
+      requested: "openai:gpt-6-astra",
+      surface: "cli",
+      projectRoot: root,
+    })
+    expect(ANTHROPIC).not.toContain(d.model)
+    expect(d.provider).toBe("openai")
+  })
+
+  test("a MALFORMED policy still cannot cross providers", async () => {
+    const root = makeProject({ policy: "{ this is not json" })
+    const d = await resolveModelDecision({ requested: "local:griotmodel", projectRoot: root })
+    expect(ANTHROPIC).not.toContain(d.model)
+  })
+
+  test("an entry claiming provider 'anthropic' does NOT smuggle a foreign key onto the chain", async () => {
+    // The nastiest case: a key that is not an Anthropic model, declaring itself Anthropic.
+    // nextRunnable must still refuse to return it as if it were a chain member.
+    const root = makeProject({
+      policy: {
+        version: 1,
+        headlessDefault: "deny",
+        models: {
+          "openai:gpt-6-astra": { mode: "deny", provider: "anthropic" },
+          opus5: { mode: "allow" },
+        },
+        surfaces: {},
+      },
+    })
+    const d = await resolveModelDecision({ requested: "openai:gpt-6-astra", projectRoot: root })
+    // It may downgrade within the declared provider, but must NEVER return the
+    // requested foreign id as a runnable Anthropic model.
+    expect(d.model).not.toBe("openai:gpt-6-astra")
+  })
+
+  test("a colon-prefixed key (empty provider) fails closed", async () => {
+    const root = makeProject({
+      policy: { version: 1, headlessDefault: "deny", models: { ":weird": { mode: "deny" } }, surfaces: {} },
+    })
+    const d = await resolveModelDecision({ requested: ":weird", projectRoot: root })
+    expect(ANTHROPIC).not.toContain(d.model)
+    expect(d.blocked).toBe(true)
+  })
+
+  test("a bare unknown key (no colon, not an Anthropic id) fails closed", async () => {
+    const root = makeProject({
+      policy: { version: 1, headlessDefault: "deny", models: { mystery: { mode: "deny" } }, surfaces: {} },
+    })
+    const d = await resolveModelDecision({ requested: "mystery", projectRoot: root })
+    expect(d.provider).toBe("unknown")
+    expect(d.blocked).toBe(true)
+    expect(ANTHROPIC).not.toContain(d.model)
+  })
+
+  test("EVERY blocked decision keeps `model` === requested, so an ignoring caller cannot silently switch provider", async () => {
+    const root = makeProject({
+      policy: {
+        version: 1,
+        headlessDefault: "deny",
+        models: { "local:griotmodel": { mode: "deny" }, "mistral:large": { mode: "deny" } },
+        surfaces: {},
+      },
+    })
+    for (const req of ["local:griotmodel", "mistral:large"]) {
+      const d = await resolveModelDecision({ requested: req, projectRoot: root })
+      expect(d.blocked).toBe(true)
+      // The safety property: even a caller that ignores `blocked` runs the model
+      // it asked for, never someone else's.
+      expect(d.model).toBe(req)
+    }
+  })
+
+  test("credential-bound + Anthropic: still blocks rather than downgrading", async () => {
+    const root = makeProject({
+      policy: {
+        version: 1,
+        headlessDefault: "deny",
+        models: { fable5: { mode: "deny" }, opus5: { mode: "allow" } },
+        surfaces: {},
+      },
+    })
+    const d = await resolveModelDecision({
+      requested: "fable5",
+      projectRoot: root,
+      credentialBound: true,
+    })
+    expect(d.model).toBe("fable5")
+    expect(d.blocked).toBe(true)
+  })
+})
