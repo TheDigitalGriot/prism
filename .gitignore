@@ -7,8 +7,12 @@ node_modules/
 # Build artifacts
 bin/
 cmd/prism-cli/bin/
-# Tauri installer resources (populated at CI time)
-cmd/prism-installer/src-tauri/resources/
+# Tauri installer resources populated at CI/build time.
+# NOTE: extensions/prism.vsix is deliberately NOT ignored — it is a tracked,
+# committed artifact bundled via tauri.conf.json bundle.resources (migrated
+# here when apps/prism-setup was sunset in v4.15.2).
+apps/prism-installer/src-tauri/resources/bin/
+apps/prism-installer/src-tauri/resources/plugin/
 cmd/prism-cli/prism-cli
 cmd/prism-cli/prism-cli.exe
 *.exe

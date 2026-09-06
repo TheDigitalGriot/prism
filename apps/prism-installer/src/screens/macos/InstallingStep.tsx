@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { Channel } from "@tauri-apps/api/core";
 import { getVersion } from "@tauri-apps/api/app";
+import { resolveResource } from "@tauri-apps/api/path";
 import { MAC } from "../../theme/colors";
 import { COMPONENTS } from "../../constants";
 import { ComponentSelection } from "../../hooks/useInstaller";
@@ -69,7 +70,8 @@ export function InstallingStep({ checked, installDir, onDone }: InstallingStepPr
             addLog("  ✓ Copied to ~/.prism/bin/prism-cli");
           } else if (c.id === "vscode") {
             const editors = await invoke<DetectedTool[]>("detect_editors");
-            const vsixPath = `${installDir}/extensions/prism.vsix`;
+            // Bundled Tauri resource — see the Windows ProgressStep note.
+            const vsixPath = await resolveResource("extensions/prism.vsix");
             await invoke("install_all_extensions", { editors, vsixPath });
             for (const e of editors) {
               const ver = e.version ? ` v${e.version}` : "";

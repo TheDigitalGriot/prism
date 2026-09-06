@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { Channel } from "@tauri-apps/api/core";
 import { getVersion } from "@tauri-apps/api/app";
+import { resolveResource } from "@tauri-apps/api/path";
 import { WIN } from "../../theme/colors";
 import { NavButtons } from "../../components/NavButtons";
 import { SpectralBar } from "../../components/SpectralBar";
@@ -79,7 +80,10 @@ export function ProgressStep({ checked, installDir, onNext }: ProgressStepProps)
           } else if (c.id === "vscode") {
             setStatus(i, "installing", "Installing VSIX into editors...");
             const editors = await invoke<DetectedTool[]>("detect_editors");
-            const vsixPath = `${installDir}\\extensions\\prism.vsix`;
+            // The VSIX ships as a bundled Tauri resource, so resolve it from the
+            // installer's own resource dir rather than installDir (nothing
+            // populates installDir\extensions — that was the legacy NSIS's job).
+            const vsixPath = await resolveResource("extensions/prism.vsix");
             for (const editor of editors) {
               const ver = editor.version ? ` v${editor.version}` : "";
               addLog(`[${editor.name}${ver}] Installing extension...`);
