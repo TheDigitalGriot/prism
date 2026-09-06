@@ -41,9 +41,18 @@ import * as path from "path"
 /** Per-model approval mode — the agentic-permission verb applied to a request. */
 export type ApprovalMode = "ask" | "allow" | "deny" | "skip"
 
-/** A single model's policy entry. */
+/**
+ * A single model's policy entry.
+ *
+ * `provider` is the ARKESTRA axis. It is optional for back-compat: the three
+ * legacy Anthropic keys (fable5 / opus5 / opus48) carry no provider field and
+ * resolve to "anthropic" implicitly. Everything else should declare one, or use
+ * the `${provider}:${model}` key convention the mobile lanes already emit.
+ */
 export interface ModelPolicyEntry {
   mode: ApprovalMode
+  /** e.g. "anthropic" | "openai" | "local". Inferred from the key when absent. */
+  provider?: string
 }
 
 /** The resolved policy store. */
@@ -76,6 +85,18 @@ export interface ModelDecisionInput {
     surface?: string
     mode: ApprovalMode
   }) => boolean | Promise<boolean>
+  /**
+   * The request carries its OWN credential (BYOK, an inbound key, an external
+   * provider key, or a local endpoint). Such a request is never failed over —
+   * lifted from Weave Router's `shouldFailover` (`fallback.go:427-438`), which
+   * returns false for exactly these cases.
+   *
+   * Why it matters here: downgrading a credential-bound request either bills the
+   * wrong account (a Codex request landing on the Max subscription) or breaks
+   * local-first (a local GriotModel request escaping to a cloud model). When set,
+   * a denied model BLOCKS rather than downgrading.
+   */
+  credentialBound?: boolean
 }
 
 /** The outcome of applying a model's mode. */
@@ -90,6 +111,15 @@ export interface ModelDecision {
   downgradedFrom?: string
   /** Human-readable rationale for the decision (for events / logs). */
   reason: string
+  /** The provider the decision resolved within. Never crossed implicitly. */
+  provider?: string
+  /**
+   * FAIL-CLOSED signal. `true` means nothing may run: the model was denied and
+   * its provider offers no runnable downgrade. Callers MUST check this — the
+   * alternative (silently switching provider) is the defect this axis exists to
+   * prevent. `model` still carries the requested id, for logging only.
+   */
+  blocked?: boolean
 }
 
 /** A model-decision bus event (one JSONL line under `$STATE_DIR/events`). */
@@ -100,6 +130,10 @@ export interface ModelEvent {
   mode: ApprovalMode
   surface?: string
   downgradedFrom?: string
+  /** Provider the decision resolved within — never crossed implicitly. */
+  provider?: string
+  /** True when the request failed closed and nothing may run. */
+  blocked?: boolean
   ts: string
 }
 
@@ -122,6 +156,75 @@ export const DOWNGRADE_CHAIN = ["fable5", "opus5", "opus48"] as const
 
 /** The always-runnable floor the chain terminates at. */
 export const FLOOR_MODEL = "opus48"
+
+// ---------------------------------------------------------------------------
+// The provider axis (Arkestra)
+// ---------------------------------------------------------------------------
+
+/**
+ * ARKESTRA — the model-governance layer. (Everyday name: "the Governor". The
+ * former name "Model Control Plane" was retired 2026-09-06; it collided with MCP,
+ * which means Model Context Protocol.)
+ *
+ * THE DEFECT THIS FIXES, reproduced by executing the old logic:
+ *
+ *   requested=gpt:gpt-6-astra   -> downgraded to: opus5
+ *   requested=local:griotmodel  -> downgraded to: opus5
+ *
+ * `nextRunnable` did `DOWNGRADE_CHAIN.indexOf(requested)`, which returns -1 for
+ * any provider-prefixed key, so `start` became 0 and the walk began at the TOP of
+ * the ANTHROPIC chain. Consequences: a Codex request silently became an Anthropic
+ * request billed to the Max subscription, and — far worse — a denied LOCAL model
+ * escaped to a CLOUD model, breaking the local-first guarantee and sending data
+ * off-device. It never even reached the floor; it stopped at the first freely
+ * runnable entry.
+ *
+ * THE RULE, taken from Weave Router (`fallback.go:427-438`, where `shouldFailover`
+ * returns false for BYOK / inbound / external-key requests): a request never
+ * crosses providers implicitly. A chain walks WITHIN one provider and terminates
+ * at that provider's own floor, or it fails closed. Weave Router's `rosterIDFor`
+ * likewise returns "" for an unmapped model rather than guessing a provider —
+ * that is the discipline the old `indexOf(...) === -1 -> start = 0` broke.
+ */
+
+/**
+ * Per-provider downgrade chains, most-capable first.
+ *
+ * `anthropic` is the existing `DOWNGRADE_CHAIN`, unchanged and still exported
+ * under its own name — Anthropic behaviour is byte-identical to before this axis
+ * existed, and the cross-copy conformance gate still matches it.
+ *
+ * A provider with no chain here is NOT an error; it means "no downgrade path is
+ * declared", and a denied model of that provider fails closed rather than
+ * borrowing someone else's chain.
+ */
+export const PROVIDER_CHAINS: Readonly<Record<string, readonly string[]>> = {
+  anthropic: DOWNGRADE_CHAIN,
+}
+
+/** Per-provider floor. A chain terminates HERE or nowhere — never in another provider. */
+export const PROVIDER_FLOORS: Readonly<Record<string, string>> = {
+  anthropic: FLOOR_MODEL,
+}
+
+/** The provider assumed for the three legacy keys that predate this axis. */
+export const DEFAULT_PROVIDER = "anthropic"
+
+/**
+ * Resolve a policy key's provider. Precedence:
+ *   1. an explicit `provider` on the policy entry
+ *   2. the `${provider}:${model}` key convention (as `policyKeyForModel` emits)
+ *   3. "anthropic" for the three legacy chain keys
+ *   4. "unknown" — which has no chain, so it fails closed
+ */
+export function providerOf(key: string, policy?: Policy): string {
+  const explicit = policy?.models?.[key]?.provider
+  if (explicit) return explicit
+  const i = key.indexOf(":")
+  if (i > 0) return key.slice(0, i)
+  if ((DOWNGRADE_CHAIN as readonly string[]).includes(key)) return DEFAULT_PROVIDER
+  return "unknown"
+}
 
 /**
  * Safe defaults when no store and no legacy flag exist.
@@ -187,7 +290,14 @@ function policyFromLegacyFlag(projectRoot: string): Policy | null {
 function coerceEntry(value: unknown): ModelPolicyEntry | undefined {
   if (typeof value !== "object" || value === null) return undefined
   const mode = normalizeMode((value as { mode?: unknown }).mode)
-  return mode ? { mode } : undefined
+  if (!mode) return undefined
+  // `provider` must survive the read or the Arkestra axis is inert: an explicit
+  // provider would be silently dropped and the key-prefix fallback used instead.
+  // Caught by "an explicit provider on the entry overrides the key prefix".
+  const rawProvider = (value as { provider?: unknown }).provider
+  const provider =
+    typeof rawProvider === "string" && rawProvider.trim() ? rawProvider.trim() : undefined
+  return provider ? { mode, provider } : { mode }
 }
 
 function coerceModels(value: unknown): Record<string, ModelPolicyEntry> {
@@ -274,22 +384,37 @@ function effectiveMode(
 }
 
 /**
- * Walk the downgrade chain forward from `requested` to the first model that
- * runs freely ("allow"/"skip"), terminating at the always-allowed floor.
+ * Walk the requested model's OWN provider chain to the first model that runs
+ * freely ("allow"/"skip"), terminating at that provider's floor.
+ *
+ * Returns `null` when the provider has no declared chain, or when its chain is
+ * exhausted with nothing runnable. `null` means FAIL CLOSED — the caller must
+ * not run anything. It must never mean "fall back to Anthropic": that is exactly
+ * the defect documented above the PROVIDER_CHAINS table.
  */
 function nextRunnable(
   policy: Policy,
   requested: string,
   surface?: string,
-): string {
-  const idx = DOWNGRADE_CHAIN.indexOf(requested as (typeof DOWNGRADE_CHAIN)[number])
+): string | null {
+  const provider = providerOf(requested, policy)
+  const chain = PROVIDER_CHAINS[provider]
+  // No chain for this provider -> no downgrade path. Fail closed; do NOT borrow
+  // another provider's chain.
+  if (!chain || chain.length === 0) return null
+
+  const idx = chain.indexOf(requested)
   const start = idx < 0 ? 0 : idx + 1
-  for (let i = start; i < DOWNGRADE_CHAIN.length; i++) {
-    const candidate = DOWNGRADE_CHAIN[i]
+  for (let i = start; i < chain.length; i++) {
+    const candidate = chain[i]
+    // A chain must never leave its provider. Defensive: a mis-declared entry
+    // that points elsewhere is skipped rather than silently crossing.
+    if (providerOf(candidate, policy) !== provider) continue
     const mode = effectiveMode(policy, candidate, surface)
     if (mode === "allow" || mode === "skip") return candidate
   }
-  return FLOOR_MODEL
+  const floor = PROVIDER_FLOORS[provider]
+  return floor ?? null
 }
 
 /**
@@ -300,28 +425,51 @@ function nextRunnable(
 export async function resolveModelDecision(
   input: ModelDecisionInput,
 ): Promise<ModelDecision> {
-  const { requested, surface, projectRoot, confirm } = input
+  const { requested, surface, projectRoot, confirm, credentialBound } = input
   const env = input.env ?? (typeof process !== "undefined" ? process.env : {})
   const policy = readModelPolicy(projectRoot)
   const mode = effectiveMode(policy, requested, surface)
+  const provider = providerOf(requested, policy)
 
   const downgrade = (reason: string): ModelDecision => {
+    // A credential-bound request is never failed over — downgrading it would
+    // bill the wrong account or push a local request into the cloud.
+    if (credentialBound) {
+      return {
+        model: requested,
+        requested,
+        mode,
+        provider,
+        blocked: true,
+        reason: `${reason} — BLOCKED: credential-bound request is never failed over`,
+      }
+    }
     const model = nextRunnable(policy, requested, surface)
-    return { model, requested, mode, downgradedFrom: requested, reason }
+    if (model === null) {
+      return {
+        model: requested,
+        requested,
+        mode,
+        provider,
+        blocked: true,
+        reason: `${reason} — BLOCKED: provider "${provider}" has no runnable downgrade; not crossing providers`,
+      }
+    }
+    return { model, requested, mode, provider, downgradedFrom: requested, reason }
   }
 
   switch (mode) {
     case "allow":
-      return { model: requested, requested, mode, reason: "allowed" }
+      return { model: requested, requested, mode, provider, reason: "allowed" }
     case "skip":
-      return { model: requested, requested, mode, reason: "skipped approvals" }
+      return { model: requested, requested, mode, provider, reason: "skipped approvals" }
     case "deny":
       return downgrade(`denied: downgraded ${requested} -> next runnable`)
     case "ask": {
       if (confirm) {
         const ok = await confirm({ requested, surface, mode })
         return ok
-          ? { model: requested, requested, mode, reason: "confirmed" }
+          ? { model: requested, requested, mode, provider, reason: "confirmed" }
           : downgrade(`denied via confirm: downgraded ${requested}`)
       }
       // Headless: auto-resolve per headlessDefault (env may override).
@@ -334,11 +482,12 @@ export async function resolveModelDecision(
         model: requested,
         requested,
         mode,
+        provider,
         reason: `ask -> headlessDefault=${headless}`,
       }
     }
     default:
-      return { model: requested, requested, mode, reason: "allowed" }
+      return { model: requested, requested, mode, provider, reason: "allowed" }
   }
 }
 
@@ -405,6 +554,8 @@ export function emitModelEvent(
       mode: event.mode,
       surface: event.surface,
       downgradedFrom: event.downgradedFrom,
+      provider: event.provider,
+      blocked: event.blocked,
       ts: event.ts ?? new Date().toISOString(),
     }
     fs.appendFileSync(file, JSON.stringify(line) + "\n", "utf8")

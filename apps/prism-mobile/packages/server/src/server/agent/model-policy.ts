@@ -24,6 +24,8 @@ export type ApprovalMode = "ask" | "allow" | "deny" | "skip";
 
 interface ModelPolicyEntry {
   mode: ApprovalMode;
+  /** ARKESTRA provider axis. Absent => inferred from the key. */
+  provider?: string;
 }
 
 interface Policy {
@@ -38,6 +40,10 @@ export interface ModelDecision {
   mode: ApprovalMode;
   downgradedFrom?: string;
   reason: string;
+  /** Provider the decision resolved within — never crossed implicitly. */
+  provider?: string;
+  /** FAIL-CLOSED: nothing may run. Callers MUST check this. */
+  blocked?: boolean;
 }
 
 export interface ModelEvent {
@@ -62,6 +68,30 @@ interface ModelDecisionInput {
 // Opus is current" — SDK aliases are a separate namespace.
 const DOWNGRADE_CHAIN = ["fable5", "opus5", "opus48"] as const;
 const FLOOR_MODEL = "opus48";
+
+// ARKESTRA provider axis — mirrors packages/prism-core/src/core/api/model-policy.ts.
+// A chain walks WITHIN one provider and terminates at that provider's floor, or it
+// fails closed. It must NEVER borrow another provider's chain: the old
+// `DOWNGRADE_CHAIN.indexOf(requested) === -1 -> start = 0` sent `gpt:gpt-6-astra`
+// and `local:griotmodel` to `opus5` — billing the wrong account, and pushing a
+// LOCAL request into the cloud. These lanes emit `${provider}:${model}` keys via
+// policyKeyForModel below, so that defect was reachable here first.
+const PROVIDER_CHAINS: Readonly<Record<string, readonly string[]>> = {
+  anthropic: DOWNGRADE_CHAIN,
+};
+const PROVIDER_FLOORS: Readonly<Record<string, string>> = {
+  anthropic: FLOOR_MODEL,
+};
+const DEFAULT_PROVIDER = "anthropic";
+
+export function providerOf(key: string, policy?: Policy): string {
+  const explicit = policy?.models?.[key]?.provider;
+  if (explicit) return explicit;
+  const i = key.indexOf(":");
+  if (i > 0) return key.slice(0, i);
+  if ((DOWNGRADE_CHAIN as readonly string[]).includes(key)) return DEFAULT_PROVIDER;
+  return "unknown";
+}
 const VALID_MODES: ReadonlySet<string> = new Set(["ask", "allow", "deny", "skip"]);
 
 function normalizeMode(value: unknown): ApprovalMode | undefined {
@@ -84,7 +114,10 @@ function coerceModels(value: unknown): Record<string, ModelPolicyEntry> {
     for (const [key, raw] of Object.entries(value as Record<string, unknown>)) {
       if (typeof raw === "object" && raw !== null) {
         const mode = normalizeMode((raw as { mode?: unknown }).mode);
-        if (mode) out[key] = { mode };
+        // `provider` must survive the read or the Arkestra axis is inert.
+        const rawP = (raw as { provider?: unknown }).provider;
+        const provider = typeof rawP === "string" && rawP.trim() ? rawP.trim() : undefined;
+        if (mode) out[key] = provider ? { mode, provider } : { mode };
       }
     }
   }
@@ -127,14 +160,20 @@ function effectiveMode(policy: Policy, model: string, surface?: string): Approva
   return policy.models[model]?.mode ?? "allow";
 }
 
-function nextRunnable(policy: Policy, requested: string, surface?: string): string {
-  const idx = DOWNGRADE_CHAIN.indexOf(requested as (typeof DOWNGRADE_CHAIN)[number]);
+/** Returns null to FAIL CLOSED — never falls back to another provider's chain. */
+function nextRunnable(policy: Policy, requested: string, surface?: string): string | null {
+  const provider = providerOf(requested, policy);
+  const chain = PROVIDER_CHAINS[provider];
+  if (!chain || chain.length === 0) return null;
+  const idx = chain.indexOf(requested);
   const start = idx < 0 ? 0 : idx + 1;
-  for (let i = start; i < DOWNGRADE_CHAIN.length; i++) {
-    const mode = effectiveMode(policy, DOWNGRADE_CHAIN[i], surface);
-    if (mode === "allow" || mode === "skip") return DOWNGRADE_CHAIN[i];
+  for (let i = start; i < chain.length; i++) {
+    const candidate = chain[i];
+    if (providerOf(candidate, policy) !== provider) continue;
+    const mode = effectiveMode(policy, candidate, surface);
+    if (mode === "allow" || mode === "skip") return candidate;
   }
-  return FLOOR_MODEL;
+  return PROVIDER_FLOORS[provider] ?? null;
 }
 
 /**
@@ -150,10 +189,22 @@ export function resolveModelDecision(input: ModelDecisionInput): ModelDecision {
   const mode = effectiveMode(policy, requested, surface);
 
   function downgrade(reason: string): ModelDecision {
+    const model = nextRunnable(policy, requested, surface);
+    if (model === null) {
+      return {
+        model: requested,
+        requested,
+        mode,
+        provider: providerOf(requested, policy),
+        blocked: true,
+        reason: `${reason} - BLOCKED: provider has no runnable downgrade; not crossing providers`,
+      };
+    }
     return {
-      model: nextRunnable(policy, requested, surface),
+      model,
       requested,
       mode,
+      provider: providerOf(requested, policy),
       downgradedFrom: requested,
       reason,
     };

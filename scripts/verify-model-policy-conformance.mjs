@@ -193,6 +193,53 @@ if (src.sdk) {
     fail("sdk", 'MODEL_IDS pins "claude-fable-5" — superseded by "claude-fable-5-1"')
 }
 
+// ── 7. ARKESTRA: the provider axis must not let a chain cross providers.
+//
+//      THE DEFECT THIS ENCODES, reproduced 2026-09-06 by executing the real logic:
+//        requested=gpt:gpt-6-astra   -> downgraded to: opus5
+//        requested=local:griotmodel  -> downgraded to: opus5
+//      `nextRunnable` did `DOWNGRADE_CHAIN.indexOf(requested)`, which returns -1
+//      for any `${provider}:${model}` key, so `start` became 0 and the walk began
+//      at the TOP of the Anthropic chain. A Codex request silently became an
+//      Anthropic one billed to the Max subscription; a LOCAL model escaped to the
+//      cloud, breaking local-first. It never even reached the floor.
+//
+//      That was an OBSERVATION. This makes it a CHECK — the hard form, per the
+//      ontology's SOFT FIXES ROT rule. It cannot ship silently again.
+for (const key of ["core", "mobile"]) {
+  if (!src[key]) continue
+  // (a) the provider axis exists at all
+  if (!/PROVIDER_CHAINS/.test(src[key])) {
+    fail(key, "PROVIDER_CHAINS missing — the provider axis is not present; a denied non-Anthropic model would walk the Anthropic chain")
+    continue
+  }
+  if (!/PROVIDER_FLOORS/.test(src[key]))
+    fail(key, "PROVIDER_FLOORS missing — a chain must terminate at its OWN provider's floor")
+  // (b) anthropic must still map to the canonical chain + floor
+  if (!/anthropic\s*:\s*DOWNGRADE_CHAIN/.test(src[key]))
+    fail(key, "PROVIDER_CHAINS.anthropic must be DOWNGRADE_CHAIN itself — Anthropic behaviour must stay byte-identical")
+  if (!/anthropic\s*:\s*FLOOR_MODEL/.test(src[key]))
+    fail(key, "PROVIDER_FLOORS.anthropic must be FLOOR_MODEL")
+  // (c) THE INVARIANT: nextRunnable must fail closed, never fall through to a
+  //     global chain. A `return FLOOR_MODEL` with no provider lookup is the
+  //     regression — it is precisely the old behaviour.
+  const nr = src[key].match(/function nextRunnable[\s\S]{0,1400}?\n\}/)?.[0] ?? ""
+  if (!nr) fail(key, "could not locate nextRunnable to verify the provider guard")
+  else {
+    if (!/providerOf\(/.test(nr))
+      fail(key, "nextRunnable does not resolve the requested key's provider — it can cross providers")
+    if (!/PROVIDER_CHAINS\[/.test(nr))
+      fail(key, "nextRunnable does not walk a PER-PROVIDER chain")
+    if (!/return null/.test(nr))
+      fail(key, "nextRunnable never returns null — it cannot fail closed, so an unmapped provider borrows another chain")
+    if (/return\s+FLOOR_MODEL\s*(;|\n|$)/.test(nr))
+      fail(key, "nextRunnable returns the global FLOOR_MODEL unconditionally — that is the pre-Arkestra defect (a Codex/local model lands on Anthropic)")
+  }
+  // (d) the fail-closed signal must be on the decision, or callers cannot honour it
+  if (!/blocked\??\s*:\s*boolean/.test(src[key]))
+    fail(key, "ModelDecision has no `blocked` field — callers cannot distinguish 'fail closed' from 'ran fine'")
+}
+
 // ── Report
 const label = "verify-model-policy-conformance"
 if (notes.length) for (const n of notes) console.log(`  note  ${label}: ${n}`)

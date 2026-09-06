@@ -347,3 +347,118 @@ describe("decision + event emission", () => {
     expect(events[0].resolved).toBe("fable5")
   })
 })
+
+// ---------------------------------------------------------------------------
+// ARKESTRA — the provider axis
+// ---------------------------------------------------------------------------
+//
+// These are the tests that would have caught the defect. Reproduced 2026-09-06
+// by executing the pre-Arkestra logic:
+//
+//     requested=gpt:gpt-6-astra   -> downgraded to: opus5
+//     requested=local:griotmodel  -> downgraded to: opus5
+//
+// `nextRunnable` did `DOWNGRADE_CHAIN.indexOf(requested)`, which returns -1 for
+// any `${provider}:${model}` key, so the walk began at the TOP of the Anthropic
+// chain. A Codex request silently became an Anthropic one billed to the Max
+// subscription; a LOCAL model escaped to the cloud. It never reached the floor.
+describe("Arkestra — the provider axis", () => {
+  const deniedEverything = {
+    version: 1,
+    headlessDefault: "deny",
+    models: {
+      opus5: { mode: "allow" },
+      fable5: { mode: "ask" },
+      "gpt:gpt-6-astra": { mode: "deny" },
+      "local:griotmodel": { mode: "deny" },
+    },
+    surfaces: {},
+  }
+
+  test("a denied CODEX model never becomes an Anthropic model", async () => {
+    const root = makeProject({ policy: deniedEverything })
+    const d = await resolveModelDecision({ requested: "gpt:gpt-6-astra", projectRoot: root })
+    expect(d.model).not.toBe("opus5")
+    expect(d.model).not.toBe("opus48")
+    expect(d.model).not.toBe("fable5")
+    expect(d.blocked).toBe(true)
+    expect(d.provider).toBe("gpt")
+  })
+
+  test("a denied LOCAL model never escapes to the cloud (local-first guarantee)", async () => {
+    const root = makeProject({ policy: deniedEverything })
+    const d = await resolveModelDecision({ requested: "local:griotmodel", projectRoot: root })
+    expect(d.blocked).toBe(true)
+    expect(d.provider).toBe("local")
+    // the whole point: nothing from another provider's chain
+    expect(["fable5", "opus5", "opus48"]).not.toContain(d.model)
+  })
+
+  test("ANTHROPIC downgrade behaviour is unchanged (no regression)", async () => {
+    const root = makeProject({
+      policy: {
+        version: 1,
+        headlessDefault: "deny",
+        models: { fable5: { mode: "deny" }, opus5: { mode: "allow" } },
+        surfaces: {},
+      },
+    })
+    const d = await resolveModelDecision({ requested: "fable5", projectRoot: root })
+    expect(d.model).toBe("opus5")
+    expect(d.downgradedFrom).toBe("fable5")
+    expect(d.blocked).toBeFalsy()
+    expect(d.provider).toBe("anthropic")
+  })
+
+  test("an explicit provider on the entry overrides the key prefix", async () => {
+    const root = makeProject({
+      policy: {
+        version: 1,
+        headlessDefault: "deny",
+        models: { weird: { mode: "deny", provider: "openai" } },
+        surfaces: {},
+      },
+    })
+    const d = await resolveModelDecision({ requested: "weird", projectRoot: root })
+    expect(d.provider).toBe("openai")
+    expect(d.blocked).toBe(true)
+  })
+
+  test("a credential-bound request is NEVER failed over, even within its provider", async () => {
+    const root = makeProject({
+      policy: {
+        version: 1,
+        headlessDefault: "deny",
+        models: { fable5: { mode: "deny" }, opus5: { mode: "allow" } },
+        surfaces: {},
+      },
+    })
+    const d = await resolveModelDecision({
+      requested: "fable5",
+      projectRoot: root,
+      credentialBound: true,
+    })
+    // without credentialBound this downgrades to opus5 (asserted above)
+    expect(d.model).toBe("fable5")
+    expect(d.blocked).toBe(true)
+    expect(d.reason).toMatch(/credential-bound/i)
+  })
+
+  test("the bus event carries provider and blocked, so a fail-closed is visible", () => {
+    const root = makeProject()
+    emitModelEvent(
+      root,
+      {
+        requested: "gpt:gpt-6-astra",
+        resolved: "gpt:gpt-6-astra",
+        mode: "deny",
+        provider: "gpt",
+        blocked: true,
+      },
+      {},
+    )
+    const [e] = readEvents(root)
+    expect(e.provider).toBe("gpt")
+    expect(e.blocked).toBe(true)
+  })
+})
