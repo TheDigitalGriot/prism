@@ -36,6 +36,10 @@ speech; "Model Control Plane" retired — it collided with MCP = Model Context P
 | `6fbdef9` | **Arkestra provider axis** — the fix, the gate, the unblocked test suite |
 | `57d64c7` | **Codex roster** — derived so a retired model cannot enter a chain |
 | `c3850f8` | **prism-model-onboard** skill + **decision-bus** registered with the broker |
+| `505fa76` | this handback |
+| `0964dce` | **LIFT 1** — pairing token minted/stored/compared + atomic bus appends |
+| `575304e` `b462328` | **LIFT 2** — Spectrum workgraph MCP Worker + 13 protocol tests |
+| `62c4623` | **LIFT 3** — recall layer + the Codex-Orchestration research |
 
 ### griot-live-artifacts — 4 commits, all pushed, cards live
 
@@ -114,7 +118,7 @@ for explicitly-declared providers.
 | `prism-interop-landing-zone` | **the broker is BUILT** on `:6780` (assumed spec-only); `pairingInfo()` mints a token **never stored or compared**; `digital-griot-mcp` had **zero identity** and **zero concurrency guarantees** |
 | `cc-conversation-archiver` | the capture half of deja-vu's recall; **no licence declared** |
 | `agentic-ui-canvas-oss` | nothing does the whole job; **Onlook** (Apache-2.0) closest; **tldraw is source-available, not OSI** — the shelf blurb says "open-source" |
-| `codex-orchestration` | *(agent running at handback time — check the file)* |
+| `codex-orchestration` | cross-provider call is a **subprocess** shelling out to the `claude` CLI, not a protocol bridge; the plugin holds **no key** and structurally forbids API-key auth, so one run bills **two accounts**; **no retry, no fallback anywhere**; effort has **no cross-provider mapping, deliberately**; best idea = **two-level qualification** (reviewed manifest + a per-install billable probe recorded as *route acceptance, not runtime identity*). Carries a real substitution defect to invert, and two unsourced README metrics |
 
 ---
 
@@ -131,18 +135,44 @@ never leaves its provider, write data not logic, gate on three checks.
 
 ---
 
-## STILL OPEN
+## The three lifts — ALL SHIPPED
 
-### The three remaining lifts (researched, unstarted)
-1. **Interop bus** — the broker is built and `decision-bus` is now registered. Next: mint and
-   **compare** a paired token (`pairingInfo()` already mints one and throws it away), and add
-   atomic writes to the events file (**no `flock`/rename today**; it is `unlinkSync`-ed out from
-   under readers).
-2. **MCP server for the Spectrum workgraph** on the CF-relay tier — Puter's stateless Worker is
-   the model; note the sealed blob holds flow state, not the token.
-3. **deja-vu recall** for `sankofa` + `chat-log-access`. **Two separate integrations**: local
-   models as an *embedding backend* = **zero code** (env vars; Ollama `:11434`/LM Studio `:1234`
-   already probed); GriotModel as a *log source* = a new adapter + registry entry (compile-time).
+### 1. Interop bus — `0964dce`
+- **The pairing token authenticated nothing.** `pairingInfo()` minted `randomUUID()` and threw it
+  away, so any caller could `POST /register` any id over the wildcard-CORS surface. Now it mints a
+  **`(forward, backward)` pair** into a live registry with a 5-min TTL, and `redeemPairing()`
+  validates + expires + is **single-use** (a replayed QR cannot register twice). Gated behind
+  `PRISM_BROKER_REQUIRE_PAIRING=1` so local-only setups are unchanged.
+- **Two Puter defects deliberately NOT copied**: its registry miss returns *no reply* and hangs the
+  caller's promise (we answer 401); its `connections_` map is never deleted from (we sweep).
+- **Atomic bus appends** via an explicit `O_APPEND` handle, both copies. **Proven: 8 concurrent
+  writers × 200 lines = 1600 written, ZERO torn.**
+- **Scope stated honestly:** this fixes the APPEND path. Read-modify-write callers
+  (`gavel_decide`, `digital-griot-mcp.ts:801/813`) still need a real lock, and the events file is
+  still `unlinkSync`-ed out from under readers on a new screen.
+
+### 2. Spectrum workgraph MCP Worker — `575304e` + `b462328`
+Stateless CF Worker, **service-worker format + `no_bundle`**, **zero runtime deps** (hand-rolled
+JSON-RPC — no SDK on the edge). Four tools: `workgraph_status/_awaits/_edges/_resolve`.
+**`listTools()` returns the same objects minus the handler**, so the wire schema is produced by
+omission and cannot drift — with a test asserting it. Read-only by default (the global view
+generates, never writes back). Degrades honestly: an absent KV binding returns a well-formed
+answer carrying a `degraded` reason, not a 500. **13/13 protocol tests in plain node.**
+*Auth correction carried:* Puter's sealed blob holds the **flow state and auth code**, not the
+access token — so this Worker does **not** half-implement a sealed-token flow from a wrong premise.
+
+### 3. Recall layer — `62c4623`
+**A. Local model as embedding backend: ZERO CODE, done.** Ollama `:11434` / LM Studio `:1234` are
+already probed; `recall.env.example` ships at repo root. Search stays lexical BM25 — embeddings
+only rerank ≤64 hits and the semantic tier fires *only* when lexical returns zero, so a slow local
+model degrades **quality**, never breaks recall.
+**B. GriotModel as a log source: specified, BLOCKED on one decision** — `Registry()` is a
+**compile-time slice**, so this needs a **fork or an upstream contribution**, not a plugin.
+Five craft lifts specified (budget enforcement, the fail-safe dial, reorder-don't-drop dedup,
+redact-before-cap, one-tool-with-a-mode) — those land in `~/.claude/skills` via
+digital-griot-skills, **not this repo**.
+
+## STILL OPEN
 
 ### Parked for you
 - **`griot-harvest-ux-ui`** — deliberately not built. Needs the layer roles from your Desktop
@@ -159,6 +189,14 @@ never leaves its provider, write data not logic, gate on three checks.
 - **`prism-viz-engine-cluster` was an orphan** — now published and registered as `prismvizengine`.
 
 ---
+
+### Decisions waiting on you (each blocks real work)
+
+1. **Fork deja-vu or contribute upstream?** `Registry()` is a compile-time slice, so GriotModel
+   recall cannot be a plugin. This is the only thing between the spec and the code for Lift 3B.
+2. **`griot-harvest-ux-ui` layer roles** — from your Desktop codex.
+3. **Rename `model-policy.*` → `arkestra-policy.*`?** Raised earlier, still undecided. Touches
+   4 files across 2 apps plus the shell hooks; I6-style aliases would carry the old paths.
 
 ## Ceremony checklist
 
