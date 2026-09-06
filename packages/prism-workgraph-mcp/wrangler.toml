@@ -1,0 +1,17 @@
+# Arkestra's always-on tier — the Spectrum workgraph over MCP.
+#
+# LOCAL-FIRST IS THE DEFAULT. This Worker is the ADDITIVE always-on tier that the
+# same verbs target later; nothing local gates on it being deployed.
+#
+# Shape lifted from Puter's MCP connector, with two corrections the harvest made:
+#   - it is a SERVICE-WORKER format script with no_bundle, not modules/ESM
+#   - it carries ZERO runtime dependencies; the JSON-RPC protocol is hand-rolled
+#     (~230 lines). No MCP SDK on the edge.
+name = "prism-workgraph-mcp"
+main = "src/worker.js"
+compatibility_date = "2026-09-06"
+no_bundle = true
+workers_dev = true
+
+[vars]
+WORKGRAPH_READONLY = "1"
