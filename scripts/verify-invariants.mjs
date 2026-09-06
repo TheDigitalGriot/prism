@@ -19,6 +19,7 @@
  */
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
+import { execFileSync } from 'node:child_process'
 
 const ROOT = process.cwd()
 const results = []
@@ -290,6 +291,87 @@ const newestFile = (p) => {
       problems.length ? 'fail' : 'pass',
       problems.length ? problems.slice(0, 3).join(' · ') + (problems.length > 3 ? ` (+${problems.length - 3})` : '')
                       : `${scripts.length} script(s) checked`)
+}
+
+// ── I9 · a DECISION carries an execution commit or an explicit deferral ────
+// The failure this catches: the decided-but-silently-unexecuted record. A choice
+// gets LOCKED in the drawer, the session moves on, and nothing ever ships — but
+// the record still reads "DECIDED", so the drift is invisible at the exact place
+// you would look for it. Decided is not done, and deferred-on-purpose is fine;
+// what is not fine is a locked decision that says NOTHING about either.
+//
+// Computable form, over the current session's decisions.json (same "newest
+// session" rule as I1 — the current spine, not every stale snapshot):
+//   executed = a git sha in the record that RESOLVES to a real commit in this
+//              repo. Resolving through git, not regex alone, is what makes this
+//              an observation: "defaced" and "acceded" are valid hex strings, so
+//              pattern-matching alone would manufacture passes.
+//   deferred = structural first — the decision is carried in parked[] via fromQ,
+//              or the record carries an explicit deferred/revisit field — with a
+//              deliberately TIGHT prose fallback. Loose markers ("park",
+//              "later", "inbound") are domain vocabulary in these records and
+//              matched decisions that were not deferred at all. A lenient
+//              deferral test buys a green board by lying, which is the one thing
+//              this file's honesty rule forbids.
+// Undecided records (empty choice) are exempt — they are open, not silent.
+{
+  const base = join(ROOT, '.prism', 'local', 'brainstorm')
+  const sessions = dirs(base)
+  let gitOk = true
+  try { execFileSync('git', ['rev-parse', '--git-dir'], { cwd: ROOT, stdio: 'ignore' }) } catch { gitOk = false }
+
+  if (!sessions.length) {
+    rec('I9', 'decisions carry a commit or a deferral', 'unverified', 'no decision records in this repo')
+  } else if (!gitOk) {
+    rec('I9', 'decisions carry a commit or a deferral', 'unverified',
+        'no git here — execution commits cannot be resolved, so nothing can be claimed')
+  } else {
+    const latest = sessions.map(s => ({ s, m: statSync(join(base, s)).mtimeMs }))
+      .sort((a, b) => b.m - a.m)[0].s
+    const state = read(join(base, latest, 'state', 'decisions.json'))
+    let parsed = null
+    try { parsed = state ? JSON.parse(state) : null } catch { /* malformed */ }
+    const decisions = Array.isArray(parsed?.decisions) ? parsed.decisions : null
+
+    if (!decisions) {
+      rec('I9', 'decisions carry a commit or a deferral', 'unverified',
+          state ? 'decision state is malformed or carries no decisions[]' : 'session has no decision state')
+    } else {
+      const parked = Array.isArray(parsed.parked) ? parsed.parked : []
+      const parkedFrom = new Set(parked.map(p => p && p.fromQ).filter(Boolean))
+      // tight on purpose — every phrase here is an explicit statement about
+      // execution, not a word that happens to appear in these decisions.
+      const DEFERRED = /\b(deferred|deferral|revisit|out of scope|not this session|own conversation|next cycle|backlog|not now|won't do|wont do)\b/i
+      const resolved = new Map()
+      const resolves = (sha) => {
+        if (!resolved.has(sha)) {
+          let ok = false
+          try { execFileSync('git', ['cat-file', '-e', `${sha}^{commit}`], { cwd: ROOT, stdio: 'ignore' }); ok = true } catch { /* not a commit */ }
+          resolved.set(sha, ok)
+        }
+        return resolved.get(sha)
+      }
+
+      const silent = []
+      let executed = 0, deferred = 0, open = 0
+      for (const d of decisions) {
+        const id = d.q || d.label || '(unlabelled)'
+        const choice = String(d.choice || '').trim()
+        if (!choice) { open++; continue }
+        const blob = [choice, d.summary, d.commit, d.executed, d.deferred, d.revisit].filter(Boolean).join(' ')
+        const shas = [...new Set(blob.match(/\b[0-9a-f]{7,40}\b/g) || [])].filter(resolves)
+        if (shas.length) executed++
+        else if (parkedFrom.has(d.q) || d.deferred || d.revisit || DEFERRED.test(blob)) deferred++
+        else silent.push(`${id} ("${choice.slice(0, 32)}")`)
+      }
+
+      const tally = `${executed} executed · ${deferred} deferred · ${open} open of ${decisions.length}`
+      rec('I9', 'decisions carry a commit or a deferral', silent.length ? 'fail' : 'pass',
+          silent.length
+            ? `${silent.length} decided but silent (no commit, no deferral): ${silent.slice(0, 3).join(' · ')}${silent.length > 3 ? ` (+${silent.length - 3})` : ''}`
+            : tally)
+    }
+  }
 }
 
 // ── report ─────────────────────────────────────────────────────────────────
