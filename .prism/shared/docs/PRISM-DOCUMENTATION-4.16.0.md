@@ -109,6 +109,33 @@ Every fact was verified against primary sources on release day. **Five correctio
 
 **I9 was failing on entry** with 7 decided-but-silent decisions. Resolved by recording the *real* execution commits — located by asking git which commit added each claimed artifact — not by weakening the check. Choices and summaries were left untouched.
 
+### The review gate — and why it appeared to fail
+
+The two-stage review (`spec-reviewer` → `quality-reviewer`) first returned **empty**, and that was misdiagnosed in-session as broken agents. The actual cause was `maxTurns: 10` in both agents' frontmatter: the quality-reviewer spent **15 tool calls / 79k tokens / 111s** and was terminated at the cap before it could write its summary. The prompt asked it to trace ten things across five files *and* verify six claims — roughly 25–30 turns of work. **An over-scoped prompt, not a broken agent.**
+
+Re-dispatched as two narrowly-scoped reviews that fit the budget (4 and 6 tool calls). Both returned. Result:
+
+| review | verdict |
+|---|---|
+| broker pairing + atomic writes | **CLEAN** — single-use redemption is safe (no `await` between `get` and `delete`), no bypass path, backward compatible with the env unset, no fd leak |
+| provider axis core | **1 MEDIUM — fixed** |
+
+The Medium is worth recording because it defeated an author-written test. `providerOf` gave an explicit `provider` field precedence over the key's own prefix, so a self-inconsistent entry —
+
+```jsonc
+"openai:gpt-6-astra": { mode: "deny", provider: "anthropic" }
+```
+
+— walked the **Anthropic** chain and resolved to `opus5`. The cross-provider escape this release exists to close, reintroduced through config rather than logic.
+
+The adversarial test written for exactly this case **passed while the escape was live**, because it asserted the wrong property: `expect(d.model).not.toBe("openai:gpt-6-astra")` — true, since the answer was `opus5`. Corrected to `expect(ANTHROPIC).not.toContain(d.model)`, matching the sibling malformed-policy test that had it right.
+
+**Fix:** the key prefix now wins over a contradicting `provider` field, in both mirrored copies. The prefix is part of the requested identity; the field is metadata about it, and metadata must not relabel a model into another provider's chain. Explicit `provider` still works normally on keys that carry no prefix.
+
+**Negative-tested:** reverting `providerOf` produced `expected [ 'fable5', 'opus5', 'opus48' ] to not include 'opus5'`, and the file was restored byte-identically. Final: **49/49** across three vscode suites.
+
+The lesson generalises past this bug: a test that asserts a *weaker* property than the one that matters is indistinguishable from a passing test until something independent looks at it.
+
 ## 8. Known gaps carried forward
 
 - **Bus concurrency is only half-fixed.** The append path is atomic; read-modify-write callers (`gavel_decide`, `digital-griot-mcp.ts:801/813`) still need a real lock, and the events file is still `unlinkSync`-ed out from under readers on a new screen.

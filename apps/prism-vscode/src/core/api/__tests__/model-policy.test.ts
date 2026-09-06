@@ -573,9 +573,12 @@ describe("Arkestra — adversarial provider-crossing attempts", () => {
       },
     })
     const d = await resolveModelDecision({ requested: "openai:gpt-6-astra", projectRoot: root })
-    // It may downgrade within the declared provider, but must NEVER return the
-    // requested foreign id as a runnable Anthropic model.
-    expect(d.model).not.toBe("openai:gpt-6-astra")
+    // The assertion that matters is that it did not land on an ANTHROPIC model.
+    // The first version of this test only checked `d.model !== "openai:gpt-6-astra"`,
+    // which PASSED while the decision resolved to fable5 — it was asserting the
+    // wrong property and hid a real cross-provider escape until review caught it.
+    expect(ANTHROPIC).not.toContain(d.model)
+    expect(d.provider).not.toBe("anthropic")
   })
 
   test("a colon-prefixed key (empty provider) fails closed", async () => {

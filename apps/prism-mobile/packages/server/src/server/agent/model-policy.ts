@@ -86,9 +86,24 @@ const DEFAULT_PROVIDER = "anthropic";
 
 export function providerOf(key: string, policy?: Policy): string {
   const explicit = policy?.models?.[key]?.provider;
-  if (explicit) return explicit;
   const i = key.indexOf(":");
-  if (i > 0) return key.slice(0, i);
+  const prefix = i > 0 ? key.slice(0, i) : undefined;
+
+  // THE KEY PREFIX WINS over a contradicting `provider` field.
+  //
+  // Found by review, 2026-09-06: letting the field win let a self-inconsistent
+  // entry cross providers —
+  //     "openai:gpt-6-astra": { mode: "deny", provider: "anthropic" }
+  // resolved a DENIED Codex model onto the Anthropic chain and returned fable5.
+  // That is exactly the defect this axis exists to prevent, reintroduced through
+  // config rather than logic.
+  //
+  // The prefix is part of the requested identity; the field is metadata about it.
+  // An entry must not be able to relabel a model into someone else's provider.
+  if (prefix && explicit && explicit !== prefix) return prefix;
+
+  if (explicit) return explicit;
+  if (prefix) return prefix;
   if ((DOWNGRADE_CHAIN as readonly string[]).includes(key)) return DEFAULT_PROVIDER;
   return "unknown";
 }
