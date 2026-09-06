@@ -46,6 +46,9 @@ if (base) {
 if (changed === null) line('WARN', 'no base tag/branch to diff against — structural checks skipped (run in a repo with history)');
 else if (changed.size === 0) line('WARN', `no files changed vs ${base} — structural checks scanned 0 files (bootstrap / first release?)`);
 const inScope = (p) => changed !== null && changed.has(p);
+// Structural checks report on THEIR OWN result. Sharing the global `failed` counter made an
+// earlier verify-*.mjs failure stamp [FAIL] on this line too, misattributing which gate broke.
+const failedBeforeStructural = failed;
 
 // 3a. SKILL.md size — progressive disclosure (< 500 lines)
 for (const p of walk('skills').filter(p => p.endsWith('SKILL.md') && inScope(p))) {
@@ -62,6 +65,6 @@ for (const p of [...walk('skills'), ...walk('commands'), ...walk('hooks')].filte
   if (HARDCODED.test(readFileSync(p, 'utf8'))) { failed++; line('FAIL', `${p} contains a hardcoded absolute path (use \${CLAUDE_PLUGIN_ROOT} / project-relative)`); }
 }
 
-line(failed === 0 ? 'PASS' : 'FAIL', `structural checks (scoped to ${changed ? changed.size + ' changed files' : 'skipped'})`);
+line(failed === failedBeforeStructural ? 'PASS' : 'FAIL', `structural checks (scoped to ${changed ? changed.size + ' changed files' : 'skipped'})`);
 console.log(`\n${failed === 0 ? 'AUDIT CLEAN' : failed + ' AUDIT FAILURE(S)'}`);
 process.exit(failed === 0 ? 0 : 1);

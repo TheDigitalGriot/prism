@@ -83,7 +83,17 @@ export function ProgressStep({ checked, installDir, onNext }: ProgressStepProps)
             // The VSIX ships as a bundled Tauri resource, so resolve it from the
             // installer's own resource dir rather than installDir (nothing
             // populates installDir\extensions — that was the legacy NSIS's job).
-            const vsixPath = await resolveResource("extensions/prism.vsix");
+            // Distinguish a packaging failure from an editor failure: without this,
+            // a missing bundle surfaces as a generic "Failed: Error" and reads like
+            // a broken editor rather than a broken build.
+            let vsixPath: string;
+            try {
+              vsixPath = await resolveResource("extensions/prism.vsix");
+            } catch {
+              throw new Error(
+                "Bundled VSIX resource not found (extensions/prism.vsix). This is a packaging error in the installer build, not a problem with your editor."
+              );
+            }
             for (const editor of editors) {
               const ver = editor.version ? ` v${editor.version}` : "";
               addLog(`[${editor.name}${ver}] Installing extension...`);

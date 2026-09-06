@@ -71,7 +71,14 @@ export function InstallingStep({ checked, installDir, onDone }: InstallingStepPr
           } else if (c.id === "vscode") {
             const editors = await invoke<DetectedTool[]>("detect_editors");
             // Bundled Tauri resource — see the Windows ProgressStep note.
-            const vsixPath = await resolveResource("extensions/prism.vsix");
+            let vsixPath: string;
+            try {
+              vsixPath = await resolveResource("extensions/prism.vsix");
+            } catch {
+              throw new Error(
+                "Bundled VSIX resource not found (extensions/prism.vsix). This is a packaging error in the installer build, not a problem with your editor."
+              );
+            }
             await invoke("install_all_extensions", { editors, vsixPath });
             for (const e of editors) {
               const ver = e.version ? ` v${e.version}` : "";

@@ -46,6 +46,13 @@ Output: `apps/prism-installer/src-tauri/target/release/bundle/nsis/Prism Setup_{
 Verify: `ls "apps/prism-installer/src-tauri/target/release/bundle/nsis/Prism Setup_{NEW_VERSION}_x64-setup.exe"`
 
 > **Note**: On macOS, use `--bundles dmg` instead. CI builds both via `prism-installer-release.yml`.
+>
+> **The `--bundles` flag is not optional on macOS.** `tauri.conf.json` pins
+> `bundle.targets: ["nsis"]`, so a bare `npm run tauri build` on a Mac tries to build a Windows
+> NSIS target and fails. CI is unaffected because both jobs pass `--bundles` explicitly
+> (`prism-installer-release.yml`), but a local macOS build must pass `--bundles dmg`. The config
+> keeps an explicit target rather than `[]` because an empty array bundles **nothing** while still
+> exiting 0 — the v4.15.0/v4.15.1 stale-artifact bug.
 
 ## 3e. Verify every installer by embedded version
 
