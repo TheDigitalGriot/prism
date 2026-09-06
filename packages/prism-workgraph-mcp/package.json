@@ -1,0 +1,22 @@
+{
+  "name": "@prism/workgraph-mcp",
+  "version": "4.15.2",
+  "private": true,
+  "description": "The Spectrum workgraph over MCP (Model Context Protocol) — Arkestra's additive always-on tier. Stateless Cloudflare Worker, zero runtime dependencies.",
+  "type": "commonjs",
+  "main": "src/worker.js",
+  "scripts": {
+    "test": "node src/worker.test.cjs",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "workgraph",
+    "spectrum",
+    "arkestra",
+    "cloudflare-worker"
+  ],
+  "license": "MIT"
+}

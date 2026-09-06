@@ -21,14 +21,25 @@ speech; "Model Control Plane" retired — it collided with MCP = Model Context P
 1. **I9 FAILS** — `verify-invariants.mjs` reports *7 decided but silent* decisions in an old
    brainstorm's `decisions.json` (`Q3.1`, `Q3.2`, `Q4`, +4). **Pre-existing, not from this
    session**, but the ceremony halts on a false invariant. Clear or defer them first.
-2. **`griot-ontology` HAS NO REMOTE.** *(Corrected — I first wrote "4 commits unpushed"; that was
-   wrong, there is nowhere to push them.)* `git remote -v` is empty. The 4 commits from this
-   session (`67d3d5d`, `2c15904`, `ffdaf2e`, `7ef7b84`) are committed **locally only**, as is the
-   pre-existing `1454722`.
-   **This is a bigger risk than an unpushed branch:** the canonical doctrine substrate — the file
-   every repo now imports after the migration — exists **only on this machine**, plus two D-drive
-   snapshots (`ontology-rename_2026-09-05`, `ontology-import-migration_2026-09-06`). One disk
-   failure loses the ontology's history. Worth a remote.
+2. **`griot-ontology` — RESOLVED, and deliberately NEVER going to GitHub.**
+   All 8 commits (including this session's `67d3d5d`, `2c15904`, `ffdaf2e`, `7ef7b84`) are
+   committed, and the full history is now mirrored to a **bare local repo**:
+   `D:\GriotBackups\griot-ontology.git` (remote name `backup`). Keep it current with
+   `git push backup main`.
+
+   **Why no GitHub remote — a standing decision, not an oversight.** A secret scan came back clean
+   (every hit was prose about *context tokens* / *design tokens*), but the doctrine's **content**
+   is the issue: three personal email addresses, machine paths and device name, client names, the
+   business roadmap, and **family health details**. None of that needs to leave the machine to do
+   its job, and "private repo" still means a third party holds it. Gavin stopped a push mid-flight
+   and was right to.
+
+   > ⚠️ **Loose end for Gavin (30 seconds):** an EMPTY private repo
+   > `TheDigitalGriot/griot-ontology` was created before he stopped me. **Nothing was ever pushed**
+   > (`git ls-remote` empty, `isEmpty: true`) and the local remote is removed, so it is inert. It
+   > still needs deleting — the CLI token lacks the `delete_repo` scope and I would not expand
+   > GitHub auth scopes unprompted. Either delete it in the browser, or:
+   > `gh auth refresh -h github.com -s delete_repo && gh repo delete TheDigitalGriot/griot-ontology --yes`
 
 ---
 
