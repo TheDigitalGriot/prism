@@ -65,9 +65,23 @@ interaction design are explicitly part of the requirement, not decoration.
 ### JSON Canvas — the neutral wire (confirmed)
 Placement as interchange between layer 01 and layer 02 confirmed as the right instinct.
 
-**WANTED, UNFOUND:** a repo or site Gavin saw that rendered **JSON as nodes, Blender-node-style**
-— possibly "json hacks". He could not re-find it. *"JSON node canvas+"*. Low priority, but
-recorded so it is not lost twice.
+**FOUND — it was JSONCrack** (`AykutSarac/jsoncrack.com`). Gavin re-found it the same day.
+Renders any JSON as an interactive **node graph** — which is exactly the "looked like a Blender
+node" memory. Collapse/expand, search, image export; TS/React monorepo, actively maintained
+(last commit 2026-08-30).
+
+**Licence: Apache-2.0** — surveyed, not recalled. It was **AGPL-3.0 historically**, so answering
+from memory would have been wrong, and wrong in the direction that matters for a commercial
+product. This is precisely why `griot-harvest` records licence as a surveyed fact.
+
+**The fit:** our own substrates are JSON — the workgraph index, `stories.json`, the DGS arrays
+themselves. JSONCrack makes them **explorable** rather than read. It pairs with JSON Canvas
+without overlapping: JSON Canvas is the interchange **format** between generators and canvases;
+JSONCrack is a **renderer** for JSON specifically.
+
+On the shelf as of `1abea15` — `Prism(3) · Synaptiq(2) · Valence(1)`, `undecided/next`.
+First real dogfood of `griot-harvest`: surveyed with its own script, shelf checked first
+(0 hits across 8 keyword angles — genuinely new).
 
 ## Open questions Gavin explicitly did NOT resolve
 
