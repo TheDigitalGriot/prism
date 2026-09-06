@@ -1,6 +1,6 @@
 ---
 title: Model Assignment Convention
-description: How Prism assigns models — a three-tier routing convention (Opus / Sonnet / Haiku) under the Model Control Plane, with Fable 5.1 as a HITL-gated escalation.
+description: How Prism assigns models — a three-tier routing convention (Opus / Sonnet / Haiku) under Arkestra, the model-governance layer, with Fable 5.1 as a HITL-gated escalation and a provider axis that never crosses providers.
 outline: [2, 3]
 ---
 
@@ -25,7 +25,9 @@ Two models sit outside routing entirely:
 
 Agents use **aliases, never pinned IDs**, so a family roll-forward does not require touching 14 frontmatter blocks. Pin a full ID only for reproducible eval runs.
 
-## The Model Control Plane
+## Arkestra — the model-governance layer
+
+> **Renamed in v4.16.0.** This layer was called the *Model Control Plane*; that name collided with **MCP**, which means **Model Context Protocol**. It is now **Arkestra** — after Sun Ra's Arkestra, where a conductor decides moment to moment which voice solos. *"The Governor"* remains the everyday spoken name.
 
 Assignment is only half the picture — a **per-model approval mode** (`ask` / `allow` / `deny` / `skip`) governs whether an assigned model actually runs. The policy store lives at `.prism/local/model-policy.json` (gitignored; `model-policy.example.json` documents the shape) and is resolved by one shared core, `packages/prism-core/src/core/api/model-policy.ts`.
 
@@ -35,7 +37,36 @@ Assignment is only half the picture — a **per-model approval mode** (`ask` / `
 | `opus5` | `claude-opus-5` | `allow` — the routine ceiling carries no model-level gate |
 | `opus48` | `claude-opus-4-8` | free floor, not policy-listed |
 
-A `deny` downgrades along the chain `fable5 → opus5 → opus48` and emits a bus event naming the substitution. **Every decision emits an event**, including `allow`, so a premium model never runs silently.
+A `deny` downgrades along the **Anthropic** chain `fable5 → opus5 → opus48` and emits a bus event naming the substitution. **Every decision emits an event**, including `allow`, so a premium model never runs silently.
+
+### The provider axis <Badge type="tip" text="v4.16.0" />
+
+**A chain never leaves its provider.** Models from other providers are keyed `${provider}:${model}` (e.g. `openai:gpt-6-astra`, `local:griotmodel`), each provider declares its own chain and floor, and a denied model steps down **within its own provider** or **fails closed**.
+
+This closed a real defect. Before v4.16.0 the downgrade walked one global chain, and because `DOWNGRADE_CHAIN.indexOf()` returns `-1` for any provider-prefixed key, the walk restarted at the *top of the Anthropic chain*:
+
+```text
+gpt:gpt-6-astra   →  opus5      # a Codex request became an Anthropic one
+local:griotmodel  →  opus5      # a LOCAL model escaped to the cloud
+```
+
+Three consequences: the provider changed silently, the wrong account was billed, and — most seriously — a local model's data left the device.
+
+| field | meaning |
+|---|---|
+| `provider` | the provider the decision resolved within; never crossed implicitly |
+| `blocked` | **fail-closed signal** — nothing may run. Callers must check it. |
+| `credentialBound` (input) | a request carrying its own credential is **never failed over**, even within its provider |
+
+The safety property does not depend on callers being disciplined: **a blocked decision keeps `model === requested`**, so a caller that ignores `blocked` runs the model it asked for rather than someone else's.
+
+`verify-model-policy-conformance.mjs` asserts all of this across the mirrored copies, so a cross-provider downgrade cannot be reintroduced silently.
+
+### Rosters
+
+`packages/prism-core/src/core/api/model-roster.ts` holds the **data** half — who exists, at what status, with which effort values — while `model-policy.ts` holds the **decision** half. That split lets a model be added by writing data rather than logic (see the `prism-model-onboard` skill).
+
+Retirement is a **date comparison**, not a maintained flag: `chainFor()` filters by `retiredOn`, so a retired id can never enter a live chain. Effort values are the lowercase API set (`minimal|low|medium|high|xhigh|max`) — never the vendor's UI display labels.
 
 Opus 5's only guard is a one-shot confirm on `effort: xhigh|max` — a per-call effort control, not a model gate.
 
