@@ -400,6 +400,59 @@ const newestFile = (p) => {
   }
 }
 
+// ── I10 · the ontology EDITED is the canonical, never the generated mirror ──
+// The failure this catches, observed 2026-09-06: the doctrine substrate lives at
+// griot-ontology/claude/CLAUDE.md, and propagate.ps1 copies it to the legacy
+// agent-ontology path as a generated compat mirror. Every repo root imported the
+// MIRROR, so the string "griot-ontology" appeared ZERO times in the doctrine an
+// agent actually reads — the canonical was unreachable from inside any session.
+// An agent asked to amend the ontology therefore edits the mirror, and the next
+// propagate run silently clobbers the edit. Nothing failed; the work just vanished.
+//
+// I6 already asserts both paths RESOLVE. That is not enough: two files can both
+// exist while one silently holds an edit that is about to be destroyed. So:
+//   parity  — mirror bytes == canonical bytes. A difference means either the
+//             mirror was hand-edited (edit pending loss) or propagate was not
+//             re-run after a canonical change (surfaces serving stale doctrine).
+//             Either way it is a FAIL, and the detail says which direction.
+//   reach   — this repo's own CLAUDE.md names the canonical path, so the canonical
+//             is discoverable from inside the session that would edit it. This is
+//             the half that actually prevents the mistake rather than detecting it.
+{
+  const home = process.env.USERPROFILE || process.env.HOME || ''
+  const canon = join(home, 'GriotMeta', 'griot-ontology', 'claude', 'CLAUDE.md')
+  const mirror = join(home, 'GriotMeta', 'agent-ontology', 'claude', 'CLAUDE.md')
+  const problems = []
+
+  if (!existsSync(canon) || !existsSync(mirror)) {
+    rec('I10', 'ontology: canonical edited, not the mirror', 'unverified',
+        `not both present (canonical ${existsSync(canon) ? 'ok' : 'MISSING'}, mirror ${existsSync(mirror) ? 'ok' : 'MISSING'})`)
+  } else {
+    // Compare bytes, not text: an encoding/line-ending divergence is real drift
+    // between what the canonical says and what the mirror serves.
+    const a = readFileSync(canon), b = readFileSync(mirror)
+    if (!a.equals(b)) {
+      const newer = statSync(canon).mtimeMs >= statSync(mirror).mtimeMs
+      problems.push(newer
+        ? `mirror is STALE (${a.length}B canonical vs ${b.length}B mirror) — re-run propagate.ps1`
+        : `mirror is NEWER than canonical (${b.length}B vs ${a.length}B) — it was hand-edited; that edit will be LOST on the next propagate. Move it into griot-ontology first.`)
+    }
+
+    const self = read(join(ROOT, 'CLAUDE.md'))
+    if (self === null) {
+      problems.push('this repo has no CLAUDE.md, so the canonical is not reachable from its sessions')
+    } else if (self.includes('agent-ontology')) {
+      problems.push('this repo imports the legacy agent-ontology path — the canonical is invisible from its sessions')
+    } else if (!self.includes('griot-ontology')) {
+      problems.push('this repo names neither ontology path')
+    }
+
+    rec('I10', 'ontology: canonical edited, not the mirror',
+        problems.length ? 'fail' : 'pass',
+        problems.length ? problems.join(' · ') : 'mirror byte-identical to canonical; repo imports the canonical path')
+  }
+}
+
 // ── report ─────────────────────────────────────────────────────────────────
 const pad = (s, n) => String(s).padEnd(n)
 console.log('\ninvariants — from the agent ontology\n')

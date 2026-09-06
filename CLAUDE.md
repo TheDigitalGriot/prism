@@ -1,6 +1,6 @@
-@C:\Users\digit\GriotMeta\agent-ontology\claude\CLAUDE.md
+@C:\Users\digit\GriotMeta\griot-ontology\claude\CLAUDE.md
 
-@~/GriotMeta/agent-ontology/claude/CLAUDE.md
+@~/GriotMeta/griot-ontology/claude/CLAUDE.md
 
 # CLAUDE.md
 
