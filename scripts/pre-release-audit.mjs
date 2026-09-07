@@ -46,13 +46,34 @@ if (existsSync('package.json') && existsSync('package-lock.json')) {
   try { lock = JSON.parse(readFileSync('package-lock.json', 'utf8')); } catch { /* handled below */ }
   const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
   const globs = Array.isArray(pkg.workspaces) ? pkg.workspaces : (pkg.workspaces?.packages ?? []);
-  const members = globs.flatMap(g => {
-    if (!g.endsWith('/*')) return existsSync(`${g}/package.json`) ? [g] : [];
-    const dir = g.slice(0, -2);
-    return existsSync(dir) ? readdirSync(dir, { withFileTypes: true })
-      .filter(e => e.isDirectory() && existsSync(`${dir}/${e.name}/package.json`))
-      .map(e => `${dir}/${e.name}`) : [];
-  });
+
+  // Resolve a workspace glob segment-by-segment so `apps/*/server` works, not only a trailing
+  // `/*`. An UNSUPPORTED shape (`**`, or a partial wildcard like `pre*`) is reported LOUDLY
+  // rather than resolving to nothing: the first cut silently dropped any glob that did not end
+  // in `/*`, which meant a member declared that way could be missing from the lock and this
+  // check would still print PASS — the exact M13 defect, reintroduced for a different glob shape.
+  const unsupported = [];
+  const resolveGlob = (g) => {
+    if (g.includes('**')) { unsupported.push(g); return []; }
+    let paths = [''];
+    for (const seg of g.split('/')) {
+      if (seg === '*') {
+        paths = paths.flatMap(p => {
+          const dir = p || '.';
+          return existsSync(dir) ? readdirSync(dir, { withFileTypes: true })
+            .filter(e => e.isDirectory() && e.name !== 'node_modules' && !e.name.startsWith('.'))
+            .map(e => (p ? `${p}/${e.name}` : e.name)) : [];
+        });
+      } else if (seg.includes('*')) { unsupported.push(g); return []; }
+      else paths = paths.map(p => (p ? `${p}/${seg}` : seg)).filter(existsSync);
+    }
+    return paths.filter(p => existsSync(`${p}/package.json`));
+  };
+  const members = globs.flatMap(resolveGlob);
+  if (unsupported.length) {
+    failed++;
+    line('FAIL', `unsupported workspace glob shape(s): ${unsupported.join(', ')} — this check cannot resolve them, so it would silently pass. Extend resolveGlob() in scripts/pre-release-audit.mjs`);
+  }
   if (!lock?.packages) {
     failed++;
     line('FAIL', 'package-lock.json is unreadable or has no `packages` map (lockfileVersion < 2?)');
@@ -66,15 +87,27 @@ if (existsSync('package.json') && existsSync('package-lock.json')) {
     }
   }
 
-  // 3b. Authoritative: exactly what CI runs. A genuine out-of-sync lock FAILS; an environmental
-  // problem (offline, npm missing) WARNs instead, so a plane-ride release is not blocked by a
-  // check 3a already covered deterministically.
+  // 3b. Authoritative: exactly what CI runs, so it also catches drift 3a cannot see (a member
+  // present in the lock but resolving the wrong dependency versions).
+  //
+  // FAIL-CLOSED. Any non-zero exit is a failure unless it is RECOGNISABLY environmental.
+  // The first cut of this check had it backwards: it FAILed only on an allow-list of npm
+  // phrasings and WARNed on everything else. npm's version-drift wording —
+  //     npm error Invalid: lock file's foo@1.0.0 does not satisfy foo@2.0.0
+  // — matches none of those, so genuine lock drift would have shipped as a warning. A release
+  // gate that defaults to "probably fine" on wording it does not recognise is not a gate, and
+  // npm is free to reword its errors in any release. Verified non-mutating on npm 10.9.3:
+  // lock hash and node_modules entry count are identical before and after.
   const r = run('npm', ['ci', '--dry-run', '--ignore-scripts']);
   const out = (r.stdout || '') + (r.stderr || '');
-  const outOfSync = /EUSAGE|can only install packages when your package\.json|Missing: .* from lock file/.test(out);
+  const ENVIRONMENTAL = /ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ETIMEDOUT|ERR_SOCKET|network|registry.*(unreachable|timed out)|not recognized as an internal|command not found/i;
   if (r.status === 0) line('PASS', 'npm ci --dry-run (the lock resolves as CI would resolve it)');
-  else if (outOfSync) { failed++; line('FAIL', 'npm ci --dry-run — package.json and package-lock.json are OUT OF SYNC; CI will fail'); }
-  else line('WARN', `npm ci --dry-run could not complete (environmental — network/npm?); the offline workspace check above still applied`);
+  else if (r.error || ENVIRONMENTAL.test(out)) line('WARN', 'npm ci --dry-run could not reach npm/the registry (environmental); the offline workspace check above still applied');
+  else {
+    failed++;
+    const why = out.split('\n').map(l => l.trim()).find(l => /^npm (error|ERR!)\s+\S/.test(l)) || `exit ${r.status}`;
+    line('FAIL', `npm ci --dry-run — the lock does not resolve as CI would resolve it: ${why.slice(0, 140)}`);
+  }
 }
 
 // 4. Structural best practices (griot-agent-architect) — SCOPED to this release's changed files.
