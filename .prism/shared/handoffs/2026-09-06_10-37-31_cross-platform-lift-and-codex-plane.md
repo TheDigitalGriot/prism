@@ -8,6 +8,65 @@ tags: [handoff, prism, model-control-plane, governor, codex, puter, waggle, deja
 status: in-progress
 ---
 
+## Handback reconciliation, 2026-09-07 (Cowork = source of truth, git-log-grounded)
+
+Prism shipped **v4.16.0 "Arkestra"** (`1fbf7d8`) + **v4.16.1** (HEAD `acfb0cb`); griot-live-artifacts at `eb555cc`. Crossed off against the commit log, not inference.
+
+**DONE (shipped):**
+- [x] **Task 1**, 5 graft decisions captured + codex-synced: `7a330c2` (Puter/waggle/deja-vu/open-connector/Weave Router) + `a1957ea` (18 harvest rows x 12 codexes).
+- [x] **Task 2**, code-intel + ICM ingest: `.prism/shared/research/2026-09-06-*` (arkestra-grafts, dejavu-recall, puter-interop-bus, puter-mcp-server, waggle-handoff-tokens, codex-orchestration); griot-harvest grounds OSS vs real code `3cd8385`.
+- [x] **Task 3**, Codex roster + provider axis in the Governor: `6fbdef9` (provider axis) + `57d64c7` (roster, retirement derived) + `68aec07` (key prefix wins over provider field). A denied model never crosses providers; Anthropic byte-identical.
+- [x] **Task 4**, prism-model-onboard skill: `c3850f8`.
+- [x] **Task 5a**, Puter interop-bus lift: `0964dce` (pairing token minted, stored, compared; atomic bus appends). GAP: read-modify-write callers still need a lock.
+- [x] **Task 5b**, Puter MCP tailored to ICM/Spectrum, shipped as the workgraph MCP on Arkestra's always-on tier: `575304e` + 13 protocol tests `b462328`.
+- [x] **Action 7**, handback + closing ceremony RUN: `2bb33a9`, `91d91a8`.
+- [x] BONUS, v4.16.1 release-integrity lockfile gate (`bc4a601`/`de9772c`, ledger M12+M13); cc-conversation-archiver filed; JSONCrack found (`cac3d21`, closes the viz-engine WANTED thread).
+
+**PARTIAL / BLOCKED (needs your call):**
+- [~] **Task 5c**, deja-vu recall: zero-code half wired `62c4623`. BLOCKED, `Registry()` is a compile-time slice so GriotModel recall can't be a plugin. DECISION: fork deja-vu vs contribute upstream (the only thing between spec and code for Lift 3B).
+
+  > **UPDATE 2026-09-07 (Claude Code, device-side) — 5c is UNBLOCKED and BUILT.** Decision taken:
+  > fork + remix, with the seam kept generic for upstream. Local branch
+  > `griot/runtime-register-seam` in `GriotSandbox\xplatform-harvest\deja-vu`, **no remote —
+  > creating `TheDigitalGriot/deja-vu` is still your call.**
+  >
+  > - `83f8793` **runtime `Register(h Harness)` seam** — Griot-free, upstream-PR-ready. Built-ins
+  >   keep total precedence; a runtime harness cannot shadow a built-in; order stays deterministic.
+  > - `1b576b9` **config-declared harnesses** (a source in JSON, no Go, **no rebuild**) + a
+  >   **fail-closed loopback guard** on the embedding endpoint.
+  >
+  > **Two corrections to this handoff's premise, from `thegriotmodel-codex` (which the design doc
+  > had not consulted):**
+  > 1. **GriotModel is an endpoint, not a log store** — three lanes behind one OpenAI-compatible
+  >    `base_url`. The *client* persists sessions. **Prism runs on Claude Code, and deja's built-in
+  >    `claude` adapter already reads `~/.claude/projects/**/*.jsonl` — so Prism history is
+  >    recallable today.** Observed: an unfiltered search returned this very session.
+  > 2. **Part A was wired but DORMANT** — `recall.env.example` pointed at a live Ollama with **zero
+  >    models**. Pulled `nomic-embed-text`; verified `{"embeddings":[…]}`, 768 dims, 38 ms warm.
+  >    And the "no data-egress" constraint **was enforced by nothing** — `DEJA_EMBED_URL` was
+  >    honoured verbatim. Now fail-closed.
+  >
+  > Proven against the built binary: `griotmodel: 1 session, 2 messages`, recallable via
+  > `--harness griotmodel`; a remote embed endpoint reports `endpoint unavailable`. 18 new tests,
+  > full `go test ./...` exit 0. Upstream PR **prepared, not opened** —
+  > `.prism/shared/docs/UPSTREAM-PR-CANDIDATE-deja-vu-runtime-register.md`.
+  > Config template: `deja-sources.example.json`.
+
+**OPEN / LATER:**
+- [ ] **Task 5d**, Governor grafts open-connector + Weave Router (decisions captured, stage=later).
+- [ ] **Task 6**, Prism-on-Codex version fix: still HELD pending the dual-mirror generator direction.
+
+**DECISIONS WAITING ON YOU:**
+1. deja-vu: fork or upstream (Task 5c).
+2. Rename `model-policy.*` to `arkestra-policy.*`? (still `model-policy.ts` + `model-roster.ts` on disk.)
+3. griot-harvest-ux-ui is deliberately UNBUILT, it needs the layer roles from THIS Desktop codex (interactive griot-ontology). Our codex is the unblock.
+4. Prism CC: delete the empty `TheDigitalGriot/griot-ontology` GitHub repo (needs delete_repo scope). Confirmed NO REMOTE; home = `D:\GriotBackups\griot-ontology.git`.
+
+**KNOWN GAPS:** bus read-modify-write lock (append is atomic); `apps/prism-setup` still tracked though sunset in 4.15.2.
+
+_(Original handoff content below is unchanged.)_
+
+
 # Handoff: cross-platform lift + Codex models into the Governor
 
 This is the heavy-lifting half of a multi-surface initiative planned in Cowork. All research

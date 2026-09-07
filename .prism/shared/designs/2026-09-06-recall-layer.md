@@ -120,7 +120,100 @@ aliases. One tool with a mode beats six tools in a schema list.
 
 ---
 
+---
+
+# UPDATE 2026-09-07 — built. Two corrections first.
+
+## Correction 1 — GriotModel is an endpoint, not a log store
+
+Grounded in `thegriotmodel-codex` (which this doc had not consulted): GriotModel is **three
+inference lanes behind one OpenAI-compatible `base_url`** — fast-local Ollama `:11434/v1`,
+big-local Colibri `./coli serve`, cloud — with "the one-endpoint contract" as component 5. Its
+clients are **Prism / Continue / OpenCode**.
+
+An inference endpoint does not persist conversations; the **client** does. So "GriotModel as a log
+source" resolves to *whose store holds the sessions GriotModel served* — and much of it is already
+covered:
+
+| client | already recallable? |
+|---|---|
+| **Claude Code** (how Prism runs) | ✅ built-in `claude` adapter reads `~/.claude/projects/**/*.jsonl` |
+| **OpenCode** | ✅ built-in `opencode` adapter |
+| **Continue** | ❌ no adapter |
+| a GriotModel-native log | ❌ nothing writes one yet |
+
+**Observed, not argued:** an unfiltered `deja` search during this work returned *this very Prism
+session* through the `claude` adapter. Prism history is recallable today.
+
+## Correction 2 — Part A was wired but DORMANT, and no-egress was unenforced
+
+The `[x]` below was optimistic. `recall.env.example` pointed at a **live Ollama with zero models**
+(`{"models":[]}`), so the semantic tier could never fire. Fixed: pulled `nomic-embed-text` and
+verified the real wire response — `{"embeddings":[…]}`, **768 dims, 38 ms warm** — which is the
+Ollama shape `client.go:88-105` accepts.
+
+Worse, the **hard no-egress constraint was not enforced by anything.** `New()` honours
+`DEJA_EMBED_URL` verbatim; `policy.AllowsEgress` gates *which sessions* may be embedded, not *where
+they go*. Default behaviour is genuinely local-first (probe-only), but one copied config line ships
+transcripts off-machine while recall keeps working and nothing notices.
+
+## What shipped
+
+Fork branch `griot/runtime-register-seam` (**local only, no remote**) —
+`C:\Users\digit\GriotSandbox\xplatform-harvest\deja-vu`.
+
+| commit | what |
+|---|---|
+| `83f8793` | **the runtime seam** — `Register(h Harness)`. Generic, zero Griot references, upstream-PR-ready |
+| `1b576b9` | **config-declared harnesses** + the **fail-closed loopback egress guard** |
+
+- **`Register()`** — built-ins appended-to (never interleaved, so precedence stays total); a runtime
+  harness **cannot shadow a built-in** (`claude` would silently redirect the largest store and
+  present as *missing history*); `Registered()` sorts by name because the cold load depends on
+  registry order while registration order is the caller's iteration order.
+- **`configured.go`** — a harness declared in JSON, no Go, no rebuild. Not a plugin host, on
+  purpose. **No `ParseFrom`**: an offset parser must know a partial trailing line is skippable and
+  earlier lines never change; the config cannot say which, and claiming incremental wrongly
+  *silently drops turns*.
+- **`localonly.go`** — a non-loopback embedding endpoint is refused unless
+  `DEJA_EMBED_ALLOW_REMOTE=1` (only `"1"`; `"true"`/`"yes"` do not count). Refusing degrades to
+  lexical BM25 — the shipped default — so recall never breaks. Matches the codebase's own instincts
+  (unknown `DEJA_RECALL` → `safe`; policy egress requires unanimity).
+
+**Proven against the built binary, not asserted:**
+
+```
+deja index               ->  griotmodel: 1 session, 2 messages
+deja --harness griotmodel "arkestra"
+                         ->  [griotmodel] prism · griotmodel-gm-real-1 — 1 matches
+DEJA_EMBED_URL=https://api.openai.com/...   ->  endpoint unavailable
+DEJA_EMBED_URL=http://127.0.0.1:11434/...   ->  reachable/model=nomic-embed-text
+```
+
+18 new tests; full `go test ./...` exit 0.
+
+**One honest caveat:** `deja doctor` reports `reachable` for an explicitly-configured endpoint it
+has not probed (only the fallback path probes), so it says `reachable` even for a `.invalid` host.
+Pre-existing upstream imprecision, not introduced here — but it means "reachable" in doctor should
+be read as *"a client was constructed"*.
+
 ## Status
+
+- [x] **A — local embedding backend**: config in `recall.env.example`, **and now actually live**
+      (`nomic-embed-text` pulled, 768-dim response verified) **and enforced** (loopback guard).
+- [x] **B — the blocking decision is resolved and the seam is built.** `Registry()` is no longer
+      compile-time-only. A GriotModel log becomes recallable via `deja-sources.example.json` with
+      **no rebuild** — the moment something writes one.
+- [ ] **Fork not created.** Work is local on `griot/runtime-register-seam`; no remote exists.
+      Creating `TheDigitalGriot/deja-vu` is Gavin's call.
+- [ ] **Upstream PR not opened**, by instruction. Candidate prepared:
+      `.prism/shared/docs/UPSTREAM-PR-CANDIDATE-deja-vu-runtime-register.md`.
+- [ ] the five craft lifts into `sankofa` / `chat-log-access` — those are standalone skills in
+      `~/.claude/skills`, so they ship via the digital-griot-skills repo, not this one.
+
+---
+
+## Original status (superseded above)
 
 - [x] **A — local embedding backend**: zero code. Config above; committed as
       `recall.env.example` (repo root, alongside `model-policy.example.json`).

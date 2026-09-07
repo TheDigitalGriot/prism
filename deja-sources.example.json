@@ -1,0 +1,64 @@
+{
+  "//": "GriotModel as a deja-vu LOG SOURCE. Copy to <config-dir>/deja/sources.json",
+  "//   windows": "%APPDATA%\\deja\\sources.json",
+  "//   macos":   "~/Library/Application Support/deja/sources.json",
+  "//   linux":   "~/.config/deja/sources.json",
+  "// or":        "point $DEJA_SOURCES_CONFIG at this file directly",
+
+  "// WHY THIS FILE EXISTS": [
+    "GriotModel is three inference lanes behind ONE OpenAI-compatible base_url",
+    "(fast-local Ollama :11434/v1 · big-local Colibri ./coli serve · cloud), per",
+    "thegriotmodel-codex. An inference endpoint does not persist conversations -",
+    "the CLIENT does. So 'GriotModel as a log source' resolves to: whichever",
+    "client drove the lane wrote the log, and this file tells deja where it is.",
+    "",
+    "Already covered by deja's BUILT-IN adapters, nothing to configure:",
+    "  Claude Code (how Prism runs) -> ~/.claude/projects/**/*.jsonl",
+    "  OpenCode                     -> its SQLite store",
+    "Configure below only the clients deja has no adapter for."
+  ],
+
+  "// HOW TO ADAPT": [
+    "root  - directory holding the logs; ~ and $VARS expand",
+    "glob  - basename pattern, default *.jsonl",
+    "map   - which JSON keys hold each field; dotted paths reach nested values",
+    "        map.text is the only required one - without it there is nothing to index",
+    "        map.session groups turns; omit it and each FILE becomes one session",
+    "",
+    "Only format 'jsonl-messages' (one JSON object per line, one message per",
+    "object) is supported. A store with a different shape still needs a Go",
+    "adapter, which the runtime seam then registers - see register.go."
+  ],
+
+  "harnesses": [
+    {
+      "name": "griotmodel",
+      "kinds": [
+        {
+          "//": "Adjust root/map to whatever actually writes your GriotModel turns.",
+          "name": "griotmodel-log",
+          "root": "~/.griot/model/sessions",
+          "glob": "*.jsonl",
+          "format": "jsonl-messages",
+          "map": {
+            "session": "session_id",
+            "role": "role",
+            "text": "message.content",
+            "time": "ts",
+            "project": "project",
+            "title": "title"
+          }
+        }
+      ]
+    }
+  ],
+
+  "// VERIFY": [
+    "deja index          -> expect a line: 'griotmodel: N sessions, M messages'",
+    "deja --harness griotmodel \"<something only that session said>\"",
+    "deja sources        -> the harness is listed like any built-in",
+    "",
+    "A misconfigured entry prints one line to stderr and costs that source only;",
+    "it never fails the index."
+  ]
+}
