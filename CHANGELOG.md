@@ -4,6 +4,43 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.16.2] - 2026-09-07
+
+Recall (Lift 3B) unblocked and running. **No Prism runtime changes** — the code lives in a fork of
+`deja-vu`; what lands here is the configuration, the design record and the corrections.
+
+### Added
+- **`deja-sources.example.json`** — declare a log source for the recall index in JSON. No Go, no
+  rebuild. Ships with the GriotModel shape and states its own limit: a store that is not
+  line-delimited JSON with one message per line still needs a Go adapter.
+- **`recall.env.example` gained an egress section.** The "recall must never become a data-egress
+  path" constraint was previously stated but **enforced by nothing** — upstream honours
+  `DEJA_EMBED_URL` verbatim, and `policy.AllowsEgress` gates *which sessions* may be embedded, not
+  *where they go*. Now fail-closed: a non-loopback embedding endpoint is refused unless
+  `DEJA_EMBED_ALLOW_REMOTE=1` (only the exact string `1`; `true`/`yes` do not count).
+
+### Fixed
+- **Two corrections to the recall design doc**, both from reading `thegriotmodel-codex`, which the
+  original design had not consulted:
+  1. **GriotModel is an endpoint, not a log store** — three inference lanes behind one
+     OpenAI-compatible `base_url`. An inference endpoint does not persist conversations; the
+     *client* does. Prism runs on Claude Code, whose sessions deja's built-in `claude` adapter
+     already reads — so **Prism history was recallable all along**. Observed: an unfiltered search
+     returned the live Prism session.
+  2. **Part A was wired but dormant.** `recall.env.example` pointed at a live Ollama holding **zero
+     models**, so the semantic tier could never fire; the design doc's `[x]` was optimistic.
+
+### Notes
+- Fork: `TheDigitalGriot/deja-vu`, branch `griot/runtime-register-seam`. Two commits, split so the
+  boundary between *their* design (a runtime `Register()` seam for the harness registry) and *ours*
+  (JSON-declared harnesses, the egress guard) stays legible. 18 tests; `go test ./...` clean.
+  **Experiment, not a contribution — no upstream PR.**
+- Setup verified on this machine: 234 sessions / 23,716 messages indexed across claude, codex,
+  cursor, gemini and notes; auto-recall hooks live at `DEJA_RECALL=safe`; embedding sidecar at
+  `dim=768`, 100% coverage, entirely on-device.
+- Every factual claim in the new docs was independently verified against the deja-vu source
+  (5/5 confirmed with file:line evidence) as part of the release gate.
+
 ## [4.16.1] - 2026-09-06
 
 A release-integrity patch. v4.16.0's installer workflow failed on both runners **after** the audit
