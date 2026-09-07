@@ -182,6 +182,11 @@ def main():
         # Tauri installer (new — supersedes prism-setup)
         root / "apps" / "prism-installer" / "package.json",
         root / "apps" / "prism-installer" / "src-tauri" / "tauri.conf.json",
+        # Spectrum workgraph MCP Worker (added v4.16.0). Registered here the release
+        # AFTER it was introduced, because the v4.16.1 discovery sweep caught it stuck
+        # at 4.16.0 — the same way main.go/footer.go sat at 3.0.3 for several releases.
+        # A new package under packages/ must be added here or it silently goes stale.
+        root / "packages" / "prism-workgraph-mcp" / "package.json",
         # Deprecated: cmd/prism-setup — kept for rollback but no longer bumped
         # root / "apps" / "prism-setup" / "package.json",
     ]
@@ -210,6 +215,9 @@ def main():
         root / "apps" / "prism-installer" / "src-tauri" / "Cargo.toml",
         # tauri.conf.json uses non-standard spacing ("version":  "X") — handle via text replace
         root / "apps" / "prism-installer" / "src-tauri" / "tauri.conf.json",
+        # VitePress footer copyright ('vX.Y.Z') — the docs site otherwise shows the
+        # previous release's version in its footer indefinitely.
+        root / "prism-docs" / "docs" / ".vitepress" / "config.ts",
         # Deprecated: cmd/prism-setup — kept for rollback but no longer bumped
         # root / "apps" / "prism-setup" / "src" / "main.ts",
         # root / "apps" / "prism-setup" / "src" / "screens" / "WelcomeScreen.tsx",

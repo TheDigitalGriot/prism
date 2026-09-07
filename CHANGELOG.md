@@ -4,6 +4,48 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.16.1] - 2026-09-06
+
+A release-integrity patch. v4.16.0's installer workflow failed on both runners **after** the audit
+reported `AUDIT CLEAN`, which meant the audit was not measuring the thing that broke. No user-facing
+runtime behaviour changes.
+
+### Fixed
+- **`npm ci` refused to install, so the v4.16.0 installer workflow died on both runners.**
+  `packages/prism-workgraph-mcp` was added in 4.16.0 and the root `workspaces: ["packages/*"]` glob
+  picks it up, but `package-lock.json` was never regenerated — `npm error Missing:
+  @prism/workgraph-mcp@4.16.0 from lock file`. The release job was skipped and v4.16.0 first
+  published with 5 of its 10 assets. `npm install` *reconciles* a lock; `npm ci` *asserts* it
+  already agrees — which is why the drift was invisible locally (a populated `node_modules` means
+  the lock is never consulted) and fatal in CI.
+- **`bump-version.py` did not know about two files, so they were going stale every release.**
+  `packages/prism-workgraph-mcp/package.json` (added last release) and the VitePress footer
+  `copyright` in `prism-docs/docs/.vitepress/config.ts`. Caught by the script's own discovery sweep
+  — the same failure class as `main.go`/`footer.go` sitting at 3.0.3 across several releases. Both
+  are now registered rather than swept up by hand.
+
+### Added
+- **The release audit now gates on `package.json` / `package-lock.json` sync** — the check whose
+  absence let 4.16.0 ship broken while reporting clean. Two layers on purpose:
+  - **§3a, deterministic and offline** — every workspace member resolved from the `workspaces`
+    globs must appear in the lock's `packages` map. No registry, so it cannot flake, and a flaky
+    gate is one people learn to skip. Globs resolve segment-by-segment (`apps/*/server`, not only a
+    trailing `/*`), and a shape it *cannot* resolve fails loudly instead of silently passing.
+  - **§3b, authoritative** — `npm ci --dry-run`, literally what CI runs, so it also catches
+    dependency drift §3a cannot see. **Fail-closed:** any non-zero exit fails unless it is
+    recognisably environmental (spawn error, `ENOTFOUND`/`ECONNREFUSED`/registry unreachable).
+
+    The first cut had this inverted — it failed only on an allow-list of npm phrasings and warned
+    on everything else. Drifting a dependency range makes npm emit `ETARGET` / `notarget`, which
+    matched none of them, so real lock drift would have shipped as a warning. Independent review
+    caught it. Unknown npm wording now defaults to FAIL, so npm may reword freely without silently
+    disarming the gate.
+
+  Negative-tested against the *real* v4.16.0 lock, an unsupported glob shape, and an unsatisfiable
+  dependency range; every fixture restored byte-identically. Confirmed non-mutating on npm 10.9.3
+  (lock hash and `node_modules` entry count identical before and after) — a release gate must not
+  modify the tree it audits.
+
 ## [4.16.0] - 2026-09-06
 
 ### Fixed
