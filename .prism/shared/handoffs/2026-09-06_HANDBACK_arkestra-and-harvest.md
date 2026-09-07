@@ -277,11 +277,42 @@ gh release create v4.16.0 --generate-notes \
 Everything before this is reversible (`git tag -d v4.16.0` and the branch is untouched upstream).
 Nothing after it is.
 
-### Two build traps that already bit this repo — both avoided this cut
+### Build traps — two avoided, one NOT
 
 1. **`VERSION=` is mandatory** on `make build-all`. `Makefile:3` defaults to `git describe` and
    injects via `-ldflags`, so a bare invocation stamps the *previous* tag plus `-dirty` (observed
-   on the v4.15.2 cut: `v4.15.1-4-g814b762-dirty`). Passed `VERSION=4.16.0` explicitly.
+   on the v4.15.2 cut: `v4.15.1-4-g814b762-dirty`). Passed `VERSION=4.16.0` explicitly. ✅
 2. **Stale bundles glob as fresh.** A `Prism Setup_4.15.2_x64-setup.exe` was still sitting in the
    NSIS output dir — the same class that caused the v4.15.0/4.15.1 stale-artifact bug. Cleared it
-   before building. (Electron Forge cleans its own `out/` and needed no help.)
+   before building. (Electron Forge cleans its own `out/` and needed no help.) ✅
+3. **❌ NOT avoided — a workspace member without a lock refresh.** `packages/prism-workgraph-mcp`
+   was added this cycle; the root `workspaces: ["packages/*"]` glob picks it up, but
+   `package-lock.json` was never regenerated. **The tag-triggered installer workflow then failed on
+   BOTH runners** with `npm error Missing: @prism/workgraph-mcp@4.16.0 from lock file`, the release
+   job was skipped, and v4.16.0 published with **5 of 10 assets**.
+
+   Why it was invisible: `npm install` *reconciles* the lock, `npm ci` *asserts* it already agrees.
+   Local builds reused a populated `node_modules` and never consulted the lock at all. **No gate
+   runs `npm ci`** — which is exactly how an 8/8 CLEAN audit shipped a broken release.
+
+   Fixed in `b0ef68d` (lock registration only, 12 insertions, no dependency churn). Recovery did
+   **not** rewrite the published tag: the workflow's release job is gated on
+   `startsWith(github.ref, 'refs/tags/v')`, so a `workflow_dispatch` on `main` rebuilds the
+   installers and skips the release step — the macOS dmg then comes out as a downloadable artifact
+   to attach by hand. Both runners went green on the re-dispatch, confirming the lock was the sole
+   cause. Release is now **10/10**, matching v4.15.2's shape.
+
+   **Recommended hard fix (not done — your call):** add `npm ci --dry-run` to
+   `scripts/pre-release-audit.mjs`. It is the one check that would have caught this before the tag,
+   and it converts a lesson into a gate rather than a note. Logged as **M13**.
+
+### A second miss worth knowing about — M12
+
+`gh run watch --exit-status | tail -8` reported that failing workflow as **successful**, because a
+pipeline returns the *last* command's exit code — `tail`'s `0`, not `gh`'s `1`. I reported green CI
+on a red run, and only caught it because the asset count came back 5 instead of 10. **A command
+whose exit code is the evidence must never be piped**; read the conclusion directly:
+
+```bash
+gh run view <id> --json jobs --jq '.jobs[] | "\(.name): \(.conclusion)"'
+```
