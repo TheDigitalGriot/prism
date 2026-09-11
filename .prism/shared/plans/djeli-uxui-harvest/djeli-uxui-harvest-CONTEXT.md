@@ -1,0 +1,70 @@
+﻿# Stage contract - djeli-uxui-harvest
+
+Inbound (awaits): skills/griot-harvest-ux-ui/SKILL.md, GriotSandbox/genoffice, GriotSandbox/orca
+
+## Why this was parked, and what unparked it
+
+The 2026-09-07 handback recorded griot-harvest-ux-ui as DELIBERATELY NOT BUILT, needing the layer
+roles from the Desktop codex. Those layer roles were found 2026-09-11 in the LNAME array of
+griot-live-artifacts/live/griot-suite-map.html (The Griot Stack, artifact c389ca6c). The tool is
+now unblocked. It was never a generic harvester: its OUTPUT TAXONOMY is the layer roles, which is
+exactly why it could not be written without them. A UI pattern with no layer is unplaceable.
+
+## Decisions (locked)
+
+1. LINEAGE, settled by Gavin 2026-09-11: Djeli AND Prism are BOTH forks of Orca (stablyai/orca).
+   Djeli is the CONTAINER; GenOffice (genspark-ai/genoffice, Apache-2.0) is folded in as the OFFICE
+   SURFACE, not the fork base. Djeli will expand into several stacks matching GenSpark, which is
+   where the long-running confusion came from. The Sep-5 djeli-codex denial is OVERTURNED
+   (corrected in commit 5aba992) - do not reintroduce it from any older source.
+2. LAYER ROLES are the output taxonomy, verbatim from suite-map LNAME:
+   Djeli container | Collaboration GenTeam | Creation build/content/3D | Capture |
+   Intelligence Super Agent | Governance Governor | Model-making / data science |
+   Memory foundation | Deployment
+3. COMPOSITION, one home per fact. griot-harvest owns the clone, the survey and the fit verdict -
+   CALL it, never reimplement it. dgs-plan-update owns every plan write. griot-potluck-search owns
+   shelf search. This skill owns only the UI walk: component - screen - flow - workflow - provenance,
+   and the layer routing.
+4. SUBSTRATE is the live Kuzu code graph plus Chat2DB (viz-engine layer 03, running today, never
+   surfaced). CANVAS is xyflow (layer 02) because nodes are a plain JSON array an agent reads and
+   writes directly, with no canvas-widget indirection.
+5. Every claim carries file:line. Every quoted metric carries who measured it and of what. Licence
+   is a FACT for a field, never a verdict. Never gate or narrow what Gavin forks, studies or remixes.
+
+## Process
+
+Stage 1 - BUILD THE TOOL (headless, device-side, through griot-agent-architect + its validator).
+  Emit skills/griot-harvest-ux-ui/ with SKILL.md and any references/scripts it needs. Follow the
+  architect conventions; run the bundled validator; do not hand-eyeball structure.
+
+Stage 2 - RUN IT ON THE SANDBOX (Gavin drives, interactively in Claude Code).
+  Targets already on disk: GriotSandbox/genoffice (six Electron apps, thirteen packages, the office
+  surface), GriotSandbox/orca and GriotApps/djeli (the real stablyai/orca clone whose package.json
+  name is orca - this is Djeli's own lineage, not residue). Scope is Gavin's call, not the agent's.
+
+Stage 3 - COMPOSE THE CANVAS.
+  Each harvested screen becomes a canvas node carrying its layer role, its file:line origin and its
+  mount point. Real features and real UI only. Nothing sketched, nothing inferred.
+
+## Success criteria
+
+- skills/griot-harvest-ux-ui exists, passes the griot-agent-architect validator, and routes every
+  finding to one of the nine layer roles.
+- It calls griot-harvest rather than duplicating the clone/survey path.
+- A run against genoffice returns screens with file:line origins, not prose summaries.
+- The canvas renders from harvested data, not from a hand-authored node list.
+
+## Heartbeat tokens
+
+STEP 1 architect - STEP 2 skill-body - STEP 3 layer-routing - STEP 4 validator - STEP 5 commit - DONE
+
+## Stage 2 targets (complete)
+
+  GriotSandbox/block-buzz   Buzz - Djeli GenTeams - the Collaboration layer
+  GriotSandbox/buzz-skills  how Buzz is operated
+  GriotSandbox/genoffice    the office surface folded into the container
+  GriotSandbox/orca         the container shell
+  GriotApps/djeli           Djeli own Orca clone
+
+If any of the nine layer roles returns no source, say so plainly as an unfilled layer. Never invent
+a source to fill it.

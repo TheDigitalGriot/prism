@@ -16755,6 +16755,58 @@
    "contentHash": "8b581b4580d6"
   },
   {
+   "id": "wg:prism:f1b2bc89a4bc",
+   "envelopeId": "wg:prism:f1b2bc89a4bc",
+   "localId": "cowork-prism-realign",
+   "kind": "stage",
+   "origin": "prism",
+   "title": "cowork-prism-realign",
+   "state": "open",
+   "direction": "inbound",
+   "lastTouched": "2026-09-11T08:24:12.244Z",
+   "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\shared\\plans\\cowork-prism-realign\\cowork-prism-realign-CONTEXT.md",
+   "awaits": [
+    ".prism/local/plugin-update-report.md",
+    "skills/griot-harvest-ux-ui/SKILL.md"
+   ],
+   "contentHash": "2bb5dc94ec6d"
+  },
+  {
+   "id": "wg:prism:ad55aa4686e8",
+   "envelopeId": "wg:prism:ad55aa4686e8",
+   "localId": "djeli-uxui-harvest",
+   "kind": "stage",
+   "origin": "prism",
+   "title": "djeli-uxui-harvest",
+   "state": "open",
+   "direction": "inbound",
+   "lastTouched": "2026-09-11T08:57:31.733Z",
+   "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\shared\\plans\\djeli-uxui-harvest\\djeli-uxui-harvest-CONTEXT.md",
+   "awaits": [
+    "skills/griot-harvest-ux-ui/SKILL.md",
+    "GriotSandbox/genoffice",
+    "GriotSandbox/orca"
+   ],
+   "contentHash": "b4bebbc604a7"
+  },
+  {
+   "id": "wg:prism:41482addb084",
+   "envelopeId": "wg:prism:41482addb084",
+   "localId": "marketplace-sync-gate",
+   "kind": "stage",
+   "origin": "prism",
+   "title": "marketplace-sync-gate",
+   "state": "open",
+   "direction": "inbound",
+   "lastTouched": "2026-09-11T08:36:22.343Z",
+   "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\shared\\plans\\marketplace-sync-gate\\marketplace-sync-gate-CONTEXT.md",
+   "awaits": [
+    "scripts/sync-to-marketplace.sh",
+    "scripts/pre-release-audit.mjs"
+   ],
+   "contentHash": "530cef18995e"
+  },
+  {
    "id": "wg:dgs:0c121a6e9171",
    "envelopeId": "wg:dgs:0c121a6e9171",
    "localId": "Griot Ontology",
@@ -16763,7 +16815,7 @@
    "title": "Griot Ontology",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16775,7 +16827,7 @@
    "title": "the workgraph",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16787,7 +16839,7 @@
    "title": "Arkestra",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16799,7 +16851,7 @@
    "title": "Audion",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16811,7 +16863,7 @@
    "title": "Hazine",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16823,7 +16875,7 @@
    "title": "Cinopsis",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16835,7 +16887,7 @@
    "title": "Synaptiq",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16847,7 +16899,7 @@
    "title": "Meridian",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16859,7 +16911,7 @@
    "title": "Prism",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16871,7 +16923,7 @@
    "title": "griot_scrape",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16883,7 +16935,7 @@
    "title": "Lucid",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16895,7 +16947,7 @@
    "title": "digital-griot-mcp",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16907,7 +16959,7 @@
    "title": "formae (Aeraform)",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16919,7 +16971,7 @@
    "title": "Scrapling",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16931,7 +16983,7 @@
    "title": "Prism Gavel",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16943,7 +16995,7 @@
    "title": "griot-live-artifacts",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16955,7 +17007,7 @@
    "title": "The Griot Model",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16967,7 +17019,7 @@
    "title": "Kente",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16979,7 +17031,7 @@
    "title": "Valence",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -16991,7 +17043,7 @@
    "title": "Manim",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17003,7 +17055,7 @@
    "title": "Math Formalism Ideation",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17015,7 +17067,7 @@
    "title": "ManimML",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17027,7 +17079,7 @@
    "title": "R3F Studio",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17039,7 +17091,7 @@
    "title": "Mentorship Platform",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17051,7 +17103,7 @@
    "title": "everything",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17063,7 +17115,7 @@
    "title": "Fragment",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17075,7 +17127,7 @@
    "title": "every app",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17087,7 +17139,7 @@
    "title": "all agents",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17099,7 +17151,7 @@
    "title": "you",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17111,7 +17163,7 @@
    "title": "Sigil",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17123,7 +17175,7 @@
    "title": "Sigil/Synaptiq/Ashe",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17135,7 +17187,7 @@
    "title": "Ashe",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17147,7 +17199,7 @@
    "title": "Anansi + Lucid",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17159,7 +17211,7 @@
    "title": "GBFolio",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17171,7 +17223,7 @@
    "title": "GBFolio / R3F",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17183,7 +17235,7 @@
    "title": "Glenn Lewis + AUXGOD",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17195,7 +17247,7 @@
    "title": "Kaleidoscope",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17207,7 +17259,7 @@
    "title": "Griot Hub",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17219,7 +17271,7 @@
    "title": "all",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17231,7 +17283,7 @@
    "title": "sankofa",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17243,7 +17295,7 @@
    "title": "Ophenia",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17255,7 +17307,7 @@
    "title": "Prism / Mindwalk",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -17267,7 +17319,7 @@
    "title": "SkillForge",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-08T01:14:07.483Z",
+   "lastTouched": "2026-09-11T08:05:33.507Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   }
  ],
@@ -21275,6 +21327,48 @@
    "label": "branched from Q1"
   },
   {
+   "from": "wg:prism:79e7db6aaebc",
+   "to": "wg:prism:f1b2bc89a4bc",
+   "kind": "awaits",
+   "label": "awaits .prism/local/plugin-update-report.md"
+  },
+  {
+   "from": "wg:prism:54b473a47202",
+   "to": "wg:prism:f1b2bc89a4bc",
+   "kind": "awaits",
+   "label": "awaits skills/griot-harvest-ux-ui/SKILL.md"
+  },
+  {
+   "from": "wg:prism:54b473a47202",
+   "to": "wg:prism:ad55aa4686e8",
+   "kind": "awaits",
+   "label": "awaits skills/griot-harvest-ux-ui/SKILL.md"
+  },
+  {
+   "from": "wg:prism:8b4371871d0c",
+   "to": "wg:prism:ad55aa4686e8",
+   "kind": "awaits",
+   "label": "awaits GriotSandbox/genoffice"
+  },
+  {
+   "from": "wg:prism:add9f08a79dd",
+   "to": "wg:prism:ad55aa4686e8",
+   "kind": "awaits",
+   "label": "awaits GriotSandbox/orca"
+  },
+  {
+   "from": "wg:prism:694892419a95",
+   "to": "wg:prism:41482addb084",
+   "kind": "awaits",
+   "label": "awaits scripts/sync-to-marketplace.sh"
+  },
+  {
+   "from": "wg:prism:9e47f04a5332",
+   "to": "wg:prism:41482addb084",
+   "kind": "awaits",
+   "label": "awaits scripts/pre-release-audit.mjs"
+  },
+  {
    "from": "wg:dgs:0c121a6e9171",
    "to": "wg:dgs:c4f220329b0a",
    "kind": "ontology",
@@ -21563,18 +21657,19 @@
    "label": "the observe layer watching the system perceive its own cognition"
   }
  ],
- "generated": "2026-09-11T07:56:42.666Z",
+ "generated": "2026-09-11T08:57:40.922Z",
  "stats": {
-  "nodes": 738,
-  "edges": 715,
+  "nodes": 741,
+  "edges": 722,
   "byKind": {
    "epic": 17,
    "story": 260,
    "worklane": 418,
+   "stage": 3,
    "project": 43
   },
   "byState": {
-   "open": 107,
+   "open": 110,
    "parked": 211,
    "resolved": 119,
    "decided": 301
@@ -21583,11 +21678,11 @@
    "local": 687,
    "adjacent": 15,
    "outbound": 31,
-   "inbound": 5
+   "inbound": 8
   },
   "byEdgeKind": {
    "in-epic": 282,
-   "awaits": 180,
+   "awaits": 187,
    "splinter": 139,
    "outbound": 61,
    "inbound": 5,
@@ -21596,7 +21691,7 @@
   "sources": {
    "storiesFiles": 20,
    "decisionFiles": 43,
-   "awaitsDeclarations": 0
+   "awaitsDeclarations": 3
   },
   "cycles": [],
   "warnings": [
