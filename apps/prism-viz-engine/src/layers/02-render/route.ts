@@ -97,6 +97,27 @@ export interface RouteDecision {
  * topology while failing a rule or two. But every term below is one of archify's, read
  * from its source — not a pattern invented here.
  */
+/**
+ * KNOWN DUPLICATION — recorded rather than left to drift.
+ *
+ * This function answers the same question as archify's own
+ * `deploymentOwnershipDiagnostics`, which layer 01's `gate-ir.mjs` calls directly and
+ * which is authoritative. Two implementations of one rule is exactly the shape that
+ * rots, so it is named here.
+ *
+ * Why it exists anyway: that function is node-only. Its import chain
+ * (`diagnostics.mjs` -> `node:fs`, `node:path`) cannot enter a browser bundle, and by the
+ * time this code runs the IR is gone — we hold a converted JSON Canvas. So the browser
+ * cannot call the authority, only re-derive from what survived conversion.
+ *
+ * THE FIX, designed and deliberately not half-built: the sidecar runs node-side and CAN
+ * import archify. It should compute the verdict when it serves a diagram and pass it
+ * through as a route hint; `routeCanvas` then READS a fact and falls back to this scorer
+ * only when no hint arrives. One computation, at the only layer that can do it properly.
+ * Until that lands, treat `gate-ir.mjs`'s reported renderer as authoritative and this as
+ * the approximation — they agree on every example tested, which is not the same as
+ * being guaranteed to agree.
+ */
 export function topologyScore(canvas: JSONCanvas): { score: number; hits: string[] } {
   const hits: string[] = []
   const nodes = canvas.nodes.filter((n) => n.type !== "group")
