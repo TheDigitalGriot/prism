@@ -10,6 +10,7 @@
     "apps/prism-electron",
     "apps/prism-electron/webview-ui",
     "apps/prism-installer",
-    "apps/prism-design-studio"
+    "apps/prism-design-studio",
+    "apps/prism-viz-engine"
   ]
 }

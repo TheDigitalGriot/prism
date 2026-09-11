@@ -1,0 +1,36 @@
+{
+  "name": "@griot/prism-viz-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "prism-viz-engine — the assembled cluster, built. Layer 01 generate -> JSON Canvas wire -> layer 02 render (xyflow) -> layer 03 substrate (Kuzu) -> layer 04 interactive shell (Waku click-any-box). Mounts standalone, composed into another app, or inside the Djeli container.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./mount": "./src/core/mount.ts",
+    "./json-canvas": "./src/core/json-canvas.ts",
+    "./layer-roles": "./src/core/layer-roles.ts"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n reveal,vite -c magenta,cyan \"node server/reveal-server.mjs\" \"vite\"",
+    "dev:web": "vite",
+    "dev:reveal": "node server/reveal-server.mjs",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@xyflow/react": "^12.3.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "concurrently": "^9.1.0",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}
