@@ -202,35 +202,107 @@ createServer(async (req, res) => {
     return json(res, 200, { examples, source: dir })
   }
 
-  // ── diagram-design's rendered gallery ───────────────────────────────────────
-  // 162 example HTMLs, vendored. They are RENDERED artefacts, not IR, so they can never
-  // become canvas nodes — but the cluster codex calls this repo "the aesthetic reference
-  // for the cluster" and they were wired to nothing. They are the reference, rendered.
-  if (url.pathname === "/api/gallery") {
-    const dir = join(VIZ_VENDOR, "diagram-design", "assets")
-    if (!existsSync(dir)) return json(res, 200, { items: [], note: `not vendored: ${dir}` })
-    const files = readdirSync(dir).filter((f) => f.endsWith(".html"))
-    const items = files.map((f) => {
-      const base = f.replace(/\.html$/, "")
-      const variant = base.endsWith("-dark") ? "dark" : base.endsWith("-full") ? "full" : "light"
-      return {
-        file: f,
-        type: base.replace(/^example-/, "").replace(/-(dark|full)$/, ""),
-        variant,
-        url: `/gallery/${f}`,
-      }
-    })
-    return json(res, 200, { items, source: dir })
+  // ── the catalogue — EVERY viewable artefact, all five trees ─────────────────
+  // Gavin's correction, twice over. First: these are not a mood board — 62 diagram-design
+  // layouts are a systems-design diagram DATABASE, 62 solved layout problems. Second: I
+  // surface-read `examples/*.html` and called that archify's output, when every tree ships
+  // something viewable and the point is how they COMBINE.
+  //
+  // So this SCANS rather than hardcodes. Anything renderable in any vendored tree appears,
+  // classified by kind (example / template / index / preview / icons), grouped by shape so
+  // the same question answered by two systems sits in one row.
+  const TREES = [
+    { source: "diagram-design", dirs: ["assets"] },
+    { source: "archify", dirs: ["examples", "assets"] },
+    { source: "lanshu", dirs: ["assets", "assets/previews"] },
+    // Its renderable output is two levels down — a one-level scan found nothing and said
+    // so, which is how the gap surfaced. `architecture.html` here makes that shape a
+    // THREE-way comparison, and `mermaid-flowchart.html` is the themed Mermaid the design
+    // harvest found (theme:'base' + 15 themeVariables, not the bare default).
+    { source: "visual-explainer", dirs: ["plugins/visual-explainer/templates"] },
+    { source: "fossflow", dirs: ["src", "src/assets"] },
+  ]
+  const VIEWABLE = /\.(html|svg|gif|png|webp)$/i
+
+  const SHAPE_ALIASES = {
+    "data-flow": "dataflow", dataflow: "dataflow",
+    "web-app": "architecture", architecture: "architecture",
+    sequence: "sequence", "sequence-oauth": "sequence",
+    state: "lifecycle", lifecycle: "lifecycle",
+    flowchart: "process", process: "process", workflow: "process",
+    deployment: "deployment",
+  }
+  const shapeOf = (t) => SHAPE_ALIASES[t] ?? t
+
+  function classify(source, rel, file) {
+    const base = file.replace(VIEWABLE, "")
+    const animated = /-animated$/.test(base)
+    const imported = /^example-import-/.test(base)
+    let kind = "example"
+    if (/^index$/i.test(base)) kind = "index"
+    else if (/^icons$/i.test(base)) kind = "icons"
+    else if (/^template/.test(base)) kind = "template"
+    else if (/preview|\.gif$/i.test(rel + "/" + file)) kind = "preview"
+    let variant = "dark"
+    if (source === "diagram-design") {
+      variant = base.endsWith("-dark") ? "dark" : base.endsWith("-full") ? "full" : "light"
+    }
+    const type = base
+      .replace(/^example-/, "")
+      .replace(/-(dark|full)$/, "")
+      .replace(/-rendered$/, "")
+    const head = type.split("-")[0]
+    return {
+      kind,
+      variant,
+      animated,
+      imported,
+      type,
+      shape: shapeOf(SHAPE_ALIASES[head] ? head : type),
+    }
   }
 
-  // Serve a gallery file itself. Path-scoped to the vendored assets dir — a basename
-  // only, no traversal, because this process can read the whole repo.
+  if (url.pathname === "/api/gallery") {
+    const items = []
+    const notes = []
+    for (const t of TREES) {
+      let found = 0
+      for (const d of t.dirs) {
+        const dir = join(VIZ_VENDOR, t.source, ...d.split("/"))
+        if (!existsSync(dir)) continue
+        for (const f of readdirSync(dir)) {
+          if (!VIEWABLE.test(f)) continue
+          const meta = classify(t.source, d, f)
+          items.push({ source: t.source, dir: d, file: f, url: `/gallery/${t.source}/${d}/${f}`, ...meta })
+          found++
+        }
+      }
+      if (!found) notes.push(`${t.source}: nothing viewable vendored`)
+    }
+    const shapes = [...new Set(items.map((i) => i.shape))].sort()
+    const shared = shapes.filter(
+      (sh) => new Set(items.filter((i) => i.shape === sh).map((i) => i.source)).size > 1
+    )
+    const bySource = {}
+    for (const i of items) bySource[i.source] = (bySource[i.source] ?? 0) + 1
+    return json(res, 200, { items, shapes, shared, bySource, notes })
+  }
+
+  // Serve one artefact. Scoped: <vendor>/<known source>/<declared dir>/<basename>.
   if (url.pathname.startsWith("/gallery/")) {
-    const name = basename(decodeURIComponent(url.pathname.slice("/gallery/".length)))
-    const file = join(VIZ_VENDOR, "diagram-design", "assets", name)
-    if (!name.endsWith(".html") || !existsSync(file)) return json(res, 404, { ok: false, why: "no such gallery file" })
-    res.writeHead(200, { "content-type": "text/html; charset=utf-8", "access-control-allow-origin": "*" })
-    return res.end(readFileSync(file, "utf-8"))
+    const rest = decodeURIComponent(url.pathname.slice("/gallery/".length)).split("/")
+    const source = rest.shift()
+    const file = basename(rest.pop() ?? "")
+    const dir = rest.join("/")
+    const tree = TREES.find((t) => t.source === source)
+    if (!tree || !tree.dirs.includes(dir) || !VIEWABLE.test(file))
+      return json(res, 404, { ok: false, why: "not a catalogued path" })
+    const abs = join(VIZ_VENDOR, source, ...dir.split("/"), file)
+    if (!existsSync(abs)) return json(res, 404, { ok: false, why: "no such file" })
+    const ext = file.split(".").pop().toLowerCase()
+    const TYPES = { html: "text/html; charset=utf-8", svg: "image/svg+xml", gif: "image/gif", png: "image/png", webp: "image/webp" }
+    res.writeHead(200, { "content-type": TYPES[ext] ?? "application/octet-stream", "access-control-allow-origin": "*" })
+    return res.end(readFileSync(abs))
   }
 
   return json(res, 404, { ok: false, why: "no such route" })

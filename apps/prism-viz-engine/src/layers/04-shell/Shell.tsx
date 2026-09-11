@@ -90,7 +90,19 @@ export function Shell({ host, library, sources = [], onChange, reveal, subscribe
   const [selected, setSelected] = useState<string | null>(null)
   const [tracingIds, setTracingIds] = useState<Set<string>>(new Set())
   const [override, setOverride] = useState<RendererId | null>(null)
-  const [motionMode, setMotionMode] = useState<MotionMode>("none")
+  /**
+   * `reveal`, not `none`.
+   *
+   * animation.md's default is `none`, and that is right for a PUBLISHED figure — it
+   * protects a reader who never asked for motion. This engine is not publishing; it is an
+   * instrument for comparing how systems move. Defaulting to silence means comparing still
+   * frames of things whose value IS the movement, which is most of what Lanshu is.
+   *
+   * `reveal` is animation.md's own sanctioned autoplay — one deterministic run that ends
+   * complete, never restarting on viewport re-entry. So this honours the law and still
+   * lets you see the thing. prefers-reduced-motion still wins over all of it.
+   */
+  const [motionMode, setMotionMode] = useState<MotionMode>("reveal")
   const [status, setStatus] = useState("")
   // The reference gallery is a MODE, not a source: those files are rendered HTML, not IR,
   // so they can never be a canvas. Making them a fake source would be a category error.

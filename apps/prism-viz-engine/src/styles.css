@@ -351,10 +351,16 @@ button.vz-pri:hover { color: #04070d; filter: brightness(1.1); }
 .vz-gal:hover { border-color: var(--neural); }
 /* The frame is scaled down rather than the document: these are finished artefacts and
    reflowing them at thumbnail width would show a layout their author never shipped. */
-.vz-gal-frame { height: 186px; overflow: hidden; position: relative; background: #fff; }
+/* Scale the FRAME, never reflow the document: these are finished pieces and reflowing
+   them at thumbnail width would show a layout their author never shipped. The iframe is
+   sized so 0.3 scale exactly fills the tile — otherwise the backing shows through as a
+   white band under every dark diagram. */
+.vz-gal-frame { height: 186px; overflow: hidden; position: relative; background: var(--void2); }
 .vz-gal-frame iframe {
-  width: 1100px; height: 620px; border: 0; transform: scale(0.3); transform-origin: top left; pointer-events: none;
+  width: 1120px; height: 620px; border: 0;
+  transform: scale(0.3); transform-origin: top left; pointer-events: none;
 }
+.vz-gal.wide .vz-gal-frame iframe { height: 800px; }
 .vz-gal figcaption {
   display: flex; justify-content: space-between; align-items: center; gap: 8px;
   padding: 7px 10px; font-size: 11.5px; color: var(--ink); border-top: 1px solid var(--line);
@@ -365,3 +371,40 @@ button.vz-pri:hover { color: #04070d; filter: brightness(1.1); }
 .vz-gal-open-bar span { font-family: var(--mono); font-size: 10.5px; color: var(--dim); }
 .vz-gal-open iframe { flex: 1; width: 100%; border: 0; background: #fff; }
 button.on { border-color: var(--neural); color: var(--neural); background: rgba(59,130,246,.12); }
+
+/* ── the catalogue: grouped by shape, shared shapes first ──────────────────── */
+.vz-cat { flex: 1; overflow-y: auto; padding: 14px 16px 40px; display: flex; flex-direction: column; gap: 22px; }
+.vz-cat-shape { display: flex; flex-direction: column; gap: 9px; }
+.vz-cat-shape.shared {
+  border: 1px solid color-mix(in srgb, var(--mint) 26%, var(--line));
+  border-radius: 14px; padding: 12px 13px; background: rgba(16, 255, 186, 0.03);
+}
+.vz-cat-hd { display: flex; align-items: baseline; gap: 10px; }
+.vz-cat-hd h3 { font-size: 13.5px; font-weight: 650; margin: 0; letter-spacing: -0.005em; }
+.vz-cat-shape.shared .vz-cat-hd h3 { color: var(--mint); }
+.vz-cat-count { font-family: var(--mono); font-size: 9.5px; color: var(--dim); margin-left: auto; }
+.vz-cat-compare {
+  font-family: var(--mono); font-size: 9.5px; padding: 2px 8px; border-radius: 9px;
+  border: 1px solid var(--mint); color: var(--mint); background: rgba(16,255,186,.08);
+}
+.vz-cat-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(256px, 1fr)); gap: 12px; }
+.vz-cat-row.vz-cat-pair { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+.vz-gal.wide .vz-gal-frame { height: 240px; }
+.vz-gal-img { width: 100%; height: 100%; object-fit: contain; background: #06070a; display: block; }
+.vz-gal-open-img { flex: 1; min-height: 0; object-fit: contain; background: #06070a; }
+.vz-gal-src {
+  font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: .05em;
+  padding: 1px 5px; border-radius: 4px; border: 1px solid var(--line2); color: var(--dim);
+}
+.vz-src-diagram-design { color: var(--neural); border-color: color-mix(in srgb, var(--neural) 45%, transparent); }
+.vz-src-archify { color: var(--mint); border-color: color-mix(in srgb, var(--mint) 45%, transparent); }
+.vz-src-lanshu { color: var(--pink); border-color: color-mix(in srgb, var(--pink) 45%, transparent); }
+.vz-src-visual-explainer { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 45%, transparent); }
+.vz-src-fossflow { color: var(--violet); border-color: color-mix(in srgb, var(--violet) 45%, transparent); }
+.vz-anim { color: var(--pink) !important; }
+.vz-gal figcaption b { flex: 1; font-weight: 560; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vz-gal-var { font-family: var(--mono); font-size: 9px; color: var(--dim); }
+.vz-compare { flex: 1; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 1px; background: var(--line); min-height: 0; }
+.vz-compare-pane { display: flex; flex-direction: column; background: var(--panel2); min-height: 0; }
+.vz-compare-pane .vz-gal-src { margin: 8px 10px; align-self: flex-start; }
+.vz-compare-pane iframe { flex: 1; width: 100%; border: 0; background: #fff; }
