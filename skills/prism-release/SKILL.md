@@ -293,19 +293,36 @@ The macOS `.dmg` is built and uploaded separately by
 shows 10 assets once CI finishes. **Verify the asset list after CI** — v4.15.0 published assets
 stamped `4.13.2`, which the count alone would not have caught.
 
-### Step 6.5: Sync the plugin-only mirror
+### Step 6.5: Sync both marketplace mirrors
 
 ```bash
 sh scripts/sync-prism-plugin.sh
+sh scripts/sync-to-marketplace.sh
 ```
 
-**Headless (R10) — destructive (force-push to mirror), fail-closed:** if `PRISM_NONINTERACTIVE` is
-set, run the mirror sync **only** when `node scripts/resolve-answer.mjs syncMirror false` resolves
-`true`. Missing/false ⇒ skip.
+**Headless (R10) — destructive (force-push to mirror / push to shared marketplace), fail-closed:**
+if `PRISM_NONINTERACTIVE` is set, run **both** syncs — never just one — **only** when
+`node scripts/resolve-answer.mjs syncMirror false` resolves `true`. Missing/false ⇒ skip both.
 
-Pushes the six plugin dirs to `TheDigitalGriot/prism-plugin` (plugin-only, source ".", single fresh
-commit per sync). Claude Desktop's marketplace points at the mirror — the full monorepo
-settles `failed_content` in the backend (observed 2026-07-17); the mirror doesn't.
+Run both, in order, every time: a release that pushes one mirror and not the other is exactly the
+defect `pre-release-audit.mjs` §5 now gates on (TheDigitalGriot/prism-plugin froze at 4.15.2 while
+digital-griot-marketplace independently froze at 4.12.1 — two different stall points, same root
+cause: a skippable manual step). Do not run one and consider Step 6.5 complete.
+
+- `sync-prism-plugin.sh` pushes the six plugin dirs to `TheDigitalGriot/prism-plugin` (plugin-only,
+  source ".", single fresh commit per sync, force-push). Claude Desktop's marketplace points at the
+  mirror — the full monorepo settles `failed_content` in the backend (observed 2026-07-17); the
+  mirror doesn't.
+- `sync-to-marketplace.sh` clones the shared `digital-griot-marketplace` repo, replaces only the
+  `prism-plugin/` subdir, upserts the `prism` entry in the root `marketplace.json`, and commits
+  without force-push so every other tool's folder survives. This is the repo the Claude Cowork
+  surface actually reads — a stale entry here serves a stale Prism to Cowork even when the
+  single-tool mirror above is current.
+
+After both syncs, `node scripts/pre-release-audit.mjs` (rerun, or as part of the next closing
+ceremony) should show its §5 mirror-freshness checks PASS. If either still fails, the sync did not
+land — investigate before considering the release done; do not re-run the gate expecting it to
+pass on its own.
 
 ### Step 7: Create eval snapshot
 

@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // pre-release-audit.mjs — the deterministic half of the closing-ceremony Review & Audit gate.
 // Run from the repo root:  node scripts/pre-release-audit.mjs
-// Runs `claude plugin validate .`, discovers + runs every scripts/verify-*.mjs, and checks a few
-// griot-agent-architect best practices. Exits non-zero on any failure so the ceremony can gate on it.
+// Runs `claude plugin validate .`, discovers + runs every scripts/verify-*.mjs, checks a few
+// griot-agent-architect best practices, and verifies both marketplace mirrors are at VERSION.
+// Exits non-zero on any failure so the ceremony can gate on it.
 import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 
@@ -147,5 +148,90 @@ for (const p of [...walk('skills'), ...walk('commands'), ...walk('hooks')].filte
 }
 
 line(failed === failedBeforeStructural ? 'PASS' : 'FAIL', `structural checks (scoped to ${changed ? changed.size + ' changed files' : 'skipped'})`);
+
+// 5. Marketplace mirror freshness — the gate this audit shipped without. Two independent mirrors
+// drifted silently and nothing failed: TheDigitalGriot/prism-plugin froze at 4.15.2 (4.16.0-4.16.2
+// never ran Step 6.5) and digital-griot-marketplace froze at 4.12.1 (last sync eb23337,
+// 2026-08-24) — same class of bug as the M13 lockfile gap above, same fix: gate it, fail closed.
+// Compares local VERSION against the version actually published on the REMOTE, fetched fresh over
+// HTTPS. A local working copy proves nothing about what Cowork's marketplace backend actually
+// serves — that is the exact gap that let both mirrors go stale while every local check passed.
+// FAIL CLOSED: unlike the npm-registry check above (§3b), a network/parse error here is a FAIL,
+// never a WARN — "can't tell if the mirror is current" is precisely the blind spot this gate
+// exists to close, so treating it as environmental noise would recreate the defect it fixes.
+if (existsSync('.claude-plugin/plugin.json') && existsSync('VERSION')) {
+  const localVersion = readFileSync('VERSION', 'utf8').trim();
+  const pluginName = JSON.parse(readFileSync('.claude-plugin/plugin.json', 'utf8')).name;
+
+  // Unauthenticated GitHub API calls are capped at 60/hr; `gh` (already required by Step 6 of this
+  // release pipeline for `gh release create`) raises that to 5000/hr when logged in. Best-effort —
+  // an unauthenticated 403 still surfaces as a clear FAIL below, never a silent pass.
+  const ghAuth = run('gh', ['auth', 'token']);
+  const ghToken = ghAuth.status === 0 ? (ghAuth.stdout || '').trim() : '';
+
+  // GitHub's raw.githubusercontent.com is CDN-fronted and observably lags a real push by minutes
+  // (verified during this gate's own build: a push that landed cleanly, confirmed by fresh clone,
+  // still read the PRE-push version from raw.* for several minutes after, cache-busting query
+  // strings and no-cache headers included). That would make this gate flake FAIL on a genuinely
+  // fresh mirror — the exact "gate people learn to ignore" failure mode decision 2 warns against.
+  // The Contents API with the raw media type returns the same bytes without that CDN lag.
+  const fetchRemote = async (url) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10000);
+    try {
+      const headers = { Accept: 'application/vnd.github.raw+json' };
+      if (ghToken) headers.Authorization = `Bearer ${ghToken}`;
+      const res = await fetch(url, { signal: controller.signal, headers });
+      if (!res.ok) return { error: `HTTP ${res.status} fetching ${url}` };
+      return { body: await res.text() };
+    } catch (e) {
+      return { error: `${e.name === 'AbortError' ? 'timed out after 10s' : (e.message || String(e))} fetching ${url}` };
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+
+  const checkMirror = async (label, url, extractVersion) => {
+    const r = await fetchRemote(url);
+    if (r.error) {
+      failed++;
+      line('FAIL', `${label} — could not read remote version (${r.error}) — fail-closed`);
+      return;
+    }
+    let version;
+    try { version = extractVersion(r.body); } catch { /* falls through to the undefined check below */ }
+    if (!version) {
+      failed++;
+      line('FAIL', `${label} — remote response had no readable version field — fail-closed`);
+    } else if (version !== localVersion) {
+      failed++;
+      line('FAIL', `${label} is at v${version}, local VERSION is v${localVersion} — mirror is behind, run its sync`);
+    } else {
+      line('PASS', `${label} matches local v${localVersion}`);
+    }
+  };
+
+  const contentsUrl = (repo, path) => `https://api.github.com/repos/TheDigitalGriot/${repo}/contents/${path}?ref=main`;
+
+  await checkMirror(
+    `TheDigitalGriot/${pluginName}-plugin mirror (single-tool, scripts/sync-prism-plugin.sh)`,
+    contentsUrl(`${pluginName}-plugin`, '.claude-plugin/plugin.json'),
+    (body) => JSON.parse(body).version
+  );
+  await checkMirror(
+    `digital-griot-marketplace root marketplace.json '${pluginName}' entry`,
+    contentsUrl('digital-griot-marketplace', '.claude-plugin/marketplace.json'),
+    (body) => (JSON.parse(body).plugins || []).find((p) => p.name === pluginName)?.version
+  );
+  await checkMirror(
+    `digital-griot-marketplace ${pluginName}-plugin/.claude-plugin/plugin.json`,
+    contentsUrl('digital-griot-marketplace', `${pluginName}-plugin/.claude-plugin/plugin.json`),
+    (body) => JSON.parse(body).version
+  );
+} else {
+  failed++;
+  line('FAIL', 'no ./.claude-plugin/plugin.json or ./VERSION — cannot determine mirror-freshness target, fail-closed');
+}
+
 console.log(`\n${failed === 0 ? 'AUDIT CLEAN' : failed + ' AUDIT FAILURE(S)'}`);
 process.exit(failed === 0 ? 0 : 1);
