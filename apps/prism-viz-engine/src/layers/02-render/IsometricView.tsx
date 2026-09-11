@@ -187,12 +187,17 @@ export function IsometricView({
             const p1 = a.box.anchors[(e.fromSide ?? "bottom") as keyof typeof a.box.anchors]
             const p2 = b.box.anchors[(e.toSide ?? "top") as keyof typeof b.box.anchors]
             const mx = (p1.x + p2.x) / 2
+            const d = `M${p1.x},${p1.y} Q${mx},${p1.y} ${mx},${(p1.y + p2.y) / 2} T${p2.x},${p2.y}`
+            // THE HALO — grafted from FossFLOW Connector.tsx:107-125. Two stacked
+            // strokes: a ground-coloured halo at 1.4x width / 0.7 opacity beneath the
+            // line itself. Its A* grid is walls-free, so nothing avoids anything; the
+            // halo is what keeps a connector readable where it crosses a dense scene.
+            // Legibility solved at DRAW time, not at route time.
             return (
-              <path
-                key={e.id}
-                className="vz-iso-edge"
-                d={`M${p1.x},${p1.y} Q${mx},${p1.y} ${mx},${(p1.y + p2.y) / 2} T${p2.x},${p2.y}`}
-              />
+              <g key={e.id}>
+                <path className="vz-iso-edge-halo" d={d} />
+                <path className="vz-iso-edge" d={d} />
+              </g>
             )
           })}
         </g>

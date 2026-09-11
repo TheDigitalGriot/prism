@@ -142,7 +142,18 @@ export interface CameraState {
   zoom: number
 }
 
-const easeOutQuint = (t: number) => 1 - Math.pow(1 - t, 5) // ~ the .2,.8,.2,1 feel
+/**
+ * `power1.out` — gsap's DEFAULT, which is the curve FossFLOW actually uses, because
+ * neither of its two `gsap.to()` calls specifies an ease (SceneLayer.tsx:32-37,
+ * Grid.tsx:32-36). An earlier revision of this file used easeOutQuint, which was a guess
+ * at the feel rather than the measured curve; the design harvest settled it.
+ *
+ * power1 is quadratic, so `out` is 1-(1-t)^2. Gentler than quintic — it decelerates
+ * sooner and settles longer, and the harvest names exactly why that matters:
+ * "a fast drag produces continuous smoothed motion that lags the cursor slightly and
+ * catches up on release. That lag IS the instrument feel."
+ */
+const power1Out = (t: number) => 1 - (1 - t) * (1 - t)
 
 export function tweenCamera(
   from: CameraState,
@@ -165,7 +176,7 @@ export function tweenCamera(
   let raf = 0
   const frame = (now: number) => {
     const p = Math.min(1, (now - t0) / dur)
-    const e = easeOutQuint(p)
+    const e = power1Out(p)
     apply({
       x: from.x + (to.x - from.x) * e,
       y: from.y + (to.y - from.y) * e,
