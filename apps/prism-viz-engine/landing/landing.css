@@ -1,133 +1,189 @@
 /*
- * Landing chrome. Inherits the engine's tokens from ../src/styles.css — the neural-blue
- * register from the diagramming-oss-audit codex — so the page and the instrument are
- * visibly the same system rather than a marketing skin wrapped around a tool.
+ * Griotwave v0.4.0 — the real tokens, read from
+ * GriotMeta/SkillsForge/griotwave/griotwave-library/_master/griotwave.tokens.json,
+ * not a recollection of them.
  *
- * One deliberate borrowing from the harvest: radius encodes hierarchy
- * (Lanshu, render_animated_diagram.py — 3→8→14→16→20→29). Cards sit at 14, the stage at
- * 20, chips at 8. Depth is legible from corner alone before any colour is read.
+ * The metaphor is Gavin's, recorded in metadata: "Stories told around a fire at night.
+ * Black = the dark of the canvas. Bloom = embers. Glass = smoke catching the firelight.
+ * Stagger = the cadence of the storyteller's voice." So the type roles are named for
+ * voices — voice / echo / whisper / footstep / ghost — and this file uses those names
+ * rather than renaming them to sizes.
+ *
+ * Ember: #e85d3a, Prism's own, from the ontology codex node table. The solar-flare
+ * family, but Prism's spark rather than the family default — "the fire is shared, the
+ * spark is yours."
+ *
+ * There is almost nothing here on purpose. The page is the engine; chrome that competes
+ * with the canvas is the mistake the first version made.
  */
 
-body { overflow-y: auto; overflow-x: hidden; }
-#landing { max-width: 1180px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
-
-/* ── hero ─────────────────────────────────────────────────────────────────── */
-.lp-hero { padding: 72px 0 34px; }
-.lp-kicker {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
-  color: var(--neural); opacity: 0.9; margin-bottom: 16px;
-}
-.lp-hero h1 {
-  font-size: clamp(38px, 6.5vw, 66px); font-weight: 650; letter-spacing: -0.035em;
-  line-height: 0.98; margin: 0;
-  background: linear-gradient(180deg, #fff 0%, #9fb0c4 135%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.lp-thesis {
-  font-size: clamp(17px, 2.2vw, 21px); color: var(--ink); max-width: 62ch;
-  margin: 20px 0 0; line-height: 1.5;
-}
-.lp-thesis em { color: var(--mint); font-style: normal; }
-.lp-thesis strong { color: var(--sky); font-weight: 600; }
-.lp-sub { font-size: 14.5px; color: var(--mute); max-width: 66ch; margin: 14px 0 0; line-height: 1.6; }
-.lp-sub strong { color: var(--ink); font-weight: 600; }
-
-code {
-  font-family: var(--mono); font-size: 0.88em; color: var(--mint);
-  background: rgba(16, 255, 186, 0.07); border: 1px solid rgba(16, 255, 186, 0.16);
-  border-radius: 4px; padding: 1px 5px;
+@font-face {
+  font-family: "Afrik";
+  src: url("./assets/Afrik-Regular.woff") format("woff");
+  font-weight: 400;
+  font-display: swap;
 }
 
-/* ── the live stage — the hero IS the engine ──────────────────────────────── */
-.lp-stage {
-  border: 1px solid var(--line2); border-radius: 20px; overflow: hidden;
-  background: var(--panel2); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
-  margin-bottom: 64px;
-}
-.lp-stage-bar {
-  display: flex; align-items: center; gap: 12px; padding: 9px 15px;
-  background: var(--panel); border-bottom: 1px solid var(--line);
-}
-.lp-live {
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--mint);
-}
-.lp-stage-note { font-family: var(--mono); font-size: 11px; color: var(--dim); }
-.lp-stage-note.lp-warn { color: var(--amber); }
-.lp-mount { height: 660px; position: relative; }
-.lp-mount .vz-shell { height: 100%; }
-.lp-mount-empty::after {
-  content: "The engine mounts here. It is not a screenshot, so there is nothing to show until the sidecar is up.";
-  display: grid; place-content: center; height: 100%; padding: 0 15%;
-  text-align: center; color: var(--dim); font-size: 13px; line-height: 1.6;
+:root {
+  /* canvas — griotwave color.canvas */
+  --gw-void: #000000;
+  --gw-ink: #030303;
+  --gw-graphite: #0e0f11;
+
+  /* glass — color.glass. rim-04 is the Velora signature top inset */
+  --gw-haze-05: rgba(255, 255, 255, 0.05);
+  --gw-rim-04: rgba(255, 255, 255, 0.04);
+  --gw-rim-08: rgba(255, 255, 255, 0.08);
+
+  /* the storyteller's register — color.text */
+  --gw-voice: #ffffff;
+  --gw-echo: rgba(255, 255, 255, 0.85);
+  --gw-whisper: rgba(255, 255, 255, 0.6);
+  --gw-footstep: rgba(255, 255, 255, 0.4);
+
+  /* Prism's spark */
+  --gw-ember: #e85d3a;
+  --gw-ember-hot: #fb923c;
+  --gw-ember-soft: rgba(232, 93, 58, 0.2);
+  --gw-ember-wash: rgba(232, 93, 58, 0.05);
+
+  /* motion — easing.drum is cubic-bezier(.2,.8,.2,1), the same curve
+     diagram-design's animation.md arrived at independently */
+  --gw-drum: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --gw-song: cubic-bezier(0.16, 1, 0.3, 1);
+  --gw-tell: 700ms;
+  --gw-swipe: 300ms;
 }
 
-/* ── sections ─────────────────────────────────────────────────────────────── */
-.lp-section { margin-bottom: 62px; }
-.lp-section h2 {
-  font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--neural); margin: 0 0 8px; display: flex; align-items: center; gap: 12px;
-}
-.lp-section h2::before { content: ""; width: 24px; height: 1px; background: var(--neural); opacity: 0.6; }
-.lp-lead { font-size: 14.5px; color: var(--mute); max-width: 74ch; margin: 0 0 22px; line-height: 1.6; }
-
-/* ── layers ───────────────────────────────────────────────────────────────── */
-.lp-layers { display: grid; grid-template-columns: repeat(auto-fit, minmax(228px, 1fr)); gap: 14px; }
-.lp-layer {
-  background: var(--glass); border: 1px solid var(--line); border-radius: 14px;
-  padding: 17px 18px; backdrop-filter: blur(18px) saturate(140%); position: relative; overflow: hidden;
-}
-.lp-layer::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 2px; background: var(--dim); opacity: 0.5; }
-.lp-layer.lp-built::before { background: var(--mint); opacity: 1; }
-.lp-layer.lp-partial::before { background: var(--amber); opacity: 1; }
-.lp-layer-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.lp-num { font-family: var(--mono); font-size: 11px; color: var(--neural); font-weight: 650; letter-spacing: 0.1em; }
-.lp-state {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
-  border: 1px solid var(--line2); border-radius: 8px; padding: 2px 7px; color: var(--dim);
-}
-.lp-built .lp-state { border-color: var(--mint); color: var(--mint); }
-.lp-partial .lp-state { border-color: var(--amber); color: var(--amber); }
-.lp-layer h3 { font-size: 16px; font-weight: 600; margin: 0 0 2px; letter-spacing: -0.01em; }
-.lp-layer-sub { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-bottom: 10px; }
-.lp-layer p { font-size: 12.5px; color: var(--mute); line-height: 1.55; margin: 0 0 12px; }
-.lp-parts { display: flex; flex-wrap: wrap; gap: 5px; }
-.lp-parts span {
-  font-family: var(--mono); font-size: 9.5px; color: var(--mute);
-  border: 1px solid var(--line); border-radius: 8px; padding: 2px 7px;
+html,
+body,
+#landing {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--gw-void);
 }
 
-/* ── roles ────────────────────────────────────────────────────────────────── */
-.lp-roles { display: flex; flex-wrap: wrap; gap: 7px; }
-.lp-roles span {
-  font-size: 12px; color: var(--ink); background: var(--glass);
-  border: 1px solid var(--line2); border-radius: 8px; padding: 5px 11px;
+/* The ambient ember blobs — layout primitive added in griotwave 0.2.0, so the frost has
+   something to refract. One bloom, low, warm: a fire at the edge of the dark. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(820px 520px at 12% -10%, rgba(232, 93, 58, 0.13), transparent 62%),
+    radial-gradient(680px 460px at 96% 104%, rgba(232, 93, 58, 0.07), transparent 60%);
 }
 
-/* ── harvest ──────────────────────────────────────────────────────────────── */
-.lp-harvest { display: grid; grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)); gap: 14px; }
-.lp-h {
-  border: 1px solid var(--line); border-left: 3px solid var(--violet);
-  border-radius: 14px; padding: 16px 18px; background: var(--glass);
-}
-.lp-h b { font-size: 14.5px; color: var(--ink); display: block; margin-bottom: 6px; }
-.lp-h p { font-size: 12.5px; color: var(--mute); line-height: 1.55; margin: 0; }
-
-/* ── the honest section — deliberately not hidden at the bottom ───────────── */
-.lp-honest {
-  border: 1px dashed rgba(245, 158, 11, 0.42); border-radius: 16px;
-  padding: 24px 26px; background: rgba(245, 158, 11, 0.04);
-}
-.lp-honest h2 { color: var(--amber); }
-.lp-honest h2::before { background: var(--amber); }
-.lp-honest ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 9px; }
-.lp-honest li { font-size: 13px; color: var(--mute); line-height: 1.55; }
-.lp-honest b { color: var(--ink); font-weight: 600; }
-
-.lp-foot {
-  border-top: 1px solid var(--line); padding-top: 20px;
-  display: flex; flex-wrap: wrap; gap: 8px 28px;
-  font-family: var(--mono); font-size: 11px; color: var(--dim);
+#landing {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-@media (max-width: 720px) { .lp-mount { height: 520px; } .lp-hero { padding-top: 48px; } }
+/* ── the masthead — three lines, then out of the way ───────────────────────── */
+.gw-mast {
+  flex: none;
+  padding: 26px 30px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  border-bottom: 1px solid var(--gw-rim-08);
+  background: linear-gradient(180deg, var(--gw-ink), transparent);
+}
+
+/* Afrik is a carved display face — it is the wordmark, never body copy. */
+.gw-mark {
+  font-family: "Afrik", Georgia, serif;
+  font-size: clamp(30px, 4.4vw, 52px);
+  line-height: 0.92;
+  color: var(--gw-voice);
+  letter-spacing: 0.01em;
+  text-transform: lowercase;
+}
+
+.gw-voice {
+  font-size: 15px;
+  color: var(--gw-echo);
+  margin: 2px 0 0;
+  max-width: 74ch;
+  line-height: 1.5;
+}
+.gw-ember {
+  color: var(--gw-ember-hot);
+}
+
+.gw-footstep {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gw-footstep);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* ── the stage — everything else ───────────────────────────────────────────── */
+.gw-stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+.gw-stage .vz-shell {
+  height: 100%;
+}
+
+/* Re-temper the engine's own chrome into the warm register while it sits on this page.
+   The engine keeps its neural-blue identity standalone; here it wears Prism's ember,
+   which is the point of one ember per tool. */
+.gw-stage .vz-brand {
+  font-family: "Afrik", Georgia, serif;
+  font-size: 17px;
+  color: var(--gw-ember-hot);
+  letter-spacing: 0.01em;
+}
+.gw-stage .vz-host,
+.gw-stage .vz-chip.on {
+  color: var(--gw-ember-hot);
+  border-color: var(--gw-ember);
+  background: var(--gw-ember-wash);
+}
+.gw-stage button.vz-pri {
+  background: var(--gw-ember);
+  border-color: var(--gw-ember);
+  color: #140703;
+}
+.gw-stage button:hover:not(:disabled) {
+  border-color: var(--gw-ember);
+  color: var(--gw-ember-hot);
+}
+.gw-stage .vz-route {
+  border-color: var(--gw-ember-soft);
+  background: var(--gw-ember-wash);
+}
+.gw-stage .vz-route b {
+  color: var(--gw-ember-hot);
+}
+.gw-stage .vz-status,
+.gw-stage .vz-count,
+.gw-stage .vz-placed {
+  color: var(--gw-ember-hot);
+}
+.gw-stage .vz-search:focus,
+.gw-stage .vz-picker:focus {
+  border-color: var(--gw-ember);
+}
+
+/* Seam nodes — declared, not built — read as unlit rather than hidden. An engine that
+   hides its own gaps is doing the thing this one exists to stop. */
+.gw-stage .vz-node .vz-dec {
+  letter-spacing: 0.06em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

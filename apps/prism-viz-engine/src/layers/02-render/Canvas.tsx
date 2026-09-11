@@ -27,7 +27,9 @@ import {
   Controls,
   MiniMap,
   ReactFlowProvider,
+  ViewportPortal,
   useReactFlow,
+  useViewport,
   applyNodeChanges,
   applyEdgeChanges,
   addEdge,
@@ -64,22 +66,70 @@ export interface CanvasProps {
 export const laneOf = (y: number): LayerSlot =>
   ALL_SLOTS[Math.max(0, Math.min(ALL_SLOTS.length - 1, Math.floor(y / LANE_H)))]
 
-function Lanes({ width }: { width: number }) {
+/**
+ * The lanes live in FLOW space, not screen space.
+ *
+ * They were rendered as a plain child of <ReactFlow>, which put them in the viewport's
+ * own coordinates — so the graph panned and zoomed underneath them and the labels
+ * stopped describing the rows they sat on. A lane that does not move with its nodes is
+ * worse than no lane: it asserts a role for whatever happens to be under it.
+ *
+ * <ViewportPortal> renders into the transformed pane, so a lane is pinned to the same
+ * coordinates as the nodes it contains and survives any camera move.
+ */
+function LaneBands({ width }: { width: number }) {
   return (
-    <>
+    <ViewportPortal>
       {ALL_SLOTS.map((role, i) => (
         <div
           key={role}
           className="vz-lane"
           style={{ top: i * LANE_H, height: LANE_H, width, ["--ember" as string]: ROLE_EMBER[role] }}
-        >
-          <div className="vz-lane-hd">
-            <span className="vz-lane-name">{role}</span>
-            {ROLE_EQUIV[role] && <span className="vz-lane-eq">{ROLE_EQUIV[role]}</span>}
-          </div>
-        </div>
+        />
       ))}
-    </>
+    </ViewportPortal>
+  )
+}
+
+/**
+ * The label rail — screen space, but tracking the bands.
+ *
+ * Bands belong in flow space or a node drifts out of the role it is sitting in. Labels
+ * do NOT: send them through the same transform and the legend slides off the left edge
+ * the moment you pan right, which is the context loss this is fixing, just rotated 90
+ * degrees.
+ *
+ * So the rail is pinned to the viewport and reads `useViewport()` to place each label at
+ * its band's PROJECTED y. Bands move with the graph; the legend never leaves. Labels
+ * fade out when their band is too short to read at the current zoom rather than
+ * overlapping their neighbours — the same instinct as archify's Reading Depth, where
+ * detail drops out by scale but nothing moves to make room.
+ */
+function LaneRail() {
+  const { y, zoom } = useViewport()
+  const h = LANE_H * zoom
+  const readable = h > 26
+  return (
+    <div className="vz-rail" aria-hidden={!readable}>
+      {ALL_SLOTS.map((role, i) => {
+        const top = y + i * h
+        return (
+          <div
+            key={role}
+            className="vz-rail-row"
+            style={{
+              top,
+              height: h,
+              opacity: readable ? 1 : 0,
+              ["--ember" as string]: ROLE_EMBER[role],
+            }}
+          >
+            <span className="vz-lane-name">{role}</span>
+            {ROLE_EQUIV[role] && h > 48 && <span className="vz-lane-eq">{ROLE_EQUIV[role]}</span>}
+          </div>
+        )
+      })}
+    </div>
   )
 }
 
@@ -132,12 +182,15 @@ function CanvasInner(props: CanvasProps) {
         fitView
         proOptions={{ hideAttribution: false }}
       >
-        <Lanes width={laneWidth} />
+        <LaneBands width={laneWidth} />
+        <LaneRail />
         <Background variant={BackgroundVariant.Dots} gap={22} size={1} color="var(--grid)" />
         <Controls position="bottom-right" />
         <MiniMap
           pannable
           zoomable
+          bgColor="#0d1116"
+          maskStrokeColor="rgba(255,255,255,.12)"
           nodeColor={(n) => ROLE_EMBER[(n.data as ComponentNodeData).griot?.layer as LayerSlot] ?? "#555"}
           maskColor="rgba(0,0,0,.55)"
         />

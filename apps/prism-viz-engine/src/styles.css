@@ -157,10 +157,19 @@ button.vz-pri:hover { color: #04070d; filter: brightness(1.1); }
   border-bottom: 1px dashed var(--line);
   background: linear-gradient(90deg, rgba(255,255,255,.018), transparent 460px);
 }
-.vz-lane-hd {
-  position: absolute; left: 0; top: 0; bottom: 0; width: 200px; padding: 10px 12px;
+/* The pinned label rail — screen space, tracking each band's projected position.
+   Bands move with the graph; the legend stays put. */
+.vz-rail {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 200px;
+  z-index: 5; pointer-events: none; overflow: hidden;
+  border-right: 1px solid var(--line);
+  background: linear-gradient(90deg, var(--panel2) 0 88%, transparent);
+}
+.vz-rail-row {
+  position: absolute; left: 0; width: 100%; padding: 0 12px;
   display: flex; flex-direction: column; justify-content: center; gap: 3px;
-  border-right: 1px solid var(--line); background: var(--panel2);
+  border-bottom: 1px solid var(--soft);
+  transition: opacity 160ms var(--motion-ease, cubic-bezier(.2,.8,.2,1));
 }
 .vz-lane-name { font-size: 11.5px; font-weight: 600; line-height: 1.25; color: var(--ink); }
 .vz-lane-name::before {
