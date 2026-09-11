@@ -1,0 +1,133 @@
+/*
+ * Landing chrome. Inherits the engine's tokens from ../src/styles.css — the neural-blue
+ * register from the diagramming-oss-audit codex — so the page and the instrument are
+ * visibly the same system rather than a marketing skin wrapped around a tool.
+ *
+ * One deliberate borrowing from the harvest: radius encodes hierarchy
+ * (Lanshu, render_animated_diagram.py — 3→8→14→16→20→29). Cards sit at 14, the stage at
+ * 20, chips at 8. Depth is legible from corner alone before any colour is read.
+ */
+
+body { overflow-y: auto; overflow-x: hidden; }
+#landing { max-width: 1180px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+/* ── hero ─────────────────────────────────────────────────────────────────── */
+.lp-hero { padding: 72px 0 34px; }
+.lp-kicker {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--neural); opacity: 0.9; margin-bottom: 16px;
+}
+.lp-hero h1 {
+  font-size: clamp(38px, 6.5vw, 66px); font-weight: 650; letter-spacing: -0.035em;
+  line-height: 0.98; margin: 0;
+  background: linear-gradient(180deg, #fff 0%, #9fb0c4 135%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.lp-thesis {
+  font-size: clamp(17px, 2.2vw, 21px); color: var(--ink); max-width: 62ch;
+  margin: 20px 0 0; line-height: 1.5;
+}
+.lp-thesis em { color: var(--mint); font-style: normal; }
+.lp-thesis strong { color: var(--sky); font-weight: 600; }
+.lp-sub { font-size: 14.5px; color: var(--mute); max-width: 66ch; margin: 14px 0 0; line-height: 1.6; }
+.lp-sub strong { color: var(--ink); font-weight: 600; }
+
+code {
+  font-family: var(--mono); font-size: 0.88em; color: var(--mint);
+  background: rgba(16, 255, 186, 0.07); border: 1px solid rgba(16, 255, 186, 0.16);
+  border-radius: 4px; padding: 1px 5px;
+}
+
+/* ── the live stage — the hero IS the engine ──────────────────────────────── */
+.lp-stage {
+  border: 1px solid var(--line2); border-radius: 20px; overflow: hidden;
+  background: var(--panel2); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  margin-bottom: 64px;
+}
+.lp-stage-bar {
+  display: flex; align-items: center; gap: 12px; padding: 9px 15px;
+  background: var(--panel); border-bottom: 1px solid var(--line);
+}
+.lp-live {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--mint);
+}
+.lp-stage-note { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+.lp-stage-note.lp-warn { color: var(--amber); }
+.lp-mount { height: 660px; position: relative; }
+.lp-mount .vz-shell { height: 100%; }
+.lp-mount-empty::after {
+  content: "The engine mounts here. It is not a screenshot, so there is nothing to show until the sidecar is up.";
+  display: grid; place-content: center; height: 100%; padding: 0 15%;
+  text-align: center; color: var(--dim); font-size: 13px; line-height: 1.6;
+}
+
+/* ── sections ─────────────────────────────────────────────────────────────── */
+.lp-section { margin-bottom: 62px; }
+.lp-section h2 {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--neural); margin: 0 0 8px; display: flex; align-items: center; gap: 12px;
+}
+.lp-section h2::before { content: ""; width: 24px; height: 1px; background: var(--neural); opacity: 0.6; }
+.lp-lead { font-size: 14.5px; color: var(--mute); max-width: 74ch; margin: 0 0 22px; line-height: 1.6; }
+
+/* ── layers ───────────────────────────────────────────────────────────────── */
+.lp-layers { display: grid; grid-template-columns: repeat(auto-fit, minmax(228px, 1fr)); gap: 14px; }
+.lp-layer {
+  background: var(--glass); border: 1px solid var(--line); border-radius: 14px;
+  padding: 17px 18px; backdrop-filter: blur(18px) saturate(140%); position: relative; overflow: hidden;
+}
+.lp-layer::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 2px; background: var(--dim); opacity: 0.5; }
+.lp-layer.lp-built::before { background: var(--mint); opacity: 1; }
+.lp-layer.lp-partial::before { background: var(--amber); opacity: 1; }
+.lp-layer-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.lp-num { font-family: var(--mono); font-size: 11px; color: var(--neural); font-weight: 650; letter-spacing: 0.1em; }
+.lp-state {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+  border: 1px solid var(--line2); border-radius: 8px; padding: 2px 7px; color: var(--dim);
+}
+.lp-built .lp-state { border-color: var(--mint); color: var(--mint); }
+.lp-partial .lp-state { border-color: var(--amber); color: var(--amber); }
+.lp-layer h3 { font-size: 16px; font-weight: 600; margin: 0 0 2px; letter-spacing: -0.01em; }
+.lp-layer-sub { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-bottom: 10px; }
+.lp-layer p { font-size: 12.5px; color: var(--mute); line-height: 1.55; margin: 0 0 12px; }
+.lp-parts { display: flex; flex-wrap: wrap; gap: 5px; }
+.lp-parts span {
+  font-family: var(--mono); font-size: 9.5px; color: var(--mute);
+  border: 1px solid var(--line); border-radius: 8px; padding: 2px 7px;
+}
+
+/* ── roles ────────────────────────────────────────────────────────────────── */
+.lp-roles { display: flex; flex-wrap: wrap; gap: 7px; }
+.lp-roles span {
+  font-size: 12px; color: var(--ink); background: var(--glass);
+  border: 1px solid var(--line2); border-radius: 8px; padding: 5px 11px;
+}
+
+/* ── harvest ──────────────────────────────────────────────────────────────── */
+.lp-harvest { display: grid; grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)); gap: 14px; }
+.lp-h {
+  border: 1px solid var(--line); border-left: 3px solid var(--violet);
+  border-radius: 14px; padding: 16px 18px; background: var(--glass);
+}
+.lp-h b { font-size: 14.5px; color: var(--ink); display: block; margin-bottom: 6px; }
+.lp-h p { font-size: 12.5px; color: var(--mute); line-height: 1.55; margin: 0; }
+
+/* ── the honest section — deliberately not hidden at the bottom ───────────── */
+.lp-honest {
+  border: 1px dashed rgba(245, 158, 11, 0.42); border-radius: 16px;
+  padding: 24px 26px; background: rgba(245, 158, 11, 0.04);
+}
+.lp-honest h2 { color: var(--amber); }
+.lp-honest h2::before { background: var(--amber); }
+.lp-honest ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 9px; }
+.lp-honest li { font-size: 13px; color: var(--mute); line-height: 1.55; }
+.lp-honest b { color: var(--ink); font-weight: 600; }
+
+.lp-foot {
+  border-top: 1px solid var(--line); padding-top: 20px;
+  display: flex; flex-wrap: wrap; gap: 8px 28px;
+  font-family: var(--mono); font-size: 11px; color: var(--dim);
+}
+
+@media (max-width: 720px) { .lp-mount { height: 520px; } .lp-hero { padding-top: 48px; } }
