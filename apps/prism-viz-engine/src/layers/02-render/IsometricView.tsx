@@ -47,6 +47,7 @@ function tintFor(griot: GriotNodeMeta | undefined, node: CanvasNode): string {
   return "#64748b"
 }
 import { MOTION, pulseIntensity, activeIndex, decorativeAttrs, type MotionMode } from "../../core/motion"
+import { loadIcons, resolveIcon, placeIcon, type IsoIcon } from "./icons"
 
 export interface IsometricViewProps {
   canvas: JSONCanvas
@@ -93,6 +94,9 @@ export function IsometricView({
   onReveal,
 }: IsometricViewProps) {
   const [cam, setCam] = useState({ x: 0, y: 0, zoom: 1 })
+  // 1062 base64 icons load lazily — a canvas that needs none pays nothing.
+  const [icons, setIcons] = useState<IsoIcon[]>([])
+  useEffect(() => { loadIcons().then(setIcons).catch(() => {}) }, [])
   const [elapsed, setElapsed] = useState(0)
   const wrap = useRef<HTMLDivElement>(null)
   const pan = useRef<{ x: number; y: number; cx: number; cy: number } | null>(null)
@@ -209,6 +213,9 @@ export function IsometricView({
             const isSel = selectedId === p.node.id
             const isLit = i === lit
             const label = (p.node as any).label ?? p.node.id
+            const ax = (p.node as any).archify ?? {}
+            const match = resolveIcon(icons, { label: String(label), type: ax.type, brand: ax.brand })
+            const art = match ? placeIcon(match.icon, p.box.center, boxHeight) : null
             return (
               <g
                 key={p.node.id}
@@ -236,7 +243,28 @@ export function IsometricView({
                 <polygon className="vz-iso-face left" points={p.box.left} fill={ember} />
                 <polygon className="vz-iso-face right" points={p.box.right} fill={ember} />
                 <polygon className="vz-iso-face top" points={p.box.top} fill={ember} />
-                <text className="vz-iso-label" x={p.box.labelAt.x} y={p.box.labelAt.y} textAnchor="middle">
+                {art && (
+                  /* Two paths, never averaged: an isometric icon is ANCHORED and never
+                     transformed; a flat vendor mark is PROJECTED into the plane as a
+                     decal. Transform the first and it shears; leave the second flat and
+                     it floats above the scene like a sticker. */
+                  <image
+                    className="vz-iso-icon"
+                    href={art.href}
+                    width={art.width}
+                    x={art.x}
+                    y={art.y}
+                    transform={art.transform}
+                    preserveAspectRatio="xMidYMax meet"
+                    aria-hidden="true"
+                  />
+                )}
+                <text
+                  className="vz-iso-label"
+                  x={p.box.labelAt.x}
+                  y={art ? p.box.labelAt.y + boxHeight + 16 : p.box.labelAt.y}
+                  textAnchor="middle"
+                >
                   {wrapLabel(String(label)).map((line, li, all) => (
                     <tspan key={li} x={p.box.labelAt.x} dy={li === 0 ? -((all.length - 1) * 6) : 12}>
                       {line}

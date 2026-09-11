@@ -23,6 +23,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@isoflow/isopacks": "^0.0.10",
     "@mui/icons-material": "^5.18.0",
     "@mui/material": "^5.18.0",
     "@xyflow/react": "^12.3.5",

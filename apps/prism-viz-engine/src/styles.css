@@ -329,3 +329,7 @@ button.vz-pri:hover { color: #04070d; filter: brightness(1.1); }
   /* diagram-design animation.md:76 — decoration is dropped entirely, not just slowed */
   [data-motion-decorative] { display: none !important; }
 }
+
+/* Icons sit on the lid; the label moves below the box when one is present so the two
+   never compete for the same face. */
+.vz-iso-icon { pointer-events: none; }
