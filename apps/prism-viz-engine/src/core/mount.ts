@@ -28,8 +28,10 @@ export interface MountOptions {
   element: HTMLElement
   /** Which surface is hosting. Detected when omitted. */
   host?: VizHost
-  /** The canvas to open with. */
+  /** The canvas to open with — also the palette library for composable sources. */
   canvas?: JSONCanvas
+  /** Named canvases the engine can switch between. */
+  sources?: unknown[]
   /** Called on every mutation so the host owns persistence — the engine never writes. */
   onChange?: (canvas: JSONCanvas) => void
   /**

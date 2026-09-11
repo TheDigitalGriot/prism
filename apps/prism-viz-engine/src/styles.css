@@ -257,4 +257,58 @@ button.vz-pri:hover { color: #04070d; filter: brightness(1.1); }
 .vz-legend-row i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
 .vz-legend-row em { font-family: var(--mono); font-size: 9px; color: var(--sky); font-style: normal; }
 
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+/* ── pickers + the routing readout ─────────────────────────────────────────── */
+.vz-picker {
+  font: inherit; font-size: 11px; padding: 4px 7px; border-radius: 6px;
+  border: 1px solid var(--line2); background: var(--glass); color: var(--ink);
+}
+.vz-picker:focus { outline: none; border-color: var(--neural); }
+.vz-route {
+  display: inline-flex; align-items: baseline; gap: 7px;
+  padding: 3px 9px; border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--mint) 38%, var(--line));
+  background: rgba(16, 255, 186, 0.07);
+}
+.vz-route b { font-size: 11.5px; color: var(--mint); font-weight: 650; }
+.vz-route em {
+  font-family: var(--mono); font-size: 9.5px; color: var(--mute); font-style: normal;
+}
+.vz-route .vz-fellback { font-family: var(--mono); font-size: 9.5px; color: var(--amber); font-style: normal; }
+
+/* ── isometric canvas ──────────────────────────────────────────────────────── */
+.vz-iso {
+  flex: 1; min-width: 0; position: relative; overflow: hidden; cursor: grab;
+  background:
+    radial-gradient(1200px 700px at 50% 0%, rgba(59, 130, 246, 0.06), transparent 60%),
+    var(--void);
+  touch-action: none;
+}
+.vz-iso:active { cursor: grabbing; }
+.vz-iso-svg { width: 100%; height: 100%; display: block; transform-origin: 50% 50%; }
+
+.vz-iso-edge {
+  fill: none; stroke: var(--dim); stroke-width: 2; opacity: 0.5;
+  stroke-linecap: round;
+}
+.vz-iso-node { cursor: pointer; }
+.vz-iso-face { stroke: rgba(0, 0, 0, 0.45); stroke-width: 1; stroke-linejoin: round; }
+/* one light source, top-left: lid full, south-west wall mid, south-east wall dark.
+   That single convention is what reads as solid rather than as three flat shapes. */
+.vz-iso-face.top { filter: brightness(1.06); }
+.vz-iso-face.left { filter: brightness(0.62); }
+.vz-iso-face.right { filter: brightness(0.4); }
+.vz-iso-node:hover .vz-iso-face.top { filter: brightness(1.28); }
+.vz-iso-node.sel .vz-iso-face { stroke: var(--mint); stroke-width: 1.6; }
+.vz-iso-node.sel .vz-iso-face.top { filter: brightness(1.35); }
+.vz-iso-label {
+  fill: #06080c; font-family: var(--sans); font-size: 11px; font-weight: 650;
+  pointer-events: none; paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.55); stroke-width: 2.4px; stroke-linejoin: round;
+}
+.vz-iso-empty { position: absolute; inset: 0; display: grid; place-content: center; max-width: 40ch; margin: auto; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+  /* diagram-design animation.md:76 — decoration is dropped entirely, not just slowed */
+  [data-motion-decorative] { display: none !important; }
+}

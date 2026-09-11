@@ -1,47 +1,82 @@
 /**
  * Standalone entry — host #1 of three.
  *
- * The engine itself is host-agnostic; this file is only the standalone wrapper. It
- * fetches the REAL harvest from the sidecar (never a bundled fixture, so the canvas
- * cannot drift from what was actually walked), wires Wiring B to the sidecar's reveal
- * endpoint, and mounts.
+ * Builds the source list the engine opens with. Two kinds, deliberately distinct:
+ *
+ *   composable  the Djeli UX/UI harvest — a palette you compose from. ONE source among
+ *               several, not the engine's identity.
+ *   examples    archify's own IR files, straight out of the harvested repo. The engine
+ *               demonstrates itself on the cluster's real data, so a broken adapter
+ *               shows up as a broken example instead of a green fixture.
+ *
+ * Nothing is bundled. If the sidecar is down the palette stays empty and says so.
  */
 
 import { mountVizEngine } from "./core/mount"
 import { adaptHarvest, type HarvestedUxNode, type HarvestedCodeRow } from "./layers/03-substrate/harvest-adapter"
+import { archifyToCanvas, type ArchifyIR } from "./layers/01-generate/archify-ir"
 import { ALL_SLOTS } from "./core/layer-roles"
-import { emptyCanvas } from "./core/json-canvas"
+import { emptyCanvas, merge } from "./core/json-canvas"
+import type { VizSource } from "./layers/04-shell/Shell"
 
 const SIDECAR = import.meta.env.VITE_SIDECAR ?? "http://127.0.0.1:5178"
 
+async function getJSON(path: string) {
+  const res = await fetch(`${SIDECAR}${path}`)
+  if (!res.ok) throw new Error(`${path} -> ${res.status}`)
+  return res.json()
+}
+
 async function boot() {
   const el = document.getElementById("root")!
+  const sources: VizSource[] = []
+  const notes: string[] = []
 
-  let ux: HarvestedUxNode[] = []
-  let code: HarvestedCodeRow[] = []
-  let note = ""
-
+  // ── the harvest (composable) ────────────────────────────────────────────────
+  let harvest = emptyCanvas()
   try {
-    const res = await fetch(`${SIDECAR}/api/harvest`)
-    if (!res.ok) throw new Error(`sidecar ${res.status}`)
-    const body = await res.json()
-    ux = body.ux ?? []
-    code = body.code ?? []
+    const b = await getJSON("/api/harvest")
+    const ux: HarvestedUxNode[] = b.ux ?? []
+    const code: HarvestedCodeRow[] = b.code ?? []
+    if (ux.length) {
+      harvest = adaptHarvest(ux, code, { slots: ALL_SLOTS })
+      sources.push({
+        id: "djeli-harvest",
+        label: `Djeli UX/UI harvest (${ux.length})`,
+        note: "composable — drag from the palette",
+        canvas: harvest,
+        composable: true,
+      })
+    }
+    if (b.notes?.length) notes.push(...b.notes)
   } catch (e) {
-    // Say so loudly rather than rendering a plausible empty canvas.
-    note =
-      `Could not reach the harvest sidecar at ${SIDECAR}. ` +
-      `Run \`npm run dev:reveal\` in apps/prism-viz-engine. ` +
-      `Nothing is being invented to fill the gap — the palette stays empty until real harvested data loads.`
-    console.error("[prism-viz-engine]", note, e)
+    notes.push(`harvest unavailable: ${(e as Error).message}`)
   }
 
-  const canvas = ux.length ? adaptHarvest(ux, code, { slots: ALL_SLOTS }) : emptyCanvas()
+  // ── archify's own examples (view-only) ──────────────────────────────────────
+  try {
+    const b = await getJSON("/api/examples")
+    for (const ex of b.examples ?? []) {
+      const ir = ex.ir as ArchifyIR
+      sources.push({
+        id: ex.id,
+        label: `${ex.title} · ${ex.diagramType}`,
+        note: `${ex.components} components · ${ex.connections} connections · ${ex.boundaries} boundaries`,
+        canvas: archifyToCanvas(ir, { harvestedBy: "archify-ir", harvestedAt: "2026-09-11" }),
+        diagramType: ex.diagramType,
+        composable: false,
+      })
+    }
+    if (b.note) notes.push(b.note)
+  } catch (e) {
+    notes.push(`examples unavailable: ${(e as Error).message}`)
+  }
 
   const handle = await mountVizEngine({
     element: el,
     host: "standalone",
-    canvas,
+    canvas: harvest, // the palette library comes from here
+    sources,
     reveal: async (origin) => {
       await fetch(`${SIDECAR}/api/reveal`, {
         method: "POST",
@@ -50,24 +85,23 @@ async function boot() {
       })
     },
     onChange: (c) => {
-      // Standalone persists to localStorage; a composed host would persist its own way.
-      try {
-        localStorage.setItem("prism-viz-engine:canvas", JSON.stringify(c))
-      } catch {}
+      try { localStorage.setItem("prism-viz-engine:canvas", JSON.stringify(c)) } catch {}
     },
   })
 
-  if (note) {
-    const banner = document.createElement("div")
-    banner.className = "vz-boot-note"
-    banner.textContent = note
-    banner.style.cssText =
+  if (!sources.length) {
+    const b = document.createElement("div")
+    b.style.cssText =
       "position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:99;max-width:760px;" +
       "background:#1a1206;border:1px solid #f59e0b;color:#f6d79a;border-radius:10px;padding:10px 14px;" +
       "font:12px/1.5 Inter,system-ui,sans-serif"
-    document.body.appendChild(banner)
+    b.textContent =
+      `No sources loaded. Start the sidecar: npm run dev:reveal. ` +
+      `Nothing is being invented to fill the gap. ${notes.join(" · ")}`
+    document.body.appendChild(b)
   }
 
+  void merge // kept exported-in-use for host code that merges canvases
   ;(window as any).__vizEngine = handle
 }
 

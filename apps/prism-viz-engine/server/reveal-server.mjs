@@ -19,7 +19,7 @@
  */
 
 import { createServer } from "node:http"
-import { readFileSync, existsSync } from "node:fs"
+import { readFileSync, existsSync, readdirSync } from "node:fs"
 import { join, resolve, isAbsolute } from "node:path"
 import { spawn } from "node:child_process"
 
@@ -32,6 +32,8 @@ const PLAN =
   "C:/Users/digit/GriotMeta/griot-live-artifacts/live/dgs-definitive-plan.html"
 
 const UX_NODES = join(PRISM_ROOT, ".prism", "shared", "workgraph", "uxui-canvas-nodes.json")
+/** Where griot-harvest cloned the layer-01 cluster. The engine's examples come from here. */
+const VIZ_CLUSTER = process.env.VIZ_CLUSTER ?? join(SANDBOX, "viz-generate")
 
 /** Where a repo id actually lives on disk. Djeli is in GriotApps; the rest are sandboxed. */
 const REPO_ROOTS = {
@@ -168,6 +170,34 @@ createServer(async (req, res) => {
   if (url.pathname === "/api/reveal" && req.method === "POST") {
     const b = await body(req)
     return json(res, 200, reveal(b))
+  }
+
+  // ── the engine's own examples ────────────────────────────────────────────────
+  // Real archify IR from the harvested repo, not fixtures written here. The engine
+  // demonstrates itself on the cluster's own data, so a broken adapter shows up as a
+  // broken example rather than a green fixture.
+  if (url.pathname === "/api/examples") {
+    const dir = join(VIZ_CLUSTER, "archify", "examples")
+    if (!existsSync(dir)) return json(res, 200, { examples: [], note: `not cloned: ${dir}` })
+    const files = readdirSync(dir).filter((f) => f.endsWith(".json"))
+    const examples = []
+    for (const f of files) {
+      try {
+        const ir = JSON.parse(readFileSync(join(dir, f), "utf-8"))
+        if (!ir.components) continue // only the node/edge IRs; sequence/receipt shapes differ
+        examples.push({
+          id: f.replace(/\.json$/, ""),
+          file: f,
+          diagramType: ir.diagram_type,
+          title: ir.meta?.title ?? f,
+          components: ir.components.length,
+          connections: (ir.connections ?? []).length,
+          boundaries: (ir.boundaries ?? []).length,
+          ir,
+        })
+      } catch {}
+    }
+    return json(res, 200, { examples, source: dir })
   }
 
   return json(res, 404, { ok: false, why: "no such route" })

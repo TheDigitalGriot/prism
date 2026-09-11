@@ -25,7 +25,7 @@ export function mountReact(opts: MountOptions & { host: NonNullable<MountOptions
       <Shell
         host={opts.host}
         library={library}
-        initial={{ nodes: [], edges: [] }}
+        sources={(opts.sources as any) ?? []}
         onChange={opts.onChange}
         reveal={opts.reveal}
         subscribeTrace={opts.subscribeTrace}
