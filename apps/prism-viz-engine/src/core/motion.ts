@@ -15,19 +15,32 @@
  *   Lanshu          THE TOKENS   render_animated_diagram.py:599-647 — glow dots,
  *                                pulse_rect phase maths, sequential module activation.
  *
- * ── THE CONFLICT, RULED ─────────────────────────────────────────────────────────
- * These two are in direct contradiction and merging them silently would be dishonest:
+ * ── THE CONFLICT, RULED 2-1 ─────────────────────────────────────────────────────
+ * Merging these silently would be dishonest. TWO independent sources forbid the thing
+ * the third is built on:
  *
- *   animation.md:46  "Avoid zoom, parallax, bounce, shake, GLOW, particles, and
- *                     indefinite blinking."
- *   Lanshu :560-571  glow via GaussianBlur; :599 draw_glow_dot; :606 pulse_rect
+ *   diagram-design  animation.md:46   "Avoid zoom, parallax, bounce, shake, GLOW,
+ *                                      particles, and indefinite blinking."
+ *   visual-explainer SKILL.md:109     bans continuous glow/pulse/breathing on static
+ *                                      content. Reached independently — the two repos
+ *                                      share no lineage.
+ *   Lanshu          :557-596          bloom on six container edges (alpha 70, radius 18,
+ *                                      GaussianBlur 4); :599 draw_glow_dot;
+ *                                      :606 pulse_rect. This IS its entire value.
  *
- * RULING: diagram-design's law wins on SEMANTICS, Lanshu's primitives survive as
- * DECORATION under that law. Concretely — a glow or pulse may never encode meaning, is
- * always `aria-hidden`, only ever runs in `loop` mode at a >=3s cycle, is the first
- * thing dropped under `prefers-reduced-motion`, and never appears in an export. That
- * keeps Lanshu's feel (which is the part worth having) without violating the rule that
- * motion explains a complete static figure and never supplies missing meaning.
+ * RULING (2-1, and recorded as 2-1 rather than laundered into consensus): the law wins
+ * on SEMANTICS, Lanshu's primitives survive as DECORATION under it. A glow or pulse may
+ * never encode meaning, is always `aria-hidden`, only runs in `loop` mode at a >=3s
+ * cycle, is the first thing dropped under `prefers-reduced-motion`, and never appears in
+ * an export.
+ *
+ * What makes that defensible rather than a fudge is Lanshu's own thesis, which the
+ * design harvest surfaced: "the pulse order teaches the reading order while the plate
+ * itself never changes — only light is added." One region lit at a time, advancing every
+ * 6 frames (300ms) over a 41-frame / 20fps / 2.05s loop. That is motion explaining a
+ * complete static figure — which is diagram-design's own first principle, arriving from
+ * the opposite direction. The two sides are closer than the prohibition suggests; what
+ * is actually banned is glow that CARRIES meaning, and Lanshu's never does.
  *
  * The camera is exempt from that argument entirely: pan/zoom is chrome, not figure, so
  * FossFLOW's 0.25s tween sits outside the semantic budget.
