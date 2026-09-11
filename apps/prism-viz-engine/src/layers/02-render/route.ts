@@ -46,11 +46,91 @@ export interface RouteDecision {
   alternatives: RendererId[]
 }
 
+/**
+ * ISOMETRIC IS NOT THE DEFAULT FOR "architecture".
+ *
+ * Gavin asked for the isometric camera on CERTAIN architectural diagrams — GBFolio,
+ * DO/Cloudflare, IONOS — i.e. deployment topology, things that occupy somewhere. An
+ * earlier pass routed the whole `architecture` type to isometric, which made every
+ * diagram isometric. That is the opposite of what was asked for.
+ *
+ * The real discriminator is TOPOLOGY, not the type name. A deployment diagram has
+ * regions, zones, VPCs, hosts, clusters — it has a floor plan, so a floor plan reads it.
+ * An application architecture of the same declared type has modules and services with no
+ * spatial meaning at all, and forcing it onto a tile lattice invents a geography that
+ * isn't in the data.
+ *
+ * So `architecture` routes to the node graph by default, and only lifts to isometric when
+ * the document itself shows topology. The signals are read from the content, and the
+ * reason is reported, so the lift is never silent.
+ */
+/**
+ * READ FROM THE DATA, not from the field names. Two wrong passes preceded this:
+ *
+ *   1. scoring boundary LABELS with a generic word list — too weak, real deployment
+ *      diagrams scored 0.25 and stayed node-graph.
+ *   2. scoring the boundary `kind` — meaningless. `architecture.schema.json` types that
+ *      field as `{"enum":["region","security-group"]}`, only two values, and archify
+ *      reuses them for ANY grouping: `kind=region` labels both "AWS us-east-1 /
+ *      production" AND "archify/ skill package".
+ *
+ * The signal is in what the label SAYS: a cloud provider, a region identifier, a subnet,
+ * a security group with ports. Those are things that occupy somewhere. "Query Runtime"
+ * and "Ingestion Pipeline" carry the same `kind` and occupy nothing.
+ */
+/** Cloud providers and the estate Gavin actually runs on. */
+const PROVIDER = /(aws|gcp|google cloud|azure|digitalocean|digital ocean|do|cloudflare|ionos|vercel|fly\.io|hetzner|linode|oracle cloud)/i
+/** Region identifiers — us-east-1, eu-west-2, northeurope, us-central1. */
+const REGION_ID = /([a-z]{2}-[a-z]+-\d|[a-z]{2}[a-z]+-\d|(north|south|east|west|central)[a-z]*-?\d?)/i
+/** Network topology proper. */
+const NETWORK = /(vpc|subnet|security.?group|sg-|availability.?zone|az-|load.?balancer|cdn|edge|firewall|dmz|private network|public network|ingress|egress)/i
+/** Port notation — :443, :8000. A thing that listens is a thing that is deployed. */
+const PORTS = /:\d{2,5}/
+/** Component types that only exist in a deployed system. */
+const INFRA_TYPE = /(cloud|region|zone|vpc|subnet|cluster|node|host|server|vm|container|pod|instance|edge|cdn|load.?balancer|lb|gateway|firewall|dns|bucket|volume|datacent)/i
+
+/**
+ * How strongly a document reads as DEPLOYMENT TOPOLOGY — a thing that occupies somewhere
+ * — rather than an application architecture. 0..1, with the evidence that produced it.
+ */
+export function topologyScore(canvas: JSONCanvas): { score: number; hits: string[] } {
+  const hits: string[] = []
+  const nodes = canvas.nodes.filter((n) => n.type !== "group")
+  const groups = canvas.nodes.filter((n) => n.type === "group")
+
+  const isInfraLabel = (t: string) =>
+    PROVIDER.test(t) || NETWORK.test(t) || PORTS.test(t) || (REGION_ID.test(t) && /region|zone|dc/i.test(t))
+
+  const infraGroups = groups.filter((g) => isInfraLabel(String((g as any).label ?? "")))
+  if (infraGroups.length) hits.push(`${infraGroups.length} deployment boundary(ies)`)
+
+  const infraNodes = nodes.filter((n) => {
+    const t = String((n as any).archify?.type ?? "")
+    const l = String((n as any).label ?? "")
+    return INFRA_TYPE.test(t) || PROVIDER.test(l) || NETWORK.test(l)
+  })
+  if (infraNodes.length) hits.push(`${infraNodes.length} infra component(s)`)
+
+  const nested = groups.filter((g) =>
+    groups.some((o) => o !== g && g.x >= o.x && g.y >= o.y && g.x + g.width <= o.x + o.width && g.y + g.height <= o.y + o.height)
+  )
+  const nestedInfra = nested.filter((g) => isInfraLabel(String((g as any).label ?? "")))
+  if (nestedInfra.length) hits.push(`${nestedInfra.length} nested deployment boundary(ies)`)
+
+  const score =
+    (groups.length ? infraGroups.length / groups.length : 0) * 0.5 +
+    (nodes.length ? infraNodes.length / nodes.length : 0) * 0.35 +
+    (nestedInfra.length ? 0.15 : 0)
+
+  return { score, hits }
+}
+
 const ROUTES: Record<DiagramShape, RouteDecision> = {
   architecture: {
-    renderer: "isometric",
-    because: "infrastructure topology — zones and tiers read fastest as a floor plan",
-    alternatives: ["nodegraph", "excalidraw"],
+    // default — an application architecture is modules and services, not a floor plan
+    renderer: "nodegraph",
+    because: "components and their relationships — no spatial meaning to project",
+    alternatives: ["isometric", "excalidraw"],
   },
   workflow: {
     renderer: "nodegraph",
@@ -107,7 +187,24 @@ export function routeCanvas(
 ): RouteDecision & { shape: DiagramShape; declared: boolean; empty?: boolean } {
   if (declaredType && declaredType in ROUTES) {
     const shape = declaredType as DiagramShape
-    return { ...routeForShape(shape), shape, declared: true }
+    const base = routeForShape(shape)
+
+    // The only lift to isometric: a declared architecture that actually shows topology.
+    // Threshold is deliberately high — when in doubt this stays a node graph, because a
+    // wrongly-isometric diagram invents a geography the data does not contain.
+    if (shape === "architecture") {
+      const topo = topologyScore(canvas)
+      if (topo.score >= 0.35) {
+        return {
+          renderer: "isometric",
+          because: `deployment topology — ${topo.hits.join(", ")}`,
+          alternatives: ["nodegraph", "excalidraw"],
+          shape,
+          declared: true,
+        }
+      }
+    }
+    return { ...base, shape, declared: true }
   }
 
   // No declaration. Read the document's own structure rather than guessing a name.
@@ -130,9 +227,10 @@ export function routeCanvas(
   const density = nodes.length ? edges / nodes.length : 0
   const sided = canvas.edges.filter((e) => e.fromSide || e.toSide).length
 
-  // Boundaries/zones present and edges anchored to sides -> an authored topology.
+  // Same test as the declared path — topology, not the mere presence of boundaries.
+  const topo = topologyScore(canvas)
   const shape: DiagramShape =
-    groups > 0 && sided > 0
+    groups > 0 && sided > 0 && topo.score >= 0.35
       ? "architecture"
       : density > 1.6
         ? "codegraph" // densely interlinked, no authored layout to preserve

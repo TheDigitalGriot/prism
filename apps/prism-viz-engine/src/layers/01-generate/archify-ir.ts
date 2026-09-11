@@ -200,7 +200,7 @@ export function archifyToCanvas(ir: ArchifyIR, opts: AdaptOptions = {}): JSONCan
     const minY = Math.min(...members.map((m) => m.y)) - pad
     const maxX = Math.max(...members.map((m) => m.x + m.width)) + pad
     const maxY = Math.max(...members.map((m) => m.y + m.height)) + pad
-    nodes.unshift({
+    const group = {
       id: `boundary-${i}-${b.kind}`,
       type: "group",
       label: b.label,
@@ -208,7 +208,12 @@ export function archifyToCanvas(ir: ArchifyIR, opts: AdaptOptions = {}): JSONCan
       y: minY,
       width: maxX - minX,
       height: maxY - minY,
-    } as CanvasNode)
+    } as CanvasNode
+    // `kind` (region | security-group | …) is archify's own topology declaration. An
+    // earlier pass kept only `label` and the router then had to guess from prose — which
+    // is how a real deployment diagram scored as an app architecture.
+    ;(group as any).archify = { kind: b.kind, wraps: b.wraps }
+    nodes.unshift(group)
   }
 
   // Connections -> edges. fromSide/toSide pass through UNTRANSLATED — same enum.
