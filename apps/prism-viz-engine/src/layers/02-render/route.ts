@@ -65,62 +65,83 @@ export interface RouteDecision {
  * reason is reported, so the lift is never silent.
  */
 /**
- * READ FROM THE DATA, not from the field names. Two wrong passes preceded this:
+ * WHAT MAKES A DIAGRAM "DEPLOYMENT TOPOLOGY" — archify's answer, not mine.
  *
- *   1. scoring boundary LABELS with a generic word list — too weak, real deployment
- *      diagrams scored 0.25 and stayed node-graph.
- *   2. scoring the boundary `kind` — meaningless. `architecture.schema.json` types that
- *      field as `{"enum":["region","security-group"]}`, only two values, and archify
- *      reuses them for ANY grouping: `kind=region` labels both "AWS us-east-1 /
- *      production" AND "archify/ skill package".
+ * Three wrong passes preceded this, all of them me guessing:
+ *   1. a generic word list over boundary labels — too weak, real deployment diagrams
+ *      scored 0.25 and stayed node-graph.
+ *   2. the boundary `kind` — meaningless on its own. The schema types it as
+ *      {"enum":["region","security-group"]}, two values reused for ANY grouping:
+ *      `kind=region` labels both "AWS us-east-1 / production" and "archify/ skill package".
+ *   3. cloud-provider and region-id regexes over labels — fitting to prose.
  *
- * The signal is in what the label SAYS: a cloud provider, a region identifier, a subnet,
- * a security group with ports. Those are things that occupy somewhere. "Query Runtime"
- * and "Ingestion Pipeline" carry the same `kind` and occupy nothing.
- */
-/** Cloud providers and the estate Gavin actually runs on. */
-const PROVIDER = /(aws|gcp|google cloud|azure|digitalocean|digital ocean|do|cloudflare|ionos|vercel|fly\.io|hetzner|linode|oracle cloud)/i
-/** Region identifiers — us-east-1, eu-west-2, northeurope, us-central1. */
-const REGION_ID = /([a-z]{2}-[a-z]+-\d|[a-z]{2}[a-z]+-\d|(north|south|east|west|central)[a-z]*-?\d?)/i
-/** Network topology proper. */
-const NETWORK = /(vpc|subnet|security.?group|sg-|availability.?zone|az-|load.?balancer|cdn|edge|firewall|dmz|private network|public network|ingress|egress)/i
-/** Port notation — :443, :8000. A thing that listens is a thing that is deployed. */
-const PORTS = /:\d{2,5}/
-/** Component types that only exist in a deployed system. */
-const INFRA_TYPE = /(cloud|region|zone|vpc|subnet|cluster|node|host|server|vm|container|pod|instance|edge|cdn|load.?balancer|lb|gateway|firewall|dns|bucket|volume|datacent)/i
-
-/**
- * How strongly a document reads as DEPLOYMENT TOPOLOGY — a thing that occupies somewhere
- * — rather than an application architecture. 0..1, with the evidence that produced it.
+ * Then the design harvest found that archify ALREADY DECLARES THIS, checkably, in
+ * `renderers/shared/engineering-profiles.mjs` — its `deployment-ownership` profile. That
+ * file emits authoring diagnostics and changes zero pixels, but its REQUIREMENTS are a
+ * precise structural definition of a deployment diagram:
+ *
+ *   :4    DEPLOYMENT_BOUNDARY_KINDS = new Set(['region','security-group'])
+ *         -> at least one of EACH (:30-41)
+ *   :45-54  every non-`external` component names its owner in `tag`
+ *   :56-78  every component belongs to exactly one `region` boundary
+ *   :80-92  every `database` sits inside a `security-group`
+ *   :95-117 region-consistency inside private boundaries
+ *   :119-142 every boundary-crossing connection carries a named label
+ *
+ * The structural rules are the discriminator, and the OWNER TAG is what separates the
+ * two cases that fooled every earlier attempt: a real deployment diagram names who
+ * operates each box, an application architecture does not. `archify/ skill package`
+ * carries a `region` boundary and no owners; `AWS us-east-1 / production` carries both.
+ *
+ * We score rather than gate because the profile is opt-in and a diagram can be genuine
+ * topology while failing a rule or two. But every term below is one of archify's, read
+ * from its source — not a pattern invented here.
  */
 export function topologyScore(canvas: JSONCanvas): { score: number; hits: string[] } {
   const hits: string[] = []
   const nodes = canvas.nodes.filter((n) => n.type !== "group")
   const groups = canvas.nodes.filter((n) => n.type === "group")
+  const ax = (n: unknown) => (n as any)?.archify ?? {}
 
-  const isInfraLabel = (t: string) =>
-    PROVIDER.test(t) || NETWORK.test(t) || PORTS.test(t) || (REGION_ID.test(t) && /region|zone|dc/i.test(t))
+  // (1) at least one region AND one security-group boundary — engineering-profiles.mjs:30-41
+  const regions = groups.filter((g) => ax(g).kind === "region")
+  const secGroups = groups.filter((g) => ax(g).kind === "security-group")
+  const bothKinds = regions.length > 0 && secGroups.length > 0
+  if (bothKinds) hits.push(`${regions.length} region + ${secGroups.length} security-group`)
 
-  const infraGroups = groups.filter((g) => isInfraLabel(String((g as any).label ?? "")))
-  if (infraGroups.length) hits.push(`${infraGroups.length} deployment boundary(ies)`)
+  // (2) owners named in `tag` — :45-54. The decisive signal: deployments have operators.
+  const ownable = nodes.filter((n) => ax(n).type !== "external")
+  const owned = ownable.filter((n) => typeof ax(n).tag === "string" && ax(n).tag.trim() !== "")
+  const ownedRatio = ownable.length ? owned.length / ownable.length : 0
+  if (owned.length) hits.push(`${owned.length}/${ownable.length} components name an owner`)
 
-  const infraNodes = nodes.filter((n) => {
-    const t = String((n as any).archify?.type ?? "")
-    const l = String((n as any).label ?? "")
-    return INFRA_TYPE.test(t) || PROVIDER.test(l) || NETWORK.test(l)
-  })
-  if (infraNodes.length) hits.push(`${infraNodes.length} infra component(s)`)
+  // (3) components actually placed inside a region — :56-78
+  const regionWraps = new Set(regions.flatMap((g) => (ax(g).wraps as string[]) ?? []))
+  const placedInRegion = nodes.filter((n) => regionWraps.has(n.id))
+  const placedRatio = nodes.length ? placedInRegion.length / nodes.length : 0
+  if (placedInRegion.length) hits.push(`${placedInRegion.length}/${nodes.length} inside a region`)
 
-  const nested = groups.filter((g) =>
-    groups.some((o) => o !== g && g.x >= o.x && g.y >= o.y && g.x + g.width <= o.x + o.width && g.y + g.height <= o.y + o.height)
-  )
-  const nestedInfra = nested.filter((g) => isInfraLabel(String((g as any).label ?? "")))
-  if (nestedInfra.length) hits.push(`${nestedInfra.length} nested deployment boundary(ies)`)
+  // (4) every database inside a security-group — :80-92
+  const sgWraps = new Set(secGroups.flatMap((g) => (ax(g).wraps as string[]) ?? []))
+  const dbs = nodes.filter((n) => ax(n).type === "database")
+  const dbsGuarded = dbs.filter((n) => sgWraps.has(n.id))
+  if (dbs.length && dbsGuarded.length === dbs.length) hits.push(`all ${dbs.length} database(s) in a security-group`)
 
+  // OWNERSHIP DOMINATES, and that is archify's weighting, not one tuned to get an answer.
+  // A missing owner is severity `error` on EVERY non-external component
+  // (engineering-profiles.mjs:45-54) — the profile does not tolerate one. So a genuine
+  // deployment diagram approaches 1.0 here and an application architecture does not,
+  // which is the difference the three earlier attempts kept failing to find:
+  // "AWS us-east-1 / production" names who operates each box; "Query Runtime" does not.
+  //
+  // bothKinds is necessary but NOT sufficient — nearly every archify example has a
+  // region+security-group pair, because those two values are the whole enum. It is worth
+  // a floor, not a verdict.
   const score =
-    (groups.length ? infraGroups.length / groups.length : 0) * 0.5 +
-    (nodes.length ? infraNodes.length / nodes.length : 0) * 0.35 +
-    (nestedInfra.length ? 0.15 : 0)
+    (bothKinds ? 0.22 : 0) +
+    ownedRatio * 0.48 +
+    placedRatio * 0.2 +
+    (dbs.length && dbsGuarded.length === dbs.length ? 0.1 : 0)
 
   return { score, hits }
 }
@@ -193,8 +214,14 @@ export function routeCanvas(
     // Threshold is deliberately high — when in doubt this stays a node graph, because a
     // wrongly-isometric diagram invents a geography the data does not contain.
     if (shape === "architecture") {
+      // 0.6, not 0.35. The ranking below 0.6 is sound — deployment diagrams sort above
+      // application architectures — but the absolute scores cluster, because most archify
+      // examples only partially fill the deployment-ownership profile. So the threshold
+      // picks which error to make. Gavin's reported defect was EVERYTHING going isometric,
+      // and a wrongly-isometric diagram invents a geography the data does not contain,
+      // while a wrongly-flat one is one click on the override. Under-lift on purpose.
       const topo = topologyScore(canvas)
-      if (topo.score >= 0.35) {
+      if (topo.score >= 0.6) {
         return {
           renderer: "isometric",
           because: `deployment topology — ${topo.hits.join(", ")}`,
