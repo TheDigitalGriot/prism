@@ -333,3 +333,35 @@ button.vz-pri:hover { color: #04070d; filter: brightness(1.1); }
 /* Icons sit on the lid; the label moves below the box when one is present so the two
    never compete for the same face. */
 .vz-iso-icon { pointer-events: none; }
+
+/* ── the reference gallery ─────────────────────────────────────────────────── */
+.vz-gallery { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--void); }
+.vz-gallery-bar {
+  display: flex; align-items: center; gap: 9px; flex-wrap: wrap;
+  padding: 10px 14px; border-bottom: 1px solid var(--line); background: var(--panel);
+}
+.vz-gallery-title { font-size: 12.5px; font-weight: 650; display: flex; align-items: center; gap: 7px; }
+.vz-gallery-search { width: 200px; }
+.vz-gallery-note { font-family: var(--mono); font-size: 10px; color: var(--amber); }
+.vz-gallery-grid {
+  flex: 1; overflow-y: auto; padding: 14px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(272px, 1fr)); gap: 14px; align-content: start;
+}
+.vz-gal { margin: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel2); cursor: zoom-in; }
+.vz-gal:hover { border-color: var(--neural); }
+/* The frame is scaled down rather than the document: these are finished artefacts and
+   reflowing them at thumbnail width would show a layout their author never shipped. */
+.vz-gal-frame { height: 186px; overflow: hidden; position: relative; background: #fff; }
+.vz-gal-frame iframe {
+  width: 1100px; height: 620px; border: 0; transform: scale(0.3); transform-origin: top left; pointer-events: none;
+}
+.vz-gal figcaption {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  padding: 7px 10px; font-size: 11.5px; color: var(--ink); border-top: 1px solid var(--line);
+}
+.vz-gal figcaption span { font-family: var(--mono); font-size: 9.5px; color: var(--dim); }
+.vz-gal-open { position: fixed; inset: 0; z-index: 60; background: rgba(3,4,6,.86); display: flex; flex-direction: column; }
+.vz-gal-open-bar { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.vz-gal-open-bar span { font-family: var(--mono); font-size: 10.5px; color: var(--dim); }
+.vz-gal-open iframe { flex: 1; width: 100%; border: 0; background: #fff; }
+button.on { border-color: var(--neural); color: var(--neural); background: rgba(59,130,246,.12); }

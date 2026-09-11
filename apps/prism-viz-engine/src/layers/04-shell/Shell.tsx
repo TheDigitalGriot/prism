@@ -30,6 +30,7 @@ import { routeCanvas, resolveRenderer, IMPLEMENTED, type RendererId } from "../0
 import type { ComponentNodeData } from "../02-render/ComponentNode"
 import { Palette } from "./Palette"
 import { Inspector } from "./Inspector"
+import { Gallery } from "./Gallery"
 import {
   type JSONCanvas,
   type CanvasNode,
@@ -91,6 +92,9 @@ export function Shell({ host, library, sources = [], onChange, reveal, subscribe
   const [override, setOverride] = useState<RendererId | null>(null)
   const [motionMode, setMotionMode] = useState<MotionMode>("none")
   const [status, setStatus] = useState("")
+  // The reference gallery is a MODE, not a source: those files are rendered HTML, not IR,
+  // so they can never be a canvas. Making them a fake source would be a category error.
+  const [gallery, setGallery] = useState(false)
 
   const source = useMemo(() => sources.find((s) => s.id === sourceId) ?? sources[0], [sources, sourceId])
   const composable = source?.composable ?? false
@@ -246,11 +250,18 @@ export function Shell({ host, library, sources = [], onChange, reveal, subscribe
           ))}
         </select>
 
+        <button className={gallery ? "on" : ""} onClick={() => setGallery((g) => !g)}>
+          {gallery ? "← canvas" : "Reference"}
+        </button>
         <button onClick={wake}>Wake agent</button>
         <button className="vz-pri" onClick={exportCanvas}>Export .canvas.json</button>
       </header>
 
       <div className="vz-body">
+        {gallery ? (
+          <Gallery sidecar={(import.meta as any).env?.VITE_SIDECAR ?? "http://127.0.0.1:5178"} />
+        ) : (
+          <>
         {composable && <Palette library={library} placed={placed} onReveal={reveal} />}
 
         {renderer === "isometric" ? (
@@ -275,6 +286,8 @@ export function Shell({ host, library, sources = [], onChange, reveal, subscribe
         )}
 
         <Inspector node={selectedNode} reveal={reveal} onRelayer={onReroute} />
+          </>
+        )}
       </div>
     </div>
   )

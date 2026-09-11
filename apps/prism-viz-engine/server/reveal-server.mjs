@@ -20,7 +20,7 @@
 
 import { createServer } from "node:http"
 import { readFileSync, existsSync, readdirSync } from "node:fs"
-import { join, resolve, isAbsolute } from "node:path"
+import { join, resolve, isAbsolute, basename } from "node:path"
 import { spawn } from "node:child_process"
 
 const PORT = Number(process.env.VIZ_SIDECAR_PORT ?? 5178)
@@ -34,6 +34,8 @@ const PLAN =
 const UX_NODES = join(PRISM_ROOT, ".prism", "shared", "workgraph", "uxui-canvas-nodes.json")
 /** Where griot-harvest cloned the layer-01 cluster. The engine's examples come from here. */
 const VIZ_CLUSTER = process.env.VIZ_CLUSTER ?? join(SANDBOX, "viz-generate")
+/** The vendored trees inside the engine — the gallery is served from here, not the sandbox. */
+const VIZ_VENDOR = join(PRISM_ROOT, "apps", "prism-viz-engine", "vendor")
 
 /** Where a repo id actually lives on disk. Djeli is in GriotApps; the rest are sandboxed. */
 const REPO_ROOTS = {
@@ -198,6 +200,37 @@ createServer(async (req, res) => {
       } catch {}
     }
     return json(res, 200, { examples, source: dir })
+  }
+
+  // ── diagram-design's rendered gallery ───────────────────────────────────────
+  // 162 example HTMLs, vendored. They are RENDERED artefacts, not IR, so they can never
+  // become canvas nodes — but the cluster codex calls this repo "the aesthetic reference
+  // for the cluster" and they were wired to nothing. They are the reference, rendered.
+  if (url.pathname === "/api/gallery") {
+    const dir = join(VIZ_VENDOR, "diagram-design", "assets")
+    if (!existsSync(dir)) return json(res, 200, { items: [], note: `not vendored: ${dir}` })
+    const files = readdirSync(dir).filter((f) => f.endsWith(".html"))
+    const items = files.map((f) => {
+      const base = f.replace(/\.html$/, "")
+      const variant = base.endsWith("-dark") ? "dark" : base.endsWith("-full") ? "full" : "light"
+      return {
+        file: f,
+        type: base.replace(/^example-/, "").replace(/-(dark|full)$/, ""),
+        variant,
+        url: `/gallery/${f}`,
+      }
+    })
+    return json(res, 200, { items, source: dir })
+  }
+
+  // Serve a gallery file itself. Path-scoped to the vendored assets dir — a basename
+  // only, no traversal, because this process can read the whole repo.
+  if (url.pathname.startsWith("/gallery/")) {
+    const name = basename(decodeURIComponent(url.pathname.slice("/gallery/".length)))
+    const file = join(VIZ_VENDOR, "diagram-design", "assets", name)
+    if (!name.endsWith(".html") || !existsSync(file)) return json(res, 404, { ok: false, why: "no such gallery file" })
+    res.writeHead(200, { "content-type": "text/html; charset=utf-8", "access-control-allow-origin": "*" })
+    return res.end(readFileSync(file, "utf-8"))
   }
 
   return json(res, 404, { ok: false, why: "no such route" })
