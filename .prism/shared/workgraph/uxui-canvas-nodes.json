@@ -1,0 +1,718 @@
+[
+  {
+    "id": "genoffice-shell-appframe",
+    "type": "screen",
+    "label": "AppFrame (shell chrome)",
+    "layer": "Djeli · container",
+    "position": {
+      "x": 0,
+      "y": 0
+    },
+    "data": {
+      "walkLevel": "screen",
+      "origin": {
+        "file": "apps/shell/src/renderer/src/AppFrame.tsx",
+        "line": 12
+      },
+      "mountPoint": "apps/shell renderer -> main.tsx:36 createRoot(...).render(<AppFrame/>)",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "genoffice-shell-tabbar",
+    "type": "component",
+    "label": "TabBar",
+    "layer": "Djeli · container",
+    "position": {
+      "x": 200,
+      "y": 0
+    },
+    "data": {
+      "walkLevel": "component",
+      "parentId": "genoffice-shell-appframe",
+      "origin": {
+        "file": "apps/shell/src/renderer/src/TabBar.tsx",
+        "line": 111
+      },
+      "mountPoint": "AppFrame.tsx:53 <TabBar/>",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "genoffice-shell-home",
+    "type": "screen",
+    "label": "Home (launcher / recent files)",
+    "layer": "Djeli · container",
+    "position": {
+      "x": 400,
+      "y": 0
+    },
+    "data": {
+      "walkLevel": "screen",
+      "parentId": "genoffice-shell-appframe",
+      "origin": {
+        "file": "apps/shell/src/renderer/src/Home.tsx",
+        "line": 1126
+      },
+      "mountPoint": "AppFrame.tsx:57 <Home/> (visible while homeActive, editor WebContentsViews paint above it otherwise)",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "genoffice-shell-new-doc-flow",
+    "type": "flow",
+    "label": "New-document quick-cards -> editor tab",
+    "layer": "Djeli · container",
+    "position": {
+      "x": 600,
+      "y": 0
+    },
+    "data": {
+      "walkLevel": "flow",
+      "parentId": "genoffice-shell-home",
+      "origin": {
+        "file": "apps/shell/src/renderer/src/Home.tsx",
+        "line": 1574
+      },
+      "mountPoint": "Home quick-start section (Home.tsx:1582 renderQuickCards) -> window.aiOffice.newDoc/newSheet/newSlide/newMarkdown/newPdf -> main process opens a new editor tab (docs/sheets/slides/markdown/pdf app)",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "genoffice-shell-onboarding",
+    "type": "screen",
+    "label": "Onboarding overlay",
+    "layer": "Djeli · container",
+    "position": {
+      "x": 0,
+      "y": 150
+    },
+    "data": {
+      "walkLevel": "screen",
+      "parentId": "genoffice-shell-appframe",
+      "origin": {
+        "file": "apps/shell/src/renderer/src/Onboarding.tsx",
+        "line": 95
+      },
+      "mountPoint": "AppFrame.tsx:61 {showOnboarding && homeActive && <Onboarding onDone={finishOnboarding}/>}",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "genoffice-shell-starpromptcard",
+    "type": "component",
+    "label": "StarPromptCard (\"star us\" nudge)",
+    "layer": "Djeli · container",
+    "position": {
+      "x": 200,
+      "y": 150
+    },
+    "data": {
+      "walkLevel": "component",
+      "parentId": "genoffice-shell-appframe",
+      "origin": {
+        "file": "apps/shell/src/renderer/src/StarPromptCard.tsx",
+        "line": 31
+      },
+      "mountPoint": "AppFrame.tsx:62-64 {starPromptDocOpens !== null && !showOnboarding && homeActive && <StarPromptCard .../>}",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "genoffice-shell-settingsmodal",
+    "type": "screen",
+    "label": "SettingsModal — AI provider/model/key pane",
+    "layer": "Governance · Governor",
+    "position": {
+      "x": 400,
+      "y": 150
+    },
+    "data": {
+      "walkLevel": "screen",
+      "parentId": "genoffice-shell-home",
+      "origin": {
+        "file": "apps/shell/src/renderer/src/SettingsModal.tsx",
+        "line": 154
+      },
+      "mountPoint": "Home.tsx:599 <SettingsModal/> (opened via AccountEntry, Home.tsx:449-450); dialog root SettingsModal.tsx:477,555; AI model pane (provider/model/apiKey/base URL, BYOK) at SettingsModal.tsx:154-316",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "genoffice-shell-update-channel",
+    "type": "component",
+    "label": "Update Channel picker",
+    "layer": "Deployment",
+    "position": {
+      "x": 600,
+      "y": 150
+    },
+    "data": {
+      "walkLevel": "component",
+      "parentId": "genoffice-shell-settingsmodal",
+      "origin": {
+        "file": "apps/shell/src/renderer/src/SettingsModal.tsx",
+        "line": 707
+      },
+      "mountPoint": "SettingsModal general pane -> updateChannel picker (SettingsModal.tsx:707-720, calls window.aiOffice.setUpdateChannel)",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "genoffice-docs-appshell",
+    "type": "screen",
+    "label": "docs App() — word processor editor shell",
+    "layer": "Creation · build/content/3D",
+    "position": {
+      "x": 0,
+      "y": 300
+    },
+    "data": {
+      "walkLevel": "screen",
+      "origin": {
+        "file": "apps/docs/src/renderer/App.tsx",
+        "line": 463
+      },
+      "mountPoint": "apps/docs renderer main.tsx -> createRoot -> App() (return at App.tsx:4327)",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "genoffice-docs-aipanel",
+    "type": "component",
+    "label": "AiPanel — docs AI chat/composer",
+    "layer": "Intelligence · Super Agent",
+    "position": {
+      "x": 200,
+      "y": 300
+    },
+    "data": {
+      "walkLevel": "component",
+      "parentId": "genoffice-docs-appshell",
+      "origin": {
+        "file": "apps/docs/src/renderer/ai/AiPanel.tsx",
+        "line": 288
+      },
+      "mountPoint": "App.tsx:4418 <AiPanel/>; panel dialog aria-label aiPanelTitle at AiPanel.tsx:1028, new-chat at :1041, copy-reply at :1162, regenerate at :1192",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "genoffice-docs-editqueuecard",
+    "type": "component",
+    "label": "EditQueueCard — pending selection-scoped AI edits",
+    "layer": "Intelligence · Super Agent",
+    "position": {
+      "x": 400,
+      "y": 300
+    },
+    "data": {
+      "walkLevel": "component",
+      "parentId": "genoffice-docs-aipanel",
+      "origin": {
+        "file": "apps/docs/src/renderer/ai/EditQueueCard.tsx",
+        "line": 32
+      },
+      "mountPoint": "Rendered above the AiPanel composer; queued edits resolved live against the tiptap Editor (EditQueueCard.tsx:1-27 doc comment)",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "genoffice-docs-comparepanel",
+    "type": "component",
+    "label": "ComparePanel — Review > Compare diff pane",
+    "layer": "Creation · build/content/3D",
+    "position": {
+      "x": 600,
+      "y": 300
+    },
+    "data": {
+      "walkLevel": "component",
+      "parentId": "genoffice-docs-appshell",
+      "origin": {
+        "file": "apps/docs/src/renderer/components/ComparePanel.tsx",
+        "line": 11
+      },
+      "mountPoint": "docs App.tsx Review > Compare result pane; paragraph-level diff between open document and a chosen second file (ComparePanel.tsx:7-9 doc comment)",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "genoffice-pdf-ocrtextlayer",
+    "type": "component",
+    "label": "OcrTextLayer — scanned-page OCR overlay",
+    "layer": "Capture",
+    "position": {
+      "x": 0,
+      "y": 450
+    },
+    "data": {
+      "walkLevel": "component",
+      "origin": {
+        "file": "apps/pdf/src/renderer/ocr-layer.tsx",
+        "line": 191
+      },
+      "mountPoint": "PDF viewer page overlay for scanned pages; platform system OCR engine output rendered as a selectable/searchable text layer (ocr-layer.tsx:2-6 doc comment, issue #119)",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "genoffice"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "orca-app-confirmationdialogprovider",
+    "type": "component",
+    "label": "ConfirmationDialogProvider — app-wide HITL confirm/deny queue",
+    "layer": "Governance · Governor",
+    "position": {
+      "x": 0,
+      "y": 0
+    },
+    "data": {
+      "walkLevel": "component",
+      "origin": {
+        "file": "src/renderer/src/components/confirmation-dialog.tsx",
+        "line": 26
+      },
+      "mountPoint": "App.tsx:2256 <ConfirmationDialogProvider> (wraps the app); promise-based confirm() queue consumed by useFileDeletion, ai-vault-session-delete-action, use-hosted-review-actions, SourceControl.tsx, GitHubItemDialog.tsx",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": "05c30166f492958f3d80cf6731124d91a17218ed",
+        "repo": "orca"
+      },
+      "licence": "spdx:MIT",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "orca-app-sidebar",
+    "type": "screen",
+    "label": "Sidebar — left workspace/project navigator",
+    "layer": "Djeli · container",
+    "position": {
+      "x": 200,
+      "y": 0
+    },
+    "data": {
+      "walkLevel": "screen",
+      "origin": {
+        "file": "src/renderer/src/components/sidebar/index.tsx",
+        "line": 41
+      },
+      "mountPoint": "App.tsx:2329 and App.tsx:2350 <Sidebar .../>",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": "05c30166f492958f3d80cf6731124d91a17218ed",
+        "repo": "orca"
+      },
+      "licence": "spdx:MIT",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "orca-app-rightsidebar",
+    "type": "screen",
+    "label": "RightSidebar — AI Vault agent session/chat panel",
+    "layer": "Intelligence · Super Agent",
+    "position": {
+      "x": 400,
+      "y": 0
+    },
+    "data": {
+      "walkLevel": "screen",
+      "origin": {
+        "file": "src/renderer/src/components/right-sidebar/index.tsx",
+        "line": 60
+      },
+      "mountPoint": "App.tsx:2468 <RightSidebar/>; hosts ai-vault-* session panes (ai-vault-original-pane.ts, ai-vault-session-continuation.ts), file deletion (useFileDeletion.ts), review actions (use-hosted-review-actions.ts), SourceControl.tsx, ChecksPanel.tsx",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": "05c30166f492958f3d80cf6731124d91a17218ed",
+        "repo": "orca"
+      },
+      "licence": "spdx:MIT",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "orca-app-newworkspacemodal",
+    "type": "screen",
+    "label": "NewWorkspaceComposerModal — new agent-task launcher",
+    "layer": "Intelligence · Super Agent",
+    "position": {
+      "x": 600,
+      "y": 0
+    },
+    "data": {
+      "walkLevel": "screen",
+      "origin": {
+        "file": "src/renderer/src/components/NewWorkspaceComposerModal.tsx",
+        "line": 60
+      },
+      "mountPoint": "App.tsx:2523 <NewWorkspaceComposerModal/>",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": "05c30166f492958f3d80cf6731124d91a17218ed",
+        "repo": "orca"
+      },
+      "licence": "spdx:MIT",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "djeli-app-confirmationdialogprovider",
+    "type": "component",
+    "label": "ConfirmationDialogProvider — app-wide HITL confirm/deny queue",
+    "layer": "Governance · Governor",
+    "position": {
+      "x": 0,
+      "y": 600
+    },
+    "data": {
+      "walkLevel": "component",
+      "origin": {
+        "file": "src/renderer/src/components/confirmation-dialog.tsx",
+        "line": 33
+      },
+      "mountPoint": "App.tsx:2196 <ConfirmationDialogProvider>",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": "94009f63ff6010a087b4765864d7d5b6828aa3a9",
+        "repo": "djeli"
+      },
+      "licence": "spdx:MIT",
+      "notCopy": [
+        "CORRECTION (stated loudly, not buried): as of this commit, GriotApps/djeli is an UNMODIFIED clone of stablyai/orca — origin remote is github.com/stablyai/orca, package.json name is still \"orca\", and grep for the string \"djeli\" anywhere under src/ returns zero hits. This node and its three siblings below are the SAME upstream Orca UI as GriotSandbox/orca (see orca-app-* nodes), not a Djeli-specific fork. Line numbers differ slightly from GriotSandbox/orca only because the two clones are pinned to different upstream commits (djeli=94009f63, sandbox-orca=05c30166), not because of divergent customization."
+      ]
+    }
+  },
+  {
+    "id": "djeli-app-sidebar",
+    "type": "screen",
+    "label": "Sidebar — left workspace/project navigator",
+    "layer": "Djeli · container",
+    "position": {
+      "x": 200,
+      "y": 600
+    },
+    "data": {
+      "walkLevel": "screen",
+      "origin": {
+        "file": "src/renderer/src/components/sidebar/index.tsx",
+        "line": 42
+      },
+      "mountPoint": "App.tsx:2261 and App.tsx:2282 <Sidebar .../>",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": "94009f63ff6010a087b4765864d7d5b6828aa3a9",
+        "repo": "djeli"
+      },
+      "licence": "spdx:MIT",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "djeli-app-rightsidebar",
+    "type": "screen",
+    "label": "RightSidebar — AI Vault agent session/chat panel",
+    "layer": "Intelligence · Super Agent",
+    "position": {
+      "x": 400,
+      "y": 600
+    },
+    "data": {
+      "walkLevel": "screen",
+      "origin": {
+        "file": "src/renderer/src/components/right-sidebar/index.tsx",
+        "line": 61
+      },
+      "mountPoint": "App.tsx:2400 <RightSidebar/>",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": "94009f63ff6010a087b4765864d7d5b6828aa3a9",
+        "repo": "djeli"
+      },
+      "licence": "spdx:MIT",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "djeli-app-newworkspacemodal",
+    "type": "screen",
+    "label": "NewWorkspaceComposerModal — new agent-task launcher",
+    "layer": "Intelligence · Super Agent",
+    "position": {
+      "x": 600,
+      "y": 600
+    },
+    "data": {
+      "walkLevel": "screen",
+      "origin": {
+        "file": "src/renderer/src/components/NewWorkspaceComposerModal.tsx",
+        "line": 56
+      },
+      "mountPoint": "App.tsx:2455 <NewWorkspaceComposerModal/>",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": "94009f63ff6010a087b4765864d7d5b6828aa3a9",
+        "repo": "djeli"
+      },
+      "licence": "spdx:MIT",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "buzz-app-appshell",
+    "type": "screen",
+    "label": "AppShell — Buzz desktop root shell",
+    "layer": "Collaboration · GenTeam",
+    "position": {
+      "x": 0,
+      "y": 750
+    },
+    "data": {
+      "walkLevel": "screen",
+      "origin": {
+        "file": "desktop/src/app/AppShell.tsx",
+        "line": 101
+      },
+      "mountPoint": "Buzz desktop (Tauri) renderer root; \"A workspace where humans and agents share the same rooms\" (README.md)",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "block-buzz"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "buzz-channels-channelscreen",
+    "type": "screen",
+    "label": "ChannelScreen — channel/thread main pane",
+    "layer": "Collaboration · GenTeam",
+    "position": {
+      "x": 200,
+      "y": 750
+    },
+    "data": {
+      "walkLevel": "screen",
+      "parentId": "buzz-app-appshell",
+      "origin": {
+        "file": "desktop/src/features/channels/ui/ChannelScreen.tsx",
+        "line": 89
+      },
+      "mountPoint": "AppShell -> AppShellChannelSurface.tsx -> ChannelScreen",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "block-buzz"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "buzz-agents-addagenttochanneldialog",
+    "type": "component",
+    "label": "AddAgentToChannelDialog",
+    "layer": "Collaboration · GenTeam",
+    "position": {
+      "x": 400,
+      "y": 750
+    },
+    "data": {
+      "walkLevel": "component",
+      "parentId": "buzz-channels-channelscreen",
+      "origin": {
+        "file": "desktop/src/features/agents/ui/AddAgentToChannelDialog.tsx",
+        "line": 23
+      },
+      "mountPoint": "Channel management -> add an AI agent as a channel member alongside human members",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "block-buzz"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "buzz-huddle-addagentdialog",
+    "type": "component",
+    "label": "AddAgentDialog — add agent to voice huddle",
+    "layer": "Collaboration · GenTeam",
+    "position": {
+      "x": 600,
+      "y": 750
+    },
+    "data": {
+      "walkLevel": "component",
+      "origin": {
+        "file": "desktop/src/features/huddle/components/AddAgentDialog.tsx",
+        "line": 31
+      },
+      "mountPoint": "Huddle voice room controls (HuddleBar.tsx) -> add an agent as a live voice participant",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "block-buzz"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "buzz-moderation-reportmessagedialog",
+    "type": "component",
+    "label": "ReportMessageDialog",
+    "layer": "Governance · Governor",
+    "position": {
+      "x": 0,
+      "y": 900
+    },
+    "data": {
+      "walkLevel": "component",
+      "origin": {
+        "file": "desktop/src/features/moderation/ui/ReportMessageDialog.tsx",
+        "line": 30
+      },
+      "mountPoint": "Message context menu (MessageModerationMenuItems.tsx) -> Report",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "block-buzz"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  },
+  {
+    "id": "buzz-meshcompute-settingscard",
+    "type": "component",
+    "label": "MeshComputeSettingsCard — share/serve model on peer mesh",
+    "layer": "Governance · Governor",
+    "position": {
+      "x": 200,
+      "y": 900
+    },
+    "data": {
+      "walkLevel": "component",
+      "origin": {
+        "file": "desktop/src/features/mesh-compute/ui/MeshComputeSettingsCard.tsx",
+        "line": 86
+      },
+      "mountPoint": "Settings -> Mesh Compute: one share toggle, one model field, an \"Already installed\" picklist (MeshComputeSettingsCard.tsx:82-86 doc comment)",
+      "provenance": {
+        "harvestedBy": "griot-harvest-ux-ui",
+        "harvestedAt": "2026-09-11",
+        "sourceCommit": null,
+        "repo": "block-buzz"
+      },
+      "licence": "spdx:Apache-2.0",
+      "notCopy": []
+    }
+  }
+]

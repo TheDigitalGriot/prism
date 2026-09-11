@@ -16772,6 +16772,23 @@
    "contentHash": "2bb5dc94ec6d"
   },
   {
+   "id": "wg:prism:f0bae4343819",
+   "envelopeId": "wg:prism:f0bae4343819",
+   "localId": "cowork-session-close-20260911",
+   "kind": "stage",
+   "origin": "prism",
+   "title": "cowork-session-close-20260911",
+   "state": "open",
+   "direction": "inbound",
+   "lastTouched": "2026-09-11T09:53:03.122Z",
+   "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\shared\\plans\\cowork-session-close-20260911\\cowork-session-close-20260911-CONTEXT.md",
+   "awaits": [
+    ".prism/shared/handoffs",
+    "live/_drift/drift-entries.json"
+   ],
+   "contentHash": "ab37a4717925"
+  },
+  {
    "id": "wg:prism:ad55aa4686e8",
    "envelopeId": "wg:prism:ad55aa4686e8",
    "localId": "djeli-uxui-harvest",
@@ -21368,6 +21385,18 @@
    "label": "awaits skills/griot-harvest-ux-ui/SKILL.md"
   },
   {
+   "from": "wg:prism:293d92a812fb",
+   "to": "wg:prism:f0bae4343819",
+   "kind": "awaits",
+   "label": "awaits .prism/shared/handoffs"
+  },
+  {
+   "from": "wg:prism:6fca016e6ba8",
+   "to": "wg:prism:f0bae4343819",
+   "kind": "awaits",
+   "label": "awaits live/_drift/drift-entries.json"
+  },
+  {
    "from": "wg:prism:54b473a47202",
    "to": "wg:prism:ad55aa4686e8",
    "kind": "awaits",
@@ -21704,19 +21733,19 @@
    "label": "lineage settled 2026-09-11 — BOTH fork Orca (stablyai/orca); Djeli is the container (GenOffice folded in as its office surface, expanding into several stacks matching Genspark), Prism mounts in as the agent brain/spine"
   }
  ],
- "generated": "2026-09-11T09:32:10.855Z",
+ "generated": "2026-09-11T10:05:53.709Z",
  "stats": {
-  "nodes": 743,
-  "edges": 725,
+  "nodes": 744,
+  "edges": 727,
   "byKind": {
    "epic": 17,
    "story": 260,
    "worklane": 418,
-   "stage": 4,
+   "stage": 5,
    "project": 44
   },
   "byState": {
-   "open": 112,
+   "open": 113,
    "parked": 211,
    "resolved": 119,
    "decided": 301
@@ -21725,11 +21754,11 @@
    "local": 688,
    "adjacent": 15,
    "outbound": 31,
-   "inbound": 9
+   "inbound": 10
   },
   "byEdgeKind": {
    "in-epic": 282,
-   "awaits": 189,
+   "awaits": 191,
    "splinter": 139,
    "outbound": 61,
    "inbound": 5,
@@ -21738,7 +21767,7 @@
   "sources": {
    "storiesFiles": 20,
    "decisionFiles": 43,
-   "awaitsDeclarations": 4
+   "awaitsDeclarations": 5
   },
   "cycles": [],
   "warnings": [
