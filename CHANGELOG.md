@@ -4,6 +4,55 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.17.0] - 2026-09-12
+
+`prism-viz-engine` ships to npm, and the code-intelligence layer stops failing silently.
+Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-4.17.0.md`.
+
+### Added
+
+- **`prism-viz-engine@0.1.0` published to npm** — unscoped, MIT, React 18 as a *peer*
+  dependency so Kweli, Djeli, Prism and Synaptiq mount one engine instead of drifting three
+  copies. `npm i prism-viz-engine`.
+- **`prism_viz_engine` MCP tool** on the digital-griot channel — `render` (emits a screen into
+  the live brainstorm companion), `layers` (the eleven roles, read from source), `validate`
+  (reports *unfilled* layers rather than inventing sources).
+- **`scripts/verify-code-intel.mjs`** — invariants I11–I15: index address, index freshness,
+  vendored-tree completeness, shelf-to-install drift, declared-capability health. Auto-discovered
+  by `pre-release-audit.mjs`, so it gates every release.
+- **`scripts/workgraph-screen.mjs`** — renders the global workgraph (session vs everything,
+  per-project state lanes, project→project links). Chained from the index generator.
+- **archify vendored whole** at `vendor/archify-full` — 512 files including the 15 authored
+  `viewer/` modules the 14,934-line bundle is built from.
+- **`describeGraphSubstrate()`** in layer 03 — reports path, provider, indexed commit, stats and
+  degraded capabilities.
+- **Local semantic search** via `code-review-graph` — 25,669 embeddings, `all-MiniLM-L6-v2`, no
+  API key. Closes Gap 3 from the 2026-04-11 research.
+
+### Changed
+
+- **archify is the fourth seat in `motion.ts`** — THE RUNTIME, alongside diagram-design (law),
+  FossFLOW (camera), Lanshu (tokens). With it the delivery ruling: Lanshu's GIF is a *delivery
+  limitation, not a design decision*; its motion now runs realtime under archify's Motion
+  Governor, never pre-rendered. Animated-vs-static is a property of the **mode** — `loop` may
+  breathe, `none`/`reveal`/`step` may not.
+- **`loadFromKuzu` → `loadFromGraph`** — Kuzu was archived 2025-10-10 (Apple acquired Kùzu Inc.);
+  the substrate is Ladybug. `loadFromKuzu` kept as a deprecation alias. It still refuses to
+  invent rows — it no longer refuses to *look*.
+- **Layer roles nine → eleven** across the emitter, `griot-harvest-ux-ui/SKILL.md` and
+  `layer-roles.ts`, verified byte-identical. `Suite meta` and `Cross-cutting rails` were absent,
+  so our own validator rejected Griot Ontology, Client work, Meridian and Griotwave.
+- **Ontology's diagram-quality bar** moved from *TENTATIVE* to *LIVE* and propagated.
+
+### Fixed
+
+- **Workgraph generator emitted edges to nodes it never created** — 114 of 775 (15%) had an
+  unresolved endpoint, which is why project→project was never visible. Unresolved edges: **0**.
+- **`griot-harvest-ux-ui/SKILL.md`** — BOM before the frontmatter broke the structural check;
+  28 double-encoded mojibake sequences repaired.
+- **`archify-full` staged as a gitlink** rather than its files — clones would have received an
+  empty directory where the authored viewer runtime should be.
+
 ## [4.16.2] - 2026-09-07
 
 Recall (Lift 3B) unblocked and running. **No Prism runtime changes** — the code lives in a fork of

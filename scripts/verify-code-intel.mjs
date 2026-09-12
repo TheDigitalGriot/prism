@@ -94,14 +94,26 @@ const CACHE = join(homedir(), '.cache', 'codebase-memory-mcp')
     checked++
     try {
       const j = JSON.parse(gx)
+      // TOLERANCE, added 2026-09-12. Strict equality fails on EVERY commit —
+      // including the release commit that runs this very gate — and a check that
+      // is permanently red is a check nobody reads. Exactly the failure that made
+      // "7 of 11 layers" survive for months as an honest-looking number.
+      // The failure this exists to catch was 228 commits / 3 months, not one
+      // commit thirty seconds ago. So: drift is fine, STALENESS is not.
+      const MAX_COMMITS_BEHIND = 25
+      const MAX_DAYS_BEHIND = 14
       if (!head) problems.push('gitnexus: cannot read git HEAD to compare')
       else if (j.lastCommit !== head) {
         const when = String(j.indexedAt ?? '').slice(0, 10)
-        const behind = git('rev-list', '--count', `${j.lastCommit}..HEAD`)
-        problems.push(
-          `gitnexus indexed at ${String(j.lastCommit).slice(0, 7)} (${when})` +
-          (behind ? `, ${behind} commits behind` : '') +
-          ` — HEAD is ${head.slice(0, 7)}. Re-index: node .gitnexus/run.cjs analyze`)
+        const behind = Number(git('rev-list', '--count', `${j.lastCommit}..HEAD`) ?? 0)
+        const days = j.indexedAt ? (Date.now() - Date.parse(j.indexedAt)) / 86400000 : 0
+        if (behind > MAX_COMMITS_BEHIND || days > MAX_DAYS_BEHIND) {
+          problems.push(
+            `gitnexus indexed at ${String(j.lastCommit).slice(0, 7)} (${when}), ` +
+            `${behind} commits / ${Math.floor(days)} days behind HEAD ${head.slice(0, 7)} ` +
+            `— past the ${MAX_COMMITS_BEHIND}-commit / ${MAX_DAYS_BEHIND}-day tolerance. ` +
+            `Re-index: node .gitnexus/run.cjs analyze`)
+        }
       }
       // Capability health is I15, NOT here. Bundling it with freshness meant a
       // fixed index still read FAIL because a degraded capability was riding the

@@ -139,6 +139,8 @@ The deterministic half of the closing-ceremony **Review & Audit gate** — run b
 | `verify-story-unification.mjs` | Node | Static guard that the plan → story → execute flow stays unified on `stories.json`. Phased checks: generation (default), `--check-consumers` (implement/subagent), `--check-coherence` (iterate/validate), `--all` (every phase) |
 | `verify-model-policy-conformance.mjs` | Node | Static guard that every dispatch surface resolves models through the shared model-policy core rather than re-implementing approval modes locally (see *Model Control Plane* below) |
 | `verify-invariants.mjs` | Node | **v4.14.0**, extended **v4.15.0** — the invariant runner. Computes the ontology's invariants (I1–I9) and reports `pass` / `fail` / `unverified` per invariant. Auto-discovered by `pre-release-audit.mjs` under the `verify-*.mjs` convention, so it gates every release |
+| `verify-code-intel.mjs` | Node | **v4.17.0** — the code-intelligence invariants (I11–I15): index address, index freshness (25-commit / 14-day tolerance), vendored-tree completeness against `VENDOR-MANIFEST.json`, shelf-to-install drift, and declared-capability health. Written after three correctly-built code-intel systems were found aimed at addresses that no longer existed, with nothing failing when they were ignored. Same `verify-*.mjs` auto-discovery, so it gates every release |
+| `workgraph-screen.mjs` | Node | **v4.17.0** — renders the global workgraph as a screen: session-vs-everything scope, per-project state lanes, and project→project links keyed on the target slug. Chained from `workgraph-index.mjs`, so regenerating the index always regenerates the view that displays it |
 
 #### Invariants (v4.14.0, I3/I7/I8 in v4.15.0, I9 current)
 
