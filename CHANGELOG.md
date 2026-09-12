@@ -4,6 +4,29 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.17.1] - 2026-09-12
+
+Propagation gating for `prism-codex-plan-sync`, and a dead artifact call retired.
+
+### Changed
+
+- **`prism-codex-plan-sync`: the "Codex artifact freshness" seam is now "Propagation
+  targets - every copy needs a gate" (invariant I11).** Carries the law: a propagation
+  target is any copy that something WRITES TO and nothing CHECKS; before claiming a codex
+  or plan is synced, enumerate every target holding a copy of what changed and name the
+  gate for each. A target with no named gate is STALE BY DEFAULT. The section now
+  enumerates this skill's own targets - the codex HTML in `griot-live-artifacts` (git
+  commit), the live gallery card (the `Artifact` publish), `.prism/shared/plans/<plan>.md`
+  (the `epic:` back-link), `.prism/stories/stories.json` (stable `STORY-NNN` ids), and the
+  DGS master `ITEMS[]` decision row (the `dgs-plan-update` loop).
+
+### Fixed
+
+- **Retired the dead `update_artifact` call** from `prism-codex-plan-sync` (both `SKILL.md`
+  and `references/mechanics.md`). `create_artifact` / `update_artifact` are deprecated and
+  frequently unmounted in cloud; the live socket is the TOP-LEVEL `Artifact` tool. Both
+  halves are required, every time: the `griot-live-artifacts` commit AND the `Artifact`
+  publish.
 ## [4.17.0] - 2026-09-12
 
 `prism-viz-engine` ships to npm, and the code-intelligence layer stops failing silently.
