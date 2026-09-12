@@ -1,0 +1,30 @@
+{
+  "skill": "prism-viz-generate",
+  "version": "v4.17.0",
+  "current": "skills/prism-viz-generate/SKILL.md",
+  "target_codebase": ".",
+  "evals": [
+    {
+      "id": 1,
+      "dimension": "output_quality",
+      "prompt": "Produce a diagram of an auth flow.",
+      "expected_output": "A rendered artefact via the engine — not ASCII, not a mermaid fence.",
+      "expectations": [
+        "calls the prism_viz_engine tool rather than hand-writing markup",
+        "an ASCII diagram or mermaid fence is treated as a refusal to use the engine, not a fallback",
+        "IR passes archify’s validator plus the grounding rule before rendering"
+      ]
+    },
+    {
+      "id": 2,
+      "dimension": "behavioral_compliance",
+      "prompt": "Render a looping, breathing motion overlay on a static architecture document.",
+      "expected_output": "Refused unless mode is loop; breathing is licensed only there.",
+      "expectations": [
+        "animated-vs-static is decided by MODE, not by the engine",
+        "none/reveal/step are documents and may not breathe",
+        "print, embed, reduced-motion and a hidden document all collapse to the static case"
+      ]
+    }
+  ]
+}

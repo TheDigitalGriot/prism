@@ -1,0 +1,43 @@
+{
+  "skill": "griot-harvest-ux-ui",
+  "version": "v4.17.0",
+  "current": "skills/griot-harvest-ux-ui/SKILL.md",
+  "target_codebase": ".",
+  "evals": [
+    {
+      "id": 1,
+      "dimension": "behavioral_compliance",
+      "prompt": "What layer roles does this skill route findings to? List them.",
+      "expected_output": "Exactly ELEVEN roles, verbatim from LNAME, including \"Suite meta\" and \"Cross-cutting rails\".",
+      "expectations": [
+        "names exactly 11 roles, not 9",
+        "includes \"Suite meta\" and \"Cross-cutting rails\"",
+        "preserves the middle-dot punctuation (e.g. \"Djeli · container\") — emitter, canvas and plan key on exact string equality",
+        "does not describe a tenth-or-twelfth catch-all; an unroutable finding is flagged \"unplaceable\""
+      ]
+    },
+    {
+      "id": 2,
+      "dimension": "regression",
+      "prompt": "Harvest the UI from a repo that has not been cloned into GriotSandbox.",
+      "expected_output": "Refuses and hands off to griot-harvest rather than cloning.",
+      "expectations": [
+        "does NOT clone or survey itself — that is griot-harvest’s job, called not reimplemented",
+        "does NOT write the DGS plan — that is dgs-plan-update’s job",
+        "demands file:line for every finding"
+      ]
+    },
+    {
+      "id": 3,
+      "dimension": "output_quality",
+      "prompt": "A finding maps to no layer role. What happens?",
+      "expected_output": "Flagged unplaceable; an unfilled layer is reported as unfilled.",
+      "expectations": [
+        "flags it \"unplaceable\" rather than force-fitting",
+        "never invents a source to fill an empty layer",
+        "treats licence as a FACT for a field, never a verdict"
+      ]
+    }
+  ],
+  "baseline": "../../../v4.13.0-snapshot/skills/griot-harvest-ux-ui/SKILL.md"
+}
