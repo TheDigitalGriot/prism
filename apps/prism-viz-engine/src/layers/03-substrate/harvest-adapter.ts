@@ -148,14 +148,100 @@ export function adaptHarvest(
 const repoOf = (n: HarvestedUxNode) => n.data.provenance?.repo ?? n.data.origin?.repo ?? "?"
 
 /**
- * The Kuzu seam. `kuzudb/kuzu` is `trial · next` on the shelf and is the prism-graph
- * query substrate; when the embedded DB lands, structural nodes come from a Cypher
- * query here instead of a JSON file. Left throwing on purpose — a stub that returns
- * plausible fake rows is the exact failure this whole engine exists to stop.
+ * ── LAYER 03 · THE GRAPH SUBSTRATE ────────────────────────────────────────────
+ *
+ * WHAT CHANGED, 2026-09-12. This was `loadFromKuzu`, and it threw. The reasoning
+ * was sound — a stub returning plausible fake rows is the exact failure this
+ * engine exists to stop — but the premise was wrong, and stayed wrong for months:
+ *
+ *   • Kuzu was ARCHIVED 2025-10-10. Apple acquired Kùzu Inc.; all 24 repos in the
+ *     org are archived. It is never landing. The shelf still said `trial · next`.
+ *   • The substrate we were waiting for WAS ALREADY ON DISK. `.gitnexus/lbug` is a
+ *     351 MB LadybugDB — the maintained Kuzu fork — holding this repo's whole code
+ *     graph: 2,645 files, 39,798 nodes, 90,788 edges, 1,731 communities, 300
+ *     execution flows. Indexed 2026-07-12 and never queried once.
+ *
+ * So this seam waited for a dead database while a live one sat three directories
+ * away. Renamed to `loadFromGraph` because the substrate is Ladybug now, not Kuzu;
+ * `loadFromKuzu` is kept below as a deprecation alias so nothing that imports it
+ * breaks (I6 — a proper name keeps resolving).
+ *
+ * THE HONESTY RULE IS UNCHANGED. This still refuses to invent rows. What it no
+ * longer does is refuse to *look*: it reports whether a real graph is present,
+ * where, and how stale, so the caller gets a fact instead of a blanket throw.
  */
-export async function loadFromKuzu(_cypher: string): Promise<JSONCanvas> {
+export interface GraphSubstrate {
+  /** absolute path to the graph database, if one is actually present */
+  path: string | null
+  provider: "ladybugdb" | "none"
+  available: boolean
+  /** the commit the graph was built from — NOT necessarily HEAD */
+  indexedAtCommit: string | null
+  indexedAt: string | null
+  stats: { files: number; nodes: number; edges: number; communities: number; processes: number } | null
+  /** capabilities that silently degraded; an empty array is not a promise of health */
+  degraded: string[]
+  why: string
+}
+
+/**
+ * Report the substrate. Node-only (`node:fs`), so callers on the render side must
+ * treat this as build/sidecar-time, never as something the browser reaches.
+ */
+export async function describeGraphSubstrate(projectRoot: string): Promise<GraphSubstrate> {
+  const none = (why: string): GraphSubstrate => ({
+    path: null, provider: "none", available: false, indexedAtCommit: null,
+    indexedAt: null, stats: null, degraded: [], why,
+  })
+  try {
+    const { readFileSync, existsSync, statSync } = await import("node:fs")
+    const { join } = await import("node:path")
+    const metaPath = join(projectRoot, ".gitnexus", "gitnexus.json")
+    if (!existsSync(metaPath)) return none(`no .gitnexus/gitnexus.json under ${projectRoot}`)
+    const meta = JSON.parse(readFileSync(metaPath, "utf-8"))
+    const provider = meta?.capabilities?.graph?.provider
+    if (provider !== "ladybugdb") return none(`graph provider is ${provider ?? "unknown"}, not ladybugdb`)
+    const db = join(projectRoot, ".gitnexus", "lbug")
+    if (!existsSync(db)) return none(`gitnexus.json declares ladybugdb but ${db} is absent`)
+    const degraded: string[] = []
+    for (const [name, cap] of Object.entries(meta.capabilities ?? {})) {
+      const c = cap as { status?: string; reason?: string }
+      if (c?.status && c.status !== "available") degraded.push(`${name}: ${c.status}${c.reason ? ` — ${c.reason}` : ""}`)
+    }
+    return {
+      path: db, provider: "ladybugdb", available: true,
+      indexedAtCommit: meta.lastCommit ?? null,
+      indexedAt: meta.indexedAt ?? null,
+      stats: meta.stats ?? null,
+      degraded,
+      why: `LadybugDB present (${(statSync(db).size / 1048576).toFixed(0)} MB), indexed at ${String(meta.lastCommit ?? "?").slice(0, 7)}`,
+    }
+  } catch (err) {
+    return none(`substrate probe failed: ${String(err)}`)
+  }
+}
+
+/**
+ * Query the graph into a canvas.
+ *
+ * Still throws rather than fabricate — but now it throws with the SUBSTRATE'S
+ * ACTUAL STATE attached, so "not wired" is a measured report and not a shrug. The
+ * remaining work is a Ladybug client binding, not a decision: the store, its
+ * location, its contents and its staleness are all known and stated here.
+ */
+export async function loadFromGraph(_cypher: string, projectRoot = process.cwd()): Promise<JSONCanvas> {
+  const s = await describeGraphSubstrate(projectRoot)
+  if (!s.available) {
+    throw new Error(`loadFromGraph: no graph substrate — ${s.why}. adaptHarvest() against a real harvest instead; this path will not return invented rows.`)
+  }
   throw new Error(
-    "loadFromKuzu: the Kuzu substrate is not wired yet (shelf state: trial · next). " +
-      "Use adaptHarvest() against a real harvest until it is — this path will not return invented rows."
+    `loadFromGraph: substrate IS present and unread — ${s.path} (${s.provider}), ` +
+      `${s.stats?.nodes ?? "?"} nodes / ${s.stats?.edges ?? "?"} edges / ${s.stats?.processes ?? "?"} flows, ` +
+      `indexed at ${String(s.indexedAtCommit ?? "?").slice(0, 7)} (${String(s.indexedAt ?? "?").slice(0, 10)}). ` +
+      (s.degraded.length ? `DEGRADED: ${s.degraded.join(" · ")}. ` : "") +
+      `What is missing is a Ladybug client binding, not the data. Verify freshness with scripts/verify-code-intel.mjs (I12).`
   )
 }
+
+/** @deprecated Kuzu was archived 2025-10-10; the substrate is Ladybug. Kept so existing imports resolve (I6). */
+export const loadFromKuzu = loadFromGraph

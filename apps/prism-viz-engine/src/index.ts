@@ -1,5 +1,5 @@
 /**
- * @griot/prism-viz-engine — public surface.
+ * prism-viz-engine — public surface.
  *
  * The three mount targets Gavin named all import from here:
  *

@@ -14,6 +14,33 @@
  *                                background in step so the floor moves with the camera.
  *   Lanshu          THE TOKENS   render_animated_diagram.py:599-647 — glow dots,
  *                                pulse_rect phase maths, sequential module activation.
+ *   archify         THE RUNTIME  template.html:4130-4181 Reading Depth; :4294-4655 the
+ *                                interaction inventory (focus, lens, reach, route probe,
+ *                                relationship pin); :938-1000 the Motion Governor.
+ *                                Added as the fourth seat 2026-09-11 on Gavin's read.
+ *
+ * ── THE DELIVERY RULING, 2026-09-11 ────────────────────────────────────────────
+ * Lanshu ships its motion as a 41-frame, 6-8MB GIF (`optimize=False`, :662). That is a
+ * DELIVERY LIMITATION, not a design decision — the renderer is Python/PIL with no
+ * runtime, so the only way to show travelling light was to bake it.
+ *
+ * The vocabulary is the asset; the baking is the loss. A GIF cannot be focused, cannot
+ * be probed, cannot honour `prefers-reduced-motion`, and cannot let a reader click into
+ * a region to ask what it is. archify already solved exactly that — and independently
+ * arrived at Lanshu's own thesis: Lanshu's 300ms pulse cursor walking Input → Scan →
+ * Import → Index → Decision → Archive → Pack IS archify's guided-view chapter rail
+ * (:5092-5129). Same idea, one baked and one live.
+ *
+ * RULED: Lanshu's motion vocabulary runs REALTIME under archify's Motion Governor, never
+ * pre-rendered. The artefact export survives as an OUTPUT (archify's WebM path, capped
+ * at 1280 and never upscaled) rather than as the medium. What the reader gets is the
+ * instrument; what they can hand someone else is the recording.
+ *
+ * This also settles harvest item 10 — "one engine needs an explicit rule for when a
+ * plate is ANIMATED versus STATIC." It is not a property of the engine, it is a property
+ * of the MODE: `loop` is an explainer artefact and may breathe; `none`/`reveal`/`step`
+ * are documents and may not. The Governor is the mechanism that enforces it, and print,
+ * embed and reduced-motion all collapse to the document case automatically.
  *
  * ── THE CONFLICT, RULED 2-1 ─────────────────────────────────────────────────────
  * Merging these silently would be dishonest. TWO independent sources forbid the thing
@@ -242,4 +269,122 @@ export function motionCssVars(): Record<string, string> {
     "--motion-camera": `${MOTION.camera}ms`,
     "--motion-ease": MOTION.ease,
   }
+}
+
+// ── Lanshu's vocabulary, as parameters rather than pixels ──────────────────────
+/**
+ * render_animated_diagram.py:599-649. The whole animation system is ~35 lines, and the
+ * design harvest's judgement stands: "the motion vocabulary is the crown jewel."
+ *
+ * Ported as PARAMETERS so the paths come from the canvas edge list instead of the 11
+ * hardcoded literals at :618-630 — which is the harvest's stated defect 3, hardcoded
+ * coordinates as the layout model. Same numbers, driven by real data.
+ *
+ * Everything here is DECORATION under the 2-1 ruling above: aria-hidden, `loop` mode
+ * only, first thing dropped under reduced-motion, never in an export, never carrying
+ * meaning. The reading-order cursor is the one that earns its place — it teaches
+ * sequence while the plate itself never changes.
+ */
+export const LANSHU = {
+  /** :599-603 — 3-stop falloff plus a white core. This is what makes a dot read as a
+   *  light source rather than a disc. Alphas are 0-255 in the source; kept verbatim. */
+  glowDot: {
+    stops: [
+      { radius: 15, alpha: 42 },
+      { radius: 10, alpha: 70 },
+      { radius: 5, alpha: 210 },
+    ],
+    core: { radius: 4, alpha: 245 },
+  },
+  /** :632-634 — the comet. Three draws at t, t-0.035, t-0.07 with falling strength.
+   *  ~145ms of travel at 20fps: a tail, not a dotted line. */
+  trail: [
+    { offset: 0, strength: 1 },
+    { offset: -0.035, strength: 0.72 },
+    { offset: -0.07, strength: 0.44 },
+  ],
+  /** :606-610 — the ring is a shockwave, not an outline: brightest and tightest at the
+   *  card edge, dissolving outward. alpha = 70 + 70*sin(phase), floored at 25. */
+  pulseRing: {
+    grows: [0, 4, 8],
+    widths: [2, 2, 1],
+    baseRadius: 12,
+    alphaBase: 70,
+    alphaSwing: 70,
+    alphaFloor: 25,
+    alphaFalloffPerGrow: 8,
+  },
+  /** :635-647 — ONE region lit at a time, advancing every 6 frames. At 20fps that is
+   *  300ms, and the walk is a guided tour of the figure. This is the reading-order
+   *  teacher, and archify's chapter rail is the same instrument. */
+  readingCursor: { stepMs: 300, oneAtATime: true },
+  /** :14-15, :661 — 41 frames @ 20fps = 2.05s, and `phase = progress * tau * 2` gives
+   *  two breaths per loop, ~1Hz. Note 2050ms is UNDER MOTION_BUDGET.minLoopCycle
+   *  (3000ms), so a Lanshu-faithful loop must be slowed to clear the law's own floor —
+   *  recorded rather than silently retimed. */
+  loop: { frames: 41, fps: 20, cycleMs: 2050, breathsPerCycle: 2 },
+} as const
+
+/** The law's floor wins over Lanshu's native cadence. Stated, not hidden. */
+export const LANSHU_LOOP_MS = Math.max(LANSHU.loop.cycleMs, MOTION_BUDGET.minLoopCycle)
+
+// ── archify's Reading Depth — the fourth seat's contribution ───────────────────
+/**
+ * template.html:4130-4181. Three levels tied to zoom, carried as `data-detail-level`.
+ * Elements tag themselves `data-detail="context"` (sublabels, edge labels) or
+ * `"fine"` (tags, ordinals). Crucially NOTHING MOVES — the only transform is an 8px
+ * nudge on `[data-detail-anchor]` so a primary label re-centres when its sublabel goes.
+ *
+ * The override is the part worth having: focus, hover, lens, route and reach all reveal
+ * their exact matches at ANY scale. archify's own phrasing, and it is the whole
+ * philosophy in six words — "reader intent outranks the global zoom level."
+ */
+export const READING_DEPTH = {
+  levels: ["map", "read", "full"] as const,
+  /** below 100% → map · 100% → read · 175% → full (viewer-runtime.md:8) */
+  thresholds: { map: 1, full: 1.75 },
+  hides: { map: ["context", "fine"], read: ["fine"], full: [] as string[] },
+  anchorNudgePx: 8,
+  transitionMs: 160,
+  intentOverridesDepth: true,
+} as const
+
+export type ReadingDepth = (typeof READING_DEPTH.levels)[number]
+
+export function depthForZoom(zoom: number): ReadingDepth {
+  if (zoom >= READING_DEPTH.thresholds.full) return "full"
+  if (zoom >= READING_DEPTH.thresholds.map) return "read"
+  return "map"
+}
+
+/**
+ * The Motion Governor (archify :938-1000). Static is the DEFAULT; six conditions kill
+ * motion outright. Returned as a reason rather than a boolean so a surface can say WHY
+ * it is still — the harvest's point that reduced-motion is a designed state, not a
+ * blunt `animation: none`.
+ */
+export interface GovernorInput {
+  mode: MotionMode
+  still?: boolean
+  embedded?: boolean
+  printing?: boolean
+  documentHidden?: boolean
+  sharePlayback?: boolean
+  reducedMotion?: boolean
+}
+
+export function motionCapable(i: GovernorInput): { capable: boolean; reason?: string } {
+  if (i.mode === "none") return { capable: false, reason: "mode=none" }
+  if (i.still) return { capable: false, reason: "Live/Still toggle is Still" }
+  if (i.embedded) return { capable: false, reason: "embed mode" }
+  if (i.printing) return { capable: false, reason: "print" }
+  if (i.documentHidden) return { capable: false, reason: "document hidden" }
+  if (i.sharePlayback) return { capable: false, reason: "share playback owns the budget" }
+  if (i.reducedMotion) return { capable: false, reason: "prefers-reduced-motion" }
+  return { capable: true }
+}
+
+/** Lanshu's breathing is licensed ONLY in loop — the animated-vs-static ruling, computed. */
+export function breathingAllowed(i: GovernorInput): boolean {
+  return i.mode === "loop" && motionCapable(i).capable
 }

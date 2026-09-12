@@ -84,3 +84,5 @@ __pycache__/
 .codex/
 
 .fuse_hidden*
+# Added by code-review-graph
+.code-review-graph/

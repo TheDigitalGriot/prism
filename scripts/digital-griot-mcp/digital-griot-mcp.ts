@@ -71,7 +71,10 @@ const server = new Server(
       "human-readable summary. When you receive a wake event, read the events file for that " +
       "session and resume: a brainstorm event → resume the brainstorm session; a gavel event " +
       "(skill=gavel) → run the requested gavel `verb`. This server also exposes the gavel_* " +
-      "MCP tools for driving the Gavel cockpit directly.",
+      "MCP tools for driving the Gavel cockpit directly, and `prism_viz_engine` — the " +
+      "renderer. When a diagram is asked for, CALL prism_viz_engine rather than writing ASCII, " +
+      "a mermaid fence, a markdown table of boxes, or a prose description of a picture. Those " +
+      "are not diagrams. The engine draws into the brainstorm surface on this same channel.",
   },
 )
 
@@ -293,6 +296,51 @@ const GAVEL_TOOLS = [
         },
       },
       required: ["claim"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "prism_viz_engine",
+    description:
+      "prism-viz-engine — render a diagram as a real screen instead of describing one. " +
+      "`render` emits a self-contained canvas into the live brainstorm session's content dir, " +
+      "where the companion serves it immediately (same :52342 channel this server runs on), and " +
+      "returns the URL. `layers` returns the eleven Griot Stack layer roles — the output taxonomy " +
+      "every placed node is routed to. `validate` checks a JSON Canvas against the wire format. " +
+      "Use this INSTEAD OF hand-writing HTML, an ASCII diagram, a mermaid fence, or a markdown " +
+      "table of boxes: those are not diagrams. Never invents a node — it renders harvested data " +
+      "or refuses.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        mode: {
+          type: "string",
+          enum: ["render", "layers", "validate"],
+          description: "What to do. Default: render.",
+          default: "render",
+        },
+        canvas_path: {
+          type: "string",
+          description:
+            "Path to a JSON Canvas / harvested-nodes file to draw. Omit with mode=render to use " +
+            "the engine's own harvested document (--self).",
+        },
+        title: {
+          type: "string",
+          description: "Screen title. Defaults to the canvas filename, or 'Harvested components'.",
+        },
+        content_dir: {
+          type: "string",
+          description:
+            "Explicit brainstorm content dir to write the screen into. If omitted, resolved from " +
+            "BRAINSTORM_DIR or the newest session under <project>/.prism/local/brainstorm/*/content.",
+        },
+        project_dir: {
+          type: "string",
+          description: "Project root used to locate the newest brainstorm session and the engine.",
+        },
+      },
+      required: [],
       additionalProperties: false,
     },
   },
@@ -972,6 +1020,222 @@ function handleGriotAssert(args: Record<string, unknown>) {
   return okJson({ ok: true, tool: "griot_assert", phase: "record", verdict, record, written })
 }
 
+// ===========================================================================
+// prism_viz_engine — the engine, reachable as a tool call.
+//
+// Gavin's rule, made mechanical: "when I ask for a diagram I mean a RENDERED
+// VISUAL." An agent that can only describe a picture will describe one. This
+// hands it a renderer instead, wired to the surface he is already looking at.
+//
+// Capability split, same shape as the gavel tools:
+//   • render   — SERVER-SIDE. Shells out to the engine's own emit-screen.mjs
+//                (one home per fact — the renderer is never reimplemented here)
+//                and writes into the live brainstorm content dir, which
+//                server.cjs watches. Returns the served URL.
+//   • layers   — reads LAYER_ROLES from the engine source. Never retyped by
+//                hand: the emitter, the canvas and the plan key on exact
+//                string equality, middle dots included.
+//   • validate — parses a canvas and reports node/edge/layer coverage,
+//                including which of the eleven layers are UNFILLED. An
+//                unfilled layer is reported, never invented.
+// ===========================================================================
+
+/** Resolve the engine's own root so the tool works from any cwd. */
+function resolveEngineDir(args: Record<string, unknown>): string {
+  const projectDir =
+    (typeof args.project_dir === "string" && args.project_dir) ||
+    process.env.PRISM_PROJECT_DIR ||
+    process.cwd()
+  return path.join(projectDir, "apps", "prism-viz-engine")
+}
+
+/**
+ * CONTENT_DIR resolution. Precedence: explicit arg → BRAINSTORM_DIR env →
+ * newest brainstorm session → null. Mirrors resolveStateDir's contract, against
+ * server.cjs:80's `<BRAINSTORM_DIR>/content`.
+ */
+function resolveBrainstormContentDir(args: Record<string, unknown>): string | null {
+  if (typeof args.content_dir === "string" && args.content_dir) return args.content_dir
+  if (process.env.BRAINSTORM_DIR) return path.join(process.env.BRAINSTORM_DIR, "content")
+  const projectDir =
+    (typeof args.project_dir === "string" && args.project_dir) ||
+    process.env.PRISM_PROJECT_DIR ||
+    process.cwd()
+  const base = path.join(projectDir, ".prism", "local", "brainstorm")
+  if (!fs.existsSync(base)) return null
+  const sessions = fs
+    .readdirSync(base)
+    .map((d) => path.join(base, d, "content"))
+    .filter((p) => fs.existsSync(p))
+    .map((p) => ({ p, m: fs.statSync(p).mtimeMs }))
+    .sort((x, y) => y.m - x.m)
+  return sessions.length ? sessions[0].p : null
+}
+
+/** The served URL for a session, read from the server's own started-log. */
+function brainstormUrlFor(contentDir: string): string | null {
+  try {
+    const log = path.join(path.dirname(contentDir), "state", "server.log")
+    if (!fs.existsSync(log)) return null
+    const line = fs
+      .readFileSync(log, "utf-8")
+      .split("\n")
+      .find((l) => l.includes("server-started"))
+    if (!line) return null
+    const url = JSON.parse(line).url
+    return typeof url === "string" ? url : null
+  } catch {
+    return null
+  }
+}
+
+/** LAYER_ROLES, read from the engine source rather than duplicated here. */
+function readLayerRoles(engineDir: string): string[] {
+  const src = path.join(engineDir, "src", "core", "layer-roles.ts")
+  if (!fs.existsSync(src)) return []
+  const lit = extractArrayLiteral(fs.readFileSync(src, "utf-8"), "LAYER_ROLES")
+  if (!lit) return []
+  return [...lit.matchAll(/"([^"]+)"/g)].map((m) => m[1])
+}
+
+function handlePrismVizEngine(args: Record<string, unknown>) {
+  const mode = typeof args.mode === "string" ? args.mode : "render"
+  const engineDir = resolveEngineDir(args)
+
+  if (!fs.existsSync(engineDir)) {
+    return okJson({
+      ok: false,
+      tool: "prism_viz_engine",
+      error: `engine not found at ${engineDir}. Pass project_dir, or set PRISM_PROJECT_DIR.`,
+    })
+  }
+
+  const roles = readLayerRoles(engineDir)
+
+  if (mode === "layers") {
+    return okJson({
+      ok: roles.length > 0,
+      tool: "prism_viz_engine",
+      mode: "layers",
+      count: roles.length,
+      layer_roles: roles,
+      unplaceable: "unplaceable",
+      note:
+        "ELEVEN, not nine. A finding that fits no role is flagged `unplaceable` — never " +
+        "force-fit into a twelfth, and never invented to fill an empty layer.",
+      source: path.join(engineDir, "src", "core", "layer-roles.ts"),
+    })
+  }
+
+  if (mode === "validate") {
+    const p = typeof args.canvas_path === "string" ? args.canvas_path : ""
+    if (!p || !fs.existsSync(p)) {
+      return okJson({
+        ok: false,
+        tool: "prism_viz_engine",
+        mode: "validate",
+        error: `canvas_path required and must exist. Got: ${p || "(none)"}`,
+      })
+    }
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(fs.readFileSync(p, "utf-8"))
+    } catch (err) {
+      return okJson({ ok: false, tool: "prism_viz_engine", mode: "validate", error: String(err) })
+    }
+    const nodes = Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>[])
+      : ((parsed as { nodes?: Record<string, unknown>[] }).nodes ?? [])
+    const used = new Set<string>()
+    let withOrigin = 0
+    for (const n of nodes) {
+      const layer =
+        (n.layer as string) ?? ((n.griot as { layer?: string } | undefined)?.layer as string)
+      if (layer) used.add(layer)
+      const data = n.data as { origin?: { file?: string; line?: number } } | undefined
+      if (data?.origin?.file) withOrigin++
+    }
+    const unfilled = roles.filter((r) => !used.has(r))
+    return okJson({
+      ok: true,
+      tool: "prism_viz_engine",
+      mode: "validate",
+      canvas_path: p,
+      nodes: nodes.length,
+      with_file_line_origin: `${withOrigin}/${nodes.length}`,
+      layers_filled: `${used.size}/${roles.length}`,
+      unfilled_layers: unfilled,
+      note:
+        unfilled.length > 0
+          ? "Unfilled layers are reported as unfilled. Never invent a source to fill one."
+          : "Every layer role has at least one grounded source.",
+    })
+  }
+
+  // mode === "render"
+  const script = path.join(engineDir, "scripts", "emit-screen.mjs")
+  if (!fs.existsSync(script)) {
+    return okJson({ ok: false, tool: "prism_viz_engine", error: `emit-screen.mjs not found at ${script}` })
+  }
+  const contentDir = resolveBrainstormContentDir(args)
+  if (!contentDir) {
+    return okJson({
+      ok: false,
+      tool: "prism_viz_engine",
+      mode: "render",
+      error:
+        "No brainstorm content dir found. Start a companion session first (prism-brainstorm " +
+        "start-server.sh), or pass content_dir explicitly. Nothing is rendered into thin air.",
+    })
+  }
+
+  const argv: string[] = [script]
+  if (typeof args.canvas_path === "string" && args.canvas_path) {
+    argv.push("--in", args.canvas_path)
+  } else {
+    argv.push("--self")
+  }
+  if (typeof args.title === "string" && args.title) argv.push("--title", args.title)
+  argv.push("--out", contentDir)
+
+  let stdout = ""
+  try {
+    stdout = execFileSync("node", argv, {
+      encoding: "utf-8",
+      cwd: engineDir,
+      env: { ...process.env, PRISM_ROOT: path.join(engineDir, "..", "..") },
+    })
+  } catch (err) {
+    const e = err as { stderr?: string; stdout?: string; message?: string }
+    return okJson({
+      ok: false,
+      tool: "prism_viz_engine",
+      mode: "render",
+      error: (e.stderr || e.stdout || e.message || String(err)).trim(),
+      note: "The emitter refuses to draw an empty or ungrounded canvas. That refusal is the feature.",
+    })
+  }
+
+  const stats = stdout.match(/(\d+) nodes · (\d+) edges · (\d+)\/(\d+) layers/)
+  const wrote = stdout.match(/wrote\s+(.+)/)
+  const url = brainstormUrlFor(contentDir)
+
+  return okJson({
+    ok: true,
+    tool: "prism_viz_engine",
+    mode: "render",
+    nodes: stats ? Number(stats[1]) : null,
+    edges: stats ? Number(stats[2]) : null,
+    layers_filled: stats ? `${stats[3]}/${stats[4]}` : null,
+    screen: wrote ? wrote[1].trim() : null,
+    url,
+    channel_port: CHANNEL_PORT,
+    note:
+      "The companion watches this directory and serves the newest screen at the URL above. " +
+      "Static render: reveal-to-source needs the sidecar, which is not listening here.",
+  })
+}
+
 // tools/list — advertise the gavel tools plus the assertion facade.
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: GAVEL_TOOLS.map((t) => ({
@@ -1001,6 +1265,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return handleGavelDecide(args)
       case "griot_assert":
         return handleGriotAssert(args)
+      case "prism_viz_engine":
+        return handlePrismVizEngine(args)
       default:
         return errJson(`Unknown tool: ${name}`)
     }

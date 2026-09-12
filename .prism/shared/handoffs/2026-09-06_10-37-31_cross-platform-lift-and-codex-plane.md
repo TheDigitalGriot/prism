@@ -64,6 +64,8 @@ Prism shipped **v4.16.0 "Arkestra"** (`1fbf7d8`) + **v4.16.1** (HEAD `acfb0cb`);
 
 **KNOWN GAPS:** bus read-modify-write lock (append is atomic); `apps/prism-setup` still tracked though sunset in 4.15.2.
 
+**UPDATE v4.16.2, 2026-09-07:** Task 5c (deja-vu recall) SHIPPED, the one blocked item is now green. Forked to `TheDigitalGriot/deja-vu` (branch `griot/runtime-register-seam`): runtime `Register()` seam + JSON-declared harnesses (no rebuild) + a fail-closed loopback guard so recall can never egress. Recall is live locally: 234 sessions / 23,716 messages indexed; auto-recall at `DEJA_RECALL=safe` (~2.4KB/session); embeddings on-GPU (nomic-embed-text, 768d); deja MCP + deja-history skill + /deja wired globally. Decision 1 (fork vs upstream) resolved: forked, experimentation, no upstream PR planned. Two corrections carried: GriotModel is an ENDPOINT (3 lanes behind one OpenAI-compatible base_url), the client persists sessions, so Prism history was recallable all along; and Desktop/Cowork chats are NOT on parseable disk (%APPDATA%\\Claude = sentry/ + claudevm.bundle VHDX only), so chat-log-access should delegate its on-disk half to `deja search --json` and keep its browser half. REMAINING LIVE BLOCKER: griot-harvest-ux-ui, still waiting on the layer roles from THIS Desktop codex (interactive griot-ontology).
+
 _(Original handoff content below is unchanged.)_
 
 

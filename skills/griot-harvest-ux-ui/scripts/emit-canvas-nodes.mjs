@@ -4,7 +4,7 @@
  *
  * WHY THIS IS A SCRIPT AND NOT PROSE
  * -----------------------------------
- * Validating a node against a fixed nine-role enum and a required-field schema is
+ * Validating a node against a fixed eleven-role enum and a required-field schema is
  * deterministic, repeatable, and boring â€” exactly the work that should cost zero
  * LLM tokens. It is also the one check that keeps the canvas honest: the stage
  * contract's success criteria explicitly forbid "a hand-authored node list." An
@@ -37,7 +37,7 @@ import { dirname, join } from "node:path"
 
 const SANDBOX = process.env.GRIOT_SANDBOX || "C:/Users/digit/GriotSandbox"
 
-// â”€â”€ the nine layer roles, verbatim from the stage contract (decision 2) â”€â”€â”€â”€
+// â”€â”€ the ELEVEN layer roles, verbatim from LNAME (corrected 2026-09-12) â”€â”€â”€â”€
 // Source: griot-suite-map.html LNAME array (artifact c389ca6c). Do not edit this
 // list without re-checking that source â€” it is the entire output taxonomy.
 const LAYER_ROLES = [
@@ -50,6 +50,8 @@ const LAYER_ROLES = [
   "Model-making / data science",
   "Memory · foundation",
   "Deployment",
+  "Suite meta",
+  "Cross-cutting rails",
 ]
 const VALID_LAYERS = new Set([...LAYER_ROLES, "unplaceable"])
 const VALID_TYPES = new Set(["component", "screen", "flow", "workflow"])
@@ -106,7 +108,7 @@ function validateNode(node, idx) {
   if (!node.label || typeof node.label !== "string") errs.push(`${where}: missing "label"`)
   if (!VALID_LAYERS.has(node.layer))
     errs.push(
-      `${where}: "layer" must be one of the nine verbatim roles or "unplaceable", got ${JSON.stringify(node.layer)}`
+      `${where}: "layer" must be one of the eleven verbatim roles or "unplaceable", got ${JSON.stringify(node.layer)}`
     )
   if (!node.position || typeof node.position.x !== "number" || typeof node.position.y !== "number")
     errs.push(`${where}: missing/invalid "position" {x, y}`)

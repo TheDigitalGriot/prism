@@ -12,5 +12,10 @@
     "apps/prism-installer",
     "apps/prism-design-studio",
     "apps/prism-viz-engine"
-  ]
+  ],
+  "scripts": {
+    "workgraph": "node scripts/workgraph-index.mjs .prism/shared/workgraph/index.json",
+    "workgraph:distil": "node scripts/workgraph-distil.mjs",
+    "verify:code-intel": "node scripts/verify-code-intel.mjs"
+  }
 }

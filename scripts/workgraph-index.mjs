@@ -171,6 +171,9 @@ for (const p of storyFiles) {
 }
 
 // ============ 2. decisions.json — the live worklane records ============
+/** Project slugs named by a decision's destination/source. Their nodes are
+ *  created after §4 so the plan's own project records always win. */
+const referencedProjects = new Set();
 const decFiles = [];
 for (const r of ROOTS) walk(r, 7, (p, name) => { if (name === 'decisions.json' && p.includes('brainstorm')) decFiles.push(p); });
 
@@ -196,8 +199,19 @@ for (const p of decFiles) {
       screen: o.screen ?? null, lastTouched: touched, path: p,
       contentHash: sha(String(o.label ?? '') + String(o.summary ?? o.concern ?? '')),
     });
-    for (const d of many(o.destination)) addEdge(id, wg('dgs', 'project:' + d), 'outbound', 'owed to ' + d);
-    for (const s of many(o.source)) addEdge(wg('dgs', 'project:' + s), id, 'inbound', 'came from ' + s);
+    // DANGLING-EDGE FIX (2026-09-11). These two lines emitted an edge to
+    // wg('dgs','project:<slug>') but never created that node. Only the plan's
+    // EDGES[] (§4) calls addNode for project ids, so any destination/source
+    // that is not literally a plan edge endpoint pointed at nothing: 114 of 775
+    // edges — 15% — had an unresolved endpoint, which is exactly why
+    // project-to-project was never visible. An edge to a node that does not
+    // exist is a broken graph, not a sparse one.
+    //
+    // Recorded here rather than creating the node inline, because addNode is
+    // first-writer-wins and §2 runs BEFORE §4 — stubbing now would shadow the
+    // plan's richer project records. Missing ones are created after §4 instead.
+    for (const d of many(o.destination)) { referencedProjects.add(d); addEdge(id, wg('dgs', 'project:' + d), 'outbound', 'owed to ' + d); }
+    for (const s of many(o.source)) { referencedProjects.add(s); addEdge(wg('dgs', 'project:' + s), id, 'inbound', 'came from ' + s); }
     return id;
   };
 
@@ -226,8 +240,21 @@ for (const r of ROOTS) walk(r, 6, (p, name) => {
     awaits: m[1].split(',').map((s) => s.trim()).filter(Boolean),
     contentHash: sha(c.slice(0, 20000)),
   });
-  for (const dep of m[1].split(',').map((s) => s.trim()).filter(Boolean))
-    addEdge(wg(origin, 'path:' + dep), id, 'awaits', 'awaits ' + dep);
+  // Same dangling-edge class as the destination/source fix above: this emitted
+  // an edge FROM wg(origin,'path:<dep>') without ever creating that node, so 11
+  // awaits edges had an unresolved producer. The declared dependency is a real
+  // thing the stage is blocked on — a file, a sandbox checkout, an artifact —
+  // so it becomes a node of kind 'artifact'. `open` is the honest state: nothing
+  // here asserts the dependency is satisfied, only that it was declared.
+  for (const dep of m[1].split(',').map((s) => s.trim()).filter(Boolean)) {
+    const depId = wg(origin, 'path:' + dep);
+    addNode({
+      id: depId, envelopeId: depId, localId: dep, kind: 'artifact', origin,
+      title: dep, state: 'open', direction: 'local', declaredBy: stage,
+      lastTouched: mtime(p), path: null,
+    });
+    addEdge(depId, id, 'awaits', 'awaits ' + dep);
+  }
 });
 
 // ============ 4. DGS plan EDGES[] — the ontology spine ============
@@ -248,6 +275,29 @@ try {
     }
   }
 } catch (e) { warnings.push('plan EDGES: ' + e.message); }
+
+// ============ 4b. land the dangling project references ============
+// Runs AFTER the plan so a slug the plan knows keeps the plan's record. What is
+// left is a project named by a decision but absent from the plan's EDGES[] —
+// real work owed to something the ontology spine does not yet name. It is
+// marked `inferred: true` so the two are never confused, and warned about,
+// because a destination the plan has never heard of is a finding in itself.
+{
+  let landed = 0;
+  for (const slug of referencedProjects) {
+    const id = wg('dgs', 'project:' + slug);
+    if (seen.has(id)) continue;
+    addNode({
+      id, envelopeId: id, localId: slug, kind: 'project', origin: 'dgs', title: slug,
+      state: 'open', direction: 'local', inferred: true,
+      lastTouched: new Date().toISOString(), path: null,
+    });
+    landed++;
+  }
+  if (landed) warnings.push(
+    `${landed} project node(s) referenced by a decision but absent from the plan's EDGES[]: ` +
+    [...referencedProjects].filter((s) => { const n = nodes.find((x) => x.localId === s && x.kind === 'project'); return n && n.inferred; }).join(', '));
+}
 
 // ============ 5. acyclicity — the DFS the design asks for (§3C) ============
 const adj = new Map();
@@ -287,3 +337,29 @@ const index = {
 fs.mkdirSync(path.dirname(path.resolve(OUT)), { recursive: true });
 fs.writeFileSync(OUT, JSON.stringify(index, null, 1), 'utf8');
 console.log(JSON.stringify(index.stats, null, 1));
+
+// ── the two downstream consumers of this index ────────────────────────────────
+// 1. scripts/workgraph-screen.mjs  — the global/session VIEW. Chained below, so
+//    regenerating the index always regenerates what displays it.
+// 2. scripts/workgraph-distil.mjs  — index -> one Meridian channel entry. NOT
+//    chained: its caller is the `griot-meridian-reflect` skill, which lives in the
+//    digital-griot-skills repo and runs on its own daily cadence. Naming it here
+//    because I8 searches only this repo and would otherwise read a live
+//    cross-repo helper as an orphan. Run standalone with `npm run workgraph:distil`.
+//
+// ── render the view, on the same travelled path ───────────────────────────────
+// The index was generated and nothing ever displayed it: the brainstorm rail reads
+// ONE session's decisions.json and cannot see the other ~770 nodes, so "this session
+// or everything?" had no answer on screen. workgraph-screen.mjs is that view, and a
+// helper nobody calls is a soft fix by the ontology's own definition — so it is
+// chained here rather than left to be remembered. Generate the index, get the view.
+// Non-fatal by design: a rendering problem must never fail the index itself.
+try {
+  const screen = path.join(import.meta.dirname, 'workgraph-screen.mjs');
+  if (fs.existsSync(screen)) {
+    const { execFileSync } = await import('node:child_process');
+    execFileSync(process.execPath, [screen], { stdio: 'inherit', cwd: process.cwd() });
+  }
+} catch (e) {
+  console.warn('workgraph-screen: view not rendered — ' + (e?.message ?? e));
+}
