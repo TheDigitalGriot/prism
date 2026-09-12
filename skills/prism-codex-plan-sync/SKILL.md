@@ -66,8 +66,9 @@ evidence, never inference.
   dir is cleaned**.
 - **Normalize** an implement Option-B edit and a subagent clarification into one discovery record,
   then amend the codex's `[OPT:OPEN]` / component / license claim **in place**, add a DGS `ITEMS[]`
-  decision row, and **re-push the codex artifact** (SendUserFile → update_artifact - the step that
-  goes stale if skipped). Amend only with evidence (`Found:` actual · `commitHash` · `file:line`).
+  decision row, and **re-push the codex artifact** (the top-level `Artifact` tool - the step that
+  goes stale if skipped). Both halves are required: the griot-live-artifacts commit AND the
+  Artifact publish. Amend only with evidence (`Found:` actual · `commitHash` · `file:line`).
 
 ## Load-bearing seams  → `references/mechanics.md`
 

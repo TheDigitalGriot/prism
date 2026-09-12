@@ -70,10 +70,22 @@ it is mobile/remote-only). "Won't run here" is a routing problem, not a blocker.
   `new Function(body)` it (a `SyntaxError` throws) — the JSON-LD `<script type="application/json">`
   and `text/plain` design-prompt blocks are expected non-JS false-positives, skip them.
 
-## Codex artifact freshness
+## Propagation targets - every copy needs a gate (invariant I11)
+
+The law: a propagation target is any copy that something WRITES TO and nothing CHECKS. Before
+claiming a codex or plan is synced, ENUMERATE every target holding a copy of what changed and NAME
+the gate for each. A target with no named gate is STALE BY DEFAULT. This is invariant I11 in the
+ontology; four instances have been found, the fourth measured 2026-09-12.
+
+This skill's own targets, as a list: the codex HTML in griot-live-artifacts (gate: git commit), the
+live gallery card (gate: the top-level Artifact publish), .prism/shared/plans/<plan>.md (gate: the
+epic back-link), .prism/stories/stories.json (gate: stable STORY-NNN ids), and the DGS master
+ITEMS[] decision row (gate: the dgs-plan-update loop).
 
 Every edit to a codex (forward emit-notes or reverse amend) requires re-pushing the artifact
-(`SendUserFile` → `update_artifact`) — the step that silently goes stale. The live gallery card must
+(the top-level `Artifact` tool — republish the same file path to keep the URL, or pass `url=` to
+update from another conversation) — the step that silently goes stale. Both halves are required:
+the griot-live-artifacts commit AND the Artifact publish. The live gallery card must
 never lag the git repo.
 
 ## Rename sweeps: guard on the SPECIFIC token
