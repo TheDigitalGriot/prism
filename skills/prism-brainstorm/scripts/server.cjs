@@ -81,6 +81,23 @@ const CONTENT_DIR = path.join(SESSION_DIR, 'content');
 const STATE_DIR = path.join(SESSION_DIR, 'state');
 const CHANNEL_PORT = process.env.BRAINSTORM_CHANNEL_PORT || '52342';
 const SESSION_ID = path.basename(SESSION_DIR);
+
+// viz-companion-fusion Step 3 — the node-graph state channel, alongside decisions.json.
+// Populated either by prism-viz-engine's `emit-screen.mjs --companion` (which seeds it the
+// moment it writes a screen) or by the agent directly (references/workgraph-state.md), same
+// read-merge-write discipline as decisions.json. Never required to exist: the GET route and
+// the default below both degrade to a genesis-only seed rather than an empty structure, per
+// Decision 7 — an empty LAYERS/WORKGRAPH/TIMELINE at session start is a defect, not a neutral
+// initial state.
+const WORKGRAPH_FILE = path.join(STATE_DIR, 'workgraph.json');
+const DEFAULT_WORKGRAPH = {
+  nodes: [{
+    id: 'genesis', q: 'genesis', label: 'Session opened',
+    summary: 'No workgraph content yet — first ideation step not seeded',
+    state: 'open', layer: null,
+  }],
+  edges: [],
+};
 let ownerPid = process.env.BRAINSTORM_OWNER_PID ? Number(process.env.BRAINSTORM_OWNER_PID) : null;
 
 const MIME_TYPES = {
@@ -231,6 +248,14 @@ function handleRequest(req, res) {
       : '{"decisions":[],"parked":[]}';
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
     res.end(body);
+  } else if (req.method === 'GET' && req.url === '/state/workgraph.json') {
+    // Mirrors the decisions.json route immediately above — same shape, same fallback
+    // discipline — except the fallback is a genesis seed, never an empty object (Decision 7).
+    const body = fs.existsSync(WORKGRAPH_FILE)
+      ? fs.readFileSync(WORKGRAPH_FILE, 'utf-8')
+      : JSON.stringify(DEFAULT_WORKGRAPH);
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(body);
   } else if (req.method === 'GET' && req.url.startsWith('/files/')) {
     const fileName = req.url.slice(7);
     const filePath = path.join(CONTENT_DIR, path.basename(fileName));
@@ -378,14 +403,39 @@ function startServer() {
       console.error('decisions.json parse error:', err.message);
     }
   }
+  // Step 3 (companion half) — the second watched file. Root cause was
+  // `if (filename !== 'decisions.json') return`: a hard filter that made a second state file
+  // structurally unreachable no matter what emitted it. This still filters (unknown filenames
+  // in STATE_DIR — server.pid, server.log, events — are correctly ignored) but no longer to a
+  // single name.
+  let workgraphTimer = null;
+  function broadcastWorkgraph() {
+    try {
+      const body = fs.existsSync(WORKGRAPH_FILE)
+        ? fs.readFileSync(WORKGRAPH_FILE, 'utf-8')
+        : JSON.stringify(DEFAULT_WORKGRAPH);
+      const payload = JSON.parse(body);
+      broadcast({ type: 'workgraph-update', payload });
+    } catch (err) {
+      console.error('workgraph.json parse error:', err.message);
+    }
+  }
   const stateWatcher = fs.watch(STATE_DIR, (eventType, filename) => {
-    if (filename !== 'decisions.json') return;
-    if (decisionsTimer) clearTimeout(decisionsTimer);
-    decisionsTimer = setTimeout(() => {
-      decisionsTimer = null;
-      touchActivity();
-      broadcastDecisions();
-    }, 100);
+    if (filename === 'decisions.json') {
+      if (decisionsTimer) clearTimeout(decisionsTimer);
+      decisionsTimer = setTimeout(() => {
+        decisionsTimer = null;
+        touchActivity();
+        broadcastDecisions();
+      }, 100);
+    } else if (filename === 'workgraph.json') {
+      if (workgraphTimer) clearTimeout(workgraphTimer);
+      workgraphTimer = setTimeout(() => {
+        workgraphTimer = null;
+        touchActivity();
+        broadcastWorkgraph();
+      }, 100);
+    }
   });
   stateWatcher.on('error', (err) => console.error('state fs.watch error:', err.message));
 

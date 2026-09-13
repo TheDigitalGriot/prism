@@ -46,6 +46,23 @@ Returns JSON:
 }
 ```
 
+## Workgraph Seed (state/workgraph.json)
+
+Immediately after starting the server, write a genesis node to `$STATE_DIR/workgraph.json` so the
+qrail-graph rail (LAYERS / WORKGRAPH / TIMELINE) has content from the first paint, not just after
+the first decision:
+
+```json
+{ "nodes": [{ "id": "genesis", "state": "open", "label": "Session opened",
+              "summary": "<the inbound context or the opening question for this session>",
+              "at": 1757740800000 }],
+  "edges": [] }
+```
+
+See `references/workgraph-state.md` for the full schema and the read-merge-write protocol. Skip
+this only if `prism-viz-engine`'s `emit-screen.mjs --companion` target is about to render the
+session's first screen — it seeds this file for you.
+
 ## The Content Loop
 
 1. Check server is alive: read `$STATE_DIR/server-info`

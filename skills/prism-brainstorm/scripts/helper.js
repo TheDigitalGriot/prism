@@ -46,6 +46,8 @@
         window.location.reload();
       } else if (data.type === 'state-update') {
         renderState(data.payload);
+      } else if (data.type === 'workgraph-update') {
+        renderWorkgraphState(data.payload);
       }
     };
 
@@ -142,7 +144,7 @@
   // the drawer uses. Trunk = decisions in order. Parked items hang off their
   // fromQ as dangling branches (raised, never merged). Optional `current` and
   // `upcoming[]` render the live node and the road ahead.
-  function renderGraph(state) {
+  function renderGraph(state, wgState) {
     var host = document.getElementById('qrail-graph');
     if (!host) return;
 
@@ -150,8 +152,13 @@
     var parked = (state && Array.isArray(state.parked)) ? state.parked : [];
     var current = (state && state.current) ? String(state.current) : '';
     var upcoming = (state && Array.isArray(state.upcoming)) ? state.upcoming : [];
+    // viz-companion-fusion Step 4 — the WORKGRAPH channel, read alongside decisions.json.
+    // Decisions stay their own view (never merged into wgNodes); this is a second source
+    // the same render pass folds in, per Decision 2 ("both halves land in this run").
+    var wgNodes = (wgState && Array.isArray(wgState.nodes)) ? wgState.nodes.slice() : [];
+    wgNodes.sort(function (a, b) { return (a.at || 0) - (b.at || 0); });
 
-    if (!decisions.length && !parked.length && !current && !upcoming.length) {
+    if (!decisions.length && !parked.length && !current && !upcoming.length && !wgNodes.length) {
       host.innerHTML = '<div class="qg-empty">No questions yet</div>';
       return;
     }
@@ -200,7 +207,12 @@
     // destination silently left the Parked lane -- "Parked 0" was shown while five
     // parked items existed. Splitting the panels is what lets both axes be true.
     var L = { done: [], superseded: [], parked: [], open: [] };
-    var D = { outbound: [], inbound: [], adjacent: [] };
+    // 'local' — viz-companion-fusion root-cause fix. dirOf() below always returned a value
+    // (including the literal string 'local'), but this object never had that key, so
+    // `if (D[dk]) D[dk].push(...)` silently dropped every flat/undirected item. A workgraph
+    // node with no destination/source/maps — the common case for a harvested component that
+    // hasn't been routed anywhere yet — is exactly what this was eating.
+    var D = { outbound: [], inbound: [], adjacent: [], local: [] };
     function dirOf(o) {
       if (!o) return 'local';
       return many(o.destination).length ? 'outbound'
@@ -247,6 +259,27 @@
       fileIt('open', uo, row('open', q, lab, 'not answered yet', uo));
     });
 
+    // WORKGRAPH channel nodes \u2014 harvested components / the session genesis marker. State
+    // decides the LAYERS lane (same rule as decisions/parked above); direction (usually none,
+    // hence 'local') decides the WORKGRAPH lane via the same dirOf()/badge() this file already
+    // uses for decisions, so the two channels share one bucketing rule rather than growing a
+    // second one.
+    function wgRow(n) {
+      var label = n.label || n.id || '';
+      var text = (n.layer ? n.layer + ' \u00b7 ' : '') + label;
+      var scr = n.screen ? ' data-screen="' + escapeHtml(n.screen) + '"' : '';
+      var noscr = scr ? '' : ' no-screen';
+      var bucket = n.supersededBy ? 'superseded' : (n.state || 'open');
+      return '<div class="qg-row wg ' + bucket + noscr + '" data-q="' + escapeHtml(n.id || '') + '"' + scr +
+             ' title="' + escapeHtml(n.summary || label) + (scr ? '' : ' \u2014 not rendered yet') + '">' +
+             '<span class="qg-dot"></span><span class="qg-txt">' + escapeHtml(text) + '</span>' +
+             badge(n) + '</div>';
+    }
+    wgNodes.forEach(function (n) {
+      var bucket = n.supersededBy ? 'superseded' : (n.state || 'open');
+      fileIt(bucket, n, wgRow(n));
+    });
+
     // Every decision state gets a layer, and every layer renders even at zero.
     // inbound and adjacent are deliberately SEPARATE: inbound arrived and lands
     // here; adjacent lives elsewhere permanently and never resolves here.
@@ -287,7 +320,9 @@
       /* circle-pause - deliberately held */
       parked:     glyph('<circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="15" y2="9"/><line x1="14" x2="14" y1="15" y2="9"/>'),
       /* circle-dashed - not yet closed */
-      open:       glyph('<path d="M10.1 2.182a10 10 0 0 1 3.8 0"/><path d="M13.9 21.818a10 10 0 0 1-3.8 0"/><path d="M17.609 3.721a10 10 0 0 1 2.69 2.7"/><path d="M2.182 13.9a10 10 0 0 1 0-3.8"/><path d="M20.279 17.609a10 10 0 0 1-2.7 2.69"/><path d="M21.818 10.1a10 10 0 0 1 0 3.8"/><path d="M3.721 6.391a10 10 0 0 1 2.7-2.69"/><path d="M6.391 20.279a10 10 0 0 1-2.69-2.7"/>')
+      open:       glyph('<path d="M10.1 2.182a10 10 0 0 1 3.8 0"/><path d="M13.9 21.818a10 10 0 0 1-3.8 0"/><path d="M17.609 3.721a10 10 0 0 1 2.69 2.7"/><path d="M2.182 13.9a10 10 0 0 1 0-3.8"/><path d="M20.279 17.609a10 10 0 0 1-2.7 2.69"/><path d="M21.818 10.1a10 10 0 0 1 0 3.8"/><path d="M3.721 6.391a10 10 0 0 1 2.7-2.69"/><path d="M6.391 20.279a10 10 0 0 1-2.69-2.7"/>'),
+      /* circle - undirected, lives here and nowhere else (viz-companion-fusion root-cause fix) */
+      local:      glyph('<circle cx="12" cy="12" r="9"/>')
     };
 
     // Panel 1 - STATES. Panel 2 - RELATIONS. Every lane renders even at zero:
@@ -301,9 +336,10 @@
     var DIR_LAYERS = [
       { key: 'outbound',   label: 'Outbound',   icon: LAYER_ICONS.outbound },
       { key: 'inbound',    label: 'Inbound',    icon: LAYER_ICONS.inbound },
-      { key: 'adjacent',   label: 'Adjacent',   icon: LAYER_ICONS.adjacent }
+      { key: 'adjacent',   label: 'Adjacent',   icon: LAYER_ICONS.adjacent },
+      { key: 'local',      label: 'Local',      icon: LAYER_ICONS.local }
     ];
-    var LAYERS = STATE_LAYERS.concat(DIR_LAYERS);   // filter chips still see all 7
+    var LAYERS = STATE_LAYERS.concat(DIR_LAYERS);   // filter chips still see all 8
 
     var html = '';
     // the live node is never grouped and never filtered away
@@ -345,6 +381,13 @@
                '</div>';
       }
       var seq = [];
+      // Genesis-first: TIMELINE is a time axis (Decision 7), so the WORKGRAPH channel's own
+      // records \u2014 sorted by `at` above \u2014 lead the spine. They are a separate source from the
+      // decision spine below (no shared ordering key exists between the two channels yet), so
+      // this renders as a leading block rather than an interleaved merge \u2014 an honest
+      // simplification, not a silent one. Later entries APPEND here; nothing already rendered
+      // is ever replaced.
+      wgNodes.forEach(function (n) { seq.push(wgRow(n)); });
       orderDecisions(decisions).forEach(function (d) {
         var q = String(d.q || '');
         seq.push(item(row('done', q, q + (d.label ? ' \u00b7 ' + d.label : ''),
@@ -831,9 +874,21 @@
     });
   }
 
+  // Two independent channels, one render pass. Each is cached so a change on either side
+  // (a decision confirmed, a node harvested) re-renders qrail-graph with BOTH — decisions.json
+  // and workgraph.json are on separate watchers/timers in server.cjs and never arrive together.
+  var lastDecisionsState = { decisions: [], parked: [] };
+  var lastWorkgraphState = { nodes: [], edges: [] };
+
   function renderState(state) {
-    renderDrawer(state);
-    renderGraph(state);
+    lastDecisionsState = state || lastDecisionsState;
+    renderDrawer(lastDecisionsState);
+    renderGraph(lastDecisionsState, lastWorkgraphState);
+  }
+
+  function renderWorkgraphState(wgState) {
+    lastWorkgraphState = wgState || lastWorkgraphState;
+    renderGraph(lastDecisionsState, lastWorkgraphState);
   }
 
   function fetchInitialDrawer() {
@@ -841,6 +896,12 @@
       .then(function (r) { return r.json(); })
       .then(renderState)
       .catch(function () { renderState({ decisions: [], parked: [] }); });
+    // viz-companion-fusion Step 4 — seeded independently of decisions.json (server.cjs's GET
+    // route defaults to a genesis-only payload rather than 404ing), so this always resolves.
+    fetch('/state/workgraph.json')
+      .then(function (r) { return r.json(); })
+      .then(renderWorkgraphState)
+      .catch(function () { renderWorkgraphState({ nodes: [], edges: [] }); });
   }
 
   function sendEvent(event) {

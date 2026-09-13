@@ -30,9 +30,27 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs"
 import { join, resolve, basename } from "node:path"
 
+// COMPANION TARGET (viz-companion-fusion, Step 2). Real code reuse, not a re-typed copy:
+// Node 22.6+ strips TS types natively (no enums/namespaces here, so no flag needed — verified
+// 2026-09-13, `node -e "import('./isometric.ts')"` resolves clean). Importing the source directly
+// means the 11-role taxonomy and the FossFLOW-grafted projection maths can never drift from the
+// engine's own runtime copy the way the --self path's hand-typed LAYER_ROLES/EMBER below already
+// have (a known, separately-tracked duplication — left alone here per the non-breaking decision).
+import { LAYER_ROLES as ENGINE_LAYER_ROLES, ROLE_EMBER as ENGINE_ROLE_EMBER } from "../src/core/layer-roles.ts"
+import { tileToScreen, isoBox, pixelToTile } from "../src/layers/02-render/isometric.ts"
+
 const argv = process.argv.slice(2)
 const flag = (n) => argv.includes(n)
 const opt = (n) => { const i = argv.indexOf(n); return i >= 0 && i + 1 < argv.length ? argv[i + 1] : null }
+
+// --companion — viz-companion-fusion Decision 1/2/6. Emits a FRAGMENT (no doctype/html/head/
+// body) instead of the full standalone document below, so server.cjs's isFullDocument() check
+// sends it through wrapInFrame() into the brainstorm frame rather than serving it bare. The
+// existing --self/--in -> full-document path is UNTOUCHED (Decision 4) — this is a second,
+// additive output mode selected explicitly.
+const COMPANION = flag("--companion")
+const RENDERER = opt("--renderer") ?? "shell" // shell | isometric | nodegraph
+const FIDELITY = opt("--fidelity") ?? "mid" // lo | mid | hi
 
 const PRISM_ROOT = resolve(process.env.PRISM_ROOT ?? join(import.meta.dirname, "..", "..", ".."))
 /** server.cjs:76 — the companion watches <BRAINSTORM_DIR>/content. */
@@ -112,6 +130,10 @@ const H = LAYER_ROLES.length * LANE_H
 const byId = new Map(placed.map((p) => [p.n.id, p]))
 const edges = (canvas.edges ?? []).filter((e) => byId.has(e.fromNode) && byId.has(e.toNode))
 
+// COMPANION mode defers to emitCompanionFragment(), called at the bottom of this file (its
+// helpers are declared further down; a function declaration hoists, but the `const`s it closes
+// over do not, so the call has to happen after they are initialized, not here).
+if (!COMPANION) {
 const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <title>${esc(title)} · prism-viz-engine</title>
@@ -190,3 +212,261 @@ console.log(`emit-screen: ${placed.length} nodes · ${edges.length} edges · ${p
 console.log(`  wrote  ${out}`)
 console.log(`  The brainstorm companion watches this directory — it will appear as a screen.`)
 console.log(`  Channel :52342 is the same one drive() targets, so panel and engine share it.`)
+} // end !COMPANION (full-document path, Decision 4 — unchanged above this line)
+
+// ============================================================================================
+// COMPANION TARGET — viz-companion-fusion Step 2 (engine half).
+//
+// Everything below only runs when --companion is passed (see the early-exit above). It shares
+// `nodes`, `edges`, `title`, `esc`, `CARD_W`, `CARD_H` with the full-document path above but
+// owns its OWN layout math per renderer — the shell layout is intentionally NOT reused verbatim
+// for isometric/nodegraph, because "renderer selectable" (Decision 2/Process Step 2) means three
+// really-different projections, not one layout re-skinned three times.
+// ============================================================================================
+
+/** state/workgraph.json lives next to state/decisions.json — server.cjs:82 STATE_DIR. */
+const STATE_DIR = join(BRAINSTORM_DIR, "state")
+
+/**
+ * Step 3's seed, written from the engine side. Read-merge-write, same protocol as
+ * drawer-state.md documents for decisions.json (references/workgraph-state.md documents this
+ * file's schema) — never overwrite an existing node, only add what is new. A genesis marker is
+ * ensured on every write so LAYERS/WORKGRAPH/TIMELINE are never empty even before any node
+ * lands (Decision 7) — the companion-side default in server.cjs is the second line of defense
+ * for sessions where the agent seeds before ever running this emitter.
+ */
+function writeWorkgraphSeed(seedNodes, seedEdges, genesisLabel) {
+  mkdirSync(STATE_DIR, { recursive: true })
+  const p = join(STATE_DIR, "workgraph.json")
+  let state = { nodes: [], edges: [] }
+  if (existsSync(p)) {
+    try { state = JSON.parse(readFileSync(p, "utf-8")) } catch { /* corrupt file — start fresh, never crash the emitter */ }
+  }
+  state.nodes ??= []; state.edges ??= []
+  const haveNode = new Set(state.nodes.map((n) => n.id))
+  const haveEdge = new Set(state.edges.map((e) => e.id))
+
+  if (!haveNode.has("genesis")) {
+    // state:"open" + no destination/source/maps -> the "local" WORKGRAPH lane (Step 4's fix
+    // for the named root-cause bug) + the "open" LAYERS lane. Never "done": a genesis marker
+    // is not a resolved decision, so filing it as decided would misreport session state.
+    // `at` is pinned one tick before the earliest seed node (rather than Date.now() here,
+    // called after seedNodes were already stamped) so TIMELINE mode's `at`-ascending sort
+    // always seats genesis first, matching what "genesis-first" actually means.
+    const earliestSeedAt = seedNodes.reduce((min, n) => Math.min(min, n.at ?? Infinity), Infinity)
+    state.nodes.push({
+      id: "genesis", q: "genesis", label: "Session opened",
+      summary: genesisLabel ?? "prism-viz-engine companion target — no inbound context recorded",
+      state: "open", layer: null,
+      at: Number.isFinite(earliestSeedAt) ? earliestSeedAt - 1 : Date.now(),
+    })
+  }
+  for (const n of seedNodes) {
+    if (haveNode.has(n.id)) continue
+    haveNode.add(n.id)
+    state.nodes.push(n)
+  }
+  for (const e of seedEdges) {
+    if (haveEdge.has(e.id)) continue
+    haveEdge.add(e.id)
+    state.edges.push(e)
+  }
+  writeFileSync(p, JSON.stringify(state, null, 2), "utf-8")
+  return p
+}
+
+const FIDELITY_STYLE = `
+.viz-frag{position:relative}
+.viz-frag[data-fidelity="lo"]{--fid-blur:0px;--fid-sat:100%;--fid-bloom:0;--fid-rim:.07;--fid-radius:6px;--fid-border:dashed}
+.viz-frag[data-fidelity="mid"]{--fid-blur:8px;--fid-sat:118%;--fid-bloom:.26;--fid-rim:.09;--fid-radius:14px;--fid-border:solid}
+.viz-frag[data-fidelity="hi"]{--fid-blur:40px;--fid-sat:140%;--fid-bloom:.55;--fid-rim:.13;--fid-radius:20px;--fid-border:solid}
+.viz-frag .viz-legend{margin-bottom:14px}
+.viz-frag .viz-stage{position:relative;overflow:auto;border-radius:var(--fid-radius, 14px)}
+.viz-frag .viz-lane{position:absolute;left:0;border-bottom:1px dashed var(--rim-08)}
+.viz-frag .viz-lane-hd{position:absolute;left:0;top:0;bottom:0;padding:8px 10px;display:flex;align-items:center}
+.viz-frag .viz-lane-nm{font-family:var(--font-code);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--whisper)}
+.viz-frag .viz-lane-nm::before{content:"";display:inline-block;width:3px;height:10px;border-radius:2px;background:var(--e);margin-right:6px;vertical-align:-1px}
+.viz-frag .viz-node{position:absolute;border-radius:var(--fid-radius,14px);border-width:1px;border-style:var(--fid-border,solid);
+  border-color:var(--rim-15);border-left-width:3px;border-left-color:var(--e,var(--neural));background:var(--haze-04);
+  backdrop-filter:blur(var(--fid-blur,8px)) saturate(var(--fid-sat,118%));-webkit-backdrop-filter:blur(var(--fid-blur,8px)) saturate(var(--fid-sat,118%));
+  box-shadow:var(--depth-lift),0 0 calc(var(--fid-bloom,0)*60px) 0 var(--e,var(--neural));
+  padding:8px 10px;cursor:pointer;transition:transform 220ms var(--tale),box-shadow 220ms var(--tale)}
+.viz-frag .viz-node:hover{transform:translateY(-2px)}
+.viz-frag .viz-node.selected{border-color:var(--voltage)}
+.viz-frag .viz-node .lb{font-size:12px;font-weight:560;color:var(--voice);line-height:1.3}
+.viz-frag svg.viz-edges{position:absolute;inset:0;pointer-events:none}
+.viz-frag svg.viz-edges path{fill:none;stroke:var(--footstep);stroke-width:1.3;opacity:.5}
+.viz-frag .viz-iso text{font-family:var(--font-code);font-size:9px;fill:var(--voice)}
+`.trim()
+
+/** Ember for a node's layer role, falling back to the neural default rather than inventing a color. */
+function emberFor(layer) {
+  return ENGINE_ROLE_EMBER[layer] ?? ENGINE_ROLE_EMBER.unplaceable
+}
+
+/** Renderer 1/3 — shell. Same lane-band shape as the full-document path (packed index per
+ *  lane), reskinned onto griotwave tokens/component classes instead of the private palette. */
+function layoutShell() {
+  const LANE_H2 = 108, CARD_W2 = 208, CARD_H2 = 80, RAIL2 = 168
+  const laneIdx = (l) => Math.max(0, ENGINE_LAYER_ROLES.indexOf(l))
+  const packed = new Map()
+  const placed2 = nodes.map((n) => {
+    const layer = ENGINE_LAYER_ROLES.includes(n.griot.layer) ? n.griot.layer : "unplaceable"
+    const i = packed.get(layer) ?? 0
+    packed.set(layer, i + 1)
+    return { n, layer, x: RAIL2 + 16 + i * (CARD_W2 + 14), y: laneIdx(layer) * LANE_H2 + 18, w: CARD_W2, h: CARD_H2 }
+  })
+  const W2 = RAIL2 + 16 + Math.max(1, ...[...packed.values()]) * (CARD_W2 + 14) + 16
+  const H2 = ENGINE_LAYER_ROLES.length * LANE_H2
+  const lanes = ENGINE_LAYER_ROLES.map((r, i) => ({ label: r, top: i * LANE_H2, height: LANE_H2, ember: emberFor(r) }))
+  return { placed: placed2, width: W2, height: H2, lanes }
+}
+
+/**
+ * Renderer 2/3 — isometric. GRAFTED math, not reimplemented: `tileToScreen`/`isoBox` are
+ * imported verbatim from src/layers/02-render/isometric.ts (the same FossFLOW-derived
+ * projection the interactive IsometricView.tsx uses). `pixelToTile` turns each harvested
+ * node's existing x/y into a tile index — the same lossy step isometric.ts documents at its
+ * own :25-29, made here instead of in the browser because this path has no React runtime.
+ */
+function layoutIsometric() {
+  const size = { width: 1.415 * 100, height: 0.819 * 100 } // PROJECTED_TILE_SIZE, inlined-visible
+  const boxes = nodes.map((n) => {
+    const tile = pixelToTile({ x: n.x ?? 0, y: n.y ?? 0 }, 220)
+    const box = isoBox(tile, 30, size)
+    return { n, tile, box, layer: ENGINE_LAYER_ROLES.includes(n.griot.layer) ? n.griot.layer : "unplaceable" }
+  })
+  const xs = boxes.flatMap((b) => [b.box.center.x - size.width, b.box.center.x + size.width])
+  const ys = boxes.flatMap((b) => [b.box.center.y - size.height, b.box.center.y + size.height + 40])
+  const minX = Math.min(0, ...xs), minY = Math.min(0, ...ys)
+  const width = Math.max(...xs) - minX + 60
+  const height = Math.max(...ys) - minY + 60
+  return { boxes, width, height, offset: { x: -minX + 30, y: -minY + 30 } }
+}
+
+/**
+ * Renderer 3/3 — nodegraph (xyflow's shape, Canvas.tsx's own routed name — route.ts:211).
+ * Canvas.tsx renders LaneBands as a decorative backdrop while nodes float at their OWN
+ * position (Canvas.tsx:80-97,185) rather than being packed into a per-lane grid — that is the
+ * real difference from `shell` above, so this reproduces it: lane bands stay, but x/y are the
+ * harvest's own coordinates (grouped per source repo so two repos that both started numbering
+ * at 0,0 don't overlap), never a repacked index.
+ */
+function layoutNodegraph() {
+  const LANE_H2 = 108, RAIL2 = 24, BLOCK_W = 420
+  const laneIdx = (l) => Math.max(0, ENGINE_LAYER_ROLES.indexOf(l))
+  const repos = [...new Set(nodes.map((n) => n.griot.ui?.origin?.repo ?? n.griot.provenance?.repo ?? "?"))]
+  const repoIdx = new Map(repos.map((r, i) => [r, i]))
+  const placed2 = nodes.map((n) => {
+    const layer = ENGINE_LAYER_ROLES.includes(n.griot.layer) ? n.griot.layer : "unplaceable"
+    const repo = n.griot.ui?.origin?.repo ?? n.griot.provenance?.repo ?? "?"
+    const x = RAIL2 + repoIdx.get(repo) * BLOCK_W + (n.x ?? 0) * 0.55
+    const y = laneIdx(layer) * LANE_H2 + 18 + (n.y ?? 0) * 0.12
+    return { n, layer, x, y, w: 208, h: 80 }
+  })
+  const width = RAIL2 + repos.length * BLOCK_W + 40
+  const height = ENGINE_LAYER_ROLES.length * LANE_H2
+  const lanes = ENGINE_LAYER_ROLES.map((r, i) => ({ label: r, top: i * LANE_H2, height: LANE_H2, ember: emberFor(r) }))
+  return { placed: placed2, width, height, lanes, repos }
+}
+
+function emitCompanionFragment() {
+  if (!["lo", "mid", "hi"].includes(FIDELITY)) {
+    console.error(`emit-screen --companion: --fidelity must be lo|mid|hi, got "${FIDELITY}"`)
+    process.exit(1)
+  }
+  if (!["shell", "isometric", "nodegraph"].includes(RENDERER)) {
+    console.error(`emit-screen --companion: --renderer must be shell|isometric|nodegraph, got "${RENDERER}"`)
+    process.exit(1)
+  }
+
+  const nodeEl = (id, layer, label, repo, file, line, licence, style) => {
+    const e = emberFor(layer)
+    return `<div class="viz-node" data-choice="${esc(id)}" style="${style};--e:${e}">` +
+      `${repo ? `<span class="tag" style="color:${e}">${esc(repo)}</span> ` : ""}` +
+      `<div class="lb">${esc(label)}</div>` +
+      `${file ? `<div class="tag" style="opacity:.7">${esc(file)}${line ? ":" + esc(line) : ""}</div>` : ""}` +
+      `${licence ? `<span class="tag" style="color:var(--solar)">${esc(licence)}</span>` : ""}` +
+      `</div>`
+  }
+
+  let stageHtml = "", W3 = 900, H3 = 400, layersHit = 0
+
+  if (RENDERER === "shell" || RENDERER === "nodegraph") {
+    const L = RENDERER === "shell" ? layoutShell() : layoutNodegraph()
+    W3 = L.width; H3 = L.height
+    const byId2 = new Map(L.placed.map((p) => [p.n.id, p]))
+    const edgesHere = edges.filter((e) => byId2.has(e.fromNode) && byId2.has(e.toNode))
+    layersHit = new Set(L.placed.map((p) => p.layer)).size
+    const laneHtml = L.lanes.map((ln) => `<div class="viz-lane" style="top:${ln.top}px;height:${ln.height}px;width:${W3}px;--e:${ln.ember}">` +
+      `<div class="viz-lane-hd"><span class="viz-lane-nm">${esc(ln.label)}</span></div></div>`).join("")
+    const edgeSvg = `<svg class="viz-edges" width="${W3}" height="${H3}">${edgesHere.map((e) => {
+      const a = byId2.get(e.fromNode), b = byId2.get(e.toNode)
+      const x1 = a.x + a.w / 2, y1 = a.y + a.h, x2 = b.x + b.w / 2, y2 = b.y, m = (y1 + y2) / 2
+      return `<path d="M${x1},${y1} C${x1},${m} ${x2},${m} ${x2},${y2}"/>`
+    }).join("")}</svg>`
+    const nodeHtml = L.placed.map((p) => {
+      const g = p.n.griot, o = g.ui?.origin ?? g.origin ?? {}
+      const repo = o.repo ?? g.provenance?.repo ?? ""
+      return nodeEl(p.n.id, p.layer, p.n.label ?? p.n.id, repo, o.file, o.line, g.code?.licence ?? g.licence,
+        `left:${p.x}px;top:${p.y}px;width:${p.w}px;min-height:${p.h}px`)
+    }).join("")
+    stageHtml = laneHtml + edgeSvg + nodeHtml
+  } else {
+    const L = layoutIsometric()
+    W3 = L.width; H3 = L.height
+    layersHit = new Set(L.boxes.map((b) => b.layer)).size
+    const polys = L.boxes.map(({ n, box, layer }) => {
+      const e = emberFor(layer)
+      const shift = (poly) => poly.split(" ").map((pt) => {
+        const [x, y] = pt.split(",").map(Number)
+        return `${(x + L.offset.x).toFixed(1)},${(y + L.offset.y).toFixed(1)}`
+      }).join(" ")
+      const g = n.griot, o = g.ui?.origin ?? g.origin ?? {}
+      const lbl = box.labelAt
+      return `<g class="viz-node" data-choice="${esc(n.id)}" style="cursor:pointer">` +
+        `<polygon points="${shift(box.left)}" fill="${e}" opacity=".55"/>` +
+        `<polygon points="${shift(box.right)}" fill="${e}" opacity=".75"/>` +
+        `<polygon points="${shift(box.top)}" fill="${e}" stroke="var(--rim-15)"/>` +
+        `<text x="${(lbl.x + L.offset.x).toFixed(1)}" y="${(lbl.y + L.offset.y).toFixed(1)}" text-anchor="middle">${esc((n.label ?? n.id).slice(0, 18))}</text>` +
+        `${o.repo ? `<title>${esc(o.repo)} · ${esc(o.file ?? "")}:${esc(o.line ?? "")}</title>` : ""}` +
+        `</g>`
+    }).join("")
+    stageHtml = `<svg class="viz-iso" width="${W3}" height="${H3}" viewBox="0 0 ${W3} ${H3}">${polys}</svg>`
+  }
+
+  const fragment = `<div class="viz-frag" data-fidelity="${esc(FIDELITY)}" data-renderer="${esc(RENDERER)}">
+<style>${FIDELITY_STYLE}</style>
+<div class="viz-legend meta">
+  <div class="cell"><div class="k">screen</div><div class="v">${esc(title)}</div></div>
+  <div class="cell"><div class="k">renderer</div><div class="v">${esc(RENDERER)} · prism-viz-engine companion target</div></div>
+  <div class="cell"><div class="k">counts</div><div class="v">${nodes.length} nodes · ${edges.length} edges · ${layersHit}/${ENGINE_LAYER_ROLES.length} layers</div></div>
+</div>
+<div class="diagram viz-stage" style="width:${Math.round(W3)}px;height:${Math.round(H3)}px">
+${stageHtml}
+</div>
+</div>`
+
+  mkdirSync(CONTENT_DIR, { recursive: true })
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+  const out2 = join(CONTENT_DIR, `viz-${slug}-companion.html`)
+  writeFileSync(out2, fragment, "utf-8")
+
+  // Step 3 seed — the same nodes this screen just drew, so the WORKGRAPH channel has real
+  // content the moment the screen does. state:"open" (harvested, not yet decided on);
+  // destination/source/maps deliberately absent so these file into the "local" lane fixed in
+  // Step 4 — a harvested component is local to this canvas until a decision routes it.
+  const seedNodes = nodes.map((n) => {
+    const g = n.griot, o = g.ui?.origin ?? g.origin ?? {}
+    return { id: n.id, q: n.id, label: n.label ?? n.id, state: "open", layer: g.layer ?? null, screen: basename(out2), at: Date.now() }
+  })
+  const seedEdges = edges.map((e) => ({ id: `${e.fromNode}->${e.toNode}`, fromNode: e.fromNode, toNode: e.toNode }))
+  const statePath = writeWorkgraphSeed(seedNodes, seedEdges, `Companion screen "${title}" emitted via prism-viz-engine (${RENDERER})`)
+
+  console.log(`emit-screen --companion: ${nodes.length} nodes · ${edges.length} edges · ${layersHit}/${ENGINE_LAYER_ROLES.length} layers · renderer=${RENDERER} · fidelity=${FIDELITY}`)
+  console.log(`  wrote  ${out2}`)
+  console.log(`  seeded ${statePath}`)
+  console.log(`  server.cjs will wrap this as a fragment (isFullDocument() sees no <!doctype>) and serve it inside the brainstorm frame.`)
+}
+
+if (COMPANION) emitCompanionFragment()
