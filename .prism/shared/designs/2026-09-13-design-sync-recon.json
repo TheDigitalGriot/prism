@@ -1,0 +1,241 @@
+{
+  "stage": "design-sync-recon",
+  "date": "2026-09-13",
+  "mode": "READ_ONLY",
+  "writes_performed": 0,
+  "run_status": "INCOMPLETE",
+  "incomplete_reasons": [
+    "step=3: this headless session's file-access sandbox is scoped to C:\\Users\\digit\\GriotApps\\Prism only. The Synaptiq, griot-hub, and valence-context-platform .prism/shared/designs dirs, and the griotwave-pencil-aggregator/source-registry.json file, could not be read (confirmed blocked identically via Bash, PowerShell, and Glob). Only the Prism local designs dir was inventoried.",
+    "step=4: for the same reason, C:\\Users\\digit\\GriotSandbox\\orca\\src\\renderer\\src\\components\\sidebar\\ could not be read. rail_gap[] compares only the R1-R5 doc and Lucid's described (not directly re-inspected) structure; the Orca column is 'inaccessible_sandbox' for all five rules."
+  ],
+  "get_file_calls": { "used": 0, "max": 5, "anomalies": [] },
+
+  "s1_inventory": {
+    "projects": [
+      {
+        "projectId": "019de567-c5df-7ee3-8fa2-c07c1d06dd48",
+        "name": "Griotwave Design System",
+        "type": "PROJECT_TYPE_DESIGN_SYSTEM",
+        "ownerDisplayName": "Gavin",
+        "canEdit": true,
+        "updatedAt_known": "2026-07-02T00:00:46.842805Z",
+        "type_flagged": false
+      },
+      {
+        "projectId": "019dd262-f016-764f-a21d-4e071b062caf",
+        "name": "Design System",
+        "type": "PROJECT_TYPE_DESIGN_SYSTEM",
+        "ownerDisplayName": "Gavin",
+        "canEdit": true,
+        "updatedAt_known": "2026-04-28T04:39:52.647820Z",
+        "type_flagged": false
+      }
+    ]
+  },
+
+  "s2_structure": {
+    "griotwave_design_system": {
+      "projectId": "019de567-c5df-7ee3-8fa2-c07c1d06dd48",
+      "total_paths": 155,
+      "directory_entries": 11,
+      "file_entries": 144,
+      "by_category": {
+        "foundation": 30,
+        "component": 31,
+        "preview_card": 24,
+        "other": 59
+      },
+      "category_detail": {
+        "foundation": [
+          "brand-matrix-kit/DNA.md", "brand-matrix-kit/TYPE.md",
+          "brand-matrix-kit/fonts/Afrik-Regular.woff", "brand-matrix-kit/fonts/InterVariable-Italic.woff2",
+          "brand-matrix-kit/fonts/InterVariable.woff2", "brand-matrix-kit/fonts/JetBrainsMono-Italic-Variable.ttf",
+          "brand-matrix-kit/fonts/JetBrainsMono-Variable.ttf", "brand-matrix-kit/griotwave-fonts.css",
+          "brand-matrix-kit/tokens.json", "brand-matrix-kit/type-specimen.html",
+          "colors_and_type.css",
+          "fonts/Afrik-Regular.woff", "fonts/InterVariable-Italic.woff2", "fonts/InterVariable.woff2",
+          "fonts/JetBrainsMono-Italic[wght].ttf", "fonts/JetBrainsMono-Italic_wght_.ttf",
+          "fonts/JetBrainsMono[wght].ttf", "fonts/JetBrainsMono_wght_.ttf",
+          "src/styles/global.css", "src/styles/tokens.css", "styles.css",
+          "uploads/Afrik-Regular-e4a1fd74.woff", "uploads/Afrik-Regular.woff",
+          "uploads/InterVariable-693b77d4.woff2", "uploads/InterVariable-Italic.woff2", "uploads/InterVariable.woff2",
+          "uploads/JetBrainsMono-Italic[wght].ttf", "uploads/JetBrainsMono[wght].ttf",
+          "uploads/griotwave.tokens.json", "uploads/griotwave-visual-language-v0.3.md"
+        ],
+        "component": [
+          "src/components/Ambient.module.css", "src/components/Ambient.tsx",
+          "src/components/Card.module.css", "src/components/Card.tsx",
+          "src/components/ExperimentsGrid.module.css", "src/components/ExperimentsGrid.tsx",
+          "src/components/Footer.module.css", "src/components/Footer.tsx",
+          "src/components/GlowingButton.module.css", "src/components/GlowingButton.tsx",
+          "src/components/HubCard.module.css", "src/components/HubCard.tsx",
+          "src/components/Section.module.css", "src/components/Section.tsx",
+          "src/components/ShinyButton.module.css", "src/components/ShinyButton.tsx",
+          "src/components/Wrap.module.css", "src/components/Wrap.tsx",
+          "ui_kits/griotwave-hub/Experiments.jsx", "ui_kits/griotwave-hub/HubToolCard.jsx",
+          "ui_kits/griotwave-hub/Primitives.jsx", "ui_kits/griotwave-hub/README.md",
+          "ui_kits/griotwave-hub/Sections.jsx", "ui_kits/griotwave-hub/index.html",
+          "ui_kits/griotwave-hub/styles.css",
+          "uploads/Surface.module.css", "uploads/Surface.stories.tsx", "uploads/Surface.tsx",
+          "uploads/_ref_Card.module.css", "uploads/_ref_Card.stories.tsx", "uploads/_ref_Card.tsx"
+        ],
+        "preview_card": [
+          "preview/_template.html", "preview/bloom-stack.html", "preview/brand-tool-glyphs.html",
+          "preview/brand-wordmark.html", "preview/colors-canvas.html", "preview/colors-embers-g1.html",
+          "preview/colors-embers-g2.html", "preview/colors-reserved.html", "preview/components-buttons.html",
+          "preview/components-fields.html", "preview/components-hubcard.html", "preview/components-instrument.html",
+          "preview/components-pills.html", "preview/easing.html", "preview/glass-recipe.html",
+          "preview/spacing-radii.html", "preview/spacing-scale.html", "preview/surface-registers.html",
+          "preview/text-voice.html", "preview/type-display.html", "preview/type-mono.html",
+          "preview/type-scale.html", "preview/voice-rhythm.html", "preview/zstack.html"
+        ],
+        "other_summary": "README.md, SKILL.md, _adherence.oxlintrc.json, _ds_bundle.js, _ds_manifest.json (5 root); screenshots/*.png (20); uploads/DESIGN.md, uploads/DigitalGriot-LogoType-BG-v1-01.png, uploads/griotwave-design-system-plan.md, uploads/morphic-flat-chapter-DRAFT.md (4); uploads/Screenshot*.png (12); uploads/pasted-*.png (18) — 59 total, not individually enumerated (screenshots/uploads binaries, out of scope for structural classification)"
+      }
+    },
+    "design_system_legacy": {
+      "projectId": "019dd262-f016-764f-a21d-4e071b062caf",
+      "total_paths": 0,
+      "note": "Empty project. Zero files returned by list_files."
+    }
+  },
+
+  "s3_local_cross_reference": {
+    "prism": {
+      "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\shared\\designs",
+      "status": "ok",
+      "file_count": 87,
+      "pen_count": 2,
+      "embeddable_count": 85,
+      "files": [
+        {"file": "2026-06-12-daemon-broker-design.md", "bytes": 17147, "mtime": "2026-06-13T16:08:44Z", "is_pen": false, "embeddable": true},
+        {"file": "2026-09-04-griot-decision-layer-worklanes.md", "bytes": 10357, "mtime": "2026-09-04T06:25:18Z", "is_pen": false, "embeddable": true},
+        {"file": "2026-09-05-griotwave-rail-pattern.md", "bytes": 5162, "mtime": "2026-09-05T02:23:38Z", "is_pen": false, "embeddable": true},
+        {"file": "2026-09-05-workgraph-icm-grounding.md", "bytes": 12723, "mtime": "2026-09-05T14:30:39Z", "is_pen": false, "embeddable": true},
+        {"file": "2026-09-06-prism-viz-engine-expanded.md", "bytes": 9055, "mtime": "2026-09-06T17:17:29Z", "is_pen": false, "embeddable": true},
+        {"file": "2026-09-06-recall-layer.md", "bytes": 11100, "mtime": "2026-09-07T07:57:13Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/favicon.ico", "bytes": 8487, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/icon.icns", "bytes": 2010887, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/icon.ico", "bytes": 145240, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/ios/icon-1024.png", "bytes": 990462, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/png/icon_1024.png", "bytes": 1127166, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/png/icon_128.png", "bytes": 27096, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/png/icon_16.png", "bytes": 903, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/png/icon_24.png", "bytes": 1642, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/png/icon_256.png", "bytes": 99976, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/png/icon_32.png", "bytes": 2574, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/png/icon_48.png", "bytes": 4956, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/png/icon_512.png", "bytes": 349097, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/png/icon_64.png", "bytes": 7975, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/tauri/128x128.png", "bytes": 27096, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/tauri/128x128@2x.png", "bytes": 99976, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/tauri/32x32.png", "bytes": 2574, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/tauri/icon.icns", "bytes": 2010887, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/tauri/icon.ico", "bytes": 145240, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/debug/tauri/icon.png", "bytes": 349097, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/favicon.ico", "bytes": 8239, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/icon.icns", "bytes": 1589782, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/icon.ico", "bytes": 121533, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/ios/icon-1024.png", "bytes": 765759, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/png/icon_1024.png", "bytes": 885896, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/png/icon_128.png", "bytes": 22777, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/png/icon_16.png", "bytes": 911, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/png/icon_24.png", "bytes": 1618, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/png/icon_256.png", "bytes": 81407, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/png/icon_32.png", "bytes": 2519, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/png/icon_48.png", "bytes": 4755, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/png/icon_512.png", "bytes": 270419, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/png/icon_64.png", "bytes": 7428, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/tauri/128x128.png", "bytes": 22777, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/tauri/128x128@2x.png", "bytes": 81407, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/tauri/32x32.png", "bytes": 2519, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/tauri/icon.icns", "bytes": 1589782, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/tauri/icon.ico", "bytes": 121533, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/prod/tauri/icon.png", "bytes": 270419, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/favicon.ico", "bytes": 9689, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/icon.icns", "bytes": 2030803, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/icon.ico", "bytes": 148205, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/ios/icon-1024.png", "bytes": 946858, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/png/icon_1024.png", "bytes": 1151721, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/png/icon_128.png", "bytes": 28731, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/png/icon_16.png", "bytes": 952, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/png/icon_24.png", "bytes": 1804, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/png/icon_256.png", "bytes": 98838, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/png/icon_32.png", "bytes": 2953, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/png/icon_48.png", "bytes": 5730, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/png/icon_512.png", "bytes": 341050, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/png/icon_64.png", "bytes": 9079, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/tauri/128x128.png", "bytes": 28731, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/tauri/128x128@2x.png", "bytes": 98838, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/tauri/32x32.png", "bytes": 2953, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/tauri/icon.icns", "bytes": 2030803, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/tauri/icon.ico", "bytes": 148205, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/app-icons/wave/tauri/icon.png", "bytes": 341050, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-glyph-black-128.png", "bytes": 2640, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-glyph-black-16.png", "bytes": 298, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-glyph-black-32.png", "bytes": 654, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-glyph-black.png", "bytes": 32187, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-glyph-black.svg", "bytes": 1173, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-glyph-white-128.png", "bytes": 4855, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-glyph-white-16.png", "bytes": 540, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-glyph-white-32.png", "bytes": 1251, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-glyph-white.png", "bytes": 35349, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-glyph-white.svg", "bytes": 1173, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-glyph.svg", "bytes": 1178, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-icon-blue-1024.png", "bytes": 784885, "mtime": "2026-07-03T00:00:47Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-icon-debug-transparent.png", "bytes": 1432564, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-icon-debug.png", "bytes": 1549099, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-icon-green-1024.png", "bytes": 661081, "mtime": "2026-07-03T00:00:47Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-icon-prod-transparent.png", "bytes": 1115706, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-icon-prod.png", "bytes": 1374313, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-icon-wave-transparent.png", "bytes": 1454324, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "assets/prism-icon-wave.png", "bytes": 1532011, "mtime": "2026-07-12T17:11:00Z", "is_pen": false, "embeddable": true},
+        {"file": "prism-conductor-fleet-surface.html", "bytes": 19745, "mtime": "2026-07-20T23:56:32Z", "is_pen": false, "embeddable": true},
+        {"file": "prism-conductor-score-ensemble.html", "bytes": 13278, "mtime": "2026-07-20T23:56:32Z", "is_pen": false, "embeddable": true},
+        {"file": "prism-electron.2.5.2.pen", "bytes": 217166, "mtime": "2026-04-01T23:24:46Z", "is_pen": true, "embeddable": false},
+        {"file": "prism-gavel-S2-S5-spec.md", "bytes": 10551, "mtime": "2026-07-29T05:02:23Z", "is_pen": false, "embeddable": true},
+        {"file": "prism-vscode.2.5.2.pen", "bytes": 220678, "mtime": "2026-04-01T23:37:35Z", "is_pen": true, "embeddable": false}
+      ]
+    },
+    "synaptiq": { "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\designs", "status": "inaccessible", "reason": "outside session sandbox (allowed dir: Prism only)" },
+    "griot_hub": { "path": "C:\\Users\\digit\\GriotApps\\griot-hub\\.prism\\shared\\designs", "status": "inaccessible", "reason": "outside session sandbox (allowed dir: Prism only)" },
+    "valence": { "path": "C:\\Users\\digit\\GriotApps\\valence-context-platform\\.prism\\shared\\designs", "status": "inaccessible", "reason": "outside session sandbox (allowed dir: Prism only)" },
+    "source_registry_json": { "path": "C:\\Users\\digit\\Developer\\SkillsForge\\griotwave\\griotwave-pencil-aggregator\\source-registry.json", "status": "inaccessible", "reason": "outside session sandbox (allowed dir: Prism only)" }
+  },
+
+  "s4_rail_gap": [
+    {
+      "rule": "R1",
+      "description": "collapse beats saved size",
+      "implementers": { "doc_2026-09-05-griotwave-rail-pattern": true, "lucid_shipped_panel": "unknown - not confirmed by the given structural description", "orca_sidebar": "inaccessible_sandbox" },
+      "griotwave_ui_needs": "Not yet implemented per the doc's own table (griotwave-ui: not yet). Shared rail component needs explicit precedence logic: collapse state wins over any persisted/saved panel size on reopen."
+    },
+    {
+      "rule": "R2",
+      "description": "no handle on a closed pane",
+      "implementers": { "doc_2026-09-05-griotwave-rail-pattern": true, "lucid_shipped_panel": "unknown - not confirmed by the given structural description", "orca_sidebar": "inaccessible_sandbox" },
+      "griotwave_ui_needs": "Not yet implemented. Shared rail component needs to suppress the resize/drag handle affordance while the pane is in its closed/collapsed state."
+    },
+    {
+      "rule": "R3",
+      "description": "restore before first paint",
+      "implementers": { "doc_2026-09-05-griotwave-rail-pattern": true, "lucid_shipped_panel": "unknown - not confirmed by the given structural description", "orca_sidebar": "inaccessible_sandbox" },
+      "griotwave_ui_needs": "Not yet implemented. Shared rail component needs to read persisted collapse/expand state synchronously (or via a blocking layout effect) before the first paint, to avoid a visible flash/flip."
+    },
+    {
+      "rule": "R4",
+      "description": "suppress first-paint transitions",
+      "implementers": { "doc_2026-09-05-griotwave-rail-pattern": true, "lucid_shipped_panel": "unknown - not confirmed by the given structural description", "orca_sidebar": "inaccessible_sandbox" },
+      "griotwave_ui_needs": "Not yet implemented. Shared rail component needs a mounted-flag or a no-transition class applied on first render, enabled only after mount, so the restored state (R3) doesn't visibly animate in."
+    },
+    {
+      "rule": "R5",
+      "description": "tab rounds on its free edge",
+      "implementers": { "doc_2026-09-05-griotwave-rail-pattern": true, "lucid_shipped_panel": "partial match - Lucid's described panel has a 'collapse chevron on the panel's free edge', structurally analogous but not verified against R5's specific corner-rounding detail", "orca_sidebar": "inaccessible_sandbox" },
+      "griotwave_ui_needs": "Not yet implemented. Shared rail component needs the collapse tab/chevron's border-radius to round only on the edge facing away from the docked side (the 'free' edge), matching Lucid's chevron placement pattern."
+    }
+  ],
+
+  "anomalies": [
+    { "path": "N/A", "type": "sandbox_access", "detail": "Session-level file-access sandbox scoped to C:\\Users\\digit\\GriotApps\\Prism only; three of four local designs dirs, the source-registry.json, and the Orca sidebar reference path were all unreachable. Confirmed via Bash, PowerShell, and Glob — consistent, deterministic block, not a transient failure." }
+  ]
+}

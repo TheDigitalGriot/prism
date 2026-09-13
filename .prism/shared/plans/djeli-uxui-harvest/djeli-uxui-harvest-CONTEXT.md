@@ -28,6 +28,13 @@ exactly why it could not be written without them. A UI pattern with no layer is 
 4. SUBSTRATE is the live Kuzu code graph plus Chat2DB (viz-engine layer 03, running today, never
    surfaced). CANVAS is xyflow (layer 02) because nodes are a plain JSON array an agent reads and
    writes directly, with no canvas-widget indirection.
+   CORRECTED 2026-09-13 (djeli-branch-capture third AMEND pass) - the substrate is LadybugDB, not
+   Kuzu. Kuzu was ARCHIVED 2025-10-10 (Apple acquired Kuzu Inc., all 24 org repos); griot-live-
+   artifacts commit d901bf6 (2026-09-11, live/dgs-definitive-plan.html) already corrected the DGS
+   shelf from kuzudb/kuzu (trial/next) to LadybugDB/ladybug (adopt/now) - "already in production
+   here, .gitnexus/lbug runs on it". Forked as TheDigitalGriot/ladybug; 299MB of kuzudb docs/mcp-
+   server/text2cypher/wasm was PRESERVED (not harvested) at GriotMeta/kuzu-archive. Chat2DB is
+   unchanged. See djeli-branch-capture-workgraph.json B9 for the full evidence trail.
 5. Every claim carries file:line. Every quoted metric carries who measured it and of what. Licence
    is a FACT for a field, never a verdict. Never gate or narrow what Gavin forks, studies or remixes.
 
