@@ -21,7 +21,8 @@
     "amendPass11": "2026-09-13 eleventh same-day AMEND: B17 - the ONE cohesive UI, the assembly of six layers that already exist separately (capture node/lane data, griot-viz-engine renderers, lo/mid/hi fidelity, archify chapters, OpenUI payload, AG-UI wire). And S6 - the workgraph still has no region of its own in the brainstorm frame template; A2 landed the channel and the panels, not the slot.",
     "amendPass12": "2026-09-13 twelfth AMEND: design-sync recon plus the Lucid anchor ruling. Adds B18 (Lucid is the anchor, Orca/Kiro demoted to seeds), B19 (155 remote design-system files vs an April .pen era with nothing bridging them), B20 (the shared griotwave rail component - behaviour, structure and utility all exist, the component does not), N16 (griotwave-library is the already-systematized reference corpus, plus the gavel workbench and GriotwaveGridBackground), N17 (ICM headless runs confine to cwd; this run is INCOMPLETE - S5 never emitted), N18 (griot-design-sync registry path does not exist). Three drift entries logged (40, 41, 42). Gavin holds further design specifics not given; that slot is deliberately left open.",
     "amendPass13": "2026-09-13 thirteenth AMEND: corrects N17 (the recon run did NOT stall - it reached HB_DONE and emitted both report files; the INCOMPLETE is a scope statement about S3/S4, made by the run about itself), strengthens B19 and B20 with the completed run remote inventory, and adds N19 (155 remote paths: 30 foundation, 31 component, 24 preview cards, 59 other - and no rail, sidebar or nav anywhere, so the rail is greenfield in griotwave-ui AND in the remote design system, with Lucid the only place it ships).",
-    "amendPass14": "2026-09-13 fourteenth AMEND: verification backfill. Every one of the 56 nodes now carries a verification block with evidence and result - 25 checked true against files, commits, ledger entries or live tool calls, 5 checked false where the check genuinely could not be made. Two state changes on evidence: N4 resolved (the UserPromptSubmit hook path is correctly escaped in settings.json line 68) and S3 done (the canonical capture is tracked in git). One MISMATCH recorded on B10 rather than edited away."
+    "amendPass14": "2026-09-13 fourteenth AMEND: verification backfill. Every one of the 56 nodes now carries a verification block with evidence and result - 25 checked true against files, commits, ledger entries or live tool calls, 5 checked false where the check genuinely could not be made. Two state changes on evidence: N4 resolved (the UserPromptSubmit hook path is correctly escaped in settings.json line 68) and S3 done (the canonical capture is tracked in git). One MISMATCH recorded on B10 rather than edited away.",
+    "amendPass15": "2026-09-13 fifteenth AMEND: the benji.org seam. B21 (Liveline - one rAF loop and an 8%-per-frame lerp on every part, so a live surface breathes as one thing instead of several widgets updating independently), B22 (Agentation x Kweli - visual annotation as structured, machine-addressable approval evidence; Gavin's ruling that griot-viz-engine + Kweli is the natural evolution, with the viz engine's lo/mid/hi fidelity ladder matching Agentation's four output detail levels), N20 (benji.org - Benji Taylor, author of cmdk, a source-of-truth kind the muse has no tier for, a fourth instance of the gap drift 45 names)."
   },
   "groups": [
     {
@@ -1310,6 +1311,60 @@
         "evidence": "DesignSync list_files via the completed design-sync-recon run; category_detail lists read in full from the emitted JSON sidecar. Zero get_file calls used against a ration of five.",
         "result": "CONFIRMED - foundations and components present, navigation absent."
       }
+    },
+    {
+      "id": "wg:djeli-branch:B21",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B21",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "named-unfiled",
+      "direction": "outbound",
+      "title": "Liveline - one loop, one lerp: the breathing principle for every live surface",
+      "description": "Benji Taylor's Liveline (benjitaylor/liveline, npm i liveline) is a real-time animated line chart for React on a SINGLE canvas with no dependency beyond React 18. The chart is not the point. THE PRINCIPLE IS: one requestAnimationFrame loop, and everything lerps toward its target at 8% per frame - the line, the Y-axis range, the value badge AND the grid labels - so the surface reads, in his words, as 'one thing breathing rather than a bunch of parts updating independently'. The Y-axis expands outward when data exceeds its bounds so the line never clips. WHY IT LANDS HERE: every live surface in the suite currently updates its parts independently. The DGS header tiles fetch the workgraph JSON and swap innerHTML. The Meridian day surface recomputes counts. griot-viz-engine emits shell/isometric/nodegraph with no shared clock. Liveline names the discipline that would make them feel like one instrument instead of several widgets - and it is a ~single-file technique, not a framework to adopt. Features beyond the core: momentum arrows, time-window buttons, candlestick toggle, multi-series, loading and paused states, automatic palette generation from a theme colour. Cited inspiration: Polymarket's prediction charts; reviewed by Shayne Coplan.",
+      "verification": {
+        "checked": true,
+        "evidence": "Read benji.org/liveline directly 2026-09-13; repo confirmed at github.com/benjitaylor/liveline ('Real-time animated line chart for React.') and the package on npm as 'liveline'. The 8%-per-frame lerp, the single rAF loop, the unified lerping across line/axis/badge/labels and the outward Y-axis expansion are all stated in the author's own write-up.",
+        "result": "CONFIRMED - a real, published technique with a named mechanism, not a claim about a library."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B22",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B22",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "named-unfiled",
+      "direction": "outbound",
+      "title": "Agentation x Kweli - the comprehension-and-approval seam, and griot-viz-engine as its natural evolution",
+      "description": "Gavin's call 2026-09-13: 'agentation and kweli go hand in hand... not to mention griot-viz-engine and kweli is the natural evolution.' Agentation (benjitaylor/agentation, 4.5k stars, npm install agentation -D, React 18+, zero external dependencies) is a visual annotation layer for AI coding agents: you click a rendered element and it captures the selector, the class names, the DOM position and the bounding box; you select text and the exact string travels; you drag to multi-select or to mark empty space for layout feedback; and - the detail that matters most - it FREEZES CSS animations mid-sequence so an ephemeral state can be annotated at all. Output is plain markdown with selectors at four escalating detail levels: compact (selector + note), standard (adds position and selected text), detailed (adds bounding boxes and context), forensic (adds computed CSS). His framing of the gap it closes: 'make the avatar smaller' does not identify which element or how much. WHY THIS IS KWELI'S SEAM: Kweli is the comprehension-and-approval platform. Agentation is approval capture with structured evidence attached - a human points at the thing, and what travels onward is a machine-addressable record rather than a sentence. That is the same primitive, aimed at agents instead of at people. AND THE EVOLUTION GAVIN NAMES: griot-viz-engine renders the artifact; Kweli captures the approval on what was rendered; the four detail levels are the fidelity ladder the viz engine ALREADY has (lo / mid / hi). Render, point, approve, with the evidence carried. Licence recorded for the shipping gate, not for now: PolyForm Shield 1.0.0.",
+      "verification": {
+        "checked": true,
+        "evidence": "benji.org/agentation read directly, plus github.com/benjitaylor/agentation (description 'The visual feedback tool for agents.', PolyForm Shield 1.0.0, 4.5k stars, React 18+/TypeScript, 'npm install agentation -D', exports { Agentation }). The four detail levels, the animation freeze and the click/text/multi/area capture modes are stated in the author's write-up and the repo README.",
+        "result": "CONFIRMED - the tool, its output contract and its install path are verified from primary sources. The Kweli pairing is Gavin's ruling, recorded as his."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:finding-benji-source",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N20",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "named-unfiled",
+      "direction": "outbound",
+      "title": "benji.org is a source-of-truth the muse has no tier for",
+      "description": "Gavin, 2026-09-13: 'this is an amazing creative technologist source of truth.' Verified: benji.org is Benji Taylor - Head of Design for X and SpaceXAI at SpaceX, previously design lead at Base (Coinbase), founder of Los Feliz Engineering, CPO at Aave Labs after acquisition. His open-source line is cmdk, Agentation, Liveline and Drawesome - cmdk being one of the most widely adopted command-menu components in the React ecosystem, which is what makes this a source rather than a link. His writing shelf: Drawesome (2026-07-29), Liveline (2026-02-16), Agentation (2026-01-21), Annotating for agents (2026-01-16), Morphing icons with Claude (2026-01-13), Honkish (2025-05-23), Family Values (2024-07-08). WHY IT IS A FINDING AND NOT JUST A BOOKMARK: lucid-ux-muse declares its sources as 21st.dev, CodePen, Codrops, Unicorn Studio, omma and Dribbble. A single-author technical writing shelf is a different KIND of source - the artefact is a published technique with its reasoning attached, not a component to pull - and the muse has no tier for it. This is the same structural gap drift 45 names for framer.com, getlayers.ai and shaders.com, with a fourth instance and a clearer shape. Two of his pieces that were not pulled this pass and are visibly on-topic: 'Annotating for agents' (the essay behind Agentation) and 'Morphing icons with Claude'.",
+      "verification": {
+        "checked": true,
+        "evidence": "benji.org fetched directly 2026-09-13: author identity, roles, the four open-source projects and the seven dated writing entries are listed on the site itself. Repo and npm existence confirmed separately for agentation and liveline.",
+        "result": "CONFIRMED - a real source with a verifiable body of work, and a real gap in the muse's source taxonomy."
+      }
     }
   ],
   "edges": [
@@ -1654,15 +1709,51 @@
       "to": "wg:djeli-branch:B20",
       "kind": "outbound",
       "label": "N19 feeds B20 (no navigation layer remotely either - the rail is greenfield in all three homes)"
+    },
+    {
+      "from": "wg:djeli-branch:B21",
+      "to": "wg:djeli-branch:B17",
+      "kind": "outbound",
+      "label": "B21 feeds B17 (one clock, one lerp - the discipline that makes the cohesive UI read as one instrument)"
+    },
+    {
+      "from": "wg:djeli-branch:B21",
+      "to": "wg:djeli-branch:B13",
+      "kind": "outbound",
+      "label": "B21 feeds B13 (the Meridian day surface recomputes its parts independently; this is the fix)"
+    },
+    {
+      "from": "wg:djeli-branch:B22",
+      "to": "wg:djeli-branch:B17",
+      "kind": "outbound",
+      "label": "B22 feeds B17 (render, point, approve - the interaction layer over the assembled surface)"
+    },
+    {
+      "from": "wg:djeli-branch:B22",
+      "to": "wg:djeli-branch:B21",
+      "kind": "outbound",
+      "label": "B22 and B21 share an author and a surface: annotation needs the animation frozen, which presumes a single clock"
+    },
+    {
+      "from": "wg:djeli-branch:finding-benji-source",
+      "to": "wg:djeli-branch:B21",
+      "kind": "outbound",
+      "label": "N20 sources B21"
+    },
+    {
+      "from": "wg:djeli-branch:finding-benji-source",
+      "to": "wg:djeli-branch:B22",
+      "kind": "outbound",
+      "label": "N20 sources B22"
     }
   ],
   "stats": {
-    "totalBranches": 25,
+    "totalBranches": 27,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 57,
+    "edgeCount": 63,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -1898,6 +1989,16 @@
         "S5"
       ],
       "note": "checked:false means looked-and-could-not-verify, which is a finding rather than a blank."
+    },
+    "amendPass15_2026_09_13": {
+      "newNodes": [
+        "B21",
+        "B22",
+        "N20"
+      ],
+      "newEdges": 6,
+      "corrections": [],
+      "refused": []
     }
   },
   "foreignLayer": {
