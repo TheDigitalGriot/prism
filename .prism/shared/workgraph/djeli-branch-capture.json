@@ -19,7 +19,8 @@
     "amendPass9": "2026-09-13 ninth same-day AMEND: added B14 - the Griot's Equation as a DORMANT OBSERVER. The graph gains a node ABOUT the arrangement but carries no field, flag or edge referencing the equation itself, which is the whole point and is testable by grep. Goodhart's law is the stated reason.",
     "amendPass10": "2026-09-13 tenth same-day AMEND: three external seams Gavin brought - AG-UI and OpenUI as the two named halves of the agent/UI protocol he hand-rolled in packages/griot-widget (B15), and worktrunk as the branch-state reference for a workgraph view inside prism-cli (B16). Both corrected against source rather than accepted: worktrunk is a CLI, not a TUI. And N15 corrects B2's last open gap - the Prism TUI is not absent, it is compiled and already parses worktrees; what it lacks is any knowledge of the workgraph. AMENDED same pass on Gavin's correction: the CLI-vs-TUI distinction is recorded but demoted - he uses the terms interchangeably by design (form and function feed each other; Prism's shape came out of representing the system in a terminal), and the load-bearing gap in worktrunk is that it has no edges, not that it lacks a full-screen UI.",
     "amendPass11": "2026-09-13 eleventh same-day AMEND: B17 - the ONE cohesive UI, the assembly of six layers that already exist separately (capture node/lane data, griot-viz-engine renderers, lo/mid/hi fidelity, archify chapters, OpenUI payload, AG-UI wire). And S6 - the workgraph still has no region of its own in the brainstorm frame template; A2 landed the channel and the panels, not the slot.",
-    "amendPass12": "2026-09-13 twelfth AMEND: design-sync recon plus the Lucid anchor ruling. Adds B18 (Lucid is the anchor, Orca/Kiro demoted to seeds), B19 (155 remote design-system files vs an April .pen era with nothing bridging them), B20 (the shared griotwave rail component - behaviour, structure and utility all exist, the component does not), N16 (griotwave-library is the already-systematized reference corpus, plus the gavel workbench and GriotwaveGridBackground), N17 (ICM headless runs confine to cwd; this run is INCOMPLETE - S5 never emitted), N18 (griot-design-sync registry path does not exist). Three drift entries logged (40, 41, 42). Gavin holds further design specifics not given; that slot is deliberately left open."
+    "amendPass12": "2026-09-13 twelfth AMEND: design-sync recon plus the Lucid anchor ruling. Adds B18 (Lucid is the anchor, Orca/Kiro demoted to seeds), B19 (155 remote design-system files vs an April .pen era with nothing bridging them), B20 (the shared griotwave rail component - behaviour, structure and utility all exist, the component does not), N16 (griotwave-library is the already-systematized reference corpus, plus the gavel workbench and GriotwaveGridBackground), N17 (ICM headless runs confine to cwd; this run is INCOMPLETE - S5 never emitted), N18 (griot-design-sync registry path does not exist). Three drift entries logged (40, 41, 42). Gavin holds further design specifics not given; that slot is deliberately left open.",
+    "amendPass13": "2026-09-13 thirteenth AMEND: corrects N17 (the recon run did NOT stall - it reached HB_DONE and emitted both report files; the INCOMPLETE is a scope statement about S3/S4, made by the run about itself), strengthens B19 and B20 with the completed run remote inventory, and adds N19 (155 remote paths: 30 foundation, 31 component, 24 preview cards, 59 other - and no rail, sidebar or nav anywhere, so the rail is greenfield in griotwave-ui AND in the remote design system, with Lucid the only place it ships)."
   },
   "groups": [
     {
@@ -1020,7 +1021,7 @@
       "originLane": "untracked",
       "kind": "branch",
       "title": "The design-system seam - 155 remote files vs an April .pen era, nothing bridging them",
-      "description": "Surfaced by the design-sync-recon stage-walk, 2026-09-13. TWO ERAS, NO BRIDGE. Remote: the Claude Design project Griotwave Design System (019de567-c5df-7ee3-8fa2-c07c1d06dd48) carries 155 files and was updated 2026-07-02. A second project, Design System (019dd262-f016-764f-a21d-4e071b062caf, 2026-04-28), holds ZERO files - a dead shell to reclaim or delete, not a second source of truth. Local: every designs/ folder outside Prism holds exactly one encrypted .pen from early April - Synaptiq 2026-04-06, griot-hub 2026-04-08, valence 2026-04-01 - and valence additionally carries a ZERO-BYTE prism-electron.2.5.2.pen. None are web-embeddable. CONSEQUENCE, already visible: lucid-codex.html frames 4 device embeds (which came from idea_init, not from any sync) while synaptiq-codex.html frames zero - because Synaptiq's only design is an encrypted April .pen that no codex device slot can render. The .pen era ended in April, the Claude Design era began, and no tool carries anything across. AUTH NOTE: DesignSync is authorized device-side by Gavin's /design-login and headless claude.exe -p runs inherit it; the Cowork cloud session is NOT authorized and cannot be. The socket is device-side, permanently, for this seam.",
+      "description": "Surfaced by the design-sync-recon stage-walk, 2026-09-13. TWO ERAS, NO BRIDGE. Remote: the Claude Design project Griotwave Design System (019de567-c5df-7ee3-8fa2-c07c1d06dd48) carries 155 files and was updated 2026-07-02. A second project, Design System (019dd262-f016-764f-a21d-4e071b062caf, 2026-04-28), holds ZERO files - a dead shell to reclaim or delete, not a second source of truth. Local: every designs/ folder outside Prism holds exactly one encrypted .pen from early April - Synaptiq 2026-04-06, griot-hub 2026-04-08, valence 2026-04-01 - and valence additionally carries a ZERO-BYTE prism-electron.2.5.2.pen. None are web-embeddable. CONSEQUENCE, already visible: lucid-codex.html frames 4 device embeds (which came from idea_init, not from any sync) while synaptiq-codex.html frames zero - because Synaptiq's only design is an encrypted April .pen that no codex device slot can render. The .pen era ended in April, the Claude Design era began, and no tool carries anything across. AUTH NOTE: DesignSync is authorized device-side by Gavin's /design-login and headless claude.exe -p runs inherit it; the Cowork cloud session is NOT authorized and cannot be. The socket is device-side, permanently, for this seam. RESOLVED 2026-09-13 (amendPass13): both projects verify as type PROJECT_TYPE_DESIGN_SYSTEM, owner Gavin, canEdit true. The live one splits 30 foundation / 31 component / 24 preview / 59 other across 11 directories and 144 files. The Prism designs dir - the only local one the run could reach - holds 87 files, 85 embeddable and 2 encrypted .pen. So the asymmetry is exact: 155 remote paths with a real component layer, against local dirs whose only design artifact outside Prism is a single April .pen each.",
       "outputs": [],
       "state": "named-unfiled",
       "direction": "outbound",
@@ -1038,15 +1039,15 @@
       "originLane": "untracked",
       "kind": "branch",
       "title": "The shared griotwave rail component - three sources, one missing home",
-      "description": "The precise gap, and the first thing B18 cashes out to. THREE SOURCES, ALL REAL: (1) BEHAVIOUR - .prism/shared/designs/2026-09-05-griotwave-rail-pattern.md defines R1-R5, extracted from four real bugs in the Prism companion and confirmed in the Cinopsis viewer: collapsed must beat the saved size, no drag handle on a closed pane, restore collapse state before first paint, suppress transitions for the first two frames, a tab rounds on its FREE edge. (2) STRUCTURE AND IDENTITY - Lucid's shipped dual rail (B18). (3) UTILITY - Orca's components/sidebar: lineage-indented rows, smart-sort, smart-attention, virtualised rows, drag-reorder, per-project colour, MIT so it may be lifted rather than re-derived. THE MISSING HOME: griotwave-ui EXISTS and ships (GriotMeta/SkillsForge/griotwave/griotwave-ui - Storybook, dist-lib, src/components, src/gavel, src/glass, src/sections, src/styles, GriotwaveGridBackground with its own story) but carries only bottom-nav-bar.tsx and BottomNavBarSection.tsx. There is NO rail, NO sidebar, NO pane component. The rail-pattern doc's own closing line - griotwave-ui: not yet, fold R1-R5 in when the shared rail component is built - is still exactly true eight days later. Every input exists; the component does not.",
+      "description": "The precise gap, and the first thing B18 cashes out to. THREE SOURCES, ALL REAL: (1) BEHAVIOUR - .prism/shared/designs/2026-09-05-griotwave-rail-pattern.md defines R1-R5, extracted from four real bugs in the Prism companion and confirmed in the Cinopsis viewer: collapsed must beat the saved size, no drag handle on a closed pane, restore collapse state before first paint, suppress transitions for the first two frames, a tab rounds on its FREE edge. (2) STRUCTURE AND IDENTITY - Lucid's shipped dual rail (B18). (3) UTILITY - Orca's components/sidebar: lineage-indented rows, smart-sort, smart-attention, virtualised rows, drag-reorder, per-project colour, MIT so it may be lifted rather than re-derived. THE MISSING HOME: griotwave-ui EXISTS and ships (GriotMeta/SkillsForge/griotwave/griotwave-ui - Storybook, dist-lib, src/components, src/gavel, src/glass, src/sections, src/styles, GriotwaveGridBackground with its own story) but carries only bottom-nav-bar.tsx and BottomNavBarSection.tsx. There is NO rail, NO sidebar, NO pane component. The rail-pattern doc's own closing line - griotwave-ui: not yet, fold R1-R5 in when the shared rail component is built - is still exactly true eight days later. Every input exists; the component does not. REMOTE VERIFICATION ADDED 2026-09-13 (amendPass13): the gap is now confirmed on BOTH sides, not just locally. The Claude Design project's 155 paths classify as 30 foundation, 31 component, 24 preview cards and 59 other. The component list is Ambient, Card, ExperimentsGrid, Footer, GlowingButton, HubCard, Section, ShinyButton, Wrap, plus the griotwave-hub ui_kit (Experiments, HubToolCard, Primitives, Sections) and uploaded Surface/Card references. The 24 preview cards cover colours, type, spacing, radii, easing, glass recipe, surface registers, z-stack, buttons, fields, pills, hubcard and instrument. THERE IS NO RAIL, NO SIDEBAR AND NO NAVIGATION COMPONENT ANYWHERE IN THE REMOTE DESIGN SYSTEM EITHER. So the rail is greenfield in all three homes at once - absent from griotwave-ui, absent from the remote design system, and specced only as behaviour in the R1-R5 doc. Lucid is the ONLY place the pattern exists as a shipped artifact, which is precisely why B18 ruled it the anchor.",
       "outputs": [],
       "state": "named-unfiled",
       "direction": "outbound",
       "contractPath": null,
       "verification": {
         "checked": true,
-        "evidence": "rail-pattern doc read in full (R1-R5 plus the next-surface checklist). griotwave-ui src/ enumerated: assets, components, gavel, glass, lib, sections, stories, styles; rail/sidebar/nav/pane file search returned only ExperimentsGrid, GriotwaveGridBackground, bottom-nav-bar.tsx, BottomNavBarSection.tsx.",
-        "result": "CONFIRMED - behaviour specced, structure shipped in Lucid, utility available under MIT, component absent from the library."
+        "evidence": "rail-pattern doc read in full (R1-R5 plus the next-surface checklist). griotwave-ui src/ enumerated: assets, components, gavel, glass, lib, sections, stories, styles; rail/sidebar/nav/pane file search returned only ExperimentsGrid, GriotwaveGridBackground, bottom-nav-bar.tsx, BottomNavBarSection.tsx. Remote inventory from the completed recon run: s2_structure.griotwave_design_system.category_detail, component (31) and preview_card (24) lists read in full - zero rail/sidebar/nav entries.",
+        "result": "CONFIRMED on both sides - the rail component is absent from griotwave-ui AND from the 155-path remote design system; behaviour specced, structure shipped only in Lucid, utility available under MIT in Orca."
       }
     },
     {
@@ -1073,16 +1074,22 @@
       "group": "new-findings",
       "originLane": "new-findings",
       "kind": "finding",
-      "title": "ICM headless runs are confined to cwd - and this run was INCOMPLETE",
-      "description": "The design-sync-recon stage-walk is the first ICM run in this capture launched from the Cowork side with a full stage contract, and it produced two honest failures and one silent stall. CONFINEMENT: claude.exe -p sandboxes to its working directory, so a contract whose Inputs section names sibling repos cannot read them. The run logged HB_FAIL step=3 (sandbox_blocked_3_of_4_dirs_plus_registry) and HB_FAIL step=4 (orca_sidebar_path_outside_session_sandbox_Prism_only) rather than quietly narrowing its scope - the contract's heartbeat design worked exactly as intended. The gaps were then filled from the Cowork side via Windows-MCP PowerShell, which has no such confinement. STALL: S5 never emitted. The process stayed alive with no output for roughly seven minutes and the two named output files, 2026-09-13-design-sync-recon.json and .md, were never written. Per the contract's own success criteria this is an INCOMPLETE run and is recorded as one rather than reported as done. FIX: derive one --add-dir flag per out-of-repo path in the contract's Inputs section, from the contract itself, at launch time.",
+      "title": "ICM headless runs are confined to cwd - the run completed, its SCOPE was partial",
+      "description": "CORRECTED 2026-09-13 (amendPass13) against evidence that arrived after the original claim. THE ORIGINAL CLAIM WAS WRONG: this node first asserted that S5 never emitted and that both report files were absent. It did not. The run reached HB_S5_EMIT_OK json=22508 md=4684 at 14:35:51Z followed by HB_DONE, and wrote both 2026-09-13-design-sync-recon.json and .md. The error was mine: I stopped polling the heartbeat at roughly 14:35 and read a still-alive process with no new token as a stall. WHAT IS ACTUALLY TRUE: claude.exe -p hard-scopes file access to its working directory. The run confirmed that block identically via Bash, PowerShell AND Glob before recording it - a deterministic structural property, not a transient failure - and logged HB_FAIL step=3 and HB_FAIL step=4 beside their completion tokens rather than narrowing scope in silence. Three of four local designs dirs, the aggregator registry, and the Orca sidebar were all unreachable, so S3 covered only the Prism dir (87 files, 85 embeddable, 2 .pen recorded by existence and mtime only per Locked Decision 4, never opened) and S4's Orca column is marked inaccessible for all five rules. The run then declared ITSELF incomplete in its own success-criteria self-check and emitted the partial JSON per the contract's forced-skip clause. CONTRACT HELD IN FULL: writes_performed 0, zero get_file calls against a ration of five, rail_gap carries exactly five entries, one anomaly recorded. THE DEFECT IS THE LAUNCHER, NOT THE RUN - derive one --add-dir flag per out-of-repo path in the contract's Inputs section, at launch time, from the contract itself.",
       "outputs": [],
       "state": "named-unfiled",
       "direction": "outbound",
       "contractPath": null,
       "verification": {
         "checked": true,
-        "evidence": "Heartbeat log design-sync-recon-HEARTBEAT.log contains six tokens in order: HB_S1_INVENTORY_OK n=2, HB_S2_FILES_OK a=155 b=0, HB_FAIL step=3, HB_S3_LOCAL_OK n=87, HB_FAIL step=4, HB_S4_RAILGAP_OK rules=5. No HB_S5_EMIT_OK, no HB_DONE. RUN.log and ERR.log both zero bytes.",
-        "result": "CONFIRMED INCOMPLETE - four of five steps produced output; S5 never ran; both report files absent."
+        "evidence": "Full heartbeat re-read: eight lines ending HB_S5_EMIT_OK json=22508 md=4684 and HB_DONE at 2026-09-13T14:35:51Z. Both output files present on disk at the contracted paths (22508 and 4684 bytes, mtimes 10:35:26 and 10:35:45 local). JSON parsed: writes_performed=0, get_file_calls=0, one anomaly of type sandbox_access, rail_gap five entries.",
+        "result": "CORRECTED - the run COMPLETED and honoured the contract. Its SCOPE was partial (S3, S4) because of launcher confinement. The stall was an artifact of when I stopped looking."
+      },
+      "correction": {
+        "correctedAt": "2026-09-13 amendPass13",
+        "wasClaimed": "S5 never ran; both report files absent; run INCOMPLETE because it stalled.",
+        "isTrue": "S5 ran and emitted both files; HB_DONE reached; run is INCOMPLETE only in the scope sense it declared about itself.",
+        "cause": "Stopped polling the heartbeat before the run finished and read silence as a stall. Never let the end of observation stand in for the end of a run."
       }
     },
     {
@@ -1101,6 +1108,24 @@
         "checked": true,
         "evidence": "Documented path tested (Test-Path false). Actual registry found under GriotMeta/SkillsForge and parsed: 7 sources with project and page_prefix fields as listed. Drift ledger append returned DONE_APPEND_DRIFT at 40 entries.",
         "result": "CONFIRMED - documented path absent, real path located, roster is five months stale."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:finding-remote-design-inventory",
+      "localId": "N19",
+      "group": "new-findings",
+      "originLane": "new-findings",
+      "kind": "finding",
+      "title": "The remote design system is foundations plus a component layer - and no navigation",
+      "description": "First full inventory of the Griotwave Design System project (019de567-c5df-7ee3-8fa2-c07c1d06dd48), taken read-only with zero get_file calls. 155 paths: 11 directories, 144 files. FOUNDATION (30): brand-matrix-kit with DNA.md, TYPE.md, tokens.json, griotwave-fonts.css, type-specimen.html and five font files; colors_and_type.css; src/styles/tokens.css and global.css; an uploads/ set carrying griotwave.tokens.json and griotwave-visual-language-v0.3.md. COMPONENT (31): Ambient, Card, ExperimentsGrid, Footer, GlowingButton, HubCard, Section, ShinyButton, Wrap - each as .tsx plus .module.css - plus the griotwave-hub ui_kit (Experiments.jsx, HubToolCard.jsx, Primitives.jsx, Sections.jsx, index.html, styles.css) and uploaded Surface + _ref_Card with stories. PREVIEW CARDS (24): bloom-stack, brand-wordmark, brand-tool-glyphs, four colour boards, components-buttons/fields/pills/hubcard/instrument, easing, glass-recipe, spacing-scale, spacing-radii, surface-registers, four type boards, text-voice, voice-rhythm, zstack. WHAT IS MISSING AND WHY IT MATTERS: no rail, no sidebar, no nav, no pane, no layout shell of any kind. The design system has a voice, a surface vocabulary and a card layer, and no structure layer. That is the same hole griotwave-ui has, which makes it a real gap in the system rather than a packaging accident.",
+      "outputs": [],
+      "state": "named-unfiled",
+      "direction": "outbound",
+      "contractPath": null,
+      "verification": {
+        "checked": true,
+        "evidence": "DesignSync list_files via the completed design-sync-recon run; category_detail lists read in full from the emitted JSON sidecar. Zero get_file calls used against a ration of five.",
+        "result": "CONFIRMED - foundations and components present, navigation absent."
       }
     }
   ],
@@ -1434,6 +1459,18 @@
       "to": "wg:djeli-branch:B19",
       "kind": "outbound",
       "label": "N18 feeds B19 (the only tool that could bridge the two eras fails at step zero)"
+    },
+    {
+      "from": "wg:djeli-branch:finding-remote-design-inventory",
+      "to": "wg:djeli-branch:B19",
+      "kind": "outbound",
+      "label": "N19 feeds B19 (the remote half of the seam, inventoried)"
+    },
+    {
+      "from": "wg:djeli-branch:finding-remote-design-inventory",
+      "to": "wg:djeli-branch:B20",
+      "kind": "outbound",
+      "label": "N19 feeds B20 (no navigation layer remotely either - the rail is greenfield in all three homes)"
     }
   ],
   "stats": {
@@ -1442,7 +1479,7 @@
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 55,
+    "edgeCount": 57,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -1645,6 +1682,22 @@
         "drift#42 ICM launcher cwd confinement"
       ],
       "openByGavin": "Further design specifics and Pinterest references held by Gavin and deliberately not filled in by this pass."
+    },
+    "amendPass13_2026_09_13": {
+      "corrections": 1,
+      "correctedNodes": [
+        "wg:djeli-branch:defect-icm-sandbox-confinement (N17)"
+      ],
+      "strengthened": [
+        "B19",
+        "B20"
+      ],
+      "newNodes": [
+        "N19"
+      ],
+      "newEdges": 2,
+      "correctionNote": "N17 claimed the recon run stalled and emitted nothing. It reached HB_DONE and wrote both files. The claim was made by stopping observation early and reading silence as failure - recorded rather than quietly edited away.",
+      "runOutcomeCorrected": "design-sync-recon COMPLETED. writes_performed=0, get_file_calls=0, rail_gap=5. INCOMPLETE applies to S3/S4 SCOPE only, by the run own self-check."
     }
   },
   "foreignLayer": {
