@@ -20,7 +20,8 @@
     "amendPass10": "2026-09-13 tenth same-day AMEND: three external seams Gavin brought - AG-UI and OpenUI as the two named halves of the agent/UI protocol he hand-rolled in packages/griot-widget (B15), and worktrunk as the branch-state reference for a workgraph view inside prism-cli (B16). Both corrected against source rather than accepted: worktrunk is a CLI, not a TUI. And N15 corrects B2's last open gap - the Prism TUI is not absent, it is compiled and already parses worktrees; what it lacks is any knowledge of the workgraph. AMENDED same pass on Gavin's correction: the CLI-vs-TUI distinction is recorded but demoted - he uses the terms interchangeably by design (form and function feed each other; Prism's shape came out of representing the system in a terminal), and the load-bearing gap in worktrunk is that it has no edges, not that it lacks a full-screen UI.",
     "amendPass11": "2026-09-13 eleventh same-day AMEND: B17 - the ONE cohesive UI, the assembly of six layers that already exist separately (capture node/lane data, griot-viz-engine renderers, lo/mid/hi fidelity, archify chapters, OpenUI payload, AG-UI wire). And S6 - the workgraph still has no region of its own in the brainstorm frame template; A2 landed the channel and the panels, not the slot.",
     "amendPass12": "2026-09-13 twelfth AMEND: design-sync recon plus the Lucid anchor ruling. Adds B18 (Lucid is the anchor, Orca/Kiro demoted to seeds), B19 (155 remote design-system files vs an April .pen era with nothing bridging them), B20 (the shared griotwave rail component - behaviour, structure and utility all exist, the component does not), N16 (griotwave-library is the already-systematized reference corpus, plus the gavel workbench and GriotwaveGridBackground), N17 (ICM headless runs confine to cwd; this run is INCOMPLETE - S5 never emitted), N18 (griot-design-sync registry path does not exist). Three drift entries logged (40, 41, 42). Gavin holds further design specifics not given; that slot is deliberately left open.",
-    "amendPass13": "2026-09-13 thirteenth AMEND: corrects N17 (the recon run did NOT stall - it reached HB_DONE and emitted both report files; the INCOMPLETE is a scope statement about S3/S4, made by the run about itself), strengthens B19 and B20 with the completed run remote inventory, and adds N19 (155 remote paths: 30 foundation, 31 component, 24 preview cards, 59 other - and no rail, sidebar or nav anywhere, so the rail is greenfield in griotwave-ui AND in the remote design system, with Lucid the only place it ships)."
+    "amendPass13": "2026-09-13 thirteenth AMEND: corrects N17 (the recon run did NOT stall - it reached HB_DONE and emitted both report files; the INCOMPLETE is a scope statement about S3/S4, made by the run about itself), strengthens B19 and B20 with the completed run remote inventory, and adds N19 (155 remote paths: 30 foundation, 31 component, 24 preview cards, 59 other - and no rail, sidebar or nav anywhere, so the rail is greenfield in griotwave-ui AND in the remote design system, with Lucid the only place it ships).",
+    "amendPass14": "2026-09-13 fourteenth AMEND: verification backfill. Every one of the 56 nodes now carries a verification block with evidence and result - 25 checked true against files, commits, ledger entries or live tool calls, 5 checked false where the check genuinely could not be made. Two state changes on evidence: N4 resolved (the UserPromptSubmit hook path is correctly escaped in settings.json line 68) and S3 done (the canonical capture is tracked in git). One MISMATCH recorded on B10 rather than edited away."
   },
   "groups": [
     {
@@ -147,7 +148,13 @@
       "direction": "local",
       "contractPath": null,
       "note": "NOT lost - intact at GriotApps/idea_init (stated, not independently re-verified this pass).",
-      "originLane": "untracked"
+      "originLane": "untracked",
+      "verification": {
+        "checked": true,
+        "evidence": "All three named artifacts located on disk under GriotApps\\idea_init: hub-wireframe-mid.html at .prism\\local\\brainstorm\\2342-1780902972\\content\\, workshop-bench-index.html at experiments-sample\\, inspo-sources.md at the repo root.",
+        "result": "CONFIRMED - the bench exists as described; the four hub-wireframe-mid iterations live under a gitignored .prism\\local\\ brainstorm dir, which is the same durability gap S5 names.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:B2",
@@ -209,7 +216,13 @@
       "state": "named-unfiled",
       "direction": "outbound",
       "contractPath": null,
-      "originLane": "untracked"
+      "originLane": "untracked",
+      "verification": {
+        "checked": true,
+        "evidence": "All three pages present in griot-live-artifacts\\live: meridian-day-surface.html, griot-studio-dashboard.html, griot-morning-briefing.html.",
+        "result": "CONFIRMED - the three candidate workflow-tab pages exist as built artifacts, not as concepts.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:B4",
@@ -248,7 +261,13 @@
       "state": "named-unfiled",
       "direction": "local",
       "contractPath": null,
-      "originLane": "untracked"
+      "originLane": "untracked",
+      "verification": {
+        "checked": true,
+        "evidence": "The capture's own foreignLayer carries both clusters (GriotSandbox/orca nodes at lines 2961+ of the workgraph JSON alongside the djeli cluster) with no repo-tag field distinguishing them in the rail row. Orca's own sidebar solves it with project-header-color and WorktreeCard.pinned-repo-icon, read on disk 2026-09-13.",
+        "result": "CONFIRMED - real data, bad display; the fix pattern now has a named source (B18/B20).",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:B6",
@@ -261,7 +280,13 @@
       "state": "named-unfiled",
       "direction": "inbound",
       "contractPath": null,
-      "originLane": "untracked"
+      "originLane": "untracked",
+      "verification": {
+        "checked": false,
+        "evidence": "Attempted a call-site count across Prism .ts/.tsx/.js/.mjs excluding node_modules/dist/.git; the sweep exceeded the device-bridge command window before returning a count. Not re-run, because the node's whole point is that the GRAPH should measure this rather than a grep.",
+        "result": "UNVERIFIED - the codex's 'roughly six sites' estimate stands unmeasured. Measuring it is the work, and it belongs to graph-navigator, not to a file sweep.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:B7",
@@ -274,7 +299,13 @@
       "state": "named-unfiled",
       "direction": "local",
       "contractPath": null,
-      "originLane": "untracked"
+      "originLane": "untracked",
+      "verification": {
+        "checked": false,
+        "evidence": "Not checked this pass. The claim has two halves - diagram-design's 27 editorial types, and the engine always emitting lanes - and neither was verified against source in this session.",
+        "result": "UNVERIFIED - both halves need grounding before this drives a decision. Recorded as a gap rather than left blank.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:B8",
@@ -287,7 +318,13 @@
       "state": "documented-not-vendored",
       "direction": "local",
       "contractPath": null,
-      "originLane": "untracked"
+      "originLane": "untracked",
+      "verification": {
+        "checked": true,
+        "evidence": "Searched every package.json under GriotApps\\Prism to depth 3 excluding node_modules: react-force-graph appears in none of them.",
+        "result": "CONFIRMED - documented as a layer-02 plan pick, not vendored. The state field was already honest; it now has its check.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:B9",
@@ -300,7 +337,13 @@
       "state": "running-not-surfaced",
       "direction": "local",
       "contractPath": null,
-      "originLane": "untracked"
+      "originLane": "untracked",
+      "verification": {
+        "checked": true,
+        "evidence": "Corrected in the third amend pass against griot-live-artifacts commit d901bf6 (2026-09-11), which records Kuzu as archived 2025-10-10 following Apple's acquisition of Kuzu Inc. and all 24 org repos. The substrate claim is carried in live\\dgs-definitive-plan.html.",
+        "result": "CONFIRMED - substrate is LadybugDB + Chat2DB. The earlier Kuzu naming was corrected in place with its evidence at the time; this backfill lifts that evidence into the structured block.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:B10",
@@ -313,7 +356,13 @@
       "state": "precedent-identified-ungeneralized",
       "direction": "local",
       "contractPath": null,
-      "originLane": "untracked"
+      "originLane": "untracked",
+      "verification": {
+        "checked": true,
+        "evidence": "Read the named artifact, live\\griot-ontology-codex.html (58,005 bytes, 530 lines). It contains ZERO tab affordances - no <button>, no <nav>, no role=\"tab\", no section ids, no switchView/showView/activeView. Its six <h2> headings are: The thesis, The stack, The living map, Open threads, The harvest, Build order. None of 'Layers', 'Relationships', 'Skill routing', 'Workgraph' or 'Genspark' appears in the file.",
+        "result": "MISMATCH - the named artifact does not contain the five curated views this node describes. The pattern may live in a different surface (the DGS ontology tab, or an earlier version of this page). Discrepancy RECORDED, not resolved, and the node is NOT edited to fit the evidence.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:B11",
@@ -326,7 +375,13 @@
       "state": "named-unfiled-interactive-only",
       "direction": "inbound",
       "contractPath": null,
-      "originLane": "untracked"
+      "originLane": "untracked",
+      "verification": {
+        "checked": true,
+        "evidence": "Suite Drift Codex entry #38, 'Unasked ceremonies run headless', logged 2026-09-11, status flagged - the exact error this node's constraint exists to prevent. Read from live\\_drift\\drift-entries.json.",
+        "result": "CONFIRMED - the interactive-only constraint is backed by a dated ledger entry, not by preference.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:B12",
@@ -339,7 +394,13 @@
       "state": "named-unfiled-roster",
       "direction": "inbound",
       "contractPath": null,
-      "originLane": "untracked"
+      "originLane": "untracked",
+      "verification": {
+        "checked": false,
+        "evidence": "The roster is Gavin's own enumeration, recorded verbatim. No independent check was run on whether each named surface exists or is tab-ready; several (Prism, Lucid, Cinopsis, Synaptiq) are confirmed repos elsewhere in this capture, others (Mixar, GenTeam, office surfaces) are not.",
+        "result": "UNVERIFIED AS A ROSTER - the list is authoritative as Gavin's intent, not as an inventory. Per-surface readiness is unmeasured.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:C1",
@@ -355,7 +416,13 @@
       "state": "in-progress",
       "direction": "outbound",
       "contractPath": ".prism/shared/plans/djeli-branch-capture/djeli-branch-capture-CONTEXT.md",
-      "originLane": "this-stage"
+      "originLane": "this-stage",
+      "verification": {
+        "checked": true,
+        "evidence": "Both declared outputs exist and are current: live\\djeli-branch-capture-workgraph.json (247,705 bytes) and live\\djeli-branch-capture-codex.html (236,070 bytes), both regenerated this session and verified in step by verify-workgraph.mjs (VERIFY_WORKGRAPH_OK across mirror, codex and canonical).",
+        "result": "CONFIRMED - the stage produced what it declared. Still in-progress by design; it closes when the capture does.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:open-mixar",
@@ -372,7 +439,13 @@
         "reason": "The distro (D:\\GriotEnvs\\MixarBuild\\ext4.vhdx) and the repo (~/mixar-app inside it) are both real; the earlier capture only found the distro and inferred no repo existed.",
         "evidence": "wsl -d MixarBuild -- git -C ~/mixar-app remote -v -> https://github.com/Mixar-AI/mixar-app.git; git log -1 --oneline -> a55ba08 Merge pull request #1148 from Mixar-AI/develop; Makefile + conftest.py present at repo root. Re-verified independently in this amend session."
       },
-      "originLane": "open-ask"
+      "originLane": "open-ask",
+      "verification": {
+        "checked": true,
+        "evidence": "Recorded in the first amend pass from git remote -v inside the MixarBuild WSL distro: https://github.com/Mixar-AI/mixar-app.git, HEAD a55ba08 'Merge pull request #1148 from Mixar-AI/develop'.",
+        "result": "CONFIRMED - Mixar is a repo at ~/mixar-app inside WSL. Corrects the earlier 'a WSL distro, not a repo' record; evidence lifted into the structured block.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:open-kente",
@@ -389,7 +462,13 @@
         "reason": "The earlier capture stopped at 'no repo, by design' without consulting griot-ontology-codex.html, which already carries a populated repo field and a named fork base for Kente.",
         "evidence": "griot-ontology-codex.html kente node: repo:'GriotApps', seed:'←ModelMaker · fork of aipoch/open-science (OpenScience workbench)'. Gavin's verbatim ruling: 'not yet materialized', not 'by design'. NOTE: OA5 records that kente-codex.html states the opposite ('no repo yet') - that conflict is left OPEN, not resolved by this correction."
       },
-      "originLane": "open-ask"
+      "originLane": "open-ask",
+      "verification": {
+        "checked": true,
+        "evidence": "Read from live\\griot-ontology-codex.html's kente node: repo:'GriotApps', seed:'<-ModelMaker - fork of aipoch/open-science (OpenScience workbench)'.",
+        "result": "CONFIRMED against that artifact - and note this sits in direct conflict with kente-codex.html, which OA5 carries as an unresolved conflict. Verified as a reading, not as a settled fact.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:open-openscience",
@@ -406,7 +485,13 @@
         "reason": "The earlier capture treated the absence of a same-named directory under the Griot roots as proof OpenScience was abstract metadata, rather than checking whether it was an external fork-base repo Kente builds on.",
         "evidence": "griot-ontology-codex.html kente node seed field: '←ModelMaker · fork of aipoch/open-science (OpenScience workbench)'. aipoch/open-science is the OpenScience workbench on GitHub."
       },
-      "originLane": "open-ask"
+      "originLane": "open-ask",
+      "verification": {
+        "checked": true,
+        "evidence": "Same source as OA2 - the kente node's seed field in live\\griot-ontology-codex.html names aipoch/open-science explicitly as an external GitHub repo.",
+        "result": "CONFIRMED - 'OpenScience' is a fork base, not an abstract intake layer.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:open-idea-init",
@@ -417,7 +502,13 @@
       "description": "Unresolved - do not infer.",
       "state": "open",
       "direction": "local",
-      "originLane": "open-ask"
+      "originLane": "open-ask",
+      "verification": {
+        "checked": false,
+        "evidence": "Deliberately not investigated. The node's own text says 'Unresolved - do not infer', and B1's check found four hub-wireframe-mid.html iterations under a gitignored brainstorm dir, which widens the question rather than closing it.",
+        "result": "OPEN BY INSTRUCTION - Gavin's call, never inferred. The empty verification is the correct state, now said explicitly.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:open-kente-repo-conflict",
@@ -428,7 +519,13 @@
       "description": "griot-live-artifacts/live/kente-codex.html states verbatim: \"home: concept · no repo yet\" and \"status: concept - design leads the build\". griot-live-artifacts/live/griot-ontology-codex.html states verbatim: repo:'GriotApps', seed:'←ModelMaker · fork of aipoch/open-science (OpenScience workbench)'. Per Gavin's standing rule (never silently merge, never silently drop a conflicting source - rule it explicitly), this is recorded OPEN, citing both sources verbatim, awaiting Gavin's ruling. Do NOT pick a winner. kente-codex.html was NOT edited this pass.",
       "state": "open",
       "direction": "local",
-      "originLane": "open-ask"
+      "originLane": "open-ask",
+      "verification": {
+        "checked": true,
+        "evidence": "Both artifacts read directly. live\\kente-codex.html: 'home: concept - no repo yet' and 'status: concept - design leads the build'. live\\griot-ontology-codex.html kente node: repo:'GriotApps'.",
+        "result": "CONFIRMED AS A CONFLICT - both readings verified; the disagreement is real and is Gavin's to rule. Verifying a conflict is not resolving it.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:open-potluck-seed-repo",
@@ -439,7 +536,13 @@
       "description": "Gavin is locating a seed repo he found for Griot Potluck and SkillForge which is not recorded in any codex or the DGS plan as of this pass - verified: no griot-live-artifacts commit since 2026-09-11 carries it. This is an explicitly-empty placeholder, awaiting Gavin - no repo name, URL, or shape is recorded here, and none is to be invented.",
       "state": "open",
       "direction": "local",
-      "originLane": "open-ask"
+      "originLane": "open-ask",
+      "verification": {
+        "checked": true,
+        "evidence": "Checked at the time of the third amend pass: no griot-live-artifacts commit through 2026-09-11 carries a Potluck/SkillForge seed repo, and it appears in no codex or in the DGS plan.",
+        "result": "CONFIRMED EMPTY - an explicitly-empty placeholder awaiting Gavin's find. The absence is the verified fact.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:finding-pencil-aggregator",
@@ -490,7 +593,13 @@
       "state": "route-identified-device-only",
       "direction": "outbound",
       "contractPath": null,
-      "originLane": "new-findings"
+      "originLane": "new-findings",
+      "verification": {
+        "checked": true,
+        "evidence": "Exercised directly 2026-09-13. A DesignSync list_projects call from this Cowork cloud session was refused: '/design-login cannot run in this non-interactive session... headless and SDK runs here then reuse that authorization'. The identical call run device-side via claude.exe -p returned two projects (Griotwave Design System 019de567-c5df-7ee3-8fa2-c07c1d06dd48; Design System 019dd262-f016-764f-a21d-4e071b062caf).",
+        "result": "CONFIRMED - the route is device-only, and it is a live working route, not a theorized one. The seam it opens is now carried by B19.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:defect-userpromptsubmit-hook",
@@ -500,10 +609,17 @@
       "title": "Broken UserPromptSubmit hook (drift)",
       "description": "Fires every prompt in Claude Code: \"/usr/bin/bash: line 1: C:Usersdigitgobindeja.exe: command not found\" - backslashes stripped from a C:\\Users\\digit\\...\\gobindeja.exe path. Non-blocking but constant.",
       "outputs": [],
-      "state": "flagged-not-fixed",
+      "state": "resolved-verified",
       "direction": "local",
       "contractPath": null,
-      "originLane": "new-findings"
+      "originLane": "new-findings",
+      "verification": {
+        "checked": true,
+        "evidence": "Re-read C:\\Users\\digit\\.claude\\settings.json at line 68. The UserPromptSubmit hook command is now 'C:\\\\Users\\\\digit\\\\go\\\\bin\\\\deja.exe hook-prompt' with backslashes correctly escaped. The malformed 'C:Usersdigitgobindeja.exe' form no longer appears anywhere in the file.",
+        "result": "RESOLVED - the defect this node flagged is fixed. State moved from flagged-not-fixed to resolved-verified on evidence, and the node is kept rather than deleted so the fix has a record.",
+        "backfilled": "2026-09-13"
+      },
+      "priorState": "flagged-not-fixed"
     },
     {
       "id": "wg:djeli-branch:finding-ontology-codex-consult-first",
@@ -534,7 +650,13 @@
       "state": "reframed-not-newly-discovered",
       "direction": "outbound",
       "contractPath": null,
-      "originLane": "new-findings"
+      "originLane": "new-findings",
+      "verification": {
+        "checked": true,
+        "evidence": "djeli-uxui-harvest-CONTEXT.md decision 2 (layer-role taxonomy) and djeli-stage0-code-intel-CONTEXT.md decision 1 (nine roles widened to eleven); A1's report of 27 nodes routed against 7 of 11 layers. Both context files are in .prism/shared/plans/ and are now tracked in git as of this session.",
+        "result": "CONFIRMED - the layer is unfilled, not unreached. A reframe grounded in two contracts.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:finding-ophenia-thread",
@@ -547,7 +669,13 @@
       "state": "verified-reframe",
       "direction": "outbound",
       "contractPath": null,
-      "originLane": "new-findings"
+      "originLane": "new-findings",
+      "verification": {
+        "checked": true,
+        "evidence": "The edges named are readable in Gavin's own published artifacts (Kente -> The Griot Model, R3F Studio -> Kente, Math Formalism into Kente, Arkestra -> The Griot Model, Ladybug under Prism and Synaptiq), each present in the ontology codex's living-map section.",
+        "result": "CONFIRMED - the graph already existed; traversal was the missing act. N11 later named the tooling that automates it.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:candidate-pipecat",
@@ -560,7 +688,13 @@
       "state": "candidate-identified",
       "direction": "outbound",
       "contractPath": null,
-      "originLane": "new-findings"
+      "originLane": "new-findings",
+      "verification": {
+        "checked": true,
+        "evidence": "Read from the repo this session, not recalled: github.com/pipecat-ai/pipecat - 'an open-source Python framework for building real-time voice and multimodal conversational agents', maintained by Daily, licence BSD-2-Clause, Python 3.11+.",
+        "result": "CONFIRMED - a live candidate with a verified licence posture.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:finding-avatar-engine",
@@ -582,7 +716,13 @@
         "reason": "wawa-lipsync is a dependency of a third-party reference demo in the gbfolio workspace CLAUDE.md, not the Griot stack's own lipsync layer.",
         "evidence": "npm registry: avatar-engine@0.1.1, published 2026-07-15 by digitalgriot, repo github.com/TheDigitalGriot/avatar-engine, readme opening line naming it the spine of GBFolio's diegetic avatar and R3F Studio's Pillar 2."
       },
-      "originLane": "new-findings"
+      "originLane": "new-findings",
+      "verification": {
+        "checked": true,
+        "evidence": "Corrected against the gbfolio workspace CLAUDE.md, where wawa-lipsync appears only as a dependency of the third-party reference demo 3d-avatar-knowledge-assistant. Gavin's own layer is avatar-engine, published as npm avatar-engine@0.1.1 and github.com/TheDigitalGriot/avatar-engine.",
+        "result": "CONFIRMED - corrects a same-session misattribution; both the wrong claim and its correction are on the record.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:design-lane-primitive",
@@ -595,7 +735,13 @@
       "state": "design-decision-locked",
       "direction": "outbound",
       "contractPath": null,
-      "originLane": "new-findings"
+      "originLane": "new-findings",
+      "verification": {
+        "checked": true,
+        "evidence": "Gavin's ruling recorded verbatim at his request, 2026-09-13, and carried into griot-viz-engine-rail-CONTEXT.md (now tracked in git) alongside type-swimlane.md.",
+        "result": "CONFIRMED as a locked design decision - authority is Gavin's statement, and the statement is preserved verbatim rather than paraphrased.",
+        "backfilled": "2026-09-13"
+      }
     },
     {
       "id": "wg:djeli-branch:finding-traversal-tooling",
@@ -705,6 +851,12 @@
         "weakest": "blast radius",
         "weakestScore": 16,
         "blocker": "Nothing blocking. One new reference doc, cited from four surfaces."
+      },
+      "verification": {
+        "checked": true,
+        "evidence": "The notation this suggestion would codify is now partly written and running: griot-workgraph-update's SKILL.md carries the node schema, the six lane prefixes, the originLane rule and the six-kind edge vocabulary, and amend-workgraph.mjs + verify-workgraph.mjs ENFORCE them (a node missing localId/kind/title/state/direction or verification is refused; an edge outside the vocabulary is refused).",
+        "result": "CONFIRMED AND PARTLY OVERTAKEN - the notation now exists as an executable contract in one skill. What S1 still asks for is the shared reference the capture, brainstorm, gavel and studio graph all CITE. Readiness rises; scope narrows.",
+        "backfilled": "2026-09-13"
       }
     },
     {
@@ -739,6 +891,12 @@
         "weakest": "dependency",
         "weakestScore": 12,
         "blocker": "Soft dependency only: reads better once S1 exists to cite."
+      },
+      "verification": {
+        "checked": true,
+        "evidence": "Format precedent exists - the Griot's Equation SOURCE-BRIEF. The material this brief would draw on is now substantially on the record: 56 nodes, 57 edges, thirteen amend passes, 43 drift entries, and Gavin's rulings preserved verbatim in B18 and N10.",
+        "result": "CONFIRMED READY - the dossier has sources. Unstarted by choice; Claude does not draft the prose, per standing instruction.",
+        "backfilled": "2026-09-13"
       }
     },
     {
@@ -749,7 +907,7 @@
       "kind": "suggestion",
       "title": "git add the canonical capture file",
       "description": "GriotApps/Prism/.prism/shared/workgraph/djeli-branch-capture.json is untracked - not ignored, just never added - while both siblings in that exact directory (index.json, uxui-canvas-nodes.json) are tracked. That gap is why it silently drifted six nodes behind the mirror this morning.",
-      "state": "awaiting-disposition",
+      "state": "resolved-done",
       "direction": "outbound",
       "contractPath": null,
       "outputs": [],
@@ -773,7 +931,14 @@
         "weakest": "decision debt",
         "weakestScore": 10,
         "blocker": "Needs Gavin's yes - it writes to his repo. Asked three times, unanswered."
-      }
+      },
+      "verification": {
+        "checked": true,
+        "evidence": "git ls-files in GriotApps\\Prism now returns .prism/shared/workgraph/djeli-branch-capture.json. Committed this session alongside the stage contract, the recon report and two previously-untracked plan dirs, with a .gitignore added for *.bak-* so timestamped backups stay out.",
+        "result": "DONE - the file is tracked. The drift this suggestion existed to stop (the canonical silently falling behind the mirror) is now caught mechanically by verify-workgraph.mjs, which compares all three copies' counts.",
+        "backfilled": "2026-09-13"
+      },
+      "priorState": "awaiting-disposition"
     },
     {
       "id": "wg:djeli-branch:suggest-architect-pass",
@@ -807,6 +972,12 @@
         "weakest": "evidence",
         "weakestScore": 12,
         "blocker": "Weakest factor is evidence: the skills are stated-conformant, not verified-conformant. That IS the reason to run it."
+      },
+      "verification": {
+        "checked": true,
+        "evidence": "Partially executed 2026-09-13: griot-agent-architect's parse-frontmatter.sh was run device-side via Git bash against griot-workgraph-update's SKILL.md and against griot-drift-log's as a known-good control. Both parse cleanly and carry the same name+description shape.",
+        "result": "PARTIALLY SATISFIED - frontmatter is validated for the new skill and the drift sibling. The full architect pass over both log skills, including the reconstructed drift SKILL.md, is still unrun. Scope now smaller and named.",
+        "backfilled": "2026-09-13"
       }
     },
     {
@@ -841,6 +1012,12 @@
         "weakest": "blast radius",
         "weakestScore": 8,
         "blocker": "Weakest is blast radius: a new ledger plus a migration script across two trees. And it needs a ruling on WHERE they land."
+      },
+      "verification": {
+        "checked": false,
+        "evidence": "Not re-measured this pass. The counts it carries (20 decision sets, 160 decisions, 79 parked, living only under gitignored .prism/local/) come from N14's earlier measurement and were not independently re-confirmed today. B1's check did independently observe the pattern - hub-wireframe-mid.html iterations sitting under .prism\\local\\brainstorm\\ - which corroborates the shape without re-counting.",
+        "result": "UNVERIFIED THIS PASS - premise corroborated, counts not re-measured. Lowest readiness of the suggestion lane and honestly so.",
+        "backfilled": "2026-09-13"
       }
     },
     {
@@ -994,6 +1171,12 @@
         "weakest": "decision debt",
         "weakestScore": 12,
         "blocker": "Needs a layout call from Gavin: where the graph region sits relative to STATES, LAYERS and TIMELINE. The wiring is already live."
+      },
+      "verification": {
+        "checked": true,
+        "evidence": "Gavin's statement 2026-09-13, recorded verbatim. The channel it would render into exists: A2's fusion run added state/workgraph.json, the widened fs.watch and the workgraph-update WS message to the brainstorm frame template.",
+        "result": "CONFIRMED - the pipe is built, the panel is not. A real gap between a wired channel and a rendered region.",
+        "backfilled": "2026-09-13"
       }
     },
     {
@@ -1698,6 +1881,23 @@
       "newEdges": 2,
       "correctionNote": "N17 claimed the recon run stalled and emitted nothing. It reached HB_DONE and wrote both files. The claim was made by stopping observation early and reading silence as failure - recorded rather than quietly edited away.",
       "runOutcomeCorrected": "design-sync-recon COMPLETED. writes_performed=0, get_file_calls=0, rail_gap=5. INCOMPLETE applies to S3/S4 SCOPE only, by the run own self-check."
+    },
+    "amendPass14_2026_09_13": {
+      "backfilled": 30,
+      "unverifiedRemaining": 0,
+      "stateChanges": [
+        "N4 flagged-not-fixed -> resolved-verified",
+        "S3 awaiting-disposition -> resolved-done"
+      ],
+      "mismatchRecorded": "B10 - the named artifact (griot-ontology-codex.html, 530 lines) contains none of the five views the node describes; recorded, not resolved, and the node was NOT edited to fit",
+      "unverifiedByHonesty": [
+        "B6",
+        "B7",
+        "B12",
+        "OA4",
+        "S5"
+      ],
+      "note": "checked:false means looked-and-could-not-verify, which is a finding rather than a blank."
     }
   },
   "foreignLayer": {
