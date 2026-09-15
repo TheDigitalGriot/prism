@@ -21,8 +21,46 @@ Read the git copy (source of truth) or stage the live artifact. Extract:
   vs `pattern-only` (GPL/AGPL, re-implement native). Travels with the component that borrows it.
 - **OPEN decisions** — the `[OPT:OPEN]` callouts + any DGS `ITEMS[]` row with
   `type:'open-question'`/`'decision'` and `decision:'undecided'` for this app.
+- **Device** — the codex's real UX/UI: which device block it carries, its surfaces, the frames per
+  surface, and per surface whether the destination holds a real export or a self-declaring
+  placeholder. Extract it with the named step below; never skip it because a codex "has no UI yet".
 
 The ember/accent comes from the DGS plan's `APPS[].color` for the app.
+
+### Device extraction — real export vs self-declaring placeholder
+
+The device block is where a codex shows what the app actually looks like, and where it admits what
+does not exist yet. Read it; don't count it. (Full contract with template + reference line cites:
+`.prism/shared/research/2026-09-15-codex-device-contract.md` in the Prism repo.)
+
+1. **Identify the device block(s).** Two device kinds exist, and one never replaces the other:
+   - **form-factor device** — `[OPT:DEVICE]`, `tsd-*` classes, `.tsd-btn` desktop/tablet/phone toggles
+     over ONE design;
+   - **surfaces device** — `[OPT:DEVICE-SURFACES]`, toggles are the app's NAMED SURFACES (VS Code ·
+     desktop · CLI/TUI · mobile · foundation). Template prefix `tsdx-*`; Prism's live codex uses `pfx-*`.
+   Read every device block present. No device block at all, for an app that has a UI, is itself a gap
+   (step 2).
+2. **Enumerate surfaces and frames.** For a surfaces device, read the toggle buttons
+   (`data-surf="KEY"` · `<b>NAME</b>`) and the JSON payload (`<script id="…Data" type="application/json">`
+   → `frames[]` records `{id, s, t, label, note, src}` + `turns{}`). Frames for a surface = records whose
+   `s` equals its key. A frame is a JSON record painted into one shared `<img>`, not a DOM node. For a
+   form-factor device the single surface is the design inside `.tsd-screen`.
+3. **Classify each surface by what the DESTINATION holds** — never by a raw token count:
+   - **real export** — a real image is there: frame records carrying a `src` data-URL (surfaces device),
+     or an `<img>` inside `.tsd-screen` (form-factor; usually `class="tsd-shot"`, but anansi and kora
+     carry a class-less `<img>`);
+   - **self-declaring placeholder** — the surface says it is empty: `<div class="tsd-ph">`, usually with
+     `<div class="pt">Design pending` (sometimes inline-styled, sometimes with different text);
+   - **absent** — a surface the app ships (per the codex's components/thesis) with no toggle at all.
+   A bare `tsd-shot` count is polluted by the CSS rule, and an exact `class="tsd-ph">` string misses an
+   inline-styled placeholder — match the element. (N16/B27: the "empty" slots were never empty; each
+   held an explicit self-declaring placeholder, and seven codexes already held real exports.)
+4. **Carry the provenance line.** The `*-cap` element (`.tsd-cap` / `.tsdx-cap` / `.pfx-cap`) names the
+   source `.dc.html`, the Claude Design project, the recovery channel (`griot-cc-cd-sync`) and the date.
+   Keep it verbatim per surface — step 4 seeds surface-scoped stories from it.
+
+Output: one row per surface — `surface key · device kind · frame ids · real export | placeholder |
+absent · provenance line`. Steps 2 and 4 consume this table.
 
 ## 2. Gavel ceremony — resolve the OPEN decisions FIRST
 
@@ -45,6 +83,15 @@ For each `[OPT:OPEN]` / `decision:'undecided'` item:
    item first, then decided.
 4. Anything Gavin defers/passes that would otherwise be a task → record it in the plan's
    `## What We're NOT Doing`, not as a task.
+5. **A placeholder surface is a GAP, not a decision.** A self-declaring placeholder or an absent
+   surface from the device extraction (step 1) is NOT an `[OPT:OPEN]` item and is not put to the
+   Gavel — there is nothing to rule on; the codex already says the design does not exist yet. Route
+   every one explicitly, one of two ways:
+   - **a task** — "export/render the `<surface>` design" becomes a surface-scoped story (step 4); or
+   - **`## What We're NOT Doing`** — named, with its surface key, when this plan will not produce it.
+   It never passes silently through the No-Placeholders gate as if resolved: a plan that says nothing
+   about a placeholder surface has hidden a known gap. `coverage.md` lists each placeholder/absent
+   surface under a story or under `## Intentional Exclusions`.
 
 The Gavel ceremony is an in-chat decision step in v1 (no MCP). The future
 `close_decision(id, decision, role, stage)` MCP verb is where this moves once the decision bus
@@ -97,6 +144,21 @@ for a very large codex, delegate to the `prism-decompose` skill. Schema:
 `coverage.md` is mandatory: a `Requirement → Story Mapping` table + an `## Intentional Exclusions`
 section. Requirements found MUST equal stories emitted + intentional exclusions. Populate
 `context.graphTargets` from the codex spine where you can.
+
+**Surface-scoped stories.** Any story that produces or changes a UI is scoped to ONE device surface
+from the step-1 device table:
+
+- `context.surface` — the surface key (`data-surf`, e.g. `vscode` · `electron` · `cli` · `mobile` ·
+  `foundation`; for a form-factor device, the app's single surface). One surface per story — work that
+  spans surfaces is one story per surface, chained with `blockedBy`.
+- `context.graphTargets` — seeded from that surface's **provenance line** as well as the spine: the
+  named source export (`"<Source>.dc.html#<frameId>"`) for the design side, plus the code symbols that
+  render the surface (`qualified::name#Function`) for the build side. The reverse channel matches a
+  landed UI back to its frame through these.
+- A placeholder or absent surface routed to a task in step 2 is a story here, with `context.surface`
+  set and acceptance criteria that name the real export it must produce.
+- A surface the codex does not have yet is scoped as a **new toggle state** — its acceptance criteria
+  say "adds the `<key>` toggle and its frames", never "replaces frame X".
 
 ## 5. Route the executor from the story graph
 

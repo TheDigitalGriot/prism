@@ -44,7 +44,7 @@ store per executor:
 - Because state.json is gitignored and per-run, **harvest it before the local dir is cleaned** —
   locate the run by newest `last_updated` under `.prism/local/subagent/`.
 
-`prism-dispatch` / `prism-spectrum` runs still leave git commits + (for spectrum) per-branch state;
+`prism-dispatch` / `spectrum` runs still leave git commits + (for spectrum) per-branch state;
 fall back to the git-scope walk as the common denominator.
 
 ## Normalize, then amend with evidence
@@ -67,6 +67,42 @@ the license posture, or a resolved OPEN decision. When it is:
 4. **Re-push the codex artifact** — `SendUserFile` → `update_artifact`. This is the step that goes
    stale if skipped (the whole reason `dgs-plan-update` exists). The live gallery card must not lag
    the repo.
+5. **If the discovery landed a UI, carry the device too** — the device seam below.
+
+## Device seam — a landed UI flows back into the codex device
+
+The device block is read in both directions: forward extracts it, reverse writes back to it. When a
+build lands a UI — a commit on a story whose `context.surface` is set, or a discovery whose diff touches
+the code that renders a surface — the codex device is now as stale as a wrong component claim.
+
+The normalized discovery record then carries, in addition to `Found:` · `commitHash` · `file:line`:
+
+- **`surface`** — the surface key (`context.surface`, or the key matched through `context.graphTargets`).
+- **re-render-the-frame** — which frame ids change, rendered from the REAL landed build (never a mock),
+  at the surface's natural width, as the frame's `src` data-URL, with the `*-cap` provenance line updated
+  to the new source + date. This is evidence in the same sense as `file:line`: no capture of the landed
+  UI → no device amend.
+- **re-push-the-artifact** — always set when the device changes. Same two halves as every codex amend:
+  the griot-live-artifacts commit AND the top-level `Artifact` publish.
+
+Then write back **additively**, in this order of preference:
+
+1. **Existing surface, existing view** → re-render that frame record's `src` in place; its `id` stays
+   stable (like `STORY-NNN`). Adjust `label` / `note` / `t` only where they actually changed.
+2. **Existing surface, new view** → append a new frame record with a new id and `s:"<key>"`. Never
+   repurpose an existing id.
+3. **A self-declaring placeholder that now has a real export** → fill that surface's slot. This is the
+   placeholder's declared purpose (the template's own text: "This frame embeds the real UX/UI once it
+   is — the codex re-pushes on that edit"), not an overwrite of a frame.
+4. **A surface that did not exist → a NEW TOGGLE STATE.** Add one toggle (`data-surf="<new key>"`,
+   `aria-pressed="false"`) after the existing toggles, append its frame records, and extend `RIGMODE`
+   only if the new surface needs a non-desktop rig (`phone` / `term`). Never overwrite an existing frame,
+   toggle or surface to make room, and never remove a form-factor device to add a surfaces device —
+   the two coexist.
+
+Every one of these writes matches the destination's class prefix and passes the refuse-to-write triad
+(`mechanics.md` → "Codex device injection"). A new-surface write expects exactly +1 toggle and exactly
+the intended number of new frame records; anything else is refused.
 
 ## Trigger policy (default: never silent)
 

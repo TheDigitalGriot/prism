@@ -26,7 +26,11 @@
     "amendPass16": "2026-09-14 sixteenth AMEND: the design sync RAN. B23 (74/74 Claude Design text paths reunified onto disk at griotwave-library/_master/claude-design, 619KB, zero failures, remote_writes 0 - executed by slicing the pull across four parallel headless agents after a single run managed one file in five minutes). N21 (the premise was backwards: remote 18 components vs griotwave-ui's 92, 81 local-only, and of the sync's three legs only muse->library had ever run). N22 (the 24 preview boards - the griotwave design language as viewable artefacts - existed ONLY in the cloud project, plus the recovered _ds_bundle.js and _ds_manifest.json). N23 (two self-inflicted blocks: a get_file ration I invented and then obeyed, and a bulk-export remedy named inside the error I quoted as a blocker; drift 46). Corrects N16 - the muse's work was not skipped, it landed in griotwave-ui rather than in the capture list, so drift 45 counted the wrong surface.",
     "amendPass17": "The Claude Design pull channel: the app's own API tree found one over from the one DesignSync queries, 614 files across 20 projects landed err0, written down as griot-cc-cd-sync and pushed. Two branches opened by it (prism-codex-plan-sync device UIs, the codex [OPT:DEVICE] sweep) and two findings recorded (a filtered tool result mistaken for the territory; a download prompt that gates the rename, not the data).",
     "amendPass18": "The skills clone restored to origin (B28 - 79 of 95 'modified' files were never divergent, and origin held the FULLER copies), plus two findings from doing it: N26, a gold entry hand-written into the render instead of appended through the engine, leaving the page one entry ahead of its own ledger (drift 47, fixed through append-gold.mjs); and N27, griot-gold-log has three working engines and no SKILL.md anywhere, so the skill has no door (drift 48, SKILL.md deliberately left for Gavin to author).",
-    "amendPass19": "B27 executed as B29: six codex device slots filled with real exports, and Prism's device rebuilt around its five ACTUAL SURFACES (15 real frames, 5 design turns) on Gavin's call, generalized into the codex template as [OPT:DEVICE-SURFACES] alongside the form-factor device. B27 corrected - the slots were never empty, they held self-declaring placeholders naming the exact run they awaited, and seven codexes already held real exports. Two findings: N28, the amend engine can add and correct but cannot ADVANCE a node's state, so a landed branch has no supported way to close; N29, a CSS class name collided with an HTML search anchor and silently duplicated a whole codex, caught by assertion not by reading."
+    "amendPass19": "B27 executed as B29: six codex device slots filled with real exports, and Prism's device rebuilt around its five ACTUAL SURFACES (15 real frames, 5 design turns) on Gavin's call, generalized into the codex template as [OPT:DEVICE-SURFACES] alongside the form-factor device. B27 corrected - the slots were never empty, they held self-declaring placeholders naming the exact run they awaited, and seven codexes already held real exports. Two findings: N28, the amend engine can add and correct but cannot ADVANCE a node's state, so a landed branch has no supported way to close; N29, a CSS class name collided with an HTML search anchor and silently duplicated a whole codex, caught by assertion not by reading.",
+    "amendPass20": "The three stage outputs filed as nodes: disposition sheet, Djeli branch contract, --advance spec. No edges - Decision 5.",
+    "amendPass21": "Lane repair: D1-D3 filed without group and rendered in no lane. Engine gained a validated group field on corrections.",
+    "amendPass22": "First live use of --advance. B2 and B18 advanced on checked commit anchors. B27 held pending Gavin's call on the PlayStake residual.",
+    "amendPass23": "B27 closed. PlayStake codex committed, so an anchor now exists."
   },
   "groups": [
     {
@@ -169,7 +173,7 @@
       "title": "Griot tool UI hunt",
       "description": "R3F Studio, Cinopsis, Prism desktop (Paseo lineage, the always-on architecture moment), Kente, Synaptiq. Find real HTML/app surfaces; ASK, never assume - if no HTML exists it is a Claude design or Pencil file and Gavin supplies it. RESOLVED 2026-09-13 amend pass - Lucid/idea_init, R3F Studio, Cinopsis, Prism desktop, and Synaptiq all located and verified on disk; Kente confirmed documented-not-missing (Fable-5 pass queued, not exported). Prism TUI remains the one real gap - CharmForge-shaped, terminal medium, would not be a .pen file.",
       "outputs": [],
-      "state": "largely-resolved-one-gap",
+      "state": "corrected-verified",
       "direction": "outbound",
       "contractPath": null,
       "findings": [
@@ -208,7 +212,14 @@
         "evidence": "5 of 6 named surfaces (Lucid/idea_init, R3F Studio, Cinopsis, Prism desktop, Synaptiq) located and verified on disk this amend pass with byte sizes as recorded above; Kente independently confirmed documented (not missing) via its existing codex.",
         "result": "LARGELY RESOLVED - only Prism TUI remains a genuine gap."
       },
-      "originLane": "untracked"
+      "originLane": "untracked",
+      "priorState": "largely-resolved-one-gap",
+      "advanced": {
+        "advancedAt": "2026-09-15 amendPass22",
+        "from": "largely-resolved-one-gap",
+        "to": "corrected-verified",
+        "evidence": "Prism 3cf9e5d (bubbletea in go.mod since 2026-04-06) + griot-live-artifacts 0dd2092 where N15 landed corrected-verified with the edge label closing B2's one remaining gap. prism-cli/prism.exe measured 25238528 B - the TUI is not absent."
+      }
     },
     {
       "id": "wg:djeli-branch:B3",
@@ -1193,13 +1204,20 @@
       "title": "Lucid is the anchor - Orca and Kiro are structural seeds, not targets",
       "description": "Gavin's ruling 2026-09-13, given twice and sharpened the second time: Lucid is my gold standard for design, and even though orca is the seed, the left navigation and the rails and the utility of the design therein are amazing and fit what i want visually. This REORDERS the visual-ancestors capture rather than adding to it. Lucid/idea_init's shipped design is the ANCHOR - what the surface IS. Orca (stablyai/orca, MIT, cloned at GriotSandbox/orca) and Kiro (AWS, five surfaces) drop to SEEDS - they answer how the rail behaves and what utility it carries, never what it should look like. WHAT LUCID ACTUALLY SHIPS, read from the codex's own embedded export rather than inferred: a DUAL RAIL - a ~48px icon column, then a sectioned utility panel carrying search, a PROJECTS section of colour-accented cards with live counts (idea_init 12, griotwave 8, valence 5, prism 9) each showing file chips with extensions, an AI TOOLS card grid, a pinned model-status list (Sonnet 4.5 Active, Kling, Gemini Connect), and a community footer - with the collapse chevron on the panel's FREE edge, which is rail rule R5 already drawn. CONVERGENCE, not imitation: Orca's sidebar reached the same colour-accent-plus-count project card independently (project-header-color, pinned-repo icon). Two surfaces solving the same problem the same way is the strongest confirmation available. OPEN BY GAVIN'S OWN STATEMENT: he holds further design specifics not yet given, plus Pinterest saves of the same pattern. This node deliberately does NOT fill that space - the slot stays empty so his input lands as input.",
       "outputs": [],
-      "state": "named-unfiled",
+      "state": "design-decision-locked",
       "direction": "outbound",
       "contractPath": null,
       "verification": {
         "checked": true,
         "evidence": "Lucid device embeds extracted from lucid-codex.html (3 data-URL images, 97-106KB) and read directly - embed 3 is the full idea_init surface. Orca sidebar inventory read on disk at GriotSandbox/orca/src/renderer/src/components/sidebar (project-header-color, WorktreeCard.pinned-repo-icon, smart-sort, smart-attention, worktree-list-indentation). Kiro surfaces from kiro.dev docs.",
         "result": "CONFIRMED - Lucid ships the pattern; Orca and Kiro corroborate it independently. Gavin holds undisclosed specifics; slot left open."
+      },
+      "priorState": "named-unfiled",
+      "advanced": {
+        "advancedAt": "2026-09-15 amendPass22",
+        "from": "named-unfiled",
+        "to": "design-decision-locked",
+        "evidence": "griot-live-artifacts a7e8216 (2026-09-13, design-sync recon + Lucid anchor ruling) records Gavin's ruling verbatim; live/lucid-codex.html present. Target state follows the N10 precedent."
       }
     },
     {
@@ -1507,7 +1525,7 @@
       "localId": "B27",
       "kind": "branch",
       "group": "untracked",
-      "state": "named-unfiled",
+      "state": "done",
       "direction": "outbound",
       "title": "The codex [OPT:DEVICE] sweep - 16 real design surfaces into the codexes carrying empty slots",
       "description": "griot-app-codex Phase 3 requires 'Reference AND embed the current design' and names the failure mode explicitly: never draw a fake screen, 'are we using the actual Claude Design?' must be yes. The exports needed to answer yes were unreachable until B24. Sixteen .dc.html surfaces now map onto codexes: Prism Surface System -> prism-codex; Synaptiq Host / Audion Standalone / AudionOverlay / Meridian Standalone / Griot Triad / Triad Mobile -> synaptiq, audion, meridian codexes; Kora.dc.html -> kora-codex; Anansi Loom + Anansi Cohesion Sheet -> anansi-codex; R3F Studio Sketchpad Hero (two cuts, one Griotwave-skinned) -> r3fstudio-codex; Tesseract Floating Apps -> tesseract-architecture; PlayStake -> its own node; ParalegalPro Explainer + Prototype -> paralegalproject-codex. Each embed is a real snapshot or live iframe, and each codex re-push carries the repo-copy + CODEXES-row + DGS-card half of the standing loop.",
@@ -1520,6 +1538,13 @@
         "wasClaimed": "verified-inventory-unapplied - sixteen surfaces enumerated on disk, none embedded, and the codexes described as 'carrying empty [OPT:DEVICE] slots'.",
         "isTrue": "The inventory was right but the framing was wrong twice. (1) The slots were not EMPTY - each carried an explicit, self-declaring placeholder that named the exact run it was waiting for, so filling them executed their own stated contract rather than overwriting content. (2) The scope was smaller than sixteen: seven codexes ALREADY held real exports (r3fstudio's is the actual Sketchpad Hero, tesseract's the actual Floating Apps launcher, both verified by extracting and viewing the embedded JPEG), and kweli + damus have no recovered surface at all. The real work was six codexes, and Prism's became a fifteen-frame surface-toggle device rather than a single embed.",
         "cause": "Counted what was recovered instead of checking what each destination already held. The same shape as N16 - measured the intake list rather than the destination - and the fix was the same: open the destination and look before declaring it empty."
+      },
+      "priorState": "named-unfiled",
+      "advanced": {
+        "advancedAt": "2026-09-15 amendPass23",
+        "from": "named-unfiled",
+        "to": "done",
+        "evidence": "griot-live-artifacts d1ebd34 adds live/playstake-codex.html (1751772 b) - the last named gap in B27. Verified this run: 0 occurrences of placeholder - design pending, 3 data:image embeds across 4 tsd-screen slots, 3 [OPT:DEVICE] blocks. Prior six codexes landed in d58f198."
       }
     },
     {
@@ -1656,6 +1681,78 @@
       "verification": {
         "evidence": "Reverted with git checkout to 279,524 bytes / 10 leads, then rebuilt with three assertions that refuse to write: lead count must be unchanged, output size must equal orig - removed + added within 4 bytes, and id=\"pfxSurf\" must occur exactly once. Rebuild reported leads 10 (was 10) and file 1,430,086 bytes against an expected 1,430,086 - exact.",
         "result": "verified"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D1",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D1",
+      "kind": "decision",
+      "title": "Workgraph disposition sheet - 55 non-terminal nodes sorted, 0 incomplete",
+      "state": "awaiting-disposition",
+      "direction": "local",
+      "description": "Stage 3 close-out output. Every non-terminal node sorted into ADVANCE (3) / CORRECT (7) / DEFER (29) / RULE-NEEDED (16), each ADVANCE carrying a checked commit anchor. It rejected five of its own sweep's proposed advances on weak evidence, and refused to close N28 on the handoff's word. Awaiting Gavin's rulings.",
+      "verification": {
+        "checked": true,
+        "evidence": "File present on disk at griot-live-artifacts/.prism/shared/plans/2026-09-15-workgraph-disposition-sheet.md, 17954 bytes, stat'd this run. Heartbeat .wg-closeout-progress.txt contains STEP1_CONTEXT through STEP4_SHEET then PROCESS_EXITED. Live workgraph JSON sha256 unchanged at AF2BE86C12B86325 across the run.",
+        "result": "CONFIRMED - sheet exists, run reached STEP4_SHEET, and no store was written."
+      },
+      "group": "this-stage",
+      "correction": {
+        "correctedAt": "2026-09-15 amendPass21",
+        "wasClaimed": "D1 was filed with originLane this-stage and no group, so it was treated as laned.",
+        "isTrue": "group was undefined. Every renderer filters nodes by group alone (byGroup: n.group === g), so D1 was stored but rendered into zero lanes - 1 data hit, 0 chips.",
+        "cause": "amend-workgraph treats group as optional on node-add and falls back only for originLane (originLane: n.originLane || n.group), never the reverse. No gate caught it and all three engines reported success."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D2",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D2",
+      "kind": "decision",
+      "title": "Djeli branch contract - C1/N10/B12/B3/B17 closed as ONE contract",
+      "state": "awaiting-disposition",
+      "direction": "local",
+      "description": "Cluster membership confirmed from the graph's own edges rather than the contract's list. Covers the tab primitive, the measured mount gap, the roster per surface, the pages, the cohesive-UI stack, and Q1-Q7 for Gavin. Q1 was subsequently ruled a poisoned frame - Djeli is the decided host and GenOffice is only a document tool under test.",
+      "verification": {
+        "checked": true,
+        "evidence": "File present at griot-live-artifacts/.prism/shared/research/2026-09-15-djeli-branch-contract.md, 14955 bytes, stat'd this run. Heartbeat STEP3_DJELI present. Section 7 enumerates Q1-Q7 verbatim.",
+        "result": "CONFIRMED - contract exists and carries the cluster as one closure with seven open questions."
+      },
+      "group": "this-stage",
+      "correction": {
+        "correctedAt": "2026-09-15 amendPass21",
+        "wasClaimed": "D2 was filed with originLane this-stage and no group.",
+        "isTrue": "group undefined; 1 data hit, 0 rendered chips in djeli-branch-capture-codex.html.",
+        "cause": "Same defect as D1 - group optional on add, renderer lanes on group alone."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D3",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D3",
+      "kind": "decision",
+      "title": "amend-workgraph --advance spec - evidence-gated state transitions",
+      "state": "awaiting-disposition",
+      "direction": "local",
+      "description": "Stage 1 output for N28. Payload shape, refusal conditions R1-R9, refuse-to-write gate G1-G5, provenance format, and how an advance differs from a correction. Implemented but uncommitted; three questions open for Gavin before the canonical flip.",
+      "verification": {
+        "checked": true,
+        "evidence": "Spec at digital-griot-skills/.prism/shared/research/2026-09-15-workgraph-advance-spec.md, 7995 bytes. Engine at griot-workgraph-update/scripts/amend-workgraph.mjs measures 13006 bytes with 32 matches for 'advance'; git status shows it modified and uncommitted at HEAD 02d2411. The live ~/.claude/skills copy is still the pre-change 84-line version.",
+        "result": "CONFIRMED staged, NOT live - spec and implementation exist uncommitted; the live engine home is unchanged."
+      },
+      "group": "this-stage",
+      "correction": {
+        "correctedAt": "2026-09-15 amendPass21",
+        "wasClaimed": "D3 was filed with originLane this-stage and no group.",
+        "isTrue": "group undefined; 1 data hit, 0 rendered chips in djeli-branch-capture-codex.html.",
+        "cause": "Same defect as D1 - group optional on add, renderer lanes on group alone."
       }
     }
   ],
@@ -2465,6 +2562,44 @@
         "codex-device-slot-sweep"
       ],
       "refused": []
+    },
+    "amendPass20_2026_09_15": {
+      "newNodes": [
+        "D1",
+        "D2",
+        "D3"
+      ],
+      "newEdges": 0,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass21_2026_09_15": {
+      "newNodes": [],
+      "newEdges": 0,
+      "corrections": [
+        "D1",
+        "D2",
+        "D3"
+      ],
+      "refused": []
+    },
+    "amendPass22_2026_09_15": {
+      "advanced": [
+        "B2",
+        "B18"
+      ],
+      "stateChanges": [
+        "B2 largely-resolved-one-gap -> corrected-verified",
+        "B18 named-unfiled -> design-decision-locked"
+      ]
+    },
+    "amendPass23_2026_09_15": {
+      "advanced": [
+        "B27"
+      ],
+      "stateChanges": [
+        "B27 named-unfiled -> done"
+      ]
     }
   },
   "foreignLayer": {

@@ -35,6 +35,11 @@ The pipeline, in order (details + exact schemas in the reference):
 1. **Read the codex.** Stage the live `<app>-codex` artifact or read `live/<app>-codex.html`
    from `griot-live-artifacts`; extract thesis, components, spine, build order, OSS/license,
    and every `[OPT:OPEN]` open decision.
+   **Device seam:** extract every device block (form-factor `[OPT:DEVICE]` and/or surfaces
+   `[OPT:DEVICE-SURFACES]`) — its surfaces, the frames per surface, and per surface **real export vs
+   self-declaring placeholder**, judged by what the destination holds. A placeholder surface is a gap,
+   not an open decision: it becomes a task or a `## What We're NOT Doing` line, never a silent pass.
+   UI stories carry `context.surface` + `graphTargets` seeded from the frame's provenance line.
 2. **Gavel ceremony on the OPEN decisions.** A plan legally carries *no* placeholders, but a
    codex legitimately carries open questions - so resolve them first. For each open decision,
    surface it, get Gavin's ruling (`decision` adopt/trial/defer/pass · `role` scaffold/component/pattern
@@ -49,7 +54,7 @@ The pipeline, in order (details + exact schemas in the reference):
    without stories is incomplete.
 5. **Route the executor from the story graph** (do not hard-wire one): disjoint `files[]` + all
    `blockedBy:null` → `prism-dispatch` (parallel, ≤5/wave); any file overlap or dep → `prism-subagent`
-   (serial, isolated+reviewed) for 3-10 stories, `prism-implement` for a single phase, `prism-spectrum`
+   (serial, isolated+reviewed) for 3-10 stories, `prism-implement` for a single phase, `spectrum`
    for 10+. Recommend, then hand off.
 
 ## Reverse: build → codex  → `references/reverse.md`
@@ -66,8 +71,14 @@ evidence, never inference.
   dir is cleaned**.
 - **Normalize** an implement Option-B edit and a subagent clarification into one discovery record,
   then amend the codex's `[OPT:OPEN]` / component / license claim **in place**, add a DGS `ITEMS[]`
-  decision row, and **re-push the codex artifact** (SendUserFile → update_artifact - the step that
-  goes stale if skipped). Amend only with evidence (`Found:` actual · `commitHash` · `file:line`).
+  decision row, and **re-push the codex artifact** (the top-level `Artifact` tool - the step that
+  goes stale if skipped). Both halves are required: the griot-live-artifacts commit AND the
+  Artifact publish. Amend only with evidence (`Found:` actual · `commitHash` · `file:line`).
+- **Device seam:** when the build lands a UI, the discovery record also carries the `surface`,
+  **re-render-the-frame** (from the real landed build, provenance line updated) and
+  **re-push-the-artifact**. Write back additively: re-render an existing frame in place, append new
+  frames, fill a self-declaring placeholder — and a surface that did not exist becomes a **NEW TOGGLE
+  STATE**, never a replaced frame and never a removed form-factor device.
 
 ## Load-bearing seams  → `references/mechanics.md`
 
@@ -76,11 +87,14 @@ spine; `stories.json` (not plan checkboxes) is status truth; `STORY-NNN` ids sta
 re-emits; masters are edited **add-in-place** (DGS single-quote / Potluck double-quote, lane Sets,
 `tg` display-names vs `ITEMS.app` lowercase ids); decision axes set together; device-side git via
 Windows-MCP; counts verified with Node regex, never PowerShell `.Matches.Count`.
+Device injection: match the destination's class prefix (`tsd-*` form-factor · `tsdx-*` template
+surfaces · `pfx-*` Prism), resolve accent via `--accent → --ember → --mint → literal`, and gate every
+codex write on the refuse-to-write triad (count delta exact · size == predicted ±4 b · unique id once).
 
 ## Authoring / plugin fit
 
 This skill is authored via `skill-creator` and its plugin fit is verified with
-`/prism:cl-plugin-structure` (run device-side in the Prism repo). It ships no MCP channel in v1 -
+`/prism:griot-agent-architect` (run device-side in the Prism repo). It ships no MCP channel in v1 -
 the Gavel ceremony is an in-chat decision step; the future `close_decision(id, decision, role,
 stage)` MCP verb is noted for when the decision bus lands. Keep this SKILL.md lean; the three
 reference files carry the exact schemas and are loaded only for the direction being run.
