@@ -25,7 +25,8 @@
     "amendPass15": "2026-09-13 fifteenth AMEND: the benji.org seam. B21 (Liveline - one rAF loop and an 8%-per-frame lerp on every part, so a live surface breathes as one thing instead of several widgets updating independently), B22 (Agentation x Kweli - visual annotation as structured, machine-addressable approval evidence; Gavin's ruling that griot-viz-engine + Kweli is the natural evolution, with the viz engine's lo/mid/hi fidelity ladder matching Agentation's four output detail levels), N20 (benji.org - Benji Taylor, author of cmdk, a source-of-truth kind the muse has no tier for, a fourth instance of the gap drift 45 names).",
     "amendPass16": "2026-09-14 sixteenth AMEND: the design sync RAN. B23 (74/74 Claude Design text paths reunified onto disk at griotwave-library/_master/claude-design, 619KB, zero failures, remote_writes 0 - executed by slicing the pull across four parallel headless agents after a single run managed one file in five minutes). N21 (the premise was backwards: remote 18 components vs griotwave-ui's 92, 81 local-only, and of the sync's three legs only muse->library had ever run). N22 (the 24 preview boards - the griotwave design language as viewable artefacts - existed ONLY in the cloud project, plus the recovered _ds_bundle.js and _ds_manifest.json). N23 (two self-inflicted blocks: a get_file ration I invented and then obeyed, and a bulk-export remedy named inside the error I quoted as a blocker; drift 46). Corrects N16 - the muse's work was not skipped, it landed in griotwave-ui rather than in the capture list, so drift 45 counted the wrong surface.",
     "amendPass17": "The Claude Design pull channel: the app's own API tree found one over from the one DesignSync queries, 614 files across 20 projects landed err0, written down as griot-cc-cd-sync and pushed. Two branches opened by it (prism-codex-plan-sync device UIs, the codex [OPT:DEVICE] sweep) and two findings recorded (a filtered tool result mistaken for the territory; a download prompt that gates the rename, not the data).",
-    "amendPass18": "The skills clone restored to origin (B28 - 79 of 95 'modified' files were never divergent, and origin held the FULLER copies), plus two findings from doing it: N26, a gold entry hand-written into the render instead of appended through the engine, leaving the page one entry ahead of its own ledger (drift 47, fixed through append-gold.mjs); and N27, griot-gold-log has three working engines and no SKILL.md anywhere, so the skill has no door (drift 48, SKILL.md deliberately left for Gavin to author)."
+    "amendPass18": "The skills clone restored to origin (B28 - 79 of 95 'modified' files were never divergent, and origin held the FULLER copies), plus two findings from doing it: N26, a gold entry hand-written into the render instead of appended through the engine, leaving the page one entry ahead of its own ledger (drift 47, fixed through append-gold.mjs); and N27, griot-gold-log has three working engines and no SKILL.md anywhere, so the skill has no door (drift 48, SKILL.md deliberately left for Gavin to author).",
+    "amendPass19": "B27 executed as B29: six codex device slots filled with real exports, and Prism's device rebuilt around its five ACTUAL SURFACES (15 real frames, 5 design turns) on Gavin's call, generalized into the codex template as [OPT:DEVICE-SURFACES] alongside the form-factor device. B27 corrected - the slots were never empty, they held self-declaring placeholders naming the exact run they awaited, and seven codexes already held real exports. Two findings: N28, the amend engine can add and correct but cannot ADVANCE a node's state, so a landed branch has no supported way to close; N29, a CSS class name collided with an HTML search anchor and silently duplicated a whole codex, caught by assertion not by reading."
   },
   "groups": [
     {
@@ -1511,8 +1512,14 @@
       "title": "The codex [OPT:DEVICE] sweep - 16 real design surfaces into the codexes carrying empty slots",
       "description": "griot-app-codex Phase 3 requires 'Reference AND embed the current design' and names the failure mode explicitly: never draw a fake screen, 'are we using the actual Claude Design?' must be yes. The exports needed to answer yes were unreachable until B24. Sixteen .dc.html surfaces now map onto codexes: Prism Surface System -> prism-codex; Synaptiq Host / Audion Standalone / AudionOverlay / Meridian Standalone / Griot Triad / Triad Mobile -> synaptiq, audion, meridian codexes; Kora.dc.html -> kora-codex; Anansi Loom + Anansi Cohesion Sheet -> anansi-codex; R3F Studio Sketchpad Hero (two cuts, one Griotwave-skinned) -> r3fstudio-codex; Tesseract Floating Apps -> tesseract-architecture; PlayStake -> its own node; ParalegalPro Explainer + Prototype -> paralegalproject-codex. Each embed is a real snapshot or live iframe, and each codex re-push carries the repo-copy + CODEXES-row + DGS-card half of the standing loop.",
       "verification": {
-        "evidence": "16 .dc.html files enumerated on disk by name and size via Get-ChildItem -Recurse -Filter *.dc.html over _master/claude-design; the empty-slot requirement is quoted from the griot-app-codex SKILL.md correction-checkpoints. No codex has been edited yet.",
-        "result": "verified-inventory-unapplied"
+        "evidence": "Extracted and viewed the existing data:image JPEGs from r3fstudio-codex and tesseract-architecture: both are real Claude Design exports, not placeholders. Read synaptiq-codex's device section: it carries an explicit '<!-- DEVICE (placeholder - design pending) -->' comment and a caption reading 'Placeholder, not a mock - the real export slots here on lock'. kweli's pulled project contains only index.html and no .dc.html; damus has no Claude Design project.",
+        "result": "verified"
+      },
+      "correction": {
+        "correctedAt": "2026-09-15 amendPass19",
+        "wasClaimed": "verified-inventory-unapplied - sixteen surfaces enumerated on disk, none embedded, and the codexes described as 'carrying empty [OPT:DEVICE] slots'.",
+        "isTrue": "The inventory was right but the framing was wrong twice. (1) The slots were not EMPTY - each carried an explicit, self-declaring placeholder that named the exact run it was waiting for, so filling them executed their own stated contract rather than overwriting content. (2) The scope was smaller than sixteen: seven codexes ALREADY held real exports (r3fstudio's is the actual Sketchpad Hero, tesseract's the actual Floating Apps launcher, both verified by extracting and viewing the embedded JPEG), and kweli + damus have no recovered surface at all. The real work was six codexes, and Prism's became a fifteen-frame surface-toggle device rather than a single embed.",
+        "cause": "Counted what was recovered instead of checking what each destination already held. The same shape as N16 - measured the intake list rather than the destination - and the fix was the same: open the destination and look before declaring it empty."
       }
     },
     {
@@ -1597,6 +1604,57 @@
       "description": "The gold codex page states the skill 'is callable device-side', and griot-workgraph-update's own SKILL.md counts it as one of the three skills of the anti-drift trio. Neither is true as written. append-gold.mjs, render-gold-codex.mjs and gold-codex.css all exist and all work — proven twice this session — but there is no griot-gold-log/SKILL.md in the skills dir, in the digital-griot-skills mirror, or anywhere in git history. The engines are invokable by path; the skill has no door, so nothing loads it and no agent can reach it by name. All three were also UNTRACKED, which is how the B28 fast-forward briefly removed the entire directory before it was restored from the backup taken beforehand. The SKILL.md is deliberately NOT written here: authoring the interface of Gavin's own tool unasked would be inventing it. Logged as drift 48. Same shape as the drift the trio exists to catch — the engine landed, the door did not, and two pages went on describing the door.",
       "verification": {
         "evidence": "SKILL.md search by name across ~/.claude/skills, GriotMeta/digital-griot-skills and ~/.claude/plugins returned zero hits for gold; git log --all --diff-filter=A -- griot-gold-log/SKILL.md returned zero commits; git ls-tree ORIG_HEAD showed no griot-gold-log path. The three scripts were present only as untracked files and are now committed.",
+        "result": "verified"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:codex-device-slots-filled",
+      "originLane": "tracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B29",
+      "kind": "branch",
+      "group": "tracked",
+      "state": "built-and-live",
+      "direction": "local",
+      "title": "Six codex device slots filled with the real exports - and Prism's device rebuilt around its surfaces",
+      "description": "B27 executed. Every one of the six carried an HONEST, SELF-DECLARING placeholder, not a mock - Synaptiq's read 'this frame embeds the real UX/UI once the Claude Design trio run lands - the codex re-pushes on that edit', captioned 'Placeholder, not a mock - the real export slots here on lock'. That trio run landed via griot-cc-cd-sync, so filling these executes the contract the placeholder wrote for itself rather than overwriting anything. Filled: prism (Prism Surface System), synaptiq (Synaptiq Host), audion (Audion Standalone), anansi (Anansi Loom), kora (Kora), paralegalproject (ParalegalPro Prototype). PRISM GOT A NEW DEVICE SHAPE on Gavin's call: its toggles are Prism's ACTUAL SURFACES (VS Code, Electron desktop, CLI/TUI, mobile, foundation), not desktop/tablet/phone, because those are different designs rather than one design at three widths. Fifteen real frames across five design turns, each rendered headlessly at its own natural width from its own artboard declaration; the rig reshapes per surface (mobile gets phone geometry, cli gets terminal width). Generalized into the codex template as [OPT:DEVICE-SURFACES], added ALONGSIDE the form-factor device and never replacing it, with an accent fallback chain --accent then --ember then --mint then literal, because codexes name their accent token differently. NOT TOUCHED, on purpose: the seven codexes already carrying a real export, and kweli + damus, which keep their honest placeholders because kweli's Claude Design project has no design surface (index.html only) and damus has no project at all.",
+      "verification": {
+        "evidence": "Structural check on all six post-fill: placeholder count 0, data:image/jpeg present, lead/h2/script counts unchanged. Prism verified visually twice by headless render of an isolated harness carrying the codex's own styles - surface row, frame chips, rig and provenance all render. Six cards republished (prism v6, synaptiq v4, audion v3, anansi v2, kora v2, paralegalproject v2); repo pushed ref-equal at d58f198; template + SKILL.md pushed at skills 5c8315a.",
+        "result": "verified"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:amend-engine-cannot-advance-a-node-state",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N28",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "griot-workgraph-update can add and correct nodes but cannot advance a node's state",
+      "description": "amend-workgraph.mjs is idempotent on node id: a node that already exists is skipped entirely. Its correction path writes description, title and verification, and stamps a correction block carrying wasClaimed/isTrue/cause - but it never touches 'state'. So there is no supported way to move a node from named-unfiled to done when the work simply LANDS and nothing was ever wrong. That is a different event from a correction and the engine has no verb for it. Consequence seen here: B27 (the codex device sweep) is complete and verified, but its node still reads named-unfiled, and the only ways to fix it are to hand-edit the JSON - the exact anti-pattern logged as drift 47 an hour earlier - or to file a superseding node, which is what was done (B29). SUGGESTED SHAPE, not implemented: a --advance payload array taking {target, state, evidence}, refusing any advance that carries no evidence, and stamping an 'advanced' block the way corrections stamp a 'correction' block - so a state change is as auditable as a correction. Deliberately NOT built here: extending Gavin's engine unasked is inventing his tool's interface, the same call made on the griot-gold-log SKILL.md.",
+      "verification": {
+        "evidence": "Read amend-workgraph.mjs directly: the node loop does 'if (w.nodes.some(x => x.id === id)) continue;' before any state handling, and the corrections loop assigns only description, title, verification and node.correction. No assignment to node.state appears anywhere in the file.",
+        "result": "verified"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:a-css-token-collided-with-an-html-search-and-duplicated-a-codex",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N29",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "resolved-verified",
+      "direction": "local",
+      "title": "A CSS class name collided with an HTML search anchor and silently duplicated a whole codex",
+      "description": "While building Prism's surface device I injected a CSS block containing '.pfx-surf{' into the codex's <style>, then located the HTML insertion point with indexOf('pfx-surf'). That matched inside the STYLESHEET IN <head>, which sits before any <p class=\"lead\">, so the following lastIndexOf returned -1 - and h.slice(0, -1) is the ENTIRE DOCUMENT rather than nothing. The result appended the document's tail a second time: prism-codex went to 2.67 MB with its lead paragraphs duplicated 1-9 as 11-19, lead 0 absent from the second copy because the duplication began at the first </p>. Caught by counting lead paragraphs, not by reading the file. GENERAL FORM, and the reason this is worth recording: when a script both INJECTS a token and SEARCHES for it, the search can match its own injection. Anchor on something that exists in only one of the two layers - id=\"pfxSurf\" here - and never on a bare class fragment.",
+      "verification": {
+        "evidence": "Reverted with git checkout to 279,524 bytes / 10 leads, then rebuilt with three assertions that refuse to write: lead count must be unchanged, output size must equal orig - removed + added within 4 bytes, and id=\"pfxSurf\" must occur exactly once. Rebuild reported leads 10 (was 10) and file 1,430,086 bytes against an expected 1,430,086 - exact.",
         "result": "verified"
       }
     }
@@ -2075,15 +2133,45 @@
       "to": "wg:djeli-branch:gold-entry-hand-written-into-the-render",
       "kind": "awaits",
       "label": "a skill with no door invites hand-simulation"
+    },
+    {
+      "from": "wg:djeli-branch:codex-device-slots-filled",
+      "to": "wg:djeli-branch:codex-device-slot-sweep",
+      "kind": "awaits",
+      "label": "B29 is B27 executed, filed separately because the engine cannot advance a state"
+    },
+    {
+      "from": "wg:djeli-branch:codex-device-slots-filled",
+      "to": "wg:djeli-branch:claude-design-pull-channel",
+      "kind": "awaits",
+      "label": "the surfaces it embeds came through the channel"
+    },
+    {
+      "from": "wg:djeli-branch:codex-device-slots-filled",
+      "to": "wg:djeli-branch:amend-engine-cannot-advance-a-node-state",
+      "kind": "outbound",
+      "label": "closing B27 is what exposed the missing verb"
+    },
+    {
+      "from": "wg:djeli-branch:codex-device-slots-filled",
+      "to": "wg:djeli-branch:a-css-token-collided-with-an-html-search-and-duplicated-a-codex",
+      "kind": "outbound",
+      "label": "surfaced while building Prism's device"
+    },
+    {
+      "from": "wg:djeli-branch:prism-codex-plan-sync-device-uis",
+      "to": "wg:djeli-branch:codex-device-slots-filled",
+      "kind": "awaits",
+      "label": "B26 reads the slots B29 filled"
     }
   ],
   "stats": {
-    "totalBranches": 33,
+    "totalBranches": 34,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 79,
+    "edgeCount": 84,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -2364,6 +2452,18 @@
       ],
       "newEdges": 3,
       "corrections": [],
+      "refused": []
+    },
+    "amendPass19_2026_09_15": {
+      "newNodes": [
+        "B29",
+        "N28",
+        "N29"
+      ],
+      "newEdges": 5,
+      "corrections": [
+        "codex-device-slot-sweep"
+      ],
       "refused": []
     }
   },
