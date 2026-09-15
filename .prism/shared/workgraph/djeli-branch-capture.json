@@ -24,7 +24,8 @@
     "amendPass14": "2026-09-13 fourteenth AMEND: verification backfill. Every one of the 56 nodes now carries a verification block with evidence and result - 25 checked true against files, commits, ledger entries or live tool calls, 5 checked false where the check genuinely could not be made. Two state changes on evidence: N4 resolved (the UserPromptSubmit hook path is correctly escaped in settings.json line 68) and S3 done (the canonical capture is tracked in git). One MISMATCH recorded on B10 rather than edited away.",
     "amendPass15": "2026-09-13 fifteenth AMEND: the benji.org seam. B21 (Liveline - one rAF loop and an 8%-per-frame lerp on every part, so a live surface breathes as one thing instead of several widgets updating independently), B22 (Agentation x Kweli - visual annotation as structured, machine-addressable approval evidence; Gavin's ruling that griot-viz-engine + Kweli is the natural evolution, with the viz engine's lo/mid/hi fidelity ladder matching Agentation's four output detail levels), N20 (benji.org - Benji Taylor, author of cmdk, a source-of-truth kind the muse has no tier for, a fourth instance of the gap drift 45 names).",
     "amendPass16": "2026-09-14 sixteenth AMEND: the design sync RAN. B23 (74/74 Claude Design text paths reunified onto disk at griotwave-library/_master/claude-design, 619KB, zero failures, remote_writes 0 - executed by slicing the pull across four parallel headless agents after a single run managed one file in five minutes). N21 (the premise was backwards: remote 18 components vs griotwave-ui's 92, 81 local-only, and of the sync's three legs only muse->library had ever run). N22 (the 24 preview boards - the griotwave design language as viewable artefacts - existed ONLY in the cloud project, plus the recovered _ds_bundle.js and _ds_manifest.json). N23 (two self-inflicted blocks: a get_file ration I invented and then obeyed, and a bulk-export remedy named inside the error I quoted as a blocker; drift 46). Corrects N16 - the muse's work was not skipped, it landed in griotwave-ui rather than in the capture list, so drift 45 counted the wrong surface.",
-    "amendPass17": "The Claude Design pull channel: the app's own API tree found one over from the one DesignSync queries, 614 files across 20 projects landed err0, written down as griot-cc-cd-sync and pushed. Two branches opened by it (prism-codex-plan-sync device UIs, the codex [OPT:DEVICE] sweep) and two findings recorded (a filtered tool result mistaken for the territory; a download prompt that gates the rename, not the data)."
+    "amendPass17": "The Claude Design pull channel: the app's own API tree found one over from the one DesignSync queries, 614 files across 20 projects landed err0, written down as griot-cc-cd-sync and pushed. Two branches opened by it (prism-codex-plan-sync device UIs, the codex [OPT:DEVICE] sweep) and two findings recorded (a filtered tool result mistaken for the territory; a download prompt that gates the rename, not the data).",
+    "amendPass18": "The skills clone restored to origin (B28 - 79 of 95 'modified' files were never divergent, and origin held the FULLER copies), plus two findings from doing it: N26, a gold entry hand-written into the render instead of appended through the engine, leaving the page one entry ahead of its own ledger (drift 47, fixed through append-gold.mjs); and N27, griot-gold-log has three working engines and no SKILL.md anywhere, so the skill has no door (drift 48, SKILL.md deliberately left for Gavin to author)."
   },
   "groups": [
     {
@@ -1547,6 +1548,57 @@
         "evidence": "e24bde47-efdb-4be7-8f50-a820e1a504d8.tmp at 2,803,371 bytes parsed as complete JSON via node - name 'Synaptiq Design Pass Review', count 29, file bodies intact (Griot Triad.dc.html 6151 b, Meridian Standalone.dc.html 27119 b) - while the Keep/Save prompt was still unanswered. All 19 subsequent shards then landed with no prompt at all.",
         "result": "verified"
       }
+    },
+    {
+      "id": "wg:djeli-branch:skills-clone-restored-to-origin",
+      "originLane": "tracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B28",
+      "kind": "branch",
+      "group": "tracked",
+      "state": "done",
+      "direction": "local",
+      "title": "The ~/.claude/skills clone restored to origin — 95 'modified' files were never divergent",
+      "description": "The clone read as badly diverged: 28 behind origin, 95 modified files, and a rebase that aborted because untracked files collided with incoming commits. The measurement that changed the picture: diff-vs-HEAD was 95 but diff-vs-ORIGIN was 16. Seventy-nine of the ninety-five already matched origin — they had been committed upstream from the GriotMeta mirror, so the working tree was never divergent there at all; only the clone's HEAD was stale. Of the true 16, five were the new griot-cc-cd-sync files (already pushed via the mirror, so redundant locally) and the rest were LOCAL COPIES SHORTER THAN ORIGIN'S — skill_guard.py by 517 lines, the drift-log and workgraph-update engines by 40-116 each — i.e. origin held the fuller versions and the fast-forward was a gain, not a loss. Only spectrum/SKILL.md was genuinely local-only (upstream carries prism-spectrum/). Backed up all 16 differing plus untracked files to GriotMeta/_skills-clone-backup-20260915-071552, took a git stash -u on top of that, then reset --hard to origin/main. Doubly reversible on purpose.",
+      "verification": {
+        "evidence": "Before: ahead/behind 1/31, dirty 95, untracked 15. After: HEAD and origin/main both 02d2411, dirty 1 (the ideation_team_skill gitlink), 102 skill dirs present, stash list 1. griot-cc-cd-sync 5 files/15,229 b and griot-workgraph-update 5 files/22,202 b both verified present and intact post-reset. Backup folder holds 16 files.",
+        "result": "verified"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:gold-entry-hand-written-into-the-render",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N26",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "resolved-verified",
+      "direction": "local",
+      "title": "I hand-wrote a gold entry into the render instead of appending through the engine",
+      "description": "griot-gold-log is data-driven by design: live/_gold/gold-entries.json is the ledger, gold-codex.html is only its render. I appended gold entry 3 by editing the rendered HTML with a node script and never touched the ledger, leaving the page at three entries and its own source of truth at two. The next run of render-gold-codex.mjs would have silently deleted the entry. This is precisely the standing anti-pattern — never hand-simulate a skill's output — and it is the same class of error as the Grep-over-your-tools reach: the engines were on disk, working, while I re-implemented the shape of their output by hand. Logged as drift 47. It also generalises past this one file: a render is never the place to add a fact when a ledger exists behind it.",
+      "verification": {
+        "evidence": "Ledger read 2 entries while the page rendered 3. Refixed by passing a ledger object to append-gold.mjs --entry through an execFileSync runner (a 4 KB argv trips the PowerShell command-length ceiling): engine printed APPENDED, then 'rendered 3 entries', then DONE_APPEND_GOLD. Post-fix: ledger 3, page mods 3, titles viz-companion-fusion | init before invoke | claude-design-pull-channel, no duplicates, 24,772 bytes.",
+        "result": "verified"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:griot-gold-log-has-engines-but-no-skill-md",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N27",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "griot-gold-log has three working engines and no SKILL.md anywhere",
+      "description": "The gold codex page states the skill 'is callable device-side', and griot-workgraph-update's own SKILL.md counts it as one of the three skills of the anti-drift trio. Neither is true as written. append-gold.mjs, render-gold-codex.mjs and gold-codex.css all exist and all work — proven twice this session — but there is no griot-gold-log/SKILL.md in the skills dir, in the digital-griot-skills mirror, or anywhere in git history. The engines are invokable by path; the skill has no door, so nothing loads it and no agent can reach it by name. All three were also UNTRACKED, which is how the B28 fast-forward briefly removed the entire directory before it was restored from the backup taken beforehand. The SKILL.md is deliberately NOT written here: authoring the interface of Gavin's own tool unasked would be inventing it. Logged as drift 48. Same shape as the drift the trio exists to catch — the engine landed, the door did not, and two pages went on describing the door.",
+      "verification": {
+        "evidence": "SKILL.md search by name across ~/.claude/skills, GriotMeta/digital-griot-skills and ~/.claude/plugins returned zero hits for gold; git log --all --diff-filter=A -- griot-gold-log/SKILL.md returned zero commits; git ls-tree ORIG_HEAD showed no griot-gold-log path. The three scripts were present only as untracked files and are now committed.",
+        "result": "verified"
+      }
     }
   ],
   "edges": [
@@ -2005,15 +2057,33 @@
       "to": "wg:djeli-branch:pending-download-tmp-is-already-written",
       "kind": "outbound",
       "label": "the .tmp harvest is what made it unattended"
+    },
+    {
+      "from": "wg:djeli-branch:claude-design-pull-channel",
+      "to": "wg:djeli-branch:gold-entry-hand-written-into-the-render",
+      "kind": "outbound",
+      "label": "its gold entry is where the hand-edit happened"
+    },
+    {
+      "from": "wg:djeli-branch:skills-clone-restored-to-origin",
+      "to": "wg:djeli-branch:griot-gold-log-has-engines-but-no-skill-md",
+      "kind": "outbound",
+      "label": "the fast-forward exposed the untracked engines"
+    },
+    {
+      "from": "wg:djeli-branch:griot-gold-log-has-engines-but-no-skill-md",
+      "to": "wg:djeli-branch:gold-entry-hand-written-into-the-render",
+      "kind": "awaits",
+      "label": "a skill with no door invites hand-simulation"
     }
   ],
   "stats": {
-    "totalBranches": 32,
+    "totalBranches": 33,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 76,
+    "edgeCount": 79,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -2283,6 +2353,16 @@
         "N25"
       ],
       "newEdges": 6,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass18_2026_09_15": {
+      "newNodes": [
+        "B28",
+        "N26",
+        "N27"
+      ],
+      "newEdges": 3,
       "corrections": [],
       "refused": []
     }
