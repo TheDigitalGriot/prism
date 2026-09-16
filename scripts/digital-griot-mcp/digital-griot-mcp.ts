@@ -71,8 +71,8 @@ const server = new Server(
       "human-readable summary. When you receive a wake event, read the events file for that " +
       "session and resume: a brainstorm event → resume the brainstorm session; a gavel event " +
       "(skill=gavel) → run the requested gavel `verb`. This server also exposes the gavel_* " +
-      "MCP tools for driving the Gavel cockpit directly, and `prism_viz_engine` — the " +
-      "renderer. When a diagram is asked for, CALL prism_viz_engine rather than writing ASCII, " +
+      "MCP tools for driving the Gavel cockpit directly, and `griot_viz_engine` — the " +
+      "renderer. When a diagram is asked for, CALL griot_viz_engine rather than writing ASCII, " +
       "a mermaid fence, a markdown table of boxes, or a prose description of a picture. Those " +
       "are not diagrams. The engine draws into the brainstorm surface on this same channel.",
   },
@@ -300,9 +300,14 @@ const GAVEL_TOOLS = [
     },
   },
   {
-    name: "prism_viz_engine",
+    // A4 Decision 2 — THE MCP ALIAS IS LOAD-BEARING, NOT COSMETIC. `griot_viz_engine` is the
+    // canonical binding from 2026-09-16; `prism_viz_engine` is registered immediately below and
+    // dispatches to the same handler, because a live session holds its handle to the engine by
+    // that name and would lose it mid-run. Adding the new name is in scope; removing the old one
+    // is NOT.
+    name: "griot_viz_engine",
     description:
-      "prism-viz-engine — render a diagram as a real screen instead of describing one. " +
+      "griot-viz-engine — render a diagram as a real screen instead of describing one. " +
       "`render` emits a self-contained canvas into the live brainstorm session's content dir, " +
       "where the companion serves it immediately (same :52342 channel this server runs on), and " +
       "returns the URL. `layers` returns the eleven Griot Stack layer roles — the output taxonomy " +
@@ -1237,13 +1242,39 @@ function handlePrismVizEngine(args: Record<string, unknown>) {
 }
 
 // tools/list — advertise the gavel tools plus the assertion facade.
-server.setRequestHandler(ListToolsRequestSchema, async () => ({
-  tools: GAVEL_TOOLS.map((t) => ({
-    name: t.name,
-    description: t.description,
+/**
+ * A4 Decision 1/2 - the deprecation alias, DERIVED rather than re-typed.
+ *
+ * `prism_viz_engine` was the binding a live session held when the rename landed. Dropping it would
+ * take the handle to the engine away mid-run, so it stays registered and dispatches to the same
+ * handler. It is spread from the canonical entry so the two can never disagree about the schema -
+ * a hand-copied second registration is precisely the kind of duplicate that goes stale unnoticed.
+ *
+ * An alias RESOLVES; it is not what we say. Write `griot_viz_engine`.
+ */
+const VIZ_ALIASES: ReadonlyArray<{ canonical: string; alias: string }> = [
+  { canonical: "griot_viz_engine", alias: "prism_viz_engine" },
+]
+
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  // GAVEL_TOOLS is `as const`, so `t.name` narrows to a literal union and an alias push would not
+  // type. Widen to string here - the alias name is data, not one of the declared literals.
+  const tools: { name: string; description: string; inputSchema: unknown }[] = GAVEL_TOOLS.map((t) => ({
+    name: t.name as string,
+    description: t.description as string,
     inputSchema: t.inputSchema,
-  })),
-}))
+  }))
+  for (const { canonical, alias } of VIZ_ALIASES) {
+    const src = tools.find((t) => t.name === canonical)
+    if (!src) continue
+    tools.push({
+      ...src,
+      name: alias,
+      description: `DEPRECATED ALIAS of \`${canonical}\` - resolves to the same handler. ${src.description}`,
+    })
+  }
+  return { tools }
+})
 
 // tools/call — S4 handler bodies (capability split documented above).
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
@@ -1265,6 +1296,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return handleGavelDecide(args)
       case "griot_assert":
         return handleGriotAssert(args)
+      // Canonical first, alias second - both land on the one handler (A4 Decision 2).
+      case "griot_viz_engine":
       case "prism_viz_engine":
         return handlePrismVizEngine(args)
       default:

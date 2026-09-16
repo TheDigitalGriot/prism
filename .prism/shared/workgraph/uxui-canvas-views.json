@@ -1,0 +1,72 @@
+{
+  "_contract": "archify guidedViews - vendor/archify/schemas/common.schema.json#/$defs/guidedViews. At most FIVE chapters, each { id, label (1..48), focus[] of EXISTING node ids, note? (<=140) }. viewer-runtime.md:19 - the Named Chapter Rail, the Chapter Delta Preview and the stop list ALL derive from this one array; none owns parallel topology or layout.",
+  "_rule": "A4 Decision 5 - CHAPTERS ARE READING PATHS, NOT CATEGORIES. A chapter is a journey ACROSS layers, never a restatement of one. Eleven layers were never going to be eleven chapters. Every chapter below crosses at least two layer roles; the `crosses` field records which, so the rule is checkable rather than asserted.",
+  "_source": "Stops are stable ids from uxui-canvas-nodes.json (27 nodes, harvested by griot-harvest-ux-ui 2026-09-11). Nothing here is invented; a focus id that is not a real node fails closed in core/chapters.ts.",
+  "views": [
+    {
+      "id": "first-run",
+      "label": "First run: open it, make a thing",
+      "focus": [
+        "genoffice-shell-appframe",
+        "genoffice-shell-onboarding",
+        "genoffice-shell-home",
+        "genoffice-shell-new-doc-flow",
+        "genoffice-docs-appshell"
+      ],
+      "note": "The cold-start walk: chrome, the nudge, the launcher, the quick-card, the editor that opens.",
+      "crosses": ["Djeli · container", "Creation · build/content/3D"]
+    },
+    {
+      "id": "where-the-agent-enters",
+      "label": "Where the agent enters",
+      "focus": [
+        "genoffice-docs-aipanel",
+        "genoffice-docs-editqueuecard",
+        "genoffice-docs-comparepanel",
+        "orca-app-rightsidebar",
+        "orca-app-newworkspacemodal"
+      ],
+      "note": "Every surface an agent speaks through, in the order a user meets them - compose, queue, diff, session, launch.",
+      "crosses": ["Intelligence · Super Agent", "Creation · build/content/3D"]
+    },
+    {
+      "id": "the-human-says-yes",
+      "label": "The human says yes",
+      "focus": [
+        "genoffice-docs-editqueuecard",
+        "orca-app-confirmationdialogprovider",
+        "djeli-app-confirmationdialogprovider",
+        "genoffice-shell-settingsmodal",
+        "genoffice-shell-update-channel"
+      ],
+      "note": "The consent path: a proposal, the HITL gate in two apps, where the provider is chosen, how it ships.",
+      "crosses": ["Intelligence · Super Agent", "Governance · Governor", "Deployment"]
+    },
+    {
+      "id": "collaboration-arrives",
+      "label": "Collaboration arrives",
+      "focus": [
+        "buzz-app-appshell",
+        "buzz-channels-channelscreen",
+        "buzz-agents-addagenttochanneldialog",
+        "buzz-huddle-addagentdialog",
+        "buzz-moderation-reportmessagedialog"
+      ],
+      "note": "A second person, then a second agent: root shell, the channel, invite to thread, invite to voice, then moderation.",
+      "crosses": ["Collaboration · GenTeam", "Governance · Governor"]
+    },
+    {
+      "id": "shell-vs-what-mounts",
+      "label": "What the shell owns vs what mounts in",
+      "focus": [
+        "genoffice-shell-appframe",
+        "genoffice-shell-tabbar",
+        "djeli-app-sidebar",
+        "genoffice-pdf-ocrtextlayer",
+        "buzz-meshcompute-settingscard"
+      ],
+      "note": "A4's own worked example - the container, its navigation, and three things that mount into it from elsewhere.",
+      "crosses": ["Djeli · container", "Capture", "Governance · Governor"]
+    }
+  ]
+}

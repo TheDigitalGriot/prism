@@ -38,6 +38,13 @@ import { join, resolve, basename } from "node:path"
 // have (a known, separately-tracked duplication — left alone here per the non-breaking decision).
 import { LAYER_ROLES as ENGINE_LAYER_ROLES, ROLE_EMBER as ENGINE_ROLE_EMBER } from "../src/core/layer-roles.ts"
 import { tileToScreen, isoBox, pixelToTile } from "../src/layers/02-render/isometric.ts"
+// RENDERER-TRUTH (2026-09-16). The same type-stripping route, now reaching three more modules.
+// fidelity.ts is why lo/mid/hi can change WHAT is drawn instead of only how it is tinted;
+// chrome.ts is why --renderer shell finally reaches layer 04 instead of re-drawing lanes;
+// chapters.ts is A4's guided-view contract, read from the vendored archify schema.
+import { policyFor, isFidelity, isShape, FIDELITY_RAMP, FIDELITY_LEVELS, SHAPES } from "../src/core/fidelity.ts"
+import { renderShellChrome, shellChromeCss, CHROME_WIDTH } from "../src/layers/04-shell/chrome.ts"
+import { validateViews, transitionsFor, chapterDelta, revealTarget } from "../src/core/chapters.ts"
 
 const argv = process.argv.slice(2)
 const flag = (n) => argv.includes(n)
@@ -51,6 +58,9 @@ const opt = (n) => { const i = argv.indexOf(n); return i >= 0 && i + 1 < argv.le
 const COMPANION = flag("--companion")
 const RENDERER = opt("--renderer") ?? "shell" // shell | isometric | nodegraph
 const FIDELITY = opt("--fidelity") ?? "mid" // lo | mid | hi
+/** A4 Decision 1 — the canonical name. `prism-viz-engine` resolves as an alias; it is never
+ *  what we say. Passed into the chrome rather than hard-typed there, so there is one source. */
+const BRAND = "griot-viz-engine"
 
 const PRISM_ROOT = resolve(process.env.PRISM_ROOT ?? join(import.meta.dirname, "..", "..", ".."))
 /** server.cjs:76 — the companion watches <BRAINSTORM_DIR>/content. */
@@ -97,6 +107,14 @@ if (flag("--self")) {
       griot: { ...n.data, layer: n.layer, ui: { origin: { ...n.data.origin, repo: n.data.provenance?.repo } } },
     })),
     edges: nodes.filter((n) => n.data?.parentId).map((n) => ({ id: `${n.data.parentId}->${n.id}`, fromNode: n.data.parentId, toNode: n.id })),
+  }
+  // A4 Step 3 — the ONE authored array. viewer-runtime.md:19: the rail, the delta preview and the
+  // stop list all derive from meta.views and none owns a parallel topology. Absent file = no rail,
+  // never an invented one.
+  const vp = join(PRISM_ROOT, ".prism", "shared", "workgraph", "uxui-canvas-views.json")
+  if (existsSync(vp)) {
+    const raw = JSON.parse(readFileSync(vp, "utf-8"))
+    canvas.meta = { views: (raw.views ?? []).map(({ id, label, focus, note }) => ({ id, label, focus, note })) }
   }
   title ??= "Harvested components"
 } else if (inPath) {
@@ -256,7 +274,7 @@ function writeWorkgraphSeed(seedNodes, seedEdges, genesisLabel) {
     const earliestSeedAt = seedNodes.reduce((min, n) => Math.min(min, n.at ?? Infinity), Infinity)
     state.nodes.push({
       id: "genesis", q: "genesis", label: "Session opened",
-      summary: genesisLabel ?? "prism-viz-engine companion target — no inbound context recorded",
+      summary: genesisLabel ?? `${BRAND} companion target — no inbound context recorded`,
       state: "open", layer: null,
       at: Number.isFinite(earliestSeedAt) ? earliestSeedAt - 1 : Date.now(),
     })
@@ -298,6 +316,71 @@ const FIDELITY_STYLE = `
 .viz-frag svg.viz-edges path{fill:none;stroke:var(--footstep);stroke-width:1.3;opacity:.5}
 .viz-frag .viz-iso text{font-family:var(--font-code);font-size:9px;fill:var(--voice)}
 `.trim()
+
+/**
+ * RAIL_STYLE — the chapter rail's own rules, kept as a SEPARATE string appended after
+ * FIDELITY_STYLE rather than edited into it, so every pre-existing rule stays byte-identical and
+ * the nodegraph/isometric drawings are dressed exactly as they were before this stage.
+ */
+const RAIL_STYLE = `
+.viz-frag .viz-rail{margin:0 0 14px;border:1px var(--fid-border,solid) var(--rim-08);border-radius:var(--fid-radius,14px);
+  background:var(--haze-04);padding:10px 12px}
+.viz-frag .viz-rail-hd{font-family:var(--font-code);font-size:10px;text-transform:uppercase;letter-spacing:.09em;
+  color:var(--whisper);margin-bottom:9px}
+.viz-frag .viz-chapter{padding:7px 0;border-top:1px solid var(--rim-08)}
+.viz-frag .viz-chapter:first-of-type{border-top:0}
+.viz-frag .viz-chapter-hd{display:flex;align-items:baseline;gap:8px}
+.viz-frag .viz-chapter-n{font-family:var(--font-code);font-size:9px;color:var(--voltage);border:1px solid var(--rim-15);
+  border-radius:9px;padding:0 6px}
+.viz-frag .viz-chapter-lb{font-size:12.5px;font-weight:600;color:var(--voice)}
+.viz-frag .viz-delta{margin-left:auto;font-family:var(--font-code);font-size:9.5px;color:var(--whisper)}
+.viz-frag .viz-chapter-note{font-size:11px;color:var(--whisper);margin:3px 0 5px;line-height:1.45}
+.viz-frag .viz-stops{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.viz-frag .viz-stop{font-size:10.5px;color:var(--voice);border:1px solid var(--rim-08);border-radius:7px;
+  padding:1px 7px;cursor:pointer}
+.viz-frag .viz-stop:hover{border-color:var(--voltage)}
+.viz-frag .viz-tr{font-family:var(--font-code);font-size:10px;color:var(--footstep)}
+.viz-frag .viz-tr-forward{color:var(--neural)}
+.viz-frag .viz-tr-reverse{color:var(--solar)}
+.viz-frag .viz-tr-multiple{color:var(--voltage)}
+.viz-frag [data-origin]{cursor:pointer}
+.viz-frag [data-origin-missing]{cursor:default}
+`.trim()
+
+/**
+ * A4 Step 4 — CLICK-TO-SOURCE, existing data only.
+ *
+ * Every node, palette card and chapter stop carries the AUTHORED `data-origin` (file:line) or the
+ * `data-origin-missing` marker. This handler opens the real file through the sidecar that already
+ * exists for exactly this — server/reveal-server.mjs, `POST /api/reveal {repo, file, line}` on
+ * VIZ_SIDECAR_PORT (default 5178). It derives nothing: a node without an authored origin says so
+ * and stops, rather than guessing a path that would look plausible and be wrong.
+ *
+ * It listens in the capture phase and never calls preventDefault, so the companion frame's own
+ * `[data-choice]` delegation (helper.js) still receives the click unchanged.
+ */
+const REVEAL_SCRIPT = `<script>
+(function () {
+  var SIDECAR = "http://127.0.0.1:5178/api/reveal";
+  document.currentScript.parentNode.addEventListener("click", function (ev) {
+    var el = ev.target.closest("[data-origin], [data-origin-missing]");
+    if (!el) return;
+    if (el.hasAttribute("data-origin-missing")) {
+      console.warn("griot-viz-engine: no authored origin on this node - failing closed rather than guessing a path.");
+      return;
+    }
+    var t = el.getAttribute("data-origin") || "";
+    var m = /^(.*?):(\d+)$/.exec(t);
+    fetch(SIDECAR, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ file: m ? m[1] : t, line: m ? Number(m[2]) : undefined })
+    }).catch(function () {
+      console.warn("griot-viz-engine: reveal sidecar not running (npm run dev:reveal). Target was " + t);
+    });
+  }, true);
+})();
+</script>`
 
 /** Ember for a node's layer role, falling back to the neural default rather than inventing a color. */
 function emberFor(layer) {
@@ -370,81 +453,200 @@ function layoutNodegraph() {
   return { placed: placed2, width, height, lanes, repos }
 }
 
-function emitCompanionFragment() {
-  if (!["lo", "mid", "hi"].includes(FIDELITY)) {
-    console.error(`emit-screen --companion: --fidelity must be lo|mid|hi, got "${FIDELITY}"`)
+/**
+ * A4 Step 3/4 — the Named Chapter Rail, the Chapter Delta Preview, and the stop list, all derived
+ * from the ONE authored `meta.views` array (viewer-runtime.md:19: "none owns parallel topology or
+ * layout"). Nothing here computes a second graph.
+ *
+ * Transitions between adjacent stops are classified from the AUTHORED edge set only — forward,
+ * reverse, multiple, or grouped/no-direct-link (A4 Decision 6, verbatim from the same reference).
+ * `grouped` is the honest answer for two stops with no authored edge; it is never quietly upgraded
+ * into an inferred one.
+ *
+ * Returns "" when no chapters are authored. An absent rail is correct; an invented one is not.
+ */
+function chapterRailHtml(views) {
+  if (!views || !views.length) return ""
+  const problems = validateViews(views, nodes.map((n) => n.id))
+  if (problems.length) {
+    // Fail closed and loudly (A4 Decision 7). A chapter pointing at a node that is not on this
+    // canvas is a broken reading path, not a stop to silently drop.
+    console.error(`emit-screen: meta.views failed the archify guidedViews contract:`)
+    for (const pr of problems) console.error(`  x [${pr.view}] ${pr.problem}`)
     process.exit(1)
   }
-  if (!["shell", "isometric", "nodegraph"].includes(RENDERER)) {
-    console.error(`emit-screen --companion: --renderer must be shell|isometric|nodegraph, got "${RENDERER}"`)
+  const label = new Map(nodes.map((n) => [n.id, n.label ?? n.id]))
+  const chapters = views.map((v, i) => {
+    const t = transitionsFor(v, edges)
+    const d = chapterDelta(i === 0 ? null : views[i - 1], v)
+    const stops = v.focus.map((id, k) => {
+      const kind = k === 0 ? null : t[k - 1].kind
+      return `${kind ? `<span class="viz-tr viz-tr-${kind}" title="authored relationship: ${kind}">${kind === "forward" ? "→" : kind === "reverse" ? "←" : kind === "multiple" ? "⇄" : "·"}</span>` : ""}` +
+        `<span class="viz-stop" data-choice="${esc(id)}">${esc(label.get(id) ?? id)}</span>`
+    }).join("")
+    return `<div class="viz-chapter" data-chapter="${esc(v.id)}" data-focus="${esc(v.focus.join(","))}">` +
+      `<div class="viz-chapter-hd"><span class="viz-chapter-n">${i + 1}</span>` +
+      `<span class="viz-chapter-lb">${esc(v.label)}</span>` +
+      `<span class="viz-delta" title="Chapter Delta Preview — derived from the same authored focus lists">` +
+      `+${d.entering.length} · -${d.leaving.length} · =${d.held.length}</span></div>` +
+      `${v.note ? `<div class="viz-chapter-note">${esc(v.note)}</div>` : ""}` +
+      `<div class="viz-stops">${stops}</div></div>`
+  }).join("")
+  return `<nav class="viz-rail" data-chapters="${views.length}">` +
+    `<div class="viz-rail-hd">Chapter rail · ${views.length} reading paths over ${nodes.length} nodes</div>` +
+    chapters + `</nav>`
+}
+
+function emitCompanionFragment() {
+  // The allowlists now come from src/core/fidelity.ts rather than two inline literals, so adding
+  // a level or a shape cannot land in one place and be rejected in the other.
+  if (!isFidelity(FIDELITY)) {
+    console.error(`emit-screen --companion: --fidelity must be ${FIDELITY_LEVELS.join("|")}, got "${FIDELITY}"`)
+    process.exit(1)
+  }
+  if (!isShape(RENDERER)) {
+    console.error(`emit-screen --companion: --renderer must be ${SHAPES.join("|")}, got "${RENDERER}"`)
     process.exit(1)
   }
 
-  const nodeEl = (id, layer, label, repo, file, line, licence, style) => {
-    const e = emberFor(layer)
-    return `<div class="viz-node" data-choice="${esc(id)}" style="${style};--e:${e}">` +
-      `${repo ? `<span class="tag" style="color:${e}">${esc(repo)}</span> ` : ""}` +
-      `<div class="lb">${esc(label)}</div>` +
-      `${file ? `<div class="tag" style="opacity:.7">${esc(file)}${line ? ":" + esc(line) : ""}</div>` : ""}` +
-      `${licence ? `<span class="tag" style="color:var(--solar)">${esc(licence)}</span>` : ""}` +
+  // Nodegraph's card. `pol` decides which of these children EXIST — at lo a node is a node and
+  // nothing else, which is the difference between a fidelity that draws and one that only tints.
+  // `data-origin` is A4 Decision 7: the authored file:line, or the fail-closed marker. Never a guess.
+  const nodeEl = (id, layer, label, repo, file, line, licence, style, pol, origin) => {
+    const e = pol.embers ? emberFor(layer) : "var(--footstep)"
+    const src = origin ? ` data-origin="${esc(origin)}"` : ` data-origin-missing="true"`
+    return `<div class="viz-node" data-choice="${esc(id)}"${src} style="${style};--e:${e}">` +
+      `${pol.nodeMeta && repo ? `<span class="tag" style="color:${e}">${esc(repo)}</span> ` : ""}` +
+      `${pol.nodeLabels ? `<div class="lb">${esc(label)}</div>` : ""}` +
+      `${pol.nodeMeta && file ? `<div class="tag" style="opacity:.7">${esc(file)}${line ? ":" + esc(line) : ""}</div>` : ""}` +
+      `${pol.nodeMeta && licence ? `<span class="tag" style="color:var(--solar)">${esc(licence)}</span>` : ""}` +
       `</div>`
   }
 
-  let stageHtml = "", W3 = 900, H3 = 400, layersHit = 0
+  // ═══ PER-SHAPE CANVAS (B7) ═══════════════════════════════════════════════
+  // Until 2026-09-16 this read `if (RENDERER === "shell" || RENDERER === "nodegraph")` — a TWO-way
+  // branch wearing a three-value flag. Both values fell into one emit body and no `RENDERER`
+  // conditional existed inside it, so `--renderer shell` and `--renderer nodegraph` differed only
+  // in the numbers inside style="". Measured: identical skeleton hash b90fd90fa9c69bee, 194
+  // elements, same tags, same classes, same order. That is how a request for a UI design came back
+  // as a re-skinned copy of the archify diagram.
+  //
+  // It is now genuinely three-way, and `policyFor` makes fidelity STRUCTURAL rather than a tint:
+  // every `POL.x` read below decides whether an element is emitted at all.
+  const POL = policyFor(RENDERER, FIDELITY)
 
-  if (RENDERER === "shell" || RENDERER === "nodegraph") {
-    const L = RENDERER === "shell" ? layoutShell() : layoutNodegraph()
+  let stageHtml = "", W3 = 900, H3 = 400, layersHit = 0, extraCss = ""
+
+  if (RENDERER === "shell") {
+    // ── Renderer 1/3 — SHELL. Layer 04's chrome, at last. ───────────────────
+    // layoutShell() still runs: it is what resolves each node to a layer role (and therefore the
+    // layer count in the legend). What it no longer does is decide the DRAWING — the drawing comes
+    // from src/layers/04-shell/chrome.ts, which carries Shell.tsx's own vz-* vocabulary under the
+    // check-chrome-drift.mjs gate. Deliberately NO lane bands: a lane band is the nodegraph's
+    // drawing, and treating the two as interchangeable is the whole defect.
+    const L = layoutShell()
+    layersHit = new Set(L.placed.map((p) => p.layer)).size
+    W3 = CHROME_WIDTH
+    H3 = 660
+    extraCss = shellChromeCss(FIDELITY, POL)
+    stageHtml = renderShellChrome({
+      fidelity: FIDELITY,
+      policy: POL,
+      brand: BRAND,
+      host: "companion",
+      layerRoles: ENGINE_LAYER_ROLES,
+      roleEmber: ENGINE_ROLE_EMBER,
+      counts: { nodes: nodes.length, edges: edges.length, layersHit },
+      esc,
+      nodes: L.placed.map((p) => {
+        const g = p.n.griot, o = g.ui?.origin ?? g.origin ?? {}
+        return {
+          id: p.n.id,
+          label: p.n.label ?? p.n.id,
+          layer: p.layer,
+          ember: emberFor(p.layer),
+          repo: o.repo ?? g.provenance?.repo ?? "",
+          reveal: revealTarget(p.n), // A4 Decision 7 — authored origin or null, never derived
+          kind: g.walkLevel ?? p.n.type ?? "component",
+          licence: g.code?.licence ?? g.licence ?? "",
+        }
+      }),
+    })
+  } else if (RENDERER === "nodegraph") {
+    // ── Renderer 2/3 — NODEGRAPH. The lane/node graph, unchanged in shape. ──
+    // This arm keeps the exact markup the companion has always emitted; what is new is that each
+    // piece of it is now gated. lo = nodes only. mid = + lane bands and labels. hi = + edges,
+    // node meta and embers.
+    const L = layoutNodegraph()
     W3 = L.width; H3 = L.height
     const byId2 = new Map(L.placed.map((p) => [p.n.id, p]))
     const edgesHere = edges.filter((e) => byId2.has(e.fromNode) && byId2.has(e.toNode))
     layersHit = new Set(L.placed.map((p) => p.layer)).size
-    const laneHtml = L.lanes.map((ln) => `<div class="viz-lane" style="top:${ln.top}px;height:${ln.height}px;width:${W3}px;--e:${ln.ember}">` +
-      `<div class="viz-lane-hd"><span class="viz-lane-nm">${esc(ln.label)}</span></div></div>`).join("")
-    const edgeSvg = `<svg class="viz-edges" width="${W3}" height="${H3}">${edgesHere.map((e) => {
-      const a = byId2.get(e.fromNode), b = byId2.get(e.toNode)
-      const x1 = a.x + a.w / 2, y1 = a.y + a.h, x2 = b.x + b.w / 2, y2 = b.y, m = (y1 + y2) / 2
-      return `<path d="M${x1},${y1} C${x1},${m} ${x2},${m} ${x2},${y2}"/>`
-    }).join("")}</svg>`
+    const laneHtml = POL.laneBands
+      ? L.lanes.map((ln) => `<div class="viz-lane" style="top:${ln.top}px;height:${ln.height}px;width:${W3}px;--e:${POL.embers ? ln.ember : "var(--footstep)"}">` +
+          `${POL.laneLabels ? `<div class="viz-lane-hd"><span class="viz-lane-nm">${esc(ln.label)}</span></div>` : ""}</div>`).join("")
+      : ""
+    const edgeSvg = POL.edges
+      ? `<svg class="viz-edges" width="${W3}" height="${H3}">${edgesHere.map((e) => {
+          const a = byId2.get(e.fromNode), b = byId2.get(e.toNode)
+          const x1 = a.x + a.w / 2, y1 = a.y + a.h, x2 = b.x + b.w / 2, y2 = b.y, m = (y1 + y2) / 2
+          return `<path d="M${x1},${y1} C${x1},${m} ${x2},${m} ${x2},${y2}"/>`
+        }).join("")}</svg>`
+      : ""
     const nodeHtml = L.placed.map((p) => {
       const g = p.n.griot, o = g.ui?.origin ?? g.origin ?? {}
       const repo = o.repo ?? g.provenance?.repo ?? ""
       return nodeEl(p.n.id, p.layer, p.n.label ?? p.n.id, repo, o.file, o.line, g.code?.licence ?? g.licence,
-        `left:${p.x}px;top:${p.y}px;width:${p.w}px;min-height:${p.h}px`)
+        `left:${p.x}px;top:${p.y}px;width:${p.w}px;min-height:${p.h}px`, POL, revealTarget(p.n))
     }).join("")
     stageHtml = laneHtml + edgeSvg + nodeHtml
   } else {
+    // ── Renderer 3/3 — ISOMETRIC. The spatial view. ─────────────────────────
+    // lo = flat boxes (the top face alone — a box with no depth is a genuinely different drawing
+    // from a solid, not a paler one). mid = the three faces. hi = + labels and ground shadow.
     const L = layoutIsometric()
     W3 = L.width; H3 = L.height
     layersHit = new Set(L.boxes.map((b) => b.layer)).size
     const polys = L.boxes.map(({ n, box, layer }) => {
-      const e = emberFor(layer)
+      const e = POL.embers ? emberFor(layer) : "var(--footstep)"
       const shift = (poly) => poly.split(" ").map((pt) => {
         const [x, y] = pt.split(",").map(Number)
         return `${(x + L.offset.x).toFixed(1)},${(y + L.offset.y).toFixed(1)}`
       }).join(" ")
       const g = n.griot, o = g.ui?.origin ?? g.origin ?? {}
       const lbl = box.labelAt
-      return `<g class="viz-node" data-choice="${esc(n.id)}" style="cursor:pointer">` +
-        `<polygon points="${shift(box.left)}" fill="${e}" opacity=".55"/>` +
-        `<polygon points="${shift(box.right)}" fill="${e}" opacity=".75"/>` +
+      const origin = revealTarget(n)
+      const src = origin ? ` data-origin="${esc(origin)}"` : ` data-origin-missing="true"`
+      return `<g class="viz-node" data-choice="${esc(n.id)}"${src} style="cursor:pointer">` +
+        `${POL.shadow ? `<polygon class="viz-iso-shadow" points="${shift(box.top)}" fill="#000" opacity=".28" transform="translate(0,14)"/>` : ""}` +
+        `${POL.faces === 3 ? `<polygon points="${shift(box.left)}" fill="${e}" opacity=".55"/>` : ""}` +
+        `${POL.faces === 3 ? `<polygon points="${shift(box.right)}" fill="${e}" opacity=".75"/>` : ""}` +
         `<polygon points="${shift(box.top)}" fill="${e}" stroke="var(--rim-15)"/>` +
-        `<text x="${(lbl.x + L.offset.x).toFixed(1)}" y="${(lbl.y + L.offset.y).toFixed(1)}" text-anchor="middle">${esc((n.label ?? n.id).slice(0, 18))}</text>` +
-        `${o.repo ? `<title>${esc(o.repo)} · ${esc(o.file ?? "")}:${esc(o.line ?? "")}</title>` : ""}` +
+        `${POL.labels ? `<text x="${(lbl.x + L.offset.x).toFixed(1)}" y="${(lbl.y + L.offset.y).toFixed(1)}" text-anchor="middle">${esc((n.label ?? n.id).slice(0, 18))}</text>` : ""}` +
+        `${POL.labels && o.repo ? `<title>${esc(o.repo)} · ${esc(o.file ?? "")}:${esc(o.line ?? "")}</title>` : ""}` +
         `</g>`
     }).join("")
     stageHtml = `<svg class="viz-iso" width="${W3}" height="${H3}" viewBox="0 0 ${W3} ${H3}">${polys}</svg>`
   }
 
+  const railHtml = chapterRailHtml(canvas.meta?.views)
+  const ramp = FIDELITY_RAMP[FIDELITY]
+
   const fragment = `<div class="viz-frag" data-fidelity="${esc(FIDELITY)}" data-renderer="${esc(RENDERER)}">
-<style>${FIDELITY_STYLE}</style>
+<style>${FIDELITY_STYLE}
+${RAIL_STYLE}
+${extraCss}</style>
 <div class="viz-legend meta">
   <div class="cell"><div class="k">screen</div><div class="v">${esc(title)}</div></div>
-  <div class="cell"><div class="k">renderer</div><div class="v">${esc(RENDERER)} · prism-viz-engine companion target</div></div>
+  <div class="cell"><div class="k">renderer</div><div class="v">${esc(RENDERER)} · ${esc(FIDELITY)} · ${BRAND} companion target</div></div>
   <div class="cell"><div class="k">counts</div><div class="v">${nodes.length} nodes · ${edges.length} edges · ${layersHit}/${ENGINE_LAYER_ROLES.length} layers</div></div>
+  <div class="cell"><div class="k">fidelity</div><div class="v">blur ${ramp.blur} · bloom ${ramp.bloom} · rim ${ramp.rim} · ${ramp.border}</div></div>
 </div>
+${railHtml}
 <div class="diagram viz-stage" style="width:${Math.round(W3)}px;height:${Math.round(H3)}px">
 ${stageHtml}
 </div>
+${REVEAL_SCRIPT}
 </div>`
 
   mkdirSync(CONTENT_DIR, { recursive: true })
@@ -461,7 +663,7 @@ ${stageHtml}
     return { id: n.id, q: n.id, label: n.label ?? n.id, state: "open", layer: g.layer ?? null, screen: basename(out2), at: Date.now() }
   })
   const seedEdges = edges.map((e) => ({ id: `${e.fromNode}->${e.toNode}`, fromNode: e.fromNode, toNode: e.toNode }))
-  const statePath = writeWorkgraphSeed(seedNodes, seedEdges, `Companion screen "${title}" emitted via prism-viz-engine (${RENDERER})`)
+  const statePath = writeWorkgraphSeed(seedNodes, seedEdges, `Companion screen "${title}" emitted via ${BRAND} (${RENDERER} · ${FIDELITY})`)
 
   console.log(`emit-screen --companion: ${nodes.length} nodes · ${edges.length} edges · ${layersHit}/${ENGINE_LAYER_ROLES.length} layers · renderer=${RENDERER} · fidelity=${FIDELITY}`)
   console.log(`  wrote  ${out2}`)

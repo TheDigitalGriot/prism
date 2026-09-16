@@ -8,6 +8,7 @@
   },
   "enabledMcpjsonServers": [
     "codebase-memory-mcp",
-    "chrome-devtools"
+    "chrome-devtools",
+    "code-review-graph"
   ]
 }

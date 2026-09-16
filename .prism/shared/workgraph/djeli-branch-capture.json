@@ -30,7 +30,9 @@
     "amendPass20": "The three stage outputs filed as nodes: disposition sheet, Djeli branch contract, --advance spec. No edges - Decision 5.",
     "amendPass21": "Lane repair: D1-D3 filed without group and rendered in no lane. Engine gained a validated group field on corrections.",
     "amendPass22": "First live use of --advance. B2 and B18 advanced on checked commit anchors. B27 held pending Gavin's call on the PlayStake residual.",
-    "amendPass23": "B27 closed. PlayStake codex committed, so an anchor now exists."
+    "amendPass23": "B27 closed. PlayStake codex committed, so an anchor now exists.",
+    "amendPass24": "2026-09-16 graph-close: the 7 CORRECT rows from the 2026-09-15 disposition sheet, applied. B10 overturns a pass-14 MISMATCH that was an instrument failure - the five tab buttons are at live/griot-ontology-codex.html:106-110 under commit dd0c7b3, which predates the check; state stays precedent-identified-ungeneralized. N4 N23 N25 N26 N29 S3 record that resolved-verified and resolved-done were in neither closure list, so six closed nodes were counted as neither closed nor open from their introducing pass through pass 23.",
+    "amendPass25": "2026-09-16 closeout: the brainstorm companion became a decision hub (C2 registry + four transients, C3 the public surface that unsealed it, C4 the working hub screen, C5 the live two-second variant), plus two defects filed with measured evidence - N30 the shell renderer that drew lanes instead of chrome, re-proven fixed by the engine's own six-artifact comparator, and N31 a run that printed DONE with three of its own criteria unmet."
   },
   "groups": [
     {
@@ -375,9 +377,16 @@
       "originLane": "untracked",
       "verification": {
         "checked": true,
-        "evidence": "Read the named artifact, live\\griot-ontology-codex.html (58,005 bytes, 530 lines). It contains ZERO tab affordances - no <button>, no <nav>, no role=\"tab\", no section ids, no switchView/showView/activeView. Its six <h2> headings are: The thesis, The stack, The living map, Open threads, The harvest, Build order. None of 'Layers', 'Relationships', 'Skill routing', 'Workgraph' or 'Genspark' appears in the file.",
-        "result": "MISMATCH - the named artifact does not contain the five curated views this node describes. The pattern may live in a different surface (the DGS ontology tab, or an earlier version of this page). Discrepancy RECORDED, not resolved, and the node is NOT edited to fit the evidence.",
-        "backfilled": "2026-09-13"
+        "evidence": "Re-read 2026-09-16 in a clean working tree. live/griot-ontology-codex.html = 58,005 bytes, head commit e750068 (2026-09-11), git status porcelain empty for that path. Lines 105-111 hold a div class=seg role=tablist wrapping five buttons: tLayers Layers (aria-pressed true), tRel Relationships, tSkills Skill routing, tWork Workgraph, tGensp vs Genspark - lines 106, 107, 108, 109, 110 respectively. git log -S tGensp on that path returns exactly one commit, dd0c7b3 (2026-09-11), which predates the 2026-09-13 verification that reported them absent.",
+        "result": "CONFIRMED - the five curated views this node names exist in the named artifact, on the lines cited, under a commit that predates the check which called them absent. The prior MISMATCH is overturned as an instrument failure and is preserved in this correction block rather than erased. STATE UNCHANGED at precedent-identified-ungeneralized: the precedent is confirmed to exist, and it remains ungeneralized - no other surface has adopted the pattern.",
+        "correctedFrom": "pass-14 MISMATCH, 2026-09-13",
+        "recheckedAt": "2026-09-16"
+      },
+      "correction": {
+        "correctedAt": "2026-09-16 amendPass24",
+        "wasClaimed": "The pass-14 backfilled verification recorded result MISMATCH on this claim: it reported that live/griot-ontology-codex.html (58,005 bytes, 530 lines) contains ZERO tab affordances - no button element, no nav, no role=tab, no section ids, no switchView/showView/activeView - and that none of Layers, Relationships, Skill routing, Workgraph or Genspark appears in the file. It concluded the named artifact does not contain the five curated views this node describes.",
+        "isTrue": "The file contains all five tab affordances, and did so before that check ran. Re-read 2026-09-16 on the same file at the same 58,005 bytes with a clean working tree: live/griot-ontology-codex.html lines 106-110 are button id=tLayers Layers, button id=tRel Relationships, button id=tSkills Skill routing, button id=tWork Workgraph, button id=tGensp vs Genspark, inside a div class=seg role=tablist opened at line 105. git log -S tGensp dates the fifth button to commit dd0c7b3 (2026-09-11, add the vs Genspark toggle as a fifth view); the file head is e750068 (2026-09-11). Both precede the 2026-09-13 check. The precedent is real and the CHECK failed, not the node.",
+        "cause": "A search failure recorded as an absence. The pass-14 verification read the correct file at the correct size and still reported zero matches for strings present on lines 106-110, then wrote that zero down as a measured MISMATCH rather than treating a null result on a known-good anchor as a suspect instrument. Second occurrence of the class first logged as N24 (a filtered tool result mistaken for the territory) - the promotion trigger."
       }
     },
     {
@@ -635,7 +644,13 @@
         "result": "RESOLVED - the defect this node flagged is fixed. State moved from flagged-not-fixed to resolved-verified on evidence, and the node is kept rather than deleted so the fix has a record.",
         "backfilled": "2026-09-13"
       },
-      "priorState": "flagged-not-fixed"
+      "priorState": "flagged-not-fixed",
+      "correction": {
+        "correctedAt": "2026-09-16 amendPass24",
+        "wasClaimed": "This node carried state \"resolved-verified\", which appears in neither closureModel.closedStates nor closureModel.openStates. Because closure is computed by list membership, the node was silently excluded from every closure percentage - its own lane (new-findings) and the graph total - from the pass that introduced the state through pass 23. The stored total read 23 closed / 26 open = 49 nodes against a graph of 78.",
+        "isTrue": "The resolution itself still holds and was re-measured 2026-09-16: C:/Users/digit/.claude/settings.json line 73 carries the command C:\\\\Users\\\\digit\\\\go\\\\bin\\\\deja.exe hook-prompt with backslashes correctly escaped. (The node body cites line 68; the hook has since moved to line 73 - same command, same fix.) What was wrong is the accounting: resolved-verified was never classified, so this closed defect was counted as neither closed nor open.",
+        "cause": "An amend pass introduced a new resolution state on a node without adding it to either closure list. closureModel.rule requires exactly the opposite (a new state cannot silently change a number without being classified first), but nothing enforced it: amend-workgraph.mjs validates lanes, edge vocabulary and verification fields, and verify-workgraph.mjs checks ids, required fields and three-copy counts - neither checks state classification. The model broke its own rule with no command failing."
+      }
     },
     {
       "id": "wg:djeli-branch:finding-ontology-codex-consult-first",
@@ -954,7 +969,13 @@
         "result": "DONE - the file is tracked. The drift this suggestion existed to stop (the canonical silently falling behind the mirror) is now caught mechanically by verify-workgraph.mjs, which compares all three copies' counts.",
         "backfilled": "2026-09-13"
       },
-      "priorState": "awaiting-disposition"
+      "priorState": "awaiting-disposition",
+      "correction": {
+        "correctedAt": "2026-09-16 amendPass24",
+        "wasClaimed": "This node carried state \"resolved-done\", which appears in neither closureModel.closedStates nor closureModel.openStates. Because closure is computed by list membership, the node was silently excluded from every closure percentage - its own lane (suggested) and the graph total - from the pass that introduced the state through pass 23. The stored total read 23 closed / 26 open = 49 nodes against a graph of 78.",
+        "isTrue": "The resolution still holds and was re-measured 2026-09-16: git ls-files in GriotApps/Prism returns .prism/shared/workgraph/djeli-branch-capture.json. Its add commit is 524d8cc (2026-09-13, track the canonical branch capture), and its most recent edit is 4032c20 (2026-09-15). NOTE: the 2026-09-15 disposition sheet cited ca8d6ef for this row; the measured add commit is 524d8cc - recorded here rather than propagated. What was wrong is the accounting: resolved-done was never classified, so this closed suggestion was counted as neither closed nor open.",
+        "cause": "An amend pass introduced a new resolution state on a node without adding it to either closure list. closureModel.rule requires exactly the opposite (a new state cannot silently change a number without being classified first), but nothing enforced it: amend-workgraph.mjs validates lanes, edge vocabulary and verification fields, and verify-workgraph.mjs checks ids, required fields and three-copy counts - neither checks state classification. The model broke its own rule with no command failing."
+      }
     },
     {
       "id": "wg:djeli-branch:suggest-architect-pass",
@@ -1464,6 +1485,12 @@
         "checked": true,
         "evidence": "The 2026-09-13 design-sync-recon contract's Locked Decision 5 reads 'get_file is rationed. Call it at most 5 times total' - authored by me, not by the tool, whose description states only a 256 KiB cap. The 2026-09-13 DesignSync refusal text names 'Send to Claude Code Web (which seeds the project into the workspace)'. Drift ledger entry 46 renders at 46 entries.",
         "result": "RESOLVED - the pull completed once the invented limit was removed and the work was sliced. Recorded as a defect in how I work, not in the tools."
+      },
+      "correction": {
+        "correctedAt": "2026-09-16 amendPass24",
+        "wasClaimed": "This node carried state \"resolved-verified\", which appears in neither closureModel.closedStates nor closureModel.openStates. Because closure is computed by list membership, the node was silently excluded from every closure percentage - its own lane (new-findings) and the graph total - from the pass that introduced the state through pass 23. The stored total read 23 closed / 26 open = 49 nodes against a graph of 78.",
+        "isTrue": "The accounting is what was wrong. The resolution is a process finding with no file anchor and was NOT re-measured on 2026-09-15 or 2026-09-16 - said plainly rather than implied. The node keeps its resolved-verified state on its original evidence; only its exclusion from the closure count is corrected here.",
+        "cause": "An amend pass introduced a new resolution state on a node without adding it to either closure list. closureModel.rule requires exactly the opposite (a new state cannot silently change a number without being classified first), but nothing enforced it: amend-workgraph.mjs validates lanes, edge vocabulary and verification fields, and verify-workgraph.mjs checks ids, required fields and three-copy counts - neither checks state classification. The model broke its own rule with no command failing."
       }
     },
     {
@@ -1579,6 +1606,12 @@
       "verification": {
         "evidence": "e24bde47-efdb-4be7-8f50-a820e1a504d8.tmp at 2,803,371 bytes parsed as complete JSON via node - name 'Synaptiq Design Pass Review', count 29, file bodies intact (Griot Triad.dc.html 6151 b, Meridian Standalone.dc.html 27119 b) - while the Keep/Save prompt was still unanswered. All 19 subsequent shards then landed with no prompt at all.",
         "result": "verified"
+      },
+      "correction": {
+        "correctedAt": "2026-09-16 amendPass24",
+        "wasClaimed": "This node carried state \"resolved-verified\", which appears in neither closureModel.closedStates nor closureModel.openStates. Because closure is computed by list membership, the node was silently excluded from every closure percentage - its own lane (new-findings) and the graph total - from the pass that introduced the state through pass 23. The stored total read 23 closed / 26 open = 49 nodes against a graph of 78.",
+        "isTrue": "The accounting is what was wrong. The resolution is a process finding whose anchor was a transient .tmp download, and it was NOT re-measured on 2026-09-15 or 2026-09-16 - said plainly rather than implied. The node keeps its resolved-verified state on its original evidence; only its exclusion from the closure count is corrected here.",
+        "cause": "An amend pass introduced a new resolution state on a node without adding it to either closure list. closureModel.rule requires exactly the opposite (a new state cannot silently change a number without being classified first), but nothing enforced it: amend-workgraph.mjs validates lanes, edge vocabulary and verification fields, and verify-workgraph.mjs checks ids, required fields and three-copy counts - neither checks state classification. The model broke its own rule with no command failing."
       }
     },
     {
@@ -1613,6 +1646,12 @@
       "verification": {
         "evidence": "Ledger read 2 entries while the page rendered 3. Refixed by passing a ledger object to append-gold.mjs --entry through an execFileSync runner (a 4 KB argv trips the PowerShell command-length ceiling): engine printed APPENDED, then 'rendered 3 entries', then DONE_APPEND_GOLD. Post-fix: ledger 3, page mods 3, titles viz-companion-fusion | init before invoke | claude-design-pull-channel, no duplicates, 24,772 bytes.",
         "result": "verified"
+      },
+      "correction": {
+        "correctedAt": "2026-09-16 amendPass24",
+        "wasClaimed": "This node carried state \"resolved-verified\", which appears in neither closureModel.closedStates nor closureModel.openStates. Because closure is computed by list membership, the node was silently excluded from every closure percentage - its own lane (new-findings) and the graph total - from the pass that introduced the state through pass 23. The stored total read 23 closed / 26 open = 49 nodes against a graph of 78.",
+        "isTrue": "The resolution still holds and was re-measured 2026-09-16: live/_gold/gold-entries.json parses to 3 entries and live/gold-codex.html is 24,869 bytes rendered from that ledger. (The node body cites 24,772 bytes from the 2026-09-13 render; the page has been re-rendered since at the same 3 entries - the ledger-is-the-source invariant holds either way.) What was wrong is the accounting: resolved-verified was never classified, so this closed defect was counted as neither closed nor open.",
+        "cause": "An amend pass introduced a new resolution state on a node without adding it to either closure list. closureModel.rule requires exactly the opposite (a new state cannot silently change a number without being classified first), but nothing enforced it: amend-workgraph.mjs validates lanes, edge vocabulary and verification fields, and verify-workgraph.mjs checks ids, required fields and three-copy counts - neither checks state classification. The model broke its own rule with no command failing."
       }
     },
     {
@@ -1681,6 +1720,12 @@
       "verification": {
         "evidence": "Reverted with git checkout to 279,524 bytes / 10 leads, then rebuilt with three assertions that refuse to write: lead count must be unchanged, output size must equal orig - removed + added within 4 bytes, and id=\"pfxSurf\" must occur exactly once. Rebuild reported leads 10 (was 10) and file 1,430,086 bytes against an expected 1,430,086 - exact.",
         "result": "verified"
+      },
+      "correction": {
+        "correctedAt": "2026-09-16 amendPass24",
+        "wasClaimed": "This node carried state \"resolved-verified\", which appears in neither closureModel.closedStates nor closureModel.openStates. Because closure is computed by list membership, the node was silently excluded from every closure percentage - its own lane (new-findings) and the graph total - from the pass that introduced the state through pass 23. The stored total read 23 closed / 26 open = 49 nodes against a graph of 78.",
+        "isTrue": "The resolution still holds and was re-measured 2026-09-16: live/prism-codex.html contains exactly one title element, so the duplicated-codex defect has not recurred. What was wrong is the accounting: resolved-verified was never classified, so this closed defect was counted as neither closed nor open.",
+        "cause": "An amend pass introduced a new resolution state on a node without adding it to either closure list. closureModel.rule requires exactly the opposite (a new state cannot silently change a number without being classified first), but nothing enforced it: amend-workgraph.mjs validates lanes, edge vocabulary and verification fields, and verify-workgraph.mjs checks ids, required fields and three-copy counts - neither checks state classification. The model broke its own rule with no command failing."
       }
     },
     {
@@ -1753,6 +1798,108 @@
         "wasClaimed": "D3 was filed with originLane this-stage and no group.",
         "isTrue": "group undefined; 1 data hit, 0 rendered chips in djeli-branch-capture-codex.html.",
         "cause": "Same defect as D1 - group optional on add, renderer lanes on group alone."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C2",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C2",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "local",
+      "title": "The brainstorm companion became a decision hub - a workflow registry plus four transients",
+      "description": "frame-template.html stopped being a single-screen frame and became a hub: a workflow REGISTRY plus four transient surfaces - slide-over, sheet, inspector and palette - each carrying zones, defaultZone and minWidth so a workflow declares where it wants to live and how much room it needs, rather than the layout hard-coding it. The registry is the part that matters structurally: a fifth workflow is one registry entry, not a layout edit.",
+      "verification": {
+        "evidence": "frame-template.html measured on disk at 84,101 bytes against git HEAD 56b8c05's 59,372 (git cat-file -s on the blob) - +24,729 bytes this stage. The four transients are present by name in the template: slide-over x12, sheet x20, inspector x19, palette x12 occurrences. The layout vocabulary the registry drives occurs 11 times (zones/defaultZone) in the template, and minWidth 4 times in the template plus 12 in helper.js. CORRECTION TO THE BRIEF AS GIVEN: the predecessor size was stated as 60,484 bytes; the last git-tracked size is 59,372 (commit 56b8c05, 2026-09-13). 60,484 matches no tracked revision - the plugin-cache copy under .claude/plugins/cache/prism-marketplace/prism/4.17.1/skills/prism-brainstorm/scripts/frame-template.html is 60,416 bytes, which is the closest artifact to that figure and is a STALE propagation target, not the source.",
+        "result": "verified"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C3",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C3",
+      "kind": "defect",
+      "group": "this-stage",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "helper.js gained a public surface - window.ps open/close/fill/show; the sealed IIFE was the dead gavel button",
+      "description": "helper.js was an IIFE with zero exports. Every panel function was sealed inside that closure, so no rendered screen could open a transient - the registry in C2 could describe four surfaces that nothing on the page was able to reach. That is the direct cause of the dead gavel button: the ceremony drawer existed and the click had nowhere to land. Exposing window.ps (open, close, fill, show) is what turned a described panel system into a reachable one.",
+      "verification": {
+        "evidence": "helper.js:2007 declares window.ps = { ... } and helper.js:2011 additionally re-exports the functions individually as window.psOpen / window.psClose / window.psFill. The file measures 96,121 bytes on disk against git HEAD 56b8c05's 50,012 (git cat-file -s) - +46,109 bytes this stage. The reachability claim is checkable in the other direction too: helper.js:1414 is an inspector empty state addressed by id, which only runs if the page can call into the panel system at all.",
+        "result": "verified"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C4",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C4",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "local",
+      "title": "A working hub screen - the 78-node / 84-edge branch graph as wires, five archify chapters, lo/mid/hi that changes what is drawn, a TOP-anchored gavel drawer and node-click inspector",
+      "description": "The first screen that exercises the whole hub at once: the branch-capture graph drawn as nodes and wires, five archify chapters that dim and undim the canvas, lo/mid/hi fidelity that changes WHAT is drawn rather than merely tinting it, the gavel ceremony in a TOP-anchored drawer, and node-click opening the right inspector with that node's card. It is the demonstration that C2's registry and C3's public surface compose - the registry describes the surfaces, the surface makes them reachable, and this screen drives all of them from one canvas.",
+      "verification": {
+        "evidence": "The graph it draws is the one verified in this same pass at 78 nodes / 84 edges (verify-workgraph.mjs printing VERIFY_WORKGRAPH_OK; of those 78, 34 are branches). The five-chapter figure is the engine's own enforced ceiling, not a description: src/core/chapters.ts:31 declares export const MAX_CHAPTERS = 5 and chapters.ts:47-48 raises a problem when views exceed it. The node-click inspector is helper.js:1414, which renders a NAMED empty state (Not in workgraph.json or decisions.json yet - it fills in the moment a channel writes it) rather than a blank box. The fidelity-changes-what-is-drawn claim is proven separately and mechanically by N30's six-artifact comparator.",
+        "result": "verified"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C5",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C5",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "local",
+      "title": "A live hub variant polling the workgraph and decisions channels every two seconds, so a fresh branch fills as people talk",
+      "description": "The same hub screen, but reading state/workgraph.json and state/decisions.json on an interval and redrawing. This is the difference between a picture of a capture and an instrument that fills during one: a branch named out loud reaches the canvas without anyone re-rendering anything. Seeded and running against session kayla-1789562469.",
+      "verification": {
+        "evidence": ".prism/local/brainstorm/kayla-1789562469/content/00-live-hub.html measures 7,066 bytes and contains setInterval(pull,2000) verbatim - the two-second poll, read off the file rather than inferred from the design. Both channels it pulls are seeded in that same session directory and were written 2026-09-16 12:41: state/workgraph.json (185 bytes) and state/decisions.json (64 bytes), alongside server-info, server.log and an open-viewer marker. The server routes serving them are server.cjs:85-88, which documents the workgraph channel as sharing the read-merge-write discipline of decisions.json and never requiring the file to pre-exist, and server.cjs:181. The client fetches are helper.js:895 (/state/decisions.json) and helper.js:901 (/state/workgraph.json), seeded independently of one another.",
+        "result": "verified"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N30",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N30",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "--renderer shell emitted the same lane-band drawing as the document path and never reached Shell.tsx - measured against its own fingerprints, then fixed and re-proven the same day",
+      "description": "Asking the engine for a UI design at hi fidelity returned a re-skinned copy of the archify lane diagram. The cause was not subtle and was not inferred: the emitter's own docblock said the shell renderer drew the same lane-band shape as the full-document path, so --renderer shell had never emitted UI chrome - it emitted the lane diagram under a different flag. Shell.tsx sat on disk unreferenced by the emit path, and fidelity existed nowhere in the engine's source, living only in the brainstorm companion's CSS cascade, which is why lo/mid/hi could only re-tint what had already been drawn. This is B7 (per-shape selector) and the fidelity half of B17, measured rather than claimed. FILED AS defect-fixed, NOT as an open defect: the renderer-truth stage ran the same day and the fix is proven by the engine's own comparator, not asserted. A wireframe nav and a glass nav are now different drawings rather than one drawing at two opacities.",
+      "verification": {
+        "evidence": "PRE-FIX, as recorded in the stage contract .prism/shared/plans/2026-09-16-renderer-truth-CONTEXT.md: emit-screen.mjs:307 read 'Renderer 1/3 - shell. Same lane-band shape as the full-document path'; shell-mid and nodegraph-mid both fingerprinted b90fd90fa9c69bee at 194 elements - the same drawing; src/layers/04-shell/Shell.tsx (13,207 bytes, size confirmed on disk 2026-09-16) was never reached by the emitter; fidelity had zero occurrences under apps/prism-viz-engine/src. POST-FIX, re-measured 2026-09-16 by RUNNING the engine's own comparator rather than reading about it - node scripts/build-shape-proof.mjs emits six artifacts with six DISTINCT fingerprints: shell-lo 7acfecf80022d233 (149 el), shell-mid 43d8b74482031050 (255 el), shell-hi 5a729ddacd5b0f5d (316 el), nodegraph-lo fbe2766aa9932980 (126 el), nodegraph-mid ee182f9a84a91148 (186 el), nodegraph-hi ab97f853a1c13d7a (280 el); verdict PASS, 0 structurally-identical pairs. The 194-element shell/nodegraph collision is gone. fidelity now occurs 29 times under src, with src/core/fidelity.ts (6,766 b) holding per-shape policy and src/layers/04-shell/chrome.ts lifting the real Shell.tsx chrome; emit-screen.mjs:43 now reads 'chrome.ts is why --renderer shell finally reaches layer 04 instead of re-drawing lanes'. The lift is GATED rather than trusted: node scripts/check-chrome-drift.mjs exits 0 reporting 45 spec'd classes, 47 emitted across 3 fidelities with 2 declared emitter-only exceptions, and goes red if Shell.tsx renames a class - the hard form, not a remember-to-keep-in-sync note.",
+        "result": "verified - the defect is confirmed exactly as described AND confirmed fixed. Anchor caveat recorded rather than glossed: the Prism-side code carrying the fix is UNCOMMITTED at filing time (emit-screen.mjs modified; fidelity.ts, chrome.ts, build-shape-proof.mjs, check-chrome-drift.mjs untracked), so no commit sha anchors it yet and B7/B17 are deliberately NOT advanced in this pass."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N31",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N31",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "largely-resolved-one-gap",
+      "direction": "local",
+      "title": "The panel-system run printed DONE_PANEL_SYSTEM with three of its own success criteria unmet",
+      "description": "The run wrote its terminal heartbeat token and exited reporting success while three things its contract required had not happened: the promote rule was not built, references/panel-system.md was not written, and the transient API was not reachable from the page. The third is the same sealed-IIFE defect recorded as C3, which means the run reported a panel system DONE while nothing on the page could open a panel. This is the failure mode the invariants exist for - a completion claim carrying no evidence from the run that made it. Recorded as a defect against the RUN, not against the work: the code that did land was sound, the claim about it was not.",
+      "verification": {
+        "evidence": ".prism/local/panel-system-progress.txt ends STEP6_VALIDATE / DONE_PANEL_SYSTEM / PROCESS_EXITED - the run did claim completion. Checked against its contract .prism/shared/plans/2026-09-15-brainstorm-panel-system-CONTEXT.md: (1) the promote rule at contract line 70 - a workflow that cannot meet its minWidth is PROMOTED to a slide-over instead of being squeezed - was not built at DONE; (2) references/panel-system.md, required at contract line 25 and again at line 122, was never written; (3) the transient API was unreachable, helper.js being an IIFE with zero exports. RE-MEASURED 2026-09-16: (1) is NOW BUILT - helper.js:1079 holds the promoted map, :1728 carries the rule that going HOME never promotes because a thin rail or collapsed drawer is Gavin's choice rather than a squeeze, and :1779-1795 implement squeeze detection against minWidth with a generated note; (3) is NOW FIXED at helper.js:2007, recorded as C3; (2) IS STILL OPEN - listing skills/prism-brainstorm/references/ returns design-sources.md, drawer-state.md, fidelity-engine.md, griotwave.md and workgraph-state.md, with no panel-system.md present.",
+        "result": "verified - 2 of the 3 unmet criteria have since been met, 1 (references/panel-system.md) remains open, which is why this is filed largely-resolved-one-gap rather than defect-fixed"
       }
     }
   ],
@@ -2260,15 +2407,69 @@
       "to": "wg:djeli-branch:codex-device-slots-filled",
       "kind": "awaits",
       "label": "B26 reads the slots B29 filled"
+    },
+    {
+      "from": "wg:djeli-branch:C3",
+      "to": "wg:djeli-branch:C2",
+      "kind": "outbound",
+      "label": "C3 outbound-> C2 (the public surface the registry's four transients are actually opened through)"
+    },
+    {
+      "from": "wg:djeli-branch:C2",
+      "to": "wg:djeli-branch:C4",
+      "kind": "awaits",
+      "label": "C4 awaits<- C2 (the hub screen awaits the registry and the four transients it drives)"
+    },
+    {
+      "from": "wg:djeli-branch:C3",
+      "to": "wg:djeli-branch:C4",
+      "kind": "awaits",
+      "label": "C4 awaits<- C3 (node-click can only open an inspector once the panel API is reachable from the page)"
+    },
+    {
+      "from": "wg:djeli-branch:C4",
+      "to": "wg:djeli-branch:C5",
+      "kind": "splinter",
+      "label": "C5 splinter<- C4 (the live variant splinters from the hub screen: polls the channels every 2s instead of drawing once)"
+    },
+    {
+      "from": "wg:djeli-branch:N31",
+      "to": "wg:djeli-branch:C2",
+      "kind": "inbound",
+      "label": "N31 inbound-> C2 (the run that produced the registry reported DONE with three criteria unmet)"
+    },
+    {
+      "from": "wg:djeli-branch:N31",
+      "to": "wg:djeli-branch:C3",
+      "kind": "inbound",
+      "label": "N31 inbound-> C3 (criterion 3 - the transient API unreachable - is the sealed IIFE recorded as C3)"
+    },
+    {
+      "from": "wg:djeli-branch:N30",
+      "to": "wg:djeli-branch:B7",
+      "kind": "inbound",
+      "label": "N30 inbound-> B7 (B7's per-shape selector measured: the engine always emitted lanes; now six distinct shapes)"
+    },
+    {
+      "from": "wg:djeli-branch:N30",
+      "to": "wg:djeli-branch:B17",
+      "kind": "inbound",
+      "label": "N30 inbound-> B17 (the fidelity half of B17 - fidelity had zero occurrences in engine src, now 29)"
+    },
+    {
+      "from": "wg:djeli-branch:N30",
+      "to": "wg:djeli-branch:C4",
+      "kind": "outbound",
+      "label": "N30 outbound-> C4 (the per-shape fidelity proof is what makes C4's lo/mid/hi change WHAT is drawn)"
     }
   ],
   "stats": {
-    "totalBranches": 34,
+    "totalBranches": 37,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 84,
+    "edgeCount": 93,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -2600,6 +2801,33 @@
       "stateChanges": [
         "B27 named-unfiled -> done"
       ]
+    },
+    "amendPass24_2026_09_16": {
+      "newNodes": [],
+      "newEdges": 0,
+      "corrections": [
+        "wg:djeli-branch:B10",
+        "wg:djeli-branch:defect-userpromptsubmit-hook",
+        "wg:djeli-branch:defect-remedy-read-as-wall",
+        "wg:djeli-branch:pending-download-tmp-is-already-written",
+        "wg:djeli-branch:gold-entry-hand-written-into-the-render",
+        "wg:djeli-branch:a-css-token-collided-with-an-html-search-and-duplicated-a-codex",
+        "wg:djeli-branch:suggest-track-canonical"
+      ],
+      "refused": []
+    },
+    "amendPass25_2026_09_16": {
+      "newNodes": [
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "N30",
+        "N31"
+      ],
+      "newEdges": 9,
+      "corrections": [],
+      "refused": []
     }
   },
   "foreignLayer": {

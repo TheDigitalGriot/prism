@@ -973,6 +973,336 @@
   @keyframes gbPulse{0%,100%{opacity:.28;transform:scale(1)}50%{opacity:.62;transform:scale(1.15)}}
   [data-fidelity="lo"] .gb-accent, [data-fidelity="lo"] #gb-mouse, [data-fidelity="lo"] .gb-glow{display:none}
   @media (prefers-reduced-motion:reduce){.gb-line{animation:none;opacity:.34;stroke-dashoffset:0}.gb-dot{animation:none;opacity:.42}#gb-mouse{display:none}}
+
+  /* ===== PANEL SYSTEM · registry + transients (additive · 2026-09-15) =====
+     The four permanent zones above are untouched. This layer adds four transients -
+     slide-over, sheet, inspector, palette - plus the tab / stow / vacate / borrow states
+     helper.js applies when a registered workflow moves. No fixed pixel slots: every size
+     is clamp() against its container, and every transient is a fixed overlay, so a closed
+     one reserves no space at all. Doc: references/panel-system.md */
+
+  /* The --fidelity-* cascade references/fidelity-engine.md documents, defined here. Nothing
+     that existed before reads these names, so defining them moves no current pixel. The
+     attribute values are UNQUOTED on purpose: griot-widget render() rewrites the first
+     quoted hi literal in the template, and must never land on these rules. */
+  :root,[data-fidelity=hi]{
+    --fidelity-blur:40px; --fidelity-saturate:140%; --fidelity-bloom:.55; --fidelity-rim:.13;
+    --fidelity-radius:20px; --fidelity-border:solid; --fidelity-border-style:solid;
+    --fidelity-shadow:var(--depth-card);
+  }
+  [data-fidelity=mid]{
+    --fidelity-blur:8px; --fidelity-saturate:118%; --fidelity-bloom:.26; --fidelity-rim:.09;
+    --fidelity-radius:14px; --fidelity-border:solid; --fidelity-border-style:solid;
+    --fidelity-shadow:var(--depth-card);
+  }
+  [data-fidelity=lo]{
+    --fidelity-blur:0px; --fidelity-saturate:100%; --fidelity-bloom:0; --fidelity-rim:.07;
+    --fidelity-radius:6px; --fidelity-border:dashed; --fidelity-border-style:dashed;
+    --fidelity-shadow:0 0 0 0 transparent;
+  }
+
+  /* griotwave motion - tale 220ms (UI) · song 320ms (scene shifts) · spring 50/22.
+     The spring is solved (overdamped, settles ~2.47s) and resampled into linear(), so the
+     curve IS the spring, scaled to the token's duration. Older engines fall back to --tale. */
+  :root{--ps-dur-tale:220ms; --ps-dur-song:320ms; --ps-ease:var(--tale)}
+  @supports (transition-timing-function:linear(0, 1)){
+    :root{--ps-ease:linear(0, 0.017 1.2%, 0.110 3.6%, 0.261 6.9%, 0.424 10.9%, 0.571 15.6%, 0.693 20.8%, 0.788 26.6%, 0.858 33.0%, 0.908 39.8%, 0.942 47.1%, 0.965 54.9%, 0.979 63.1%, 0.988 71.7%, 0.993 80.8%, 0.996 90.2%, 1)}
+  }
+
+  .ps-layer{
+    position:fixed;inset:0;z-index:40;pointer-events:none;
+    --ps-rim:rgba(255,255,255,var(--fidelity-rim));
+    --ps-frost:blur(var(--fidelity-blur)) saturate(var(--fidelity-saturate));
+    --ps-glow:rgba(var(--iris-rgb),calc(var(--fidelity-bloom) * .45));
+    --ps-inner-r:calc(var(--fidelity-radius) * .5);
+  }
+  .ps-scrim{
+    position:absolute;left:0;right:0;top:var(--ps-top,0px);bottom:var(--ps-bottom,0px);
+    background:radial-gradient(120% 90% at 50% 0%,rgba(var(--iris-rgb),calc(var(--fidelity-bloom) * .12)),transparent 60%),rgba(0,0,0,.42);
+    opacity:0;visibility:hidden;pointer-events:none;
+    transition:opacity var(--ps-dur-song) var(--ps-ease),visibility 0s linear var(--ps-dur-song);
+  }
+  .ps-scrim[data-open=true]{opacity:1;visibility:visible;pointer-events:auto;transition:opacity var(--ps-dur-song) var(--ps-ease),visibility 0s}
+
+  /* shared transient shell: head / tabs / body on a grid, glass from the fidelity cascade */
+  .ps-transient{
+    position:absolute;pointer-events:auto;min-inline-size:0;min-block-size:0;
+    display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);
+    color:var(--echo);font-family:var(--font-voice);
+    background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 40%),rgba(4,6,10,.78);
+    border:1px var(--fidelity-border-style) var(--ps-rim);
+    backdrop-filter:var(--ps-frost);-webkit-backdrop-filter:var(--ps-frost);
+    box-shadow:var(--fidelity-shadow),0 0 calc(var(--fidelity-bloom) * 60px) 0 var(--ps-glow);
+    opacity:0;visibility:hidden;
+    transition:transform var(--ps-dur-song) var(--ps-ease),opacity var(--ps-dur-tale) var(--ps-ease),visibility 0s linear var(--ps-dur-song);
+  }
+  .ps-transient[data-open=true]{
+    opacity:1;visibility:visible;transform:none;
+    transition:transform var(--ps-dur-song) var(--ps-ease),opacity var(--ps-dur-tale) var(--ps-ease),visibility 0s;
+  }
+  .ps-transient:focus{outline:none}
+  .ps-transient.ps-resizing{transition:none}
+  html.no-anim .ps-transient,html.no-anim .ps-scrim{transition:none}
+
+  /* slide-over - full height, covers the stage, a whole workflow surface. Never narrower
+     than the workflow's own minWidth: when the floor exceeds the ceiling, clamp() lets the
+     floor win. */
+  .ps-slide{
+    top:var(--ps-top,0px);bottom:var(--ps-bottom,0px);right:var(--ps-stage-r,0px);
+    inline-size:clamp(var(--ps-min,18rem), var(--ps-slide-w, var(--ps-stage-w,72vw)), calc(100vw - var(--ps-stage-r,0px)));
+    border-radius:var(--fidelity-radius) 0 0 var(--fidelity-radius);border-right:none;
+    transform:translateX(2.5rem);
+  }
+  /* sheet - bottom-anchored over the stage, to run a ceremony without leaving it */
+  .ps-sheet{
+    left:var(--ps-stage-l,0px);right:var(--ps-stage-r,0px);bottom:var(--ps-bottom,0px);
+    block-size:clamp(12rem, var(--ps-sheet-h,46vh), calc(100vh - var(--ps-top,0px) - var(--ps-bottom,0px) - 2rem));
+    border-radius:var(--fidelity-radius) var(--fidelity-radius) 0 0;border-bottom:none;
+    transform:translateY(2.5rem);
+  }
+  /* inspector - docked right, BESIDE the drawer, never over it */
+  .ps-inspector{
+    top:var(--ps-top,0px);bottom:var(--ps-bottom,0px);right:var(--ps-drawer-w,0px);
+    inline-size:clamp(16rem, var(--ps-inspector-w,28vw), 34rem);
+    border-radius:var(--fidelity-radius) 0 0 var(--fidelity-radius);border-right:none;
+    transform:translateX(1.5rem);
+  }
+  /* palette - keyboard-invoked list of every registered workflow */
+  .ps-palette{
+    top:calc(var(--ps-top,0px) + clamp(1.5rem, 10vh, 7rem));left:50%;translate:-50% 0;
+    inline-size:clamp(18rem, 46vw, 40rem);max-block-size:min(72vh, 38rem);
+    grid-template-rows:auto minmax(0,1fr) auto;
+    border-radius:var(--fidelity-radius);
+    transform:translateY(-.5rem) scale(.985);
+  }
+
+  .ps-head{
+    grid-row:1;display:flex;align-items:center;gap:.5rem;min-inline-size:0;
+    padding:.625rem .75rem .5rem;border-bottom:1px solid var(--ps-rim);
+  }
+  .ps-title{
+    flex:1 1 auto;min-inline-size:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font-family:var(--font-code);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--whisper);
+  }
+  .ps-note{
+    flex:0 1 auto;min-inline-size:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font-family:var(--font-code);font-size:9.5px;letter-spacing:.06em;color:var(--solar);
+  }
+  .ps-note:empty{display:none}
+  .ps-x{
+    flex:0 0 auto;inline-size:1.625rem;block-size:1.625rem;display:grid;place-items:center;cursor:pointer;
+    font-size:11px;line-height:1;color:var(--whisper);background:var(--haze-04);
+    border:1px solid var(--rim-08);border-radius:var(--ps-inner-r);
+    transition:color var(--ps-dur-tale) var(--ps-ease),border-color var(--ps-dur-tale) var(--ps-ease),background var(--ps-dur-tale) var(--ps-ease);
+  }
+  .ps-x:hover,.ps-x:focus-visible{color:var(--iris);border-color:var(--iris);background:var(--haze-06);outline:none}
+
+  /* TWO WORKFLOWS IN ONE ZONE BECOME TABS - never two half-height boxes */
+  .ps-tabs{
+    grid-row:2;display:flex;gap:.125rem;min-inline-size:0;overflow-x:auto;overflow-y:hidden;
+    padding:.375rem .5rem 0;border-bottom:1px solid rgba(255,255,255,var(--fidelity-rim));scrollbar-width:none;
+  }
+  .ps-tabs:empty{display:none}
+  .ps-zone-tabs{flex:0 0 auto;position:relative;z-index:3}
+  .main > .ps-zone-tabs{position:sticky;top:0;background:rgba(0,0,0,.55);backdrop-filter:var(--blur-frost);-webkit-backdrop-filter:var(--blur-frost)}
+  .ps-tab{
+    flex:0 0 auto;display:inline-flex;align-items:center;gap:.375rem;cursor:pointer;
+    padding:.375rem .625rem .4375rem;margin-bottom:-1px;
+    font-family:var(--font-code);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;
+    color:var(--footstep);background:transparent;border:none;border-bottom:2px solid transparent;
+    border-radius:calc(var(--fidelity-radius) * .4) calc(var(--fidelity-radius) * .4) 0 0;
+    transition:color var(--ps-dur-tale) var(--ps-ease),border-color var(--ps-dur-tale) var(--ps-ease),background var(--ps-dur-tale) var(--ps-ease);
+  }
+  .ps-tab:hover{color:var(--echo);background:var(--haze-04)}
+  .ps-tab[aria-selected=true]{color:var(--voice);border-bottom-color:var(--iris)}
+  .ps-tab:focus-visible{outline:1px solid var(--iris);outline-offset:-1px}
+  .ps-ico{font-size:11px;line-height:1;color:var(--iris)}
+
+  .ps-body{grid-row:3;min-block-size:0;overflow:auto;padding:clamp(.75rem, 1.6vw, 1.25rem)}
+  .ps-host{min-inline-size:0;min-block-size:0}
+  .ps-body > .ps-host{min-block-size:100%;display:grid;grid-template-rows:minmax(0,1fr)}
+  .grail > .ps-host,.drawer > .ps-host,.arail > .ps-host{flex:1 1 auto;min-block-size:0;overflow:auto;display:grid;grid-template-rows:minmax(0,1fr)}
+  .main > .ps-host{min-block-size:calc(100% - 2.5rem);padding:clamp(1rem, 3vw, 3rem) clamp(1rem, 3vw, 2.5rem)}
+  .ps-host[hidden],.ps-empty[hidden]{display:none!important}
+  /* a zone's own content is STOWED - never removed - while another occupant is on top */
+  .ps-stowed{display:none!important}
+
+  /* a native node lent to another zone keeps its home zone's class, so zone-scoped rules
+     (.drawer .pane ...) still match; this strips only the home zone's own box */
+  .ps-borrow{display:flex;flex-direction:column;min-inline-size:0;min-block-size:0}
+  .ps-borrow.grail,.ps-borrow.drawer,.ps-borrow.arail{
+    width:auto;flex:1 1 auto;opacity:1;pointer-events:auto;position:static;z-index:auto;overflow:visible;
+    border:none;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;transition:none;
+  }
+
+  /* AN EMPTY ZONE COLLAPSES TO ZERO - its gutter and toggle go with it */
+  .grail.ps-vacant,.arail.ps-vacant,.drawer.ps-vacant{
+    flex-basis:0!important;width:0!important;min-width:0;opacity:0;pointer-events:none;border:none;overflow:hidden;
+  }
+  .rail-resizer.ps-vacant{flex-basis:0;pointer-events:none}
+  .drawer-toggle.ps-vacant,.arail-tab.ps-vacant{opacity:0;pointer-events:none}
+  .ps-measuring,.ps-measuring *{transition:none!important}
+
+  /* a registered surface with nothing to show NAMES its state - never a blank box (Decision 7) */
+  .ps-empty{
+    display:grid;place-content:center;justify-items:center;gap:.375rem;text-align:center;
+    min-block-size:clamp(6rem, 40%, 16rem);padding:clamp(.875rem, 2vw, 1.5rem);
+    border:1px dashed rgba(255,255,255,var(--fidelity-rim));border-radius:calc(var(--fidelity-radius) * .6);
+    font-family:var(--font-code);font-size:10.5px;line-height:1.55;color:var(--footstep);
+  }
+  .ps-empty b{font-weight:500;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--whisper)}
+  .ps-empty kbd,.ps-kbd{
+    font-family:var(--font-code);font-size:9px;letter-spacing:.06em;color:var(--echo);white-space:nowrap;
+    padding:.0625rem .375rem;border:1px solid var(--rim-10);border-radius:.3125rem;background:var(--haze-04);
+  }
+  .ps-counts{display:flex;flex-wrap:wrap;justify-content:center;gap:.25rem .5rem}
+  .ps-counts i{font-style:normal;color:var(--whisper)}
+  .ps-counts i b{color:var(--iris);letter-spacing:0;text-transform:none}
+
+  /* inspector node detail */
+  .ps-resident{min-inline-size:0}
+  .ps-resident:empty{display:none}
+  .ps-node-head{display:grid;gap:.25rem;margin-bottom:.875rem}
+  .ps-node-id{font-family:var(--font-code);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--iris)}
+  .ps-node-head h3{font-size:clamp(.9375rem, 1.3vw, 1.0625rem);font-weight:500;line-height:1.35;color:var(--voice)}
+  .ps-dl{display:grid;grid-template-columns:minmax(4.5rem, max-content) minmax(0,1fr);gap:.375rem .875rem;font-size:12px}
+  .ps-dl dt{font-family:var(--font-code);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--footstep);padding-top:.125rem}
+  .ps-dl dd{color:var(--echo);overflow-wrap:anywhere}
+
+  /* drag handles - the split persists for the session */
+  .ps-handle{position:absolute;z-index:2;touch-action:none;background:transparent;transition:background var(--ps-dur-tale) var(--ps-ease)}
+  .ps-handle:hover,.ps-handle:focus-visible,.ps-handle.dragging{background:rgba(var(--iris-rgb),.30);outline:none}
+  .ps-slide > .ps-handle,.ps-inspector > .ps-handle{top:0;bottom:0;left:-3px;inline-size:6px;cursor:col-resize}
+  .ps-sheet > .ps-handle{left:0;right:0;top:-3px;block-size:6px;cursor:row-resize}
+
+  /* palette list */
+  .ps-q{
+    flex:1 1 auto;min-inline-size:0;background:transparent;border:none;outline:none;
+    font-family:var(--font-voice);font-size:14px;color:var(--voice);padding:.25rem 0;
+  }
+  .ps-q::placeholder{color:var(--footstep)}
+  .ps-list{grid-row:2;list-style:none;min-block-size:0;overflow:auto;padding:.375rem;display:grid;align-content:start;gap:.125rem}
+  .ps-palette > .ps-empty{grid-row:2;margin:.75rem}
+  .ps-item{
+    display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.25rem .625rem;
+    padding:.5rem .625rem;border-radius:var(--ps-inner-r);cursor:pointer;border:1px solid transparent;
+    transition:background var(--ps-dur-tale) var(--ps-ease),border-color var(--ps-dur-tale) var(--ps-ease);
+  }
+  .ps-item:hover{background:var(--haze-04)}
+  .ps-item[aria-selected=true]{background:rgba(var(--iris-rgb),.10);border-color:rgba(var(--iris-rgb),.28)}
+  .ps-item .ps-ico{font-size:14px}
+  .ps-lbl{display:grid;min-inline-size:0;font-size:13px;line-height:1.3;color:var(--voice)}
+  .ps-lbl small{font-size:11px;color:var(--footstep);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ps-zones{grid-column:2 / -1;display:flex;flex-wrap:wrap;align-items:center;gap:.25rem}
+  .ps-zone{
+    cursor:pointer;font-family:var(--font-code);font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--whisper);background:var(--haze-04);border:1px var(--fidelity-border-style) var(--rim-10);
+    border-radius:var(--r-pill);padding:.125rem .5rem;
+    transition:color var(--ps-dur-tale) var(--ps-ease),border-color var(--ps-dur-tale) var(--ps-ease),background var(--ps-dur-tale) var(--ps-ease);
+  }
+  .ps-zone:hover{color:var(--voice);border-color:var(--iris)}
+  .ps-zone.default::after{content:" \00B7  default";color:var(--footstep)}
+  .ps-zone.here{color:var(--bio);border-color:var(--bio)}
+  .ps-zone.cursor{color:var(--voice);border-color:var(--iris);background:rgba(var(--iris-rgb),.16)}
+  .ps-min{margin-left:auto;font-family:var(--font-code);font-size:9px;color:var(--footstep)}
+  .ps-foot{
+    grid-row:3;display:flex;flex-wrap:wrap;gap:.25rem .75rem;padding:.4375rem .75rem;
+    border-top:1px solid var(--ps-rim);font-family:var(--font-code);font-size:9px;letter-spacing:.08em;color:var(--footstep);
+  }
+
+  .ps-toast{
+    position:absolute;left:50%;bottom:calc(var(--ps-bottom,0px) + 1rem);translate:-50% 0;
+    max-inline-size:min(34rem, 90vw);padding:.4375rem .875rem;pointer-events:none;
+    font-family:var(--font-code);font-size:10px;letter-spacing:.06em;color:var(--echo);
+    background:rgba(4,6,10,.86);border:1px var(--fidelity-border-style) var(--ps-rim);border-radius:var(--r-pill);
+    opacity:0;transform:translateY(.5rem);
+    transition:opacity var(--ps-dur-tale) var(--ps-ease),transform var(--ps-dur-tale) var(--ps-ease);
+  }
+  .ps-toast[data-open=true]{opacity:1;transform:none}
+
+  @keyframes psEnter{from{opacity:0;transform:translateY(.25rem)}to{opacity:1;transform:none}}
+  .ps-enter{animation:psEnter var(--ps-dur-tale) var(--ps-ease) both}
+  @media (prefers-reduced-motion:reduce){
+    .ps-transient,.ps-transient[data-open=true],.ps-toast{transform:none}
+    .ps-enter{animation:none}
+  }
+  /* ===== PANEL SYSTEM - ceremony (TOP-anchored) + the HUB surface (additive - 2026-09-16) =====
+     Two things the prototype screen faked with !important overrides, now owned by the template:
+
+     1. CEREMONY - a TOP-anchored transient. The gavel ceremony anchors TOP and must never take
+        the right rail; the right rail is the inspector. The session screen used to force this by
+        overriding .ps-sheet with top:0!important - a disposable hack in a disposable file. It is
+        a real zone now, registered in #ps-registry like any other.
+     2. HUB - the branch canvas (nodes + wires + chapters + fidelity), promoted out of a session
+        content/ screen so it survives every session and every restart. Doc: references/panel-system.md */
+
+  /* ceremony - top-anchored over the stage. Mirror of .ps-sheet across the horizontal axis:
+     the free edge is the BOTTOM one, so that is the edge that gets the radius and the handle. */
+  .ps-ceremony{
+    left:var(--ps-stage-l,0px);right:var(--ps-stage-r,0px);top:var(--ps-top,0px);
+    block-size:clamp(12rem, var(--ps-ceremony-h,62vh), calc(100vh - var(--ps-top,0px) - var(--ps-bottom,0px) - 2rem));
+    border-radius:0 0 var(--fidelity-radius) var(--fidelity-radius);border-top:none;
+    transform:translateY(-2.5rem);
+  }
+  .ps-ceremony > .ps-handle{left:0;right:0;bottom:-3px;block-size:6px;cursor:row-resize}
+
+  /* ---- the hub surface -------------------------------------------------------------------
+     Mounts into the stage or any transient. Sizes from its container - no fixed pixel slots. */
+  .ps-hub{display:flex;flex-direction:column;min-inline-size:0;min-block-size:0}
+  .ps-hub[hidden]{display:none}
+  .ps-hub .hubbar{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:10px 0 8px}
+  .ps-hub .hublbl{font-family:var(--font-code);font-size:9.5px;letter-spacing:.14em;color:var(--footstep)}
+  .ps-hub .chip{
+    padding:6px 12px;border-radius:var(--fidelity-radius);
+    border:1px var(--fidelity-border-style) var(--rim-10);background:var(--haze-04);
+    color:var(--whisper);font-size:11.5px;font-family:var(--font-voice);cursor:pointer;
+    transition:color var(--ps-dur-tale) var(--ps-ease),border-color var(--ps-dur-tale) var(--ps-ease),background var(--ps-dur-tale) var(--ps-ease);
+  }
+  .ps-hub .chip:hover{border-color:var(--rim-15);color:var(--voice)}
+  .ps-hub .chip.on{border-color:rgba(var(--iris-rgb),.55);color:var(--iris);background:rgba(var(--iris-rgb),.12)}
+  .ps-hub .chip.gv{margin-left:auto;border-color:rgba(249,115,22,.5);color:var(--solar);background:rgba(249,115,22,.10)}
+  .ps-hub .hubnote{font-size:11.5px;color:var(--whisper);margin-bottom:8px}
+  .ps-hub .hubnote b{color:var(--echo);font-weight:500}
+  .ps-hub .hubcanvas{
+    flex:1 1 auto;min-block-size:0;overflow:auto;
+    border:1px var(--fidelity-border-style) var(--rim-08);border-radius:var(--fidelity-radius);
+    background:rgba(0,0,0,.28);
+  }
+
+  /* nodes + wires. Colour comes from CSS on [data-state], never from an SVG attribute, so the
+     griotwave tokens actually resolve (a var() in a presentation attribute would not). */
+  .ps-hub .bnode{cursor:pointer;transition:opacity var(--ps-dur-tale) var(--ps-ease)}
+  .ps-hub .bnode rect{fill:rgba(255,255,255,.035);stroke:var(--footstep);stroke-width:1}
+  .ps-hub .bnode:hover rect{fill:rgba(255,255,255,.10)}
+  .ps-hub .bnode:focus{outline:none}
+  .ps-hub .bnode:focus-visible rect{stroke:var(--iris);stroke-width:1.6}
+  .ps-hub .bnode .bn-id{fill:var(--voice);font-family:var(--font-code)}
+  .ps-hub .bnode .bn-lb{fill:var(--whisper)}
+  .ps-hub .bnode .bn-g{fill:var(--footstep)}
+  .ps-hub .bnode[data-state=done] rect{stroke:var(--bio)}      .ps-hub .bnode[data-state=done] .bn-g{fill:var(--bio)}
+  .ps-hub .bnode[data-state=open] rect{stroke:var(--solar)}    .ps-hub .bnode[data-state=open] .bn-g{fill:var(--solar)}
+  .ps-hub .bnode[data-state=parked] rect{stroke:var(--solar);stroke-dasharray:4 3} .ps-hub .bnode[data-state=parked] .bn-g{fill:var(--solar)}
+  .ps-hub .bnode[data-state=superseded] rect{stroke:var(--footstep)} .ps-hub .bnode[data-state=superseded] .bn-lb{text-decoration:line-through}
+  .ps-hub .wire{fill:none;stroke:var(--solar);stroke-width:.7;opacity:.34;transition:opacity var(--ps-dur-tale) var(--ps-ease)}
+  .ps-hub .bnode.dim{opacity:.13}
+  .ps-hub .wire.dim{opacity:.05}
+
+  /* FIDELITY CHANGES WHAT IS DRAWN, not just how it glows - lo drops the label and the glass,
+     mid drops the state glyph, hi draws all three. Same contract the prototype proved. */
+  .ps-hub[data-fidelity=lo] .bnode rect{stroke-dasharray:3 3}
+  .ps-hub[data-fidelity=lo] .hubcanvas{background:transparent}
+  .ps-hub[data-fidelity=lo] .bnode .bn-lb{display:none}
+  .ps-hub[data-fidelity=mid] .bnode .bn-g{display:none}
+
+  /* inspector card rows - the hub writes these into the inspector body */
+  .ic-k{font-family:var(--font-code);font-size:9.5px;letter-spacing:.12em;color:var(--footstep);margin-top:11px}
+  .ic-v{font-size:12.5px;color:var(--echo);line-height:1.55}
+  .ic-io{font-family:var(--font-code);font-size:11px;color:var(--whisper);line-height:1.7}
+
+  @media (prefers-reduced-motion:reduce){
+    .ps-hub .bnode,.ps-hub .wire{transition:none}
+  }
+
 </style>
 </head>
 <body>
@@ -1105,6 +1435,186 @@ requestAnimationFrame(function(){requestAnimationFrame(function(){
 
 <div class="indicator-bar">
   <span id="indicator-text">Click an option above, then return to the terminal</span>
+</div>
+
+<!-- ===== PANEL SYSTEM · workflow registry (additive · 2026-09-15) =====
+     The declarative map helper.js reads. Registering a workflow is ONE entry in
+     "workflows" - the frame's layout is never edited. "zones" names the four permanent
+     zones and three mountable transients this frame already owns (the palette is the
+     launcher, not a mount target). Inert without helper.js. Doc: references/panel-system.md -->
+<script type="application/json" id="ps-registry">
+{
+  "version": 1,
+  "zones": {
+    "grail":      { "label": "left rail",  "kind": "zone",      "el": "#grail",             "tabsAfter": ".grail-head", "chrome": [".rail-resizer[data-target=grail]"] },
+    "stage":      { "label": "stage",      "kind": "zone",      "el": ".main",              "resident": "screen" },
+    "drawer":     { "label": "drawer",     "kind": "zone",      "el": "#brainstorm-drawer", "chrome": ["#drawer-toggle", ".rail-resizer[data-target=brainstorm-drawer]"] },
+    "agent":      { "label": "agent bar",  "kind": "zone",      "el": "#arail",             "resident": "companion", "chrome": ["#arail-tab", ".rail-resizer[data-target=arail]"] },
+    "slide-over": { "label": "slide-over", "kind": "transient", "el": "#ps-slide" },
+    "sheet":      { "label": "sheet",      "kind": "transient", "el": "#ps-sheet" },
+    "ceremony":   { "label": "ceremony",   "kind": "transient", "el": "#ps-ceremony" },
+    "inspector":  { "label": "inspector",  "kind": "transient", "el": "#ps-inspector",      "resident": "node" }
+  },
+  "workflows": [
+    {
+      "id": "brainstorm-decisions",
+      "label": "Decisions",
+      "icon": "◆",
+      "shortcut": "alt+shift+d",
+      "zones": ["drawer", "slide-over", "sheet", "inspector", "stage"],
+      "defaultZone": "drawer",
+      "minWidth": 240,
+      "channel": "/state/decisions.json",
+      "vocabulary": { "collection": "@keys", "lanes": ["decisions", "parked"] },
+      "native": [".decisions-pane", ".parking-pane"],
+      "summary": "Decision ledger + parking lot - drawer-state.md"
+    },
+    {
+      "id": "branch-workgraph",
+      "label": "Branch workgraph",
+      "icon": "⑂",
+      "shortcut": "alt+shift+w",
+      "zones": ["grail", "slide-over", "inspector", "drawer", "stage"],
+      "defaultZone": "grail",
+      "minWidth": 200,
+      "channel": "/state/workgraph.json",
+      "vocabulary": { "collection": "nodes", "field": "state", "lanes": ["done", "superseded", "parked", "open"] },
+      "native": [".grail-views", "#grail-filters", ".grail-body"],
+      "summary": "Branch states on the decision spine - workgraph-state.md"
+    },
+    {
+      "id": "gavel-ceremony",
+      "label": "Gavel ceremony",
+      "icon": "⚖",
+      "shortcut": "alt+shift+g",
+      "zones": ["ceremony", "slide-over", "stage"],
+      "defaultZone": "ceremony",
+      "minWidth": 560,
+      "channel": "/state/gavel-cards.json",
+      "vocabulary": { "collection": "cards", "lanes": ["decided", "parked"], "verbs": ["open", "scan", "verify", "commit"] },
+      "summary": "Card-stack ceremony - skills/prism-gavel (gavel_state writes gavel-cards.json)"
+    },
+    {
+      "id": "branch-hub",
+      "label": "Branch hub",
+      "icon": "◉",
+      "shortcut": "alt+shift+h",
+      "zones": ["stage", "slide-over", "ceremony", "sheet", "drawer"],
+      "defaultZone": "stage",
+      "minWidth": 520,
+      "channel": "/state/workgraph.json",
+      "vocabulary": { "collection": "nodes", "field": "state", "lanes": ["done", "superseded", "parked", "open"] },
+      "summary": "The branch canvas - nodes wired as edges, archify chapters, lo/mid/hi - panel-system.md"
+    }
+  ]
+}
+</script>
+
+<!-- ===== PANEL SYSTEM · transients (additive · 2026-09-15) =====
+     Every transient ships CLOSED (data-open=false + inert), so with JS off or no registry
+     the frame paints exactly as it always has. Each one names its own empty state. -->
+<div class="ps-layer" id="ps-layer">
+  <div class="ps-scrim" id="ps-scrim" data-open="false" aria-hidden="true"></div>
+
+  <section class="ps-transient ps-slide" id="ps-slide" data-zone="slide-over" data-open="false"
+           role="dialog" aria-modal="true" aria-labelledby="ps-slide-title" aria-hidden="true" tabindex="-1" inert>
+    <div class="ps-handle" role="separator" aria-orientation="vertical" aria-label="Resize the slide-over" tabindex="0"></div>
+    <header class="ps-head">
+      <span class="ps-title" id="ps-slide-title">Slide-over</span>
+      <span class="ps-note"></span>
+      <button class="ps-x" type="button" data-ps-dismiss title="Dismiss (Esc)" aria-label="Dismiss the slide-over">&#10005;</button>
+    </header>
+    <div class="ps-tabs" role="tablist" aria-label="Workflows in the slide-over"></div>
+    <div class="ps-body">
+      <div class="ps-empty"><b>Slide-over is empty</b><span>A whole workflow surface lands here.</span><span>Press <kbd>Ctrl K</kbd> and send one to the slide-over.</span></div>
+    </div>
+  </section>
+
+  <section class="ps-transient ps-sheet" id="ps-sheet" data-zone="sheet" data-open="false"
+           role="dialog" aria-modal="false" aria-labelledby="ps-sheet-title" aria-hidden="true" tabindex="-1" inert>
+    <div class="ps-handle" role="separator" aria-orientation="horizontal" aria-label="Resize the sheet" tabindex="0"></div>
+    <header class="ps-head">
+      <span class="ps-title" id="ps-sheet-title">Sheet</span>
+      <span class="ps-note"></span>
+      <button class="ps-x" type="button" data-ps-dismiss title="Dismiss (Esc)" aria-label="Dismiss the sheet">&#10005;</button>
+    </header>
+    <div class="ps-tabs" role="tablist" aria-label="Workflows in the sheet"></div>
+    <div class="ps-body">
+      <div class="ps-empty"><b>Sheet is empty</b><span>Run a ceremony here without leaving the stage.</span><span>Press <kbd>Ctrl K</kbd> and send one to the sheet.</span></div>
+    </div>
+  </section>
+
+  <section class="ps-transient ps-inspector" id="ps-inspector" data-zone="inspector" data-open="false"
+           role="dialog" aria-modal="false" aria-labelledby="ps-inspector-title" aria-hidden="true" tabindex="-1" inert>
+    <div class="ps-handle" role="separator" aria-orientation="vertical" aria-label="Resize the inspector" tabindex="0"></div>
+    <header class="ps-head">
+      <span class="ps-title" id="ps-inspector-title">Inspector</span>
+      <span class="ps-note"></span>
+      <button class="ps-x" type="button" data-ps-dismiss title="Dismiss (Esc)" aria-label="Dismiss the inspector">&#10005;</button>
+    </header>
+    <div class="ps-tabs" role="tablist" aria-label="Workflows in the inspector"></div>
+    <div class="ps-body">
+      <div class="ps-resident" id="ps-node"></div>
+      <div class="ps-empty"><b>Inspector is empty</b><span>Shift-click a workgraph node to inspect it.</span></div>
+    </div>
+  </section>
+
+  <section class="ps-transient ps-palette" id="ps-palette" data-zone="palette" data-open="false"
+           role="dialog" aria-modal="true" aria-label="Workflow palette" aria-hidden="true" tabindex="-1" inert>
+    <header class="ps-head">
+      <kbd class="ps-kbd">Ctrl K</kbd>
+      <input class="ps-q" id="ps-q" type="text" role="combobox" aria-expanded="true" aria-controls="ps-list"
+             aria-autocomplete="list" placeholder="Open a workflow&hellip;" autocomplete="off" spellcheck="false">
+      <button class="ps-x" type="button" data-ps-dismiss title="Dismiss (Esc)" aria-label="Dismiss the palette">&#10005;</button>
+    </header>
+    <ul class="ps-list" id="ps-list" role="listbox" aria-label="Registered workflows"></ul>
+    <div class="ps-empty" id="ps-palette-empty" hidden><b>No workflows registered</b><span>Add one entry to #ps-registry in the frame template.</span></div>
+    <footer class="ps-foot">
+      <span><kbd class="ps-kbd">&uarr; &darr;</kbd> workflow</span>
+      <span><kbd class="ps-kbd">&larr; &rarr;</kbd> zone</span>
+      <span><kbd class="ps-kbd">Enter</kbd> open</span>
+      <span><kbd class="ps-kbd">Esc</kbd> close</span>
+    </footer>
+  </section>
+
+  <!-- ===== PANEL SYSTEM · ceremony transient (additive · 2026-09-16) =====
+       TOP-anchored. The gavel ceremony lands here. It is deliberately NOT the drawer:
+       the right rail is the inspector and nothing else takes it. -->
+  <section class="ps-transient ps-ceremony" id="ps-ceremony" data-zone="ceremony" data-open="false"
+           role="dialog" aria-modal="false" aria-labelledby="ps-ceremony-title" aria-hidden="true" tabindex="-1" inert>
+    <div class="ps-handle" role="separator" aria-orientation="horizontal" aria-label="Resize the ceremony" tabindex="0"></div>
+    <header class="ps-head">
+      <span class="ps-title" id="ps-ceremony-title">Ceremony</span>
+      <span class="ps-note"></span>
+      <button class="ps-x" type="button" data-ps-dismiss title="Dismiss (Esc)" aria-label="Dismiss the ceremony">&#10005;</button>
+    </header>
+    <div class="ps-tabs" role="tablist" aria-label="Workflows in the ceremony"></div>
+    <div class="ps-body">
+      <div class="ps-empty"><b>Ceremony is empty</b><span>A ceremony runs here, anchored to the top &mdash; the right rail stays the inspector.</span><span>Press <kbd>Ctrl K</kbd> and send one to the ceremony.</span></div>
+    </div>
+  </section>
+
+  <!-- ===== HUB · the branch canvas, template-resident (additive · 2026-09-16) =====
+       This chrome used to be re-written into a session content/ screen every time, which meant
+       it died with the session. helper.js clones this template into the hub workflow's host and
+       draws the nodes/wires from /state/workgraph.json. Edit the chrome HERE, by hand, once. -->
+  <template id="ps-hub-tpl">
+    <div class="ps-hub" data-fidelity="hi">
+      <div class="hubbar">
+        <span class="hublbl">CHAPTER</span>
+        <span class="hub-chapters"></span>
+        <span class="hublbl">FIDELITY</span>
+        <button class="chip fi" type="button" data-f="lo">lo</button>
+        <button class="chip fi" type="button" data-f="mid">mid</button>
+        <button class="chip fi on" type="button" data-f="hi">hi</button>
+        <button class="chip gv" type="button" data-hub-gavel>&#9878; Gavel ceremony</button>
+      </div>
+      <div class="hubnote"><b class="hub-chname">&mdash;</b> &middot; <span class="hub-chcount">0 of 0 nodes</span></div>
+      <div class="hubcanvas"></div>
+    </div>
+  </template>
+
+  <div class="ps-toast" id="ps-toast" role="status" aria-live="polite" data-open="false"></div>
 </div>
 
 <script>(function(){var m=document.getElementById('gb-mouse');if(!m)return;var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(rm)return;window.addEventListener('pointermove',function(e){m.style.left=e.clientX+'px';m.style.top=e.clientY+'px';m.style.opacity='1';},{passive:true});window.addEventListener('pointerleave',function(){m.style.opacity='0';});})();</script>

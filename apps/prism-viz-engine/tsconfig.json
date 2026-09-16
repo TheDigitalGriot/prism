@@ -14,6 +14,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    // chrome.ts is imported by scripts/*.mjs through node type-stripping, which requires an
+    // explicit .ts specifier. Vite resolves it too; this only teaches tsc to accept it.
+    "allowImportingTsExtensions": true,
     "types": ["vite/client"]
   },
   "include": ["src", "vite.config.ts"]

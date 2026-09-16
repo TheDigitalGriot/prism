@@ -40,7 +40,7 @@ npm run dev          # vite + the reveal sidecar
 **Composed into a host app**
 
 ```ts
-import { mountVizEngine } from "prism-viz-engine"
+import { mountVizEngine } from "griot-viz-engine"
 
 const handle = mountVizEngine({
   element: document.getElementById("canvas")!,
@@ -51,8 +51,8 @@ const handle = mountVizEngine({
 **Data only — no React, no xyflow in your bundle**
 
 ```ts
-import { validate, emptyCanvas } from "prism-viz-engine/json-canvas"
-import { LAYER_ROLES, isLayerRole } from "prism-viz-engine/layer-roles"
+import { validate, emptyCanvas } from "griot-viz-engine/json-canvas"
+import { LAYER_ROLES, isLayerRole } from "griot-viz-engine/layer-roles"
 ```
 
 ---

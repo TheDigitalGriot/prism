@@ -21,6 +21,24 @@ exactly why it could not be written without them. A UI pattern with no layer is 
    Djeli container | Collaboration GenTeam | Creation build/content/3D | Capture |
    Intelligence Super Agent | Governance Governor | Model-making / data science |
    Memory foundation | Deployment
+   CORRECTED 2026-09-16 (djeli-stage0-code-intel, Step 1) - the output taxonomy is ELEVEN roles,
+   not nine. The nine named above stand verbatim and unchanged as the first nine; TWO were missing
+   and are named here. MEASURED this session, not recalled: `prism_viz_engine mode=layers`
+   (scripts/digital-griot-mcp/digital-griot-mcp.ts:1120-1131, which reads the LAYER_ROLES array
+   literal at apps/prism-viz-engine/src/core/layer-roles.ts:16-28) returned count=11:
+     Djeli · container | Collaboration · GenTeam | Creation · build/content/3D | Capture |
+     Intelligence · Super Agent | Governance · Governor | Model-making / data science |
+     Memory · foundation | Deployment | Suite meta | Cross-cutting rails
+   The two added are `Suite meta` and `Cross-cutting rails`. Provenance, layer-roles.ts:1-13:
+   copied byte-verbatim from the LNAME array in griot-ontology-codex.html (The Griot Stack,
+   artifact c389ca6c) on Gavin's instruction 2026-09-11, because gating on nine meant our OWN
+   validator rejected Griot Ontology, Client work, Meridian, Griotwave and Prism - exactly the
+   tooling that has to sit on this canvas. Gavin ruled 2026-09-13 that the Djeli workspace map IS
+   `Suite meta` and that tab-to-tab motion IS `Cross-cutting rails`.
+   The middle dots and spacing are LOAD-BEARING: emitter, canvas and plan all key on exact string
+   equality (layer-roles.ts:4-6) - do not retype or tidy the punctuation. A finding that fits no
+   role is flagged `unplaceable` (layer-roles.ts:31-32), never force-fit into a twelfth and never
+   invented to fill an empty layer. Authority: djeli-stage0-code-intel-CONTEXT.md decision 1.
 3. COMPOSITION, one home per fact. griot-harvest owns the clone, the survey and the fit verdict -
    CALL it, never reimplement it. dgs-plan-update owns every plan write. griot-potluck-search owns
    shelf search. This skill owns only the UI walk: component - screen - flow - workflow - provenance,
@@ -57,6 +75,8 @@ Stage 3 - COMPOSE THE CANVAS.
 
 - skills/griot-harvest-ux-ui exists, passes the griot-agent-architect validator, and routes every
   finding to one of the nine layer roles.
+  CORRECTED 2026-09-16 (djeli-stage0-code-intel, Step 1): read "one of the ELEVEN layer roles"
+  - see decision 2's correction. The criterion is otherwise unchanged.
 - It calls griot-harvest rather than duplicating the clone/survey path.
 - A run against genoffice returns screens with file:line origins, not prose summaries.
 - The canvas renders from harvested data, not from a hand-authored node list.
@@ -75,3 +95,6 @@ STEP 1 architect - STEP 2 skill-body - STEP 3 layer-routing - STEP 4 validator -
 
 If any of the nine layer roles returns no source, say so plainly as an unfilled layer. Never invent
 a source to fill it.
+CORRECTED 2026-09-16 (djeli-stage0-code-intel, Step 1): read "any of the ELEVEN layer roles" - see
+decision 2's correction. The instruction itself is unchanged and is reinforced by the engine's own
+note: unfilled layers are reported as unfilled, never filled by invention.

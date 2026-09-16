@@ -1,8 +1,14 @@
 {
-  "name": "prism-viz-engine",
+  "name": "griot-viz-engine",
   "version": "0.1.0",
-  "description": "prism-viz-engine — the assembled cluster, built. Layer 01 generate -> JSON Canvas wire -> layer 02 render (xyflow) -> layer 03 substrate (Kuzu) -> layer 04 interactive shell (Waku click-any-box). Mounts standalone, composed into another app, or inside the Djeli container.",
+  "description": "griot-viz-engine — the assembled cluster, built. Layer 01 generate -> JSON Canvas wire -> layer 02 render (xyflow) -> layer 03 substrate (Kuzu) -> layer 04 interactive shell (Waku click-any-box). Mounts standalone, composed into another app, or inside the Djeli container.",
   "license": "MIT",
+  "griot": {
+    "canonicalName": "griot-viz-engine",
+    "deprecatedAlias": "prism-viz-engine",
+    "aliasNote": "A4 Decision 1 (Gavin ruled 2026-09-13). prism-viz-engine RESOLVES and is never what we say. The alias is load-bearing in exactly three places: the npm package, the MCP tool binding (prism_viz_engine), and module imports. Removing it is OUT of scope; keeping it resolving is the compatibility guarantee. The DIRECTORY stays apps/prism-viz-engine because root package.json workspaces, package-lock.json and skills/prism-viz-generate/scripts/gate-ir.mjs all resolve it by hard path.",
+    "publishIsGavins": "A4 Decision 3 - no npm publish, login or adduser from an agent, ever."
+  },
   "author": "digitalgriot",
   "homepage": "https://github.com/TheDigitalGriot/prism/tree/main/apps/prism-viz-engine",
   "repository": {
