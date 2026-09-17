@@ -32,7 +32,8 @@
     "amendPass22": "First live use of --advance. B2 and B18 advanced on checked commit anchors. B27 held pending Gavin's call on the PlayStake residual.",
     "amendPass23": "B27 closed. PlayStake codex committed, so an anchor now exists.",
     "amendPass24": "2026-09-16 graph-close: the 7 CORRECT rows from the 2026-09-15 disposition sheet, applied. B10 overturns a pass-14 MISMATCH that was an instrument failure - the five tab buttons are at live/griot-ontology-codex.html:106-110 under commit dd0c7b3, which predates the check; state stays precedent-identified-ungeneralized. N4 N23 N25 N26 N29 S3 record that resolved-verified and resolved-done were in neither closure list, so six closed nodes were counted as neither closed nor open from their introducing pass through pass 23.",
-    "amendPass25": "2026-09-16 closeout: the brainstorm companion became a decision hub (C2 registry + four transients, C3 the public surface that unsealed it, C4 the working hub screen, C5 the live two-second variant), plus two defects filed with measured evidence - N30 the shell renderer that drew lanes instead of chrome, re-proven fixed by the engine's own six-artifact comparator, and N31 a run that printed DONE with three of its own criteria unmet."
+    "amendPass25": "2026-09-16 closeout: the brainstorm companion became a decision hub (C2 registry + four transients, C3 the public surface that unsealed it, C4 the working hub screen, C5 the live two-second variant), plus two defects filed with measured evidence - N30 the shell renderer that drew lanes instead of chrome, re-proven fixed by the engine's own six-artifact comparator, and N31 a run that printed DONE with three of its own criteria unmet.",
+    "amendPass26": "2026-09-17 morning-briefing run: source-fidelity findings (Decoder RSS empty, AI Dev Signals 12d lag, Reallusion dry), positive verification that the artifact-publish step is running, and external evidence bearing on subagent fan-out defaults."
   },
   "groups": [
     {
@@ -1901,6 +1902,125 @@
         "evidence": ".prism/local/panel-system-progress.txt ends STEP6_VALIDATE / DONE_PANEL_SYSTEM / PROCESS_EXITED - the run did claim completion. Checked against its contract .prism/shared/plans/2026-09-15-brainstorm-panel-system-CONTEXT.md: (1) the promote rule at contract line 70 - a workflow that cannot meet its minWidth is PROMOTED to a slide-over instead of being squeezed - was not built at DONE; (2) references/panel-system.md, required at contract line 25 and again at line 122, was never written; (3) the transient API was unreachable, helper.js being an IIFE with zero exports. RE-MEASURED 2026-09-16: (1) is NOW BUILT - helper.js:1079 holds the promoted map, :1728 carries the rule that going HOME never promotes because a thin rail or collapsed drawer is Gavin's choice rather than a squeeze, and :1779-1795 implement squeeze detection against minWidth with a generated note; (3) is NOW FIXED at helper.js:2007, recorded as C3; (2) IS STILL OPEN - listing skills/prism-brainstorm/references/ returns design-sources.md, drawer-state.md, fidelity-engine.md, griotwave.md and workgraph-state.md, with no panel-system.md present.",
         "result": "verified - 2 of the 3 unmet criteria have since been met, 1 (references/panel-system.md) remains open, which is why this is filed largely-resolved-one-gap rather than defect-fixed"
       }
+    },
+    {
+      "id": "wg:djeli-branch:N32",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N32",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "The Decoder's native RSS feed returns an empty body to web_fetch; the Chrome fallback is load-bearing, not optional",
+      "description": "The morning-briefing contract names https://the-decoder.com/feed/ as a native RSS source and treats Claude in Chrome as a fallback 'if a plain web-fetch returns an empty body'. On this run the fallback was not an edge case - it was the only path that produced content. web_fetch of the feed URL returned a single line of text (the feed's own URL) and no items at all. Navigating the same publication in Chrome and reading the page returned the current article immediately. Recorded as flagged-not-fixed because nothing was repaired: the feed is still whatever it is, and the run routed around it. The contract's wording should be read as 'use Chrome for The Decoder' rather than as a rare-path escape hatch.",
+      "verification": {
+        "evidence": "mcp__workspace__web_fetch on https://the-decoder.com/feed/ returned a body consisting of the string 'https://the-decoder.com/feed' and nothing else - zero <item> elements. Same run, mcp__claude-in-chrome__navigate to https://the-decoder.com/ + get_page_text returned the full Sep 17 2026 article 'AI agent swarms are a massive waste of tokens with zero quality gain, says OpenAI Codex developer' by Matthias Bastian. A second Chrome call to /artificial-intelligence-news/ returned 12 headline refs.",
+        "result": "verified - RSS path empty, Chrome path returned content on the first attempt, both within the same run"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N33",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N33",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "AI Dev Signals has fallen 12 days behind the Marktechpost front page it digests, inverting the reason the contract pulls it",
+      "description": "The contract describes AI Dev Signals as 'near-daily' and asks for the most recent edition, warning that it will overlap with Marktechpost and should be deduped. The overlap is no longer the problem; the lag is. The newsletter's newest edition is 12 days old while the site it curates is publishing same-day, so every item the newsletter carries is either already on the front page or has been superseded. On this run it was deduped out entirely rather than partially - it contributed nothing the primary source did not carry fresher. Flagged rather than fixed because the contract still lists it as a required step and only Gavin can decide whether to demote it (see S7).",
+      "verification": {
+        "evidence": "https://www.aidevsignals.com/archive newest entry is 'MARKTECHPOST: ARC Prize, Agentic AI, and Voice Upgrades', published 2026-09-05 (meta-article:published_time 2026-09-05T01:08:38.094Z), dated Sep 4 in the archive list. Same run, https://www.marktechpost.com/ front page carried four items dated 2026-09-16 (R4T, VC-Attention, Paper2Agent, GLiFormer) and two dated 2026-09-15. Gap measured against run date 2026-09-17: 12 days.",
+        "result": "verified - newest newsletter edition 2026-09-05, newest source-site article 2026-09-16, both read in the same run"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N34",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N34",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "resolved-verified",
+      "direction": "local",
+      "title": "Both Reallusion sources are dry - nothing CC5/iClone-relevant published in roughly three weeks",
+      "description": "Step 10 of the briefing contract pulls Reallusion from two sources and says to omit the section silently when there is simply nothing new. Both were checked and both were dry, so the 3D Pipeline / Reallusion group was omitted from today's edition and the reason written into the edition's notes field rather than left as an unexplained absence. Recorded so that a future run comparing editions can tell 'checked, nothing there' apart from 'never checked' - which is the distinction the silent-omit rule would otherwise erase.",
+      "verification": {
+        "evidence": "https://discussions.reallusion.com/c/news-announcements/17 read in Chrome: newest topic by activity is '2026 Reallusion Software Subscription Options: Expanding Your Creative Freedom' at 21d, then 'SIGGRAPH 2026: NVIDIA RTX Boosts AccuFACE2 & AI Studio' at 24d; everything else is Jul 2026 or older. https://magazine.reallusion.com/ newest article is 'RTX Render Open Beta Begins: Path-Traced Quality Inside Character Creator 5 and iClone 8', dated July 28, 2026.",
+        "result": "verified - both sources reachable and read; newest relevant item 21 days old, outside the 24h window; section omitted per contract and the omission recorded in edition notes"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N35",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N35",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "resolved-verified",
+      "direction": "local",
+      "title": "The briefing's artifact-publish step is habitually running again - the archive shows an unbroken recent run of dates, not the 49-day silence the contract warns about",
+      "description": "The contract carries a loud warning that step 11 silently stopped executing on 2026-07-24 and went unnoticed for 49 days because the chat output looked like success. Reading the live artifact before amending it shows that failure mode is not currently active: the archive carries recent consecutive dates ending at the previous weekday. Recorded as a positive verification rather than assumed, because the whole point of the original defect is that its absence is invisible from the chat transcript - the only way to know the step ran is to read the artifact.",
+      "verification": {
+        "evidence": "PowerShell parse of C:\\Users\\digit\\OneDrive\\Documents\\Claude\\Artifacts\\griot-morning-briefing\\index.html before this run's amend: the <script id=\"briefings-archive\"> block parsed to 46 date keys, newest six being 2026-09-16, 2026-09-15, 2026-09-14, 2026-09-11, 2026-08-17, 2026-07-24. Artifact manifest updatedAt 2026-09-16T15:28:27.764Z. After this run's splice: VERIFY_OK keys=47 newest=2026-09-17, all 46 prior keys retained.",
+        "result": "verified - prior weekday's edition present in the archive and manifest timestamp matches, so step 11 ran on the previous run; today's edition added without dropping any prior date"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N36",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N36",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "outbound",
+      "title": "Two independent same-day sources argue against wide subagent fan-out, bearing directly on prism-subagent and prism-dispatch defaults",
+      "description": "On the same day, an empirical study and a practitioner report from inside OpenAI both landed on the claim that parallel agent fan-out buys cost rather than quality. HarnessTax evaluated 21 model-harness pairs and found harness choice barely moves task success rate while significantly moving cost, concluding a simple harness stays competitive. Separately a Codex developer named a 'coordination tax' and put the threshold at two: beyond two parallel sub-agents, agents distrust each other and burn tokens re-verifying. The third leg is the case study both are reacting to - 1,393 subagents, ~19 hours, ~$19,300, and community review still caught removed public APIs the tests missed. This bears on prism-subagent's fresh-implementer-per-task model and prism-dispatch's ad-hoc parallelism, neither of which currently caps concurrent lanes. Flagged, not fixed: no Prism default was changed on this run, and changing one is Gavin's call.",
+      "verification": {
+        "evidence": "TLDR AI edition 2026-09-17 (read in Gmail, gbdevux@gmail.com), Deep Dives section, item 'HarnessTax': '21 model-harness pairs spanning seven models and three harnesses found that harness choice has little effect on task success rate, but can significantly affect the cost.' the-decoder.com front page 2026-09-17, Matthias Bastian, quoting Eric Provencher of OpenAI Codex: 'more than two parallel sub-agents almost always burn tokens without improving quality', naming the 'coordination tax'. TLDR Dev edition 2026-09-17, 'Refactoring Hermes with 1,393 agents': 34.4% non-test source reduction for roughly $19,300, with review catching removed public APIs and changed exception handling the tests missed.",
+        "result": "verified - three distinct sources read in full in this run, two of them independent of each other and both contradicting the third's implicit premise"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S7",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S7",
+      "kind": "suggestion",
+      "group": "suggested",
+      "state": "awaiting-disposition",
+      "direction": "local",
+      "title": "Demote AI Dev Signals from a required briefing step to a freshness-gated one",
+      "description": "Proposal, not an action taken: change step 5 of the morning-briefing contract so AI Dev Signals is only pulled when its newest edition is dated within two days of the run, and skipped silently otherwise. As measured in N33 it is currently a 12-day-lagged digest of a source the run already reads same-day, so it costs a fetch and a dedupe pass to contribute nothing. The counter-argument is that its editorial framing sometimes surfaces an item Marktechpost's front page has already scrolled past, which a pure freshness gate would lose - so the alternative disposition is to keep it but drop it to the bottom of the dedupe priority rather than gate it on date. Awaiting a yes, a no, or the alternative.",
+      "verification": {
+        "evidence": "Grounded in N33's measurement (newest edition 2026-09-05 vs newest source article 2026-09-16, read in the same run). Contract step 5 as written in the scheduled-task file describes the source as 'Near-daily; if the newest edition predates today, use the most recent available and note its date' - which on a 12-day lag produces a note rather than a signal. On this run the entire newsletter was deduped out, contributing zero items to the published edition.",
+        "result": "proposed - no contract change made; the skill file is unedited and step 5 still runs as written"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA7",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA7",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Should the briefing run resolve TLDR items to their primary URLs, or keep linking the section index?",
+      "description": "TLDR newsletter bodies summarise each item but do not always expose the underlying primary URL in the rendered mail. The run currently falls back to the section index (tldr.tech/ai, /dev, /design, /data), which is honest but makes those items the only ones in the edition that do not deep-link. Resolving them would mean an extra search per item against the item's headline, which on a seven-item day is a meaningful addition to run time for a briefing that is meant to land by 10:30. The ask is which Gavin wants: keep the index links and accept the asymmetry, resolve only the items he is most likely to click, or resolve all of them and accept the longer run. Never inferred - this trades his reading experience against the run's punctuality, which is his call.",
+      "verification": {
+        "evidence": "Edition 2026-09-17 as published carries index-only links on 9 of 16 newsletter items: all of TLDR AI (2), TLDR Dev (3), TLDR Design (2) and TLDR Data (2). The Rundown AI, The Decoder and The AI Data Engineer items all carry primary URLs because those sources expose them in the body. The same pattern is recorded in the previous edition's notes field: 'A few TLDR items link to the TLDR section index rather than a primary URL because the newsletter body did not expose one.'",
+        "result": "open - recurring across at least two consecutive editions, no disposition recorded"
+      }
     }
   ],
   "edges": [
@@ -2461,6 +2581,30 @@
       "to": "wg:djeli-branch:C4",
       "kind": "outbound",
       "label": "N30 outbound-> C4 (the per-shape fidelity proof is what makes C4's lo/mid/hi change WHAT is drawn)"
+    },
+    {
+      "from": "wg:djeli-branch:N33",
+      "to": "wg:djeli-branch:S7",
+      "kind": "splinter",
+      "label": "N33 splinter-> S7 (the measured 12-day lag is what the demotion proposal rests on)"
+    },
+    {
+      "from": "wg:djeli-branch:N32",
+      "to": "wg:djeli-branch:OA7",
+      "kind": "ontology",
+      "label": "N32 ontology-> OA7 (both are source-fidelity gaps in the same contract: one loses the feed, the other loses the link)"
+    },
+    {
+      "from": "wg:djeli-branch:N36",
+      "to": "wg:djeli-branch:N31",
+      "kind": "ontology",
+      "label": "N36 ontology-> N31 (external evidence for the same lesson N31 records internally: a completion claim from a wide autonomous run is not evidence the work landed)"
+    },
+    {
+      "from": "wg:djeli-branch:N35",
+      "to": "wg:djeli-branch:N34",
+      "kind": "ontology",
+      "label": "N35 ontology-> N34 (both distinguish 'checked and empty' from 'never ran' - the failure mode a silent omission hides)"
     }
   ],
   "stats": {
@@ -2469,7 +2613,7 @@
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 93,
+    "edgeCount": 97,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -2826,6 +2970,20 @@
         "N31"
       ],
       "newEdges": 9,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass26_2026_09_17": {
+      "newNodes": [
+        "N32",
+        "N33",
+        "N34",
+        "N35",
+        "N36",
+        "S7",
+        "OA7"
+      ],
+      "newEdges": 4,
       "corrections": [],
       "refused": []
     }
