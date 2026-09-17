@@ -130,7 +130,7 @@ changed.
 | `suite-drift-codex.html` | `0d03290` | 5 new drift entries from this close-out session (see Drift Log, below) |
 
 **Encoding note, unrelated to today's edits:** `dgs-definitive-plan.html` carries a **pre-existing**
-UTF-8 double-encoding defect — three instances of `Â·` (U+00C2 U+00B7) where a plain middot (·)
+UTF-8 double-encoding defect — three instances of `·` (U+00C2 U+00B7) where a plain middot (·)
 should be, in the strings `"client · Ezgi"`, `"...wordmark · mineral-spar..."`, and
 `"...hazine-prd · cowork"`. Confirmed present as far back as commit `7397702` (2026-09-05) and
 **unchanged in byte-count across every commit made today** (`275314c`, `f6fc59d`, `5fe137a` all
@@ -183,7 +183,7 @@ contract.
   the current 322-session index.
 - **Push status for all five repos** — see `close-report.md`, Step 4. Do not assume pushed; the
   report states ref equality per repo, checked this pass, not inferred from "should have."
-- **The pre-existing `Â·` mojibake in `dgs-definitive-plan.html`** (3 instances, see above) — not
+- **The pre-existing `·` mojibake in `dgs-definitive-plan.html`** (3 instances, see above) — not
   touched, not in scope, flagged so it isn't mistaken for new damage later.
 - **CHANGELOG.md** — checked this pass; repo convention is entries written only at release time (no
   `Unreleased` heading exists anywhere in its history, and `plugin.json`/`marketplace.json` are

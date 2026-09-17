@@ -37,7 +37,8 @@
     "amendPass27": "2026-09-17 card-sync branch: C6 the 72-card sweep, C7 the verify-cards gate, N37-N41 the defects found (two of them committed by this run itself), S7 corrected with a readiness block, OA8 routed to Gavin.",
     "amendPass28": "2026-09-17 engine fix: N42 the allowlist defect that made corrections silent, N43 the CRLF non-drift, and S7's readiness re-applied on the fixed engine.",
     "amendPass29": "2026-09-17 mirror-tab branch: C8 attempted and WITHDRAWN (shadow-DOM lost the workgraph edges), N44 the gates that passed a broken build, N45 CDN-dependent codexes, N46 entity-encoded SVG, N47 the base-restore trap, OA9 the surface question.",
-    "amendPass30": "2026-09-17 the gates: C9 rebuild-dgs-mirrors, C10 dgs-sync-all (the closing move of dgs-plan-update), N48 the stale header."
+    "amendPass30": "2026-09-17 the gates: C9 rebuild-dgs-mirrors, C10 dgs-sync-all (the closing move of dgs-plan-update), N48 the stale header.",
+    "amendPass31": "Encoding: the orchestrator corrupted the plan it guards, and the damage compounded three runs deep. Repaired provably, gated at two levels, and swept across 6,776 files because Gavin refused to let a class-of-one fix stand. Plus the hub stated as one system - plan, reflect and codexes feeding both graphs, bound for Djeli."
   },
   "groups": [
     {
@@ -2374,6 +2375,125 @@
         "evidence": "Header at line 369 carried <span id=\"hdUpdated\" data-stamp=\"2026-09-12\"> while the file's git mtime was 2026-09-17. After the fix, verified in chrome-devtools by forcing the stamp across the range: 3m -> '3 minutes ago' [fresh], 90m -> '2 hours ago' [fresh], 2d -> '2 days ago' [stale], 20d -> '3 weeks ago' [old]. A second defect surfaced and was fixed in the same check: a sibling script wrote the raw ISO instant into the visible text, so the header read 'updated 2026-09-17T16:37:04.776Z'; the ticker now normalises it to the date. Pattern extracted to viz-templates/templates/06-freshness-header.html.",
         "result": "verified in a browser across four time bands, not asserted"
       }
+    },
+    {
+      "id": "wg:djeli-branch:N49",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N49",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "The sync script corrupted the plan it exists to keep honest - and the damage compounded",
+      "description": "dgs-sync-all.ps1 stamped the plan every run using Get-Content -Raw, which on Windows PowerShell 5.1 reads with the ANSI codepage (1252), not UTF-8. Writing it back as UTF-8 re-encoded every multi-byte character. One run turns a middot into two chars; three runs turned the DGS header into unreadable noise and Gavin saw it before any gate did. The failure is silent (no error, no exit code), it MULTIPLIES per run, and the offender was the orchestrator whose whole purpose is keeping surfaces honest. A repair tool that corrupts what it repairs is worse than no tool.",
+      "verification": {
+        "evidence": "Fingerprinted the compounding directly: commit 1d82a3e clean, 799ddb7 3666 artefacts, 1994db9 9705, a5fdab6 23903. Repaired by strict cp1252-encode/utf8-decode (throws rather than guesses) converging in 4 passes with zero U+FFFD, then 11 residual single-pass artefacts fixed by literal map. Root cause fixed with Read-Utf8/Write-Utf8 helpers pinned to UTF8Encoding(false); stage 0 gate added; the stamp stage now re-checks its own write and calls Die if it corrupted anything.",
+        "result": "verified in chrome-devtools on the rendered page - 0 mojibake in body text, title renders 'Digital Griot Suite - Definitive Planning', 21 tabs, 8 mirrors"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N50",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N50",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "13 files were already corrupted before today, and nothing was looking",
+      "description": "Gavin refused to let the plan-only fix stand: 'if any other ones exist that are messed up even before today I would like to fix it rather than kicking the can down the road.' The sweep found 14 dirty files in 6,776 - including the branch codex at 89 artefacts and the CANONICAL workgraph index at 102. The codex damage sat entirely in the hand-authored page chrome, zero in the synced data block, which proves the renderer was innocent and the template carried the wound. The lesson generalises: when you find one instance of a class, sweep for the class.",
+      "verification": {
+        "evidence": "tools/sweep-mojibake.mjs over 6,776 files. 8 files literal-repaired; Prism/.prism/shared/workgraph/index.json repaired JSON-aware per string value (12 strings, structure re-parsed, key count preserved) because whole-file decode refused. Re-sweep returns dirty=0. Three files are allowlisted - dgs-sync-all.ps1, widget-internals.md, cl-viz-export/SKILL.md - because they quote the artefact on purpose; repairing them would delete the lesson.",
+        "result": "verified - dirty=0 across 6,776 files on re-sweep"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N51",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N51",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "The first gate to fail crashed the reporter instead of reporting",
+      "description": "Die() calls Report(), but Report was defined eighty lines further down. PowerShell resolves functions at call time in source order, so the moment the new encoding gate actually fired, the script threw CommandNotFoundException instead of printing which stage failed. A gate that cannot report its own failure is not a gate - it is a crash with good intentions. Found only because the new gate fired on its very first run.",
+      "verification": {
+        "evidence": "Run output: \"Report : The term 'Report' is not recognized\" at dgs-sync-all.ps1:64 immediately after [FAIL] plan encoding intact. Report hoisted above Die with a comment explaining the ordering constraint; subsequent runs print the full SUMMARY block on both the red and the green path.",
+        "result": "verified - the next failing run printed its summary instead of crashing"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N52",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N52",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "The freshness stamp manufactured the drift it then reported",
+      "description": "Stage 3 rewrote the plan's stamp on EVERY run, which re-dirtied the file and instantly made the published card stale - so stage 5 could never be green and DGS_SYNC_OK was unreachable by construction. A check must not manufacture the condition it checks. Now the stamp fires only when the plan has real uncommitted changes; an unchanged plan keeps its stamp and the run can converge.",
+      "verification": {
+        "evidence": "Before: every -Commit run ended DGS_SYNC_INCOMPLETE on 'artifact cards current' with exactly one stale card, the plan itself. After the change-gate: 'plan freshness stamp OK 2026-09-17T16:50:52.991Z (plan had 1 uncommitted change(s))' and the run reached DGS_SYNC_OK with all four repos ref-equal.",
+        "result": "verified - first fully green DGS_SYNC_OK run"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C11",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C11",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "tools/sweep-mojibake.mjs - repair that is provable or refuses",
+      "description": "The ecosystem encoding gate, wired into dgs-sync-all.ps1 as stage 0b so it runs on every sync rather than being a thing someone remembers. It encodes strict-cp1252 and decodes strict-utf8, so an unmappable character or an invalid sequence THROWS instead of silently producing U+FFFD. That matters because the earlier ad-hoc 'fix' is exactly what deepened the corruption: a guess that looks like a repair. It also carries an allowlist, because three files in the suite document this bug by quoting it.",
+      "verification": {
+        "evidence": "griot-live-artifacts/tools/sweep-mojibake.mjs. Detect run found 14 dirty; --fix repaired 13 and left the allowlisted three; re-sweep dirty=0. Refusal path exercised for real on Prism's workgraph index.json, which the whole-file decoder declined (102 -> 84) and which was then repaired per JSON string value instead of being forced. Wired as stage 0b; stage 0 guards the plan specifically.",
+        "result": "verified - both the repair path and the refusal path exercised on real files"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C12",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C12",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "The hub is one system: plan + reflect + codexes all feed the global and branch workgraphs",
+      "description": "Gavin named the architecture out loud: the DGS Definitive Plan is the source of truth and is being prepared to mount inside Djeli; dgs-plan-update, griot-meridian-reflect, the codexes and the mirrors are not separate rituals but lanes feeding the global workgraph and the branch workgraph, with the plan as the surface that shows them as one thing. He also set the standing obligation - every task we do gets recorded in both graphs, not just the notable ones. Both are now ontology sections, propagated to every surface in the same pass.",
+      "verification": {
+        "evidence": "Two sections added to griot-ontology/claude/CLAUDE.md: 'encoding - PowerShell 5.1 reads ANSI, and the damage COMPOUNDS' and 'every task lands in the workgraph AND the branch workgraph'. propagate.ps1 (itself repaired to read UTF-8 rather than ANSI) synced GLOBAL, the agent-ontology compat mirror and .codex/AGENTS.md; canonical and global copies hash-identical at 77498FC6F7A6, 67,647 bytes, both sections present.",
+        "result": "verified by sha256 parity across copies, not by assertion"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA10",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA10",
+      "kind": "open",
+      "group": "new-findings",
+      "state": "open",
+      "direction": "outbound",
+      "title": "Meridian is not yet a stage in the sync spine",
+      "description": "dgs-sync-all.ps1 walks workgraph, mirrors, stamp, codex-plan-sync, cards and repos - but not the Meridian lane. griot-meridian-reflect writes Going Dark and Day Surface and feeds the same graphs, so it can drift from the hub exactly the way the artifact cards did before the card gate existed. Gavin raised the interconnection explicitly while this was being built. Needs a gated Meridian stage plus an edge in the graph.",
+      "verification": {
+        "evidence": "dgs-sync-all.ps1 stage list read directly: 0 encoding, 0b sweep, 1 workgraph parity, 2 mirrors, 3 stamp, 4 prism codex-plan-sync, 5 cards, 6 push. No Meridian stage present. Raised by Gavin mid-session: the plan, dgs-plan-update and griot-meridian-reflect 'all feed back into the global work graph and the global branch work graph system'.",
+        "result": "open - named and scoped, not yet built"
+      }
     }
   ],
   "edges": [
@@ -3084,15 +3204,69 @@
       "to": "wg:djeli-branch:C10",
       "kind": "inbound",
       "label": "N48 inbound-> C10 (the stale header is why the sync run now stamps the instant itself)"
+    },
+    {
+      "from": "wg:djeli-branch:N49",
+      "to": "wg:djeli-branch:C10",
+      "kind": "inbound",
+      "label": "N49 inbound-> C10 (the orchestrator's own stamp stage was the corrupter)"
+    },
+    {
+      "from": "wg:djeli-branch:N50",
+      "to": "wg:djeli-branch:N49",
+      "kind": "ontology",
+      "label": "N50 ontology-> N49 (one instance found; sweeping the class found thirteen more, older)"
+    },
+    {
+      "from": "wg:djeli-branch:C11",
+      "to": "wg:djeli-branch:N50",
+      "kind": "inbound",
+      "label": "C11 inbound-> N50 (the sweep that found them is now the gate that keeps them out)"
+    },
+    {
+      "from": "wg:djeli-branch:C11",
+      "to": "wg:djeli-branch:C7",
+      "kind": "ontology",
+      "label": "C11 ontology-> C7 (same family: a rule with no gate behind it is decoration)"
+    },
+    {
+      "from": "wg:djeli-branch:N51",
+      "to": "wg:djeli-branch:C10",
+      "kind": "inbound",
+      "label": "N51 inbound-> C10 (the gate could not report its own failure until Report was hoisted)"
+    },
+    {
+      "from": "wg:djeli-branch:N52",
+      "to": "wg:djeli-branch:C10",
+      "kind": "inbound",
+      "label": "N52 inbound-> C10 (a check that manufactures its own drift can never go green)"
+    },
+    {
+      "from": "wg:djeli-branch:C12",
+      "to": "wg:djeli-branch:C10",
+      "kind": "ontology",
+      "label": "C12 ontology-> C10 (the loop-closing command, written down as the obligation behind it)"
+    },
+    {
+      "from": "wg:djeli-branch:OA10",
+      "to": "wg:djeli-branch:C10",
+      "kind": "awaits",
+      "label": "OA10 awaits-> C10 (Meridian is the lane the spine does not yet hold)"
+    },
+    {
+      "from": "wg:djeli-branch:OA10",
+      "to": "wg:djeli-branch:C12",
+      "kind": "ontology",
+      "label": "OA10 ontology-> C12 (named by the same principle that says the hub is one system)"
     }
   ],
   "stats": {
-    "totalBranches": 42,
+    "totalBranches": 44,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 118,
+    "edgeCount": 127,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -3517,6 +3691,20 @@
         "N48"
       ],
       "newEdges": 5,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass31_2026_09_17": {
+      "newNodes": [
+        "N49",
+        "N50",
+        "N51",
+        "N52",
+        "C11",
+        "C12",
+        "OA10"
+      ],
+      "newEdges": 9,
       "corrections": [],
       "refused": []
     }

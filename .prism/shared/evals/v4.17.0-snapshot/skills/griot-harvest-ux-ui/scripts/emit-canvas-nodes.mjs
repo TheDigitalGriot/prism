@@ -1,19 +1,19 @@
 ﻿#!/usr/bin/env node
 /**
- * emit-canvas-nodes.mjs â€” the mechanical half of a griot-harvest-ux-ui walk.
+ * emit-canvas-nodes.mjs — the mechanical half of a griot-harvest-ux-ui walk.
  *
  * WHY THIS IS A SCRIPT AND NOT PROSE
  * -----------------------------------
  * Validating a node against a fixed eleven-role enum and a required-field schema is
- * deterministic, repeatable, and boring â€” exactly the work that should cost zero
+ * deterministic, repeatable, and boring — exactly the work that should cost zero
  * LLM tokens. It is also the one check that keeps the canvas honest: the stage
  * contract's success criteria explicitly forbid "a hand-authored node list." An
  * agent that hand-writes JSON can silently invent a tenth layer role, drop a
- * file:line, or typo a field name â€” this script rejects all three instead of
+ * file:line, or typo a field name — this script rejects all three instead of
  * merging bad data into the canvas.
  *
  * It is called from SKILL.md step 4. Per invariant I8, a helper with no caller is
- * a soft fix â€” this one sits on the travelled path or it should not exist.
+ * a soft fix — this one sits on the travelled path or it should not exist.
  *
  * Usage:
  *   node emit-canvas-nodes.mjs --cluster <name> --in <findings.json> [--out <path>]
@@ -25,7 +25,7 @@
  * --dry-run  validate only, do not write
  *
  * VALIDATION IS ALL-OR-NOTHING PER RUN. If any node in --in fails validation, the
- * script reports every violation and exits nonzero WITHOUT writing anything â€”
+ * script reports every violation and exits nonzero WITHOUT writing anything —
  * never a partial write, never a silently dropped node. Fix the findings JSON and
  * re-run.
  *
@@ -39,7 +39,7 @@ const SANDBOX = process.env.GRIOT_SANDBOX || "C:/Users/digit/GriotSandbox"
 
 // â”€â”€ the ELEVEN layer roles, verbatim from LNAME (corrected 2026-09-12) â”€â”€â”€â”€
 // Source: griot-suite-map.html LNAME array (artifact c389ca6c). Do not edit this
-// list without re-checking that source â€” it is the entire output taxonomy.
+// list without re-checking that source — it is the entire output taxonomy.
 const LAYER_ROLES = [
   "Djeli · container",
   "Collaboration · GenTeam",
@@ -96,7 +96,7 @@ if (!Array.isArray(candidates)) {
   process.exit(1)
 }
 
-// â”€â”€ validate every node â€” collect ALL violations, never stop at the first â”€â”€
+// â”€â”€ validate every node — collect ALL violations, never stop at the first â”€â”€
 function validateNode(node, idx) {
   const errs = []
   const where = `node[${idx}]${node && node.id ? ` (id=${node.id})` : ""}`
@@ -121,13 +121,13 @@ function validateNode(node, idx) {
   if (!data.origin || typeof data.origin.file !== "string" || !data.origin.file)
     errs.push(`${where}: missing "data.origin.file"`)
   if (!data.origin || typeof data.origin.line !== "number")
-    errs.push(`${where}: missing/invalid "data.origin.line" â€” every finding needs file:line`)
+    errs.push(`${where}: missing/invalid "data.origin.line" — every finding needs file:line`)
   if (!data.mountPoint || typeof data.mountPoint !== "string")
     errs.push(`${where}: missing "data.mountPoint"`)
   if (!data.provenance || !data.provenance.harvestedBy)
     errs.push(`${where}: missing "data.provenance.harvestedBy"`)
   if (typeof data.licence !== "string" || !data.licence)
-    errs.push(`${where}: missing "data.licence" â€” record as a fact (spdx:<id> | "none declared"), never omit`)
+    errs.push(`${where}: missing "data.licence" — record as a fact (spdx:<id> | "none declared"), never omit`)
 
   return errs
 }
@@ -135,7 +135,7 @@ function validateNode(node, idx) {
 const allErrors = candidates.flatMap((n, i) => validateNode(n, i))
 
 if (allErrors.length > 0) {
-  console.error(`emit-canvas-nodes: ${allErrors.length} violation(s) â€” nothing written.\n`)
+  console.error(`emit-canvas-nodes: ${allErrors.length} violation(s) — nothing written.\n`)
   for (const e of allErrors) console.error(`  - ${e}`)
   process.exit(1)
 }
@@ -171,4 +171,4 @@ const merged = [...byId.values()]
 mkdirSync(dirname(outPath), { recursive: true })
 writeFileSync(outPath, JSON.stringify(merged, null, 2) + "\n", "utf-8")
 
-console.log(`emit-canvas-nodes: wrote ${outPath} â€” ${added} added, ${updated} updated, ${merged.length} total.`)
+console.log(`emit-canvas-nodes: wrote ${outPath} — ${added} added, ${updated} updated, ${merged.length} total.`)
