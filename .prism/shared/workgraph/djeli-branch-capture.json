@@ -35,7 +35,9 @@
     "amendPass25": "2026-09-16 closeout: the brainstorm companion became a decision hub (C2 registry + four transients, C3 the public surface that unsealed it, C4 the working hub screen, C5 the live two-second variant), plus two defects filed with measured evidence - N30 the shell renderer that drew lanes instead of chrome, re-proven fixed by the engine's own six-artifact comparator, and N31 a run that printed DONE with three of its own criteria unmet.",
     "amendPass26": "2026-09-17 morning-briefing run: source-fidelity findings (Decoder RSS empty, AI Dev Signals 12d lag, Reallusion dry), positive verification that the artifact-publish step is running, and external evidence bearing on subagent fan-out defaults.",
     "amendPass27": "2026-09-17 card-sync branch: C6 the 72-card sweep, C7 the verify-cards gate, N37-N41 the defects found (two of them committed by this run itself), S7 corrected with a readiness block, OA8 routed to Gavin.",
-    "amendPass28": "2026-09-17 engine fix: N42 the allowlist defect that made corrections silent, N43 the CRLF non-drift, and S7's readiness re-applied on the fixed engine."
+    "amendPass28": "2026-09-17 engine fix: N42 the allowlist defect that made corrections silent, N43 the CRLF non-drift, and S7's readiness re-applied on the fixed engine.",
+    "amendPass29": "2026-09-17 mirror-tab branch: C8 attempted and WITHDRAWN (shadow-DOM lost the workgraph edges), N44 the gates that passed a broken build, N45 CDN-dependent codexes, N46 entity-encoded SVG, N47 the base-restore trap, OA9 the surface question.",
+    "amendPass30": "2026-09-17 the gates: C9 rebuild-dgs-mirrors, C10 dgs-sync-all (the closing move of dgs-plan-update), N48 the stale header."
   },
   "groups": [
     {
@@ -2219,6 +2221,159 @@
         "evidence": "Get-FileHash mismatch on amend-workgraph.mjs, backfill-verification.mjs, sync-codex-data.mjs and verify-workgraph.mjs, with deployed mtimes 2026-09-15 07:15 against canonical 2026-09-13. Compare-Object on the line arrays of all three unpatched files returned zero differing lines. The apparent newness of the deployment is a redeploy-copy timestamp, not an edit.",
         "result": "verified - hash inequality explained entirely by line-ending normalisation; no content drift, no reconciliation needed"
       }
+    },
+    {
+      "id": "wg:djeli-branch:C8",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C8",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "flagged-not-fixed",
+      "direction": "outbound",
+      "title": "The shadow-DOM mirror-tab rewrite was built, shipped, and REVERTED the same hour",
+      "description": "An attempt to make the five DGS mirror tabs render on every surface by replacing their iframes with shadow-DOM inlines. It cleared every Content Security Policy error it set out to clear and was still WRONG: the workgraph mirror rendered without the lines between its nodes, and the ontology mirror replaced its interactive map with a dependency banner. Gavin caught it on sight and named the governing rule - we do not replace visually good things with broken upgrades. Reverted to the iframe build at 4b320bc. Recorded as a branch that shipped and was pulled, not as a success, because the record of having been wrong is the point.",
+      "verification": {
+        "evidence": "Published build 92d8d9c logged only two cosmetic Google-Fonts style-src errors at 16:06:52Z - no frame-src, no connect-src, no EvalError - and the Playwright gate returned ok:true, problems:[], errs:[]. Both signals were green while the rendered page was visibly degraded: screenshot from Gavin shows the ontology tab displaying the vendored-dependency notice in place of its map, and he reported the workgraph mirror drawing no edges between nodes. Reverted by restoring live/dgs-definitive-plan.html from 4c6dab6 (5 iframes restored, 0 payload blocks, wgstats inline and viz-templates preserved), committed 4b320bc and republished.",
+        "result": "reverted - the surface is back to the iframe build; the rewrite is recorded as attempted-and-withdrawn rather than shipped"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N44",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N44",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "outbound",
+      "title": "Both gates measured absence of errors and called it correctness",
+      "description": "Two independent checks passed a visibly broken build. Playwright asserted mount status, element counts and console errors; verify_artifact asserted the console log on the real surface. Neither asserted that the thing LOOKED right, so a workgraph with no edges and an ontology with no map sailed through both. The deeper cause is that the workgraph codex traces its edges between the measured positions of rendered chips, and a shadow root inside an inactive tab yields zero-size layout boxes - a failure that produces no error at all, just nothing drawn. Counting elements cannot detect it. Flagged not fixed: the gate needs a visual assertion (screenshot diff, or asserting non-zero geometry on the drawn edges) before any further attempt at this class of change.",
+      "verification": {
+        "evidence": "verify-mirrors.mjs assertions were: mounted, chars, element count, styleKB, scriptError - no geometry, no pixels. It returned workgraph mounted:true chars:184335 els:2022 scriptError:null for the build whose edges were missing. The artifact debug log for the same build at 16:06:52Z carried only two style-src entries. The defect was found by a human looking at the screen, which is the only check that caught it.",
+        "result": "verified - the failure is reproducible in both harnesses as a PASS, which is precisely the problem"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N45",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N45",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "adjacent",
+      "title": "Four live codexes depend on CDN libraries and cannot fully run in the artifact sandbox",
+      "description": "Scanning every live/*.html for external script tags found four: griot-ontology-codex and griot-suite-map pull d3, gavel-decision-review pulls React + ReactDOM + Babel, kweli-brand-matrix pulls html2canvas. The artifact sandbox's script-src permits only self, inline and three named jsdelivr bundles, so none of these load there. This is why the ontology tab cannot be made equivalent by inlining alone - d3 creates its map nodes, so without d3 vendored there is no map, only prose. It also means the iframe is currently the ONLY way those codexes render correctly anywhere, which is an argument for leaving the iframes alone until a library is actually vendored.",
+      "verification": {
+        "evidence": "Regex over live/*.html for external script src: griot-ontology-codex.html and griot-suite-map.html -> d3.min.js; gavel-decision-review.html -> react.production.min.js, react-dom.production.min.js, babel.min.js; kweli-brand-matrix.html -> html2canvas.min.js. Dependency confirmed load-bearing for the ontology codex: its script calls document.getElementById for 'anodes', 'aedges' and 'amap', and none of those ids exist anywhere in the file - d3 creates them at runtime.",
+        "result": "verified - four files, named libraries, and the ontology case traced from missing ids to the library that creates them"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N46",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N46",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "intact-unfiled",
+      "direction": "local",
+      "title": "A codex storing entity-encoded markup renders under the document parser and breaks under innerHTML",
+      "description": "The ontology codex stores its SVG map with HTML entities in attribute position (id=&quot;amap&quot;, viewBox=&quot;0 0 1000 620&quot;). The document parser handles that the way it always has, so the standalone codex is clean. Assigning the same markup through innerHTML re-decodes those entities inside attributes and yields backslash-quoted SVG values the browser rejects. DOMParser, which is what the standalone page effectively uses, handles it correctly. Kept even though the change that surfaced it was reverted, because the fact is about the FILE and will bite any future attempt to embed it - and because the reflex on seeing those errors is to assume the codex is malformed, which it is not.",
+      "verification": {
+        "evidence": "Baseline run loading griot-ontology-codex.html and djeli-branch-capture-codex.html standalone in Playwright: 0 console errors each, proving the seven SVG attribute errors (viewBox, markerWidth, markerHeight, refX, refY, orient, path d) were introduced by innerHTML rather than inherited. Replacing innerHTML with DOMParser().parseFromString + node adoption removed all seven while the element count held at 224.",
+        "result": "verified in both directions - reproduced with innerHTML, absent with DOMParser, standalone baseline proving it was not pre-existing"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N47",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N47",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "Restoring the edit base from HEAD silently re-verified the previous build",
+      "description": "The rebuild loop restored its base with git checkout HEAD. Once a build had been committed, HEAD ALREADY contained the change, so the builder's idempotency guard printed 'ALREADY INLINED - no-op' and the gate then verified the OLD build while appearing to verify the new one. The base for a rebuild must be the last commit WITHOUT the change, never HEAD. Fixed by walking the file's history for the newest change-free commit, with an explicit refusal if the resolved base still contains it.",
+      "verification": {
+        "evidence": "Observed directly: after committing 74a673f, a rebuild reported 'nothing to commit, working tree clean' and the gate returned ok:true on a build that had not been regenerated. The base-finder then needed two corrections of its own - git show returns an ARRAY of lines, so -notmatch filtered instead of testing and every commit read as change-free; and the pathspec needed forward slashes. Per-commit audit after the fix: b914984 True, 74a673f True, 4c6dab6 False -> base correctly resolved to 4c6dab6.",
+        "result": "verified - the guard refused a bad base out loud before the fix and resolved the correct one after"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA9",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA9",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Do the Cowork mirror tabs need fixing at all, or is claude.ai the surface that matters for them?",
+      "description": "The iframes render correctly on claude.ai and blank in Cowork. Today's attempt to make them universal produced a version that rendered everywhere and correctly nowhere, so the honest question is whether the Cowork gap is worth closing. Three real options, and the choice is Gavin's because it is about where he actually reads the plan. ONE: leave the iframes, treat claude.ai as the canonical surface for mirror tabs, and say so in the skills - costs nothing, keeps the good view. TWO: pre-render each codex to static HTML with Playwright at publish time and inline THAT, which preserves appearance because the picture is already drawn, at the cost of losing interactivity inside the tab and adding a render step. THREE: vendor the CDN libraries and fix the layout-timing problem, the most faithful and by far the most work. Never inferred: option one may simply be correct, and the failed attempt is evidence for it rather than against it.",
+      "verification": {
+        "evidence": "Measured today: the iframe build renders correctly on claude.ai and produces five frame-src denials in the Cowork sandbox. The shadow-DOM build cleared every CSP error and lost the workgraph edges and the ontology map. N45 establishes that two of the five codexes cannot run their graphs in the sandbox at all without vendored libraries.",
+        "result": "open - deliberately unresolved; the revert restored the status quo so the decision is not under time pressure"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C9",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C9",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "rebuild-dgs-mirrors.ps1 - refuses to commit while the gate is red",
+      "description": "Written the moment after a commit landed with the gate still failing. Its value is not convenience, it is ORDER: it refuses a dirty tree, resolves the correct pre-change base, builds, runs the visual gate, and commits only on exit 0 - then proves the marker is in HEAD rather than the working copy. It also prints the reminder that file:// carries no CSP, so the harness can never be mistaken for the surface.",
+      "verification": {
+        "evidence": "griot-live-artifacts/rebuild-dgs-mirrors.ps1 with tools/inline-mirror-tabs.js and tools/verify-mirrors.mjs, committed a31ff35. Every refusal path exercised for real in-session: refused a dirty tree; refused a base that still contained the change; failed the build loudly on a syntax error and restored the base; and on the good build ran the gate, committed, pushed and confirmed marker-in-HEAD. Dry run without -Commit built and gated without writing.",
+        "result": "verified - four distinct refusal paths exercised, not asserted"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C10",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C10",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "dgs-sync-all.ps1 - one gated command behind /dgs-plan-update",
+      "description": "Gavin named this the biggest open gap: the plan updated and nothing downstream of it synced. The branch workgraph, its canonical copy in Prism, the rendered branch codex, the eight mirror files the plan embeds, prism-codex-plan-sync and the other repos were all left to memory, so the master could sit ahead of every surface it summarises and nothing failed. This walks them in dependency order and gates each stage: workgraph three-copy parity, mirrors present and eager, freshness stamp, codex-plan-sync lag, artifact cards by git-commit-time, then a push of every repo proven by ref equality. It ends by PRINTING the card-publish list it cannot perform, because the artifact tool lives in the session and not in PowerShell - naming what it cannot do rather than implying it did.",
+      "verification": {
+        "evidence": "griot-live-artifacts/dgs-sync-all.ps1. First dry run: 5 stages green, artifact-cards FAIL naming dgs-definitive-plan 16 KB behind, exit 1, DGS_SYNC_INCOMPLETE. -Commit run pushed griot-live-artifacts 799ddb7, Prism 640393f, griot-ontology and digital-griot-skills, each confirmed local HEAD == origin/main, and still reported INCOMPLETE for the unpublished card rather than claiming done. Wired into dgs-plan-update SKILL.md as Step 7 in BOTH the digital-griot-skills canonical and the ~/.claude/skills deployment (41,473 bytes each).",
+        "result": "verified - the gate failed the run that built it, which is the same proof C7 earned"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N48",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N48",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "The plan's own header claimed a date five days older than the file",
+      "description": "The DGS header read 'updated 2026-09-12' on a file that had been rewritten that morning - a hardcoded stamp in the one place whose entire job is to say how current the page is. The plan's own guidance already said prefer computed over hardcoded; the header was the exception nobody had noticed. Fixed with an instant in data-stamp written by the sync run and a relative chip recomputed on EVERY page load and re-ticked every 30s, colour-graded fresh/stale/old. The deeper point: a hardcoded date cannot tell you it has gone stale, and a relative one cannot avoid it.",
+      "verification": {
+        "evidence": "Header at line 369 carried <span id=\"hdUpdated\" data-stamp=\"2026-09-12\"> while the file's git mtime was 2026-09-17. After the fix, verified in chrome-devtools by forcing the stamp across the range: 3m -> '3 minutes ago' [fresh], 90m -> '2 hours ago' [fresh], 2d -> '2 days ago' [stale], 20d -> '3 weeks ago' [old]. A second defect surfaced and was fixed in the same check: a sibling script wrote the raw ISO instant into the visible text, so the header read 'updated 2026-09-17T16:37:04.776Z'; the ticker now normalises it to the date. Pattern extracted to viz-templates/templates/06-freshness-header.html.",
+        "result": "verified in a browser across four time bands, not asserted"
+      }
     }
   ],
   "edges": [
@@ -2869,15 +3024,75 @@
       "to": "wg:djeli-branch:N42",
       "kind": "inbound",
       "label": "N43 inbound-> N42 (surfaced while patching the engine; a hash scare that a diff dissolved)"
+    },
+    {
+      "from": "wg:djeli-branch:C8",
+      "to": "wg:djeli-branch:N39",
+      "kind": "outbound",
+      "label": "C8 outbound-> N39 (an attempt at the finding's fix that was withdrawn, leaving N39 standing)"
+    },
+    {
+      "from": "wg:djeli-branch:N44",
+      "to": "wg:djeli-branch:C8",
+      "kind": "inbound",
+      "label": "N44 inbound-> C8 (the gates that passed C8 are why it reached the surface at all)"
+    },
+    {
+      "from": "wg:djeli-branch:N44",
+      "to": "wg:djeli-branch:N38",
+      "kind": "ontology",
+      "label": "N44 ontology-> N38 (both are a gate returning green over a real failure - one by a time window, one by measuring the wrong thing entirely)"
+    },
+    {
+      "from": "wg:djeli-branch:N45",
+      "to": "wg:djeli-branch:OA9",
+      "kind": "splinter",
+      "label": "N45 splinter-> OA9 (the CDN dependency is what makes option one defensible rather than lazy)"
+    },
+    {
+      "from": "wg:djeli-branch:N46",
+      "to": "wg:djeli-branch:C8",
+      "kind": "inbound",
+      "label": "N46 inbound-> C8 (surfaced by the withdrawn attempt; kept because the fact is about the file, not the attempt)"
+    },
+    {
+      "from": "wg:djeli-branch:N47",
+      "to": "wg:djeli-branch:C9",
+      "kind": "inbound",
+      "label": "N47 inbound-> C9 (the base-restore trap surfaced while writing the gate, and is now refused by it)"
+    },
+    {
+      "from": "wg:djeli-branch:C9",
+      "to": "wg:djeli-branch:C7",
+      "kind": "ontology",
+      "label": "C9 ontology-> C7 (same family: a rule with no command behind it is decoration)"
+    },
+    {
+      "from": "wg:djeli-branch:C10",
+      "to": "wg:djeli-branch:C7",
+      "kind": "ontology",
+      "label": "C10 ontology-> C7 (the third gate of the family, and the widest - it holds every surface the plan claims to summarise)"
+    },
+    {
+      "from": "wg:djeli-branch:C10",
+      "to": "wg:djeli-branch:C6",
+      "kind": "awaits",
+      "label": "C10 awaits-> C6 (the card sweep proved the surfaces drift; this is what stops them drifting again)"
+    },
+    {
+      "from": "wg:djeli-branch:N48",
+      "to": "wg:djeli-branch:C10",
+      "kind": "inbound",
+      "label": "N48 inbound-> C10 (the stale header is why the sync run now stamps the instant itself)"
     }
   ],
   "stats": {
-    "totalBranches": 39,
+    "totalBranches": 42,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 108,
+    "edgeCount": 118,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -3277,6 +3492,32 @@
       "corrections": [
         "wg:djeli-branch:S7"
       ],
+      "refused": []
+    },
+    "amendPass29_2026_09_17": {
+      "newNodes": [
+        "C8",
+        "N44",
+        "N45",
+        "N46",
+        "N47",
+        "OA9"
+      ],
+      "newEdges": 5,
+      "corrections": [],
+      "refused": [
+        "edge wg:djeli-branch:N47->wg:djeli-branch:C9 (dangling endpoint)",
+        "edge wg:djeli-branch:C9->wg:djeli-branch:C7 (dangling endpoint)"
+      ]
+    },
+    "amendPass30_2026_09_17": {
+      "newNodes": [
+        "C9",
+        "C10",
+        "N48"
+      ],
+      "newEdges": 5,
+      "corrections": [],
       "refused": []
     }
   },
