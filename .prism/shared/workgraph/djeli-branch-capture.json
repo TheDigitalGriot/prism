@@ -34,7 +34,8 @@
     "amendPass24": "2026-09-16 graph-close: the 7 CORRECT rows from the 2026-09-15 disposition sheet, applied. B10 overturns a pass-14 MISMATCH that was an instrument failure - the five tab buttons are at live/griot-ontology-codex.html:106-110 under commit dd0c7b3, which predates the check; state stays precedent-identified-ungeneralized. N4 N23 N25 N26 N29 S3 record that resolved-verified and resolved-done were in neither closure list, so six closed nodes were counted as neither closed nor open from their introducing pass through pass 23.",
     "amendPass25": "2026-09-16 closeout: the brainstorm companion became a decision hub (C2 registry + four transients, C3 the public surface that unsealed it, C4 the working hub screen, C5 the live two-second variant), plus two defects filed with measured evidence - N30 the shell renderer that drew lanes instead of chrome, re-proven fixed by the engine's own six-artifact comparator, and N31 a run that printed DONE with three of its own criteria unmet.",
     "amendPass26": "2026-09-17 morning-briefing run: source-fidelity findings (Decoder RSS empty, AI Dev Signals 12d lag, Reallusion dry), positive verification that the artifact-publish step is running, and external evidence bearing on subagent fan-out defaults.",
-    "amendPass27": "2026-09-17 card-sync branch: C6 the 72-card sweep, C7 the verify-cards gate, N37-N41 the defects found (two of them committed by this run itself), S7 corrected with a readiness block, OA8 routed to Gavin."
+    "amendPass27": "2026-09-17 card-sync branch: C6 the 72-card sweep, C7 the verify-cards gate, N37-N41 the defects found (two of them committed by this run itself), S7 corrected with a readiness block, OA8 routed to Gavin.",
+    "amendPass28": "2026-09-17 engine fix: N42 the allowlist defect that made corrections silent, N43 the CRLF non-drift, and S7's readiness re-applied on the fixed engine."
   },
   "groups": [
     {
@@ -2006,10 +2007,30 @@
         "result": "proposed - no contract change made; the skill file is unedited and step 5 still runs as written"
       },
       "correction": {
-        "correctedAt": "2026-09-17 amendPass27",
-        "wasClaimed": "S7 was filed in amendPass26 as a complete suggestion node, carrying title, description, state awaiting-disposition and a verification block - and was treated as done.",
-        "isTrue": "S7 was filed WITHOUT a readiness block, which every other node in the suggested lane (S1-S6) carries. The suggested-lane renderer defaults a missing readiness to score 0 and colours anything under 65 with the miss hue, so S7 would render to Gavin as a red 0% card - unassessed and failing looking identical on a decision surface. Scored here against the graph declared readinessModel: evidence 20 measured, tooling 20 measured, blastRadius 16 judged, dependency 20 measured, decisionDebt 10 judged = 86, weakest decision debt.",
-        "cause": "The amendPass26 payload was written from the node-shape contract in the skill file, which lists localId/kind/title/state/direction/verification as required and does not mention readiness - readiness is enforced by the RENDERER and by lane convention, not by the amend helper validator. So a suggested-lane node missing it passes validation, passes the verifier, passes three-copy parity, and is only visibly wrong once the lane renders. The lane had not rendered since before the scope bug recorded as N42, which is why nobody had seen it."
+        "correctedAt": "2026-09-17 amendPass28",
+        "wasClaimed": "amendPass27 reported 'corrections: wg:djeli-branch:S7' and exited 0, which read as the readiness block having been applied to the node.",
+        "isTrue": "Nothing was applied. The amend helper's correction handler allowlisted description, title, verification and group and discarded every other field without a refusal, so the readiness was dropped on the floor while the run reported success. S7 continued to render as a red unscored 0%. The engine defect is recorded as N42 and patched; this correction re-applies the readiness on the fixed engine.",
+        "cause": "The engine was narrower than its own documented contract ('plus whatever fields it replaces') and failed silently rather than refusing - the exact failure shape the graph exists to make impossible, occurring inside the tool that maintains the graph."
+      },
+      "readiness": {
+        "score": 86,
+        "factors": {
+          "evidence": 20,
+          "tooling": 20,
+          "blastRadius": 16,
+          "dependency": 20,
+          "decisionDebt": 10
+        },
+        "measured": {
+          "evidence": "measured",
+          "tooling": "measured",
+          "blastRadius": "judged",
+          "dependency": "measured",
+          "decisionDebt": "judged"
+        },
+        "weakest": "decision debt",
+        "weakestScore": 10,
+        "blocker": "Needs one ruling from Gavin: freshness-gate AI Dev Signals, or keep it and drop it to the bottom of the dedupe priority. The edit is a few lines in one scheduled-task file and nothing depends on it."
       }
     },
     {
@@ -2163,6 +2184,40 @@
       "verification": {
         "evidence": "Gate output 2026-09-17 11:28, section 'CARD AHEAD OF REPO (manual)': prism-channel-rollout-status (card 1 KB larger) and fastapi-vs-flask-kente (card 1 KB larger). Both flagged, neither published. The +1 KB magnitude matches the wrapper delta seen on cards republished this session, which is suggestive but not proof - the diff has not been read.",
         "result": "open - deliberately not resolved by inference; the gate's manual lane exists precisely so this question reaches a person"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N42",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N42",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "The amend helper silently dropped every correction field outside a four-key allowlist",
+      "description": "amend-workgraph.mjs validated a correction's wasClaimed/isTrue/cause, then applied only description, title, verification and group to the node before stamping the correction block. Every other field a correction carried - readiness, state, direction, outputs - was discarded without a refusal, so the run printed 'corrections: <target>' and the value never landed. The skill's own documented contract is '{target, wasClaimed, isTrue, cause} plus whatever fields it replaces', so the engine had been quietly narrower than its spec. This is the graph's own invariant turned on itself: a correction that cannot change the thing it corrects is a silent overwrite of the correction, not of the node.",
+      "verification": {
+        "evidence": "amend-workgraph.mjs lines 51-53 applied description/title/verification, line 58-61 group, line 62 stamped node.correction - no generic pass. Proven empirically in amendPass27: the S7 readiness correction reported 'corrections: wg:djeli-branch:S7' and exited 0, then a graph query returned S7 keys = id, originLane, outputs, contractPath, localId, kind, group, state, direction, title, description, verification, correction - readiness absent, and the lane still rendered it as an unscored 0%. Fixed by applying any non-RESERVED key generically, with originLane/id/localId protected as identity and immutable.",
+        "result": "verified - defect reproduced in a real pass, patched in the digital-griot-skills canonical and the ~/.claude/skills deployment, both node --check clean"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N43",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N43",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "verified-reframe",
+      "direction": "local",
+      "title": "The skills canonical and its deployment differ only by line endings - not the sixth propagation drift it looked like",
+      "description": "A hash compare of griot-workgraph-update/scripts between the digital-griot-skills canonical and the ~/.claude/skills deployment showed all four files mismatching, with the DEPLOYED copies newer than the canonical - which reads exactly like ungated propagation target drift in its most dangerous direction, source-of-truth behind its own deployment. A line-by-line diff showed zero content differences on all three unpatched scripts: the mismatch is CRLF versus LF. Recorded as a reframe rather than a finding of drift, because acting on the hash alone would have 'reconciled' a divergence that does not exist and could have regressed a working engine.",
+      "verification": {
+        "evidence": "Get-FileHash mismatch on amend-workgraph.mjs, backfill-verification.mjs, sync-codex-data.mjs and verify-workgraph.mjs, with deployed mtimes 2026-09-15 07:15 against canonical 2026-09-13. Compare-Object on the line arrays of all three unpatched files returned zero differing lines. The apparent newness of the deployment is a redeploy-copy timestamp, not an edit.",
+        "result": "verified - hash inequality explained entirely by line-ending normalisation; no content drift, no reconciliation needed"
       }
     }
   ],
@@ -2802,6 +2857,18 @@
       "to": "wg:djeli-branch:N31",
       "kind": "ontology",
       "label": "N38 ontology-> N31 (both are a completion signal that passed while its own success criteria went unmet)"
+    },
+    {
+      "from": "wg:djeli-branch:N42",
+      "to": "wg:djeli-branch:N41",
+      "kind": "outbound",
+      "label": "N42 outbound-> N41 (N41's fix could not land until the engine stopped dropping the field that carried it)"
+    },
+    {
+      "from": "wg:djeli-branch:N43",
+      "to": "wg:djeli-branch:N42",
+      "kind": "inbound",
+      "label": "N43 inbound-> N42 (surfaced while patching the engine; a hash scare that a diff dissolved)"
     }
   ],
   "stats": {
@@ -2810,7 +2877,7 @@
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 106,
+    "edgeCount": 108,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -3196,6 +3263,17 @@
         "OA8"
       ],
       "newEdges": 9,
+      "corrections": [
+        "wg:djeli-branch:S7"
+      ],
+      "refused": []
+    },
+    "amendPass28_2026_09_17": {
+      "newNodes": [
+        "N42",
+        "N43"
+      ],
+      "newEdges": 2,
       "corrections": [
         "wg:djeli-branch:S7"
       ],
