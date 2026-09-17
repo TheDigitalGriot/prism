@@ -40,7 +40,8 @@
     "amendPass30": "2026-09-17 the gates: C9 rebuild-dgs-mirrors, C10 dgs-sync-all (the closing move of dgs-plan-update), N48 the stale header.",
     "amendPass31": "Encoding: the orchestrator corrupted the plan it guards, and the damage compounded three runs deep. Repaired provably, gated at two levels, and swept across 6,776 files because Gavin refused to let a class-of-one fix stand. Plus the hub stated as one system - plan, reflect and codexes feeding both graphs, bound for Djeli.",
     "amendPass32": "The nine surfaces declared as one system and gated: SURFACES registry + Ecosystem Map mirror (C13), verify-surfaces.mjs as stage 4b closing OA10 (C14). Three defects recorded honestly, one of them mine twice over - I guessed an owner the plan had already written down, and my parser silently dropped the row it was built to check.",
-    "amendPass33": "The two open items were one defect in two directions: a gate that reassures without checking. The card gate measured the wrong quantity and invented drift; the stories gate measured in the wrong place and invented calm. OA8 closed as a measurement artifact - nothing had been lost."
+    "amendPass33": "The two open items were one defect in two directions: a gate that reassures without checking. The card gate measured the wrong quantity and invented drift; the stories gate measured in the wrong place and invented calm. OA8 closed as a measurement artifact - nothing had been lost.",
+    "amendPass34": "The rename was authorised and NOT performed. Reading the stories contract showed s-hash is the compliant form and STORY-NNN the deviation - the opposite of what I had recorded. N58 corrected, OA11 opened for the two real follow-ups."
   },
   "groups": [
     {
@@ -2636,13 +2637,19 @@
       "localId": "N58",
       "kind": "finding",
       "group": "new-findings",
-      "state": "recorded",
+      "state": "corrected",
       "direction": "outbound",
-      "title": "Two story-id conventions coexist, and only one of them is stable",
+      "title": "The story-id conventions are the other way round - s-hash is contract-compliant, STORY-NNN is the deviation",
       "description": "Surfaced by a bug in my own fix: the first story counter matched /\"id\":\\s*\"STORY-/ and reported 0 stories for three of the four epics. They were not empty - they use older s-<hash8> ids. A shape-based count silently erases whatever does not match the shape, which is the same failure family as the parser that dropped The Griot's Equation earlier today. The real finding underneath: prism-codex-plan-sync specifies stable STORY-NNN ids precisely so status survives a re-decomposition, and only channel-adoption (25 stories) uses them. The root store, ceremony-review-audit-gate and prism-gavel predate the convention, so re-decomposing them would lose their status. Reported rather than silently normalised - renaming ids is Gavin's call, not a gate's.",
       "verification": {
-        "evidence": "Parsed all four stores: (root) 15 stories s-hash, ceremony-review-audit-gate 4 s-hash, prism-gavel 5 s-hash, channel-adoption 25 STORY-NNN. Counter rewritten to ConvertFrom-Json and count the stories array, and the gate now prints each epic's id convention alongside its count and age.",
-        "result": "recorded - open question surfaced, not resolved; re-numbering is a decision, not a cleanup"
+        "evidence": "stories-contract.md rule 4 + _id_note read verbatim; workgraph-index.mjs header names STORY-001 as contract-forbidden Dialect B. dgs-sync-all.ps1 stage 4 labels corrected from 's-hash (pre-convention)' / 'STORY-NNN' to 's-hash (contract rule 4)' / 'STORY-NNN (dialect B)', with the correction and its cause written into the script. Ontology section 'find the CONTRACT before you modernise a format' propagated to all four surfaces.",
+        "result": "corrected - the rename was NOT performed, and the reason is recorded rather than the outcome quietly changed"
+      },
+      "correction": {
+        "correctedAt": "2026-09-17 amendPass34",
+        "wasClaimed": "Two story-id conventions coexist and only one is stable: prism-codex-plan-sync specifies stable STORY-NNN ids, and only channel-adoption uses them; the root store, ceremony-review-audit-gate and prism-gavel predate the convention with older s-hash ids, so re-decomposing them would lose their status.",
+        "isTrue": "Backwards. The stories contract rule 4 requires a content-hash id derived from the behavioral-requirement text - 'stable across re-emits, NOT a sequential label like STORY-001'. So s-<hash8> IS the compliant, genuinely stable form: an unchanged requirement keeps its id through an iterate_plan and its in-flight status survives. STORY-NNN is Dialect B, which the index generator absorbs as ids 'that the contract forbids'. channel-adoption is the epic out of step; the other three were right all along. The three epics I called pre-convention lose nothing on a re-decomposition - that is precisely what content-derived ids buy.",
+        "cause": "I took prism-codex-plan-sync's SKILL.md ('stable STORY-NNN ids') as the authority without reading the contract it is supposed to implement, and pattern-matched opaque hashes as legacy and sequential labels as modern. Tidier looked newer. Gavin then said 'you can rename' and I was one step from renumbering 24 compliant ids into the forbidden form - caught only by reading the index generator's header while scoping the migration."
       }
     },
     {
@@ -2660,6 +2667,23 @@
       "verification": {
         "evidence": "verify-cards.ps1 content-aware (Get-CardBody strips the publish wrapper, Get-Sha compares) -> 90 in sync / 0 stale / 0 missing / 0 card-ahead. dgs-sync-all.ps1 stage 4 repointed at .prism/stories -> 4 epic(s), 49 stories, per-epic convention and age. Ontology section 'a gate must measure the right thing, in the right place' (+2,793 b) propagated to GLOBAL, the compat mirror and .codex/AGENTS.md; dgs-plan-update SKILL.md Step 7c added to both copies (45,052 b each). Drift #57 and #58.",
         "result": "verified - both gates re-run green on real measurements rather than proxies"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA11",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA11",
+      "kind": "open",
+      "group": "new-findings",
+      "state": "open",
+      "direction": "outbound",
+      "title": "Two authorities disagree on story ids - the skill contradicts the contract",
+      "description": "prism-codex-plan-sync's SKILL.md instructs agents to emit 'stable STORY-NNN ids'. The stories contract (rule 4) says the opposite: a story id is a hash of its behavioral-requirement text, 'stable across re-emits, NOT a sequential label like STORY-001', and scripts/workgraph-index.mjs absorbs STORY-NNN as 'Dialect B's ids that the contract forbids'. The contract wins - so the SKILL.md line is the defect, and every future run of that skill will keep minting non-compliant ids until it is fixed. It cannot be fixed from this session: the live copy is the read-only plugin cache, and the canonical source is the prism-plugin repo, which is not cloned on this machine. Second, separate decision: channel-adoption (25 stories) already carries STORY-NNN and is the one epic out of step. Re-deriving its ids from requirement text is a real migration and must be done by the emitter, not by hand - a hand-minted hash that does not match what the emitter would produce on re-emit destroys the exact stability the ids exist for.",
+      "verification": {
+        "evidence": ".prism/shared/contracts/stories-contract.md rule 4 and its _id_note read verbatim. scripts/workgraph-index.mjs header names Dialect B's STORY-001 ids as contract-forbidden. The conflicting line lives at rpm/plugin_01DWVft1gxrUEx7KKr8vKtga/skills/prism-codex-plan-sync/SKILL.md ('emit .prism/stories/stories.json with stable STORY-NNN ids'); no prism-plugin clone exists under GriotApps/GriotProducts/GriotMeta, so it cannot be edited here. git grep confirms STORY-001 appears in Prism docs only as an illustrative label, never as a reference to channel-adoption's actual stories - so a future migration would not break external links.",
+        "result": "open - two concrete follow-ups named: fix the skill line in the prism-plugin repo, and decide on channel-adoption's 25 ids"
       }
     }
   ],
@@ -3515,6 +3539,18 @@
       "to": "wg:djeli-branch:C14",
       "kind": "ontology",
       "label": "C15 ontology-> C14 (the post-push block, now honest in both stages)"
+    },
+    {
+      "from": "wg:djeli-branch:OA11",
+      "to": "wg:djeli-branch:N58",
+      "kind": "inbound",
+      "label": "OA11 inbound-> N58 (the id question, once the contract was actually read)"
+    },
+    {
+      "from": "wg:djeli-branch:OA11",
+      "to": "wg:djeli-branch:N57",
+      "kind": "ontology",
+      "label": "OA11 ontology-> N57 (both found by repointing stage 4 at the real store)"
     }
   ],
   "stats": {
@@ -3523,7 +3559,7 @@
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 142,
+    "edgeCount": 144,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -3989,6 +4025,16 @@
       "newEdges": 7,
       "corrections": [
         "OA8"
+      ],
+      "refused": []
+    },
+    "amendPass34_2026_09_17": {
+      "newNodes": [
+        "OA11"
+      ],
+      "newEdges": 2,
+      "corrections": [
+        "N58"
       ],
       "refused": []
     }
