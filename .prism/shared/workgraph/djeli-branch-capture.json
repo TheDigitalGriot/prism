@@ -39,7 +39,8 @@
     "amendPass29": "2026-09-17 mirror-tab branch: C8 attempted and WITHDRAWN (shadow-DOM lost the workgraph edges), N44 the gates that passed a broken build, N45 CDN-dependent codexes, N46 entity-encoded SVG, N47 the base-restore trap, OA9 the surface question.",
     "amendPass30": "2026-09-17 the gates: C9 rebuild-dgs-mirrors, C10 dgs-sync-all (the closing move of dgs-plan-update), N48 the stale header.",
     "amendPass31": "Encoding: the orchestrator corrupted the plan it guards, and the damage compounded three runs deep. Repaired provably, gated at two levels, and swept across 6,776 files because Gavin refused to let a class-of-one fix stand. Plus the hub stated as one system - plan, reflect and codexes feeding both graphs, bound for Djeli.",
-    "amendPass32": "The nine surfaces declared as one system and gated: SURFACES registry + Ecosystem Map mirror (C13), verify-surfaces.mjs as stage 4b closing OA10 (C14). Three defects recorded honestly, one of them mine twice over - I guessed an owner the plan had already written down, and my parser silently dropped the row it was built to check."
+    "amendPass32": "The nine surfaces declared as one system and gated: SURFACES registry + Ecosystem Map mirror (C13), verify-surfaces.mjs as stage 4b closing OA10 (C14). Three defects recorded honestly, one of them mine twice over - I guessed an owner the plan had already written down, and my parser silently dropped the row it was built to check.",
+    "amendPass33": "The two open items were one defect in two directions: a gate that reassures without checking. The card gate measured the wrong quantity and invented drift; the stories gate measured in the wrong place and invented calm. OA8 closed as a measurement artifact - nothing had been lost."
   },
   "groups": [
     {
@@ -2181,13 +2182,19 @@
       "localId": "OA8",
       "kind": "open-ask",
       "group": "open-ask",
-      "state": "open",
+      "state": "closed",
       "direction": "local",
-      "title": "Two cards are LARGER than their repo file - which side is the truth?",
+      "title": "The two 'cards ahead of repo' were a measurement artifact, not lost content (closed by C15)",
       "description": "The gate refuses to publish repo-over-card when the card is bigger, because that direction could destroy content rather than refresh it. Two cards sit in that state. The likeliest explanation is benign - the publish pipeline wraps the HTML and adds roughly a kilobyte - in which case the repo is the truth and they can be republished like any other. But the alternative is that a card was edited or published from a newer source that never made it back to the repo, in which case publishing over it would delete work. The ask is whether Gavin wants the delta diffed and reconciled into the repo first, or the wrapper hypothesis confirmed once and the pair treated as noise forever. Never inferred: only he knows whether either card was ever edited outside the repo path.",
       "verification": {
-        "evidence": "Gate output 2026-09-17 11:28, section 'CARD AHEAD OF REPO (manual)': prism-channel-rollout-status (card 1 KB larger) and fastapi-vs-flask-kente (card 1 KB larger). Both flagged, neither published. The +1 KB magnitude matches the wrapper delta seen on cards republished this session, which is suggestive but not proof - the diff has not been read.",
-        "result": "open - deliberately not resolved by inference; the gate's manual lane exists precisely so this question reaches a person"
+        "evidence": "Common prefix/suffix diff proved the repo file equals the card minus its injected meta block, exactly, for both pairs. After the fix: 'in sync (body hash match) : 90 / STALE 0 / NO CARD 0 / card ahead of repo 0'.",
+        "result": "closed - resolved by measuring correctly, not by choosing a side"
+      },
+      "correction": {
+        "correctedAt": "2026-09-17 amendPass33",
+        "wasClaimed": "Two cards are LARGER than their repo files (fastapi-vs-flask-kente, prism-channel-rollout-status) - the gate refuses to publish over them, awaiting Gavin's ruling on which side is authoritative.",
+        "isTrue": "There was nothing to rule on. Both card bodies were byte-identical to their repo files; the extra ~510 bytes were the cowork-artifact-meta block the publish pipeline injects. The gate was comparing a wrapped file against an unwrapped one using size, so it reported content loss that never happened.",
+        "cause": "verify-cards.ps1 compared size and mtime while claiming to SHA-256. Closed by C15: the wrapper is stripped and the body hashed, and both entries now report in sync."
       }
     },
     {
@@ -2585,6 +2592,74 @@
       "verification": {
         "evidence": "Reordered dgs-sync-all.ps1 to push -> cards -> report, with the reasoning written into the file as an ORDERING NOTE so it is not re-broken. The run immediately after reported DGS_SYNC_OK with 'artifact cards current: all in sync' only once the commit had actually landed, and the subsequent run correctly flagged dgs-definitive-plan as the single stale card after it was edited again.",
         "result": "verified - the gate now flags on the next run what it previously hid"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N56",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N56",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "The card gate printed 'byte-identical' and never hashed a byte",
+      "description": "verify-cards.ps1 opened by claiming it SHA-256s every live/*.html against its artifact card, and its summary line read 'in sync (byte-identical)'. It did neither - it compared FILE SIZE and MTIME. Because the Cowork publish pipeline injects a ~510-byte cowork-artifact-meta script block into every published card, a card is legitimately larger than its repo file, so two artifacts were parked in a 'card ahead of repo - inspect by hand, do NOT publish over' bucket from 2026-08-03. Six weeks, with byte-identical bodies the whole time. A gate that measures the wrong quantity does not merely miss drift - it manufactures phantom drift, and a permanent manual bucket is a bug report against the gate, not a standing task.",
+      "verification": {
+        "evidence": "Diffed both pairs by common prefix/suffix: repo 7,336 b == card 7,846 b minus a 510 b cowork-artifact-meta block (prefix 16 + suffix 7,320 = 7,336 exactly); the second pair identical in shape at 517 b. Fix strips the wrapper from both sides and SHA-256s the remaining body, short-circuiting before any size or mtime heuristic; the output label now reads 'body hash match' because that is what is measured. Re-run: 90 in sync, 0 stale, 0 missing, 0 card-ahead.",
+        "result": "verified - the manual bucket emptied without publishing over anything, which is the proof it was never real drift"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N57",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N57",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "The codex-plan-sync gate watched a path that has never existed",
+      "description": "Stage 4 tested Prism/.prism/shared/workgraph/stories.json. The skill emits to .prism/stories/<epic>/stories.json. The tested path had never existed and never would, so the check could only ever take its else-branch and report OK with the words 'no stories.json yet - expected today'. I read that line three separate times today and repeated it back to Gavin as a known gap, which is exactly how a reassuring gate works: it is not passing on an absence, it is passing on a TYPO, permanently. A gate pointed at the wrong place is indistinguishable from no gate except that it stops you looking.",
+      "verification": {
+        "evidence": "Located the real store by search, then confirmed against the prism-codex-plan-sync SKILL.md which specifies '.prism/stories/stories.json with stable STORY-NNN ids' and 'stories.json (not plan checkboxes) is status truth'. Stage 4 repointed: absence of the store or an empty store now FAILS; age is reported per epic with a >30d callout that does NOT fail the run, because the plan changes most days and a permanently-red gate gets ignored - the same hole in a different shape. First honest run: 4 epic(s), 49 stories, oldest ceremony-review-audit-gate 57d.",
+        "result": "verified - four epics and 49 stories that no gate had ever looked at are now watched"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N58",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N58",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "recorded",
+      "direction": "outbound",
+      "title": "Two story-id conventions coexist, and only one of them is stable",
+      "description": "Surfaced by a bug in my own fix: the first story counter matched /\"id\":\\s*\"STORY-/ and reported 0 stories for three of the four epics. They were not empty - they use older s-<hash8> ids. A shape-based count silently erases whatever does not match the shape, which is the same failure family as the parser that dropped The Griot's Equation earlier today. The real finding underneath: prism-codex-plan-sync specifies stable STORY-NNN ids precisely so status survives a re-decomposition, and only channel-adoption (25 stories) uses them. The root store, ceremony-review-audit-gate and prism-gavel predate the convention, so re-decomposing them would lose their status. Reported rather than silently normalised - renaming ids is Gavin's call, not a gate's.",
+      "verification": {
+        "evidence": "Parsed all four stores: (root) 15 stories s-hash, ceremony-review-audit-gate 4 s-hash, prism-gavel 5 s-hash, channel-adoption 25 STORY-NNN. Counter rewritten to ConvertFrom-Json and count the stories array, and the gate now prints each epic's id convention alongside its count and age.",
+        "result": "recorded - open question surfaced, not resolved; re-numbering is a decision, not a cleanup"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C15",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C15",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "Both post-push gates now measure the right thing in the right place",
+      "description": "The two items left open at the end of the previous pass turned out to be the same defect wearing different clothes: a gate that reassures without checking. The card gate measured the wrong QUANTITY (size instead of content) and invented drift; the stories gate measured in the wrong PLACE (a path that never existed) and invented calm. Fixing both required no new infrastructure - only making each gate actually perform the check its own output claimed. The rules went into the ontology as one section, because the pair is the lesson: if the output says byte-identical, hash bytes; if it says a file is missing, check where that file actually lives.",
+      "verification": {
+        "evidence": "verify-cards.ps1 content-aware (Get-CardBody strips the publish wrapper, Get-Sha compares) -> 90 in sync / 0 stale / 0 missing / 0 card-ahead. dgs-sync-all.ps1 stage 4 repointed at .prism/stories -> 4 epic(s), 49 stories, per-epic convention and age. Ontology section 'a gate must measure the right thing, in the right place' (+2,793 b) propagated to GLOBAL, the compat mirror and .codex/AGENTS.md; dgs-plan-update SKILL.md Step 7c added to both copies (45,052 b each). Drift #57 and #58.",
+        "result": "verified - both gates re-run green on real measurements rather than proxies"
       }
     }
   ],
@@ -3398,15 +3473,57 @@
       "to": "wg:djeli-branch:N50",
       "kind": "ontology",
       "label": "N53 ontology-> N50 (same lesson twice: read what is already written down before acting)"
+    },
+    {
+      "from": "wg:djeli-branch:N56",
+      "to": "wg:djeli-branch:C6",
+      "kind": "inbound",
+      "label": "N56 inbound-> C6 (the card sweep's own gate was measuring a proxy)"
+    },
+    {
+      "from": "wg:djeli-branch:N57",
+      "to": "wg:djeli-branch:C10",
+      "kind": "inbound",
+      "label": "N57 inbound-> C10 (stage 4 of the spine was pointed at a path that never existed)"
+    },
+    {
+      "from": "wg:djeli-branch:N58",
+      "to": "wg:djeli-branch:N57",
+      "kind": "inbound",
+      "label": "N58 inbound-> N57 (surfaced by a shape-based counter in the fix for N57)"
+    },
+    {
+      "from": "wg:djeli-branch:N58",
+      "to": "wg:djeli-branch:N54",
+      "kind": "ontology",
+      "label": "N58 ontology-> N54 (same family: counting by shape silently erases what does not match)"
+    },
+    {
+      "from": "wg:djeli-branch:C15",
+      "to": "wg:djeli-branch:N56",
+      "kind": "outbound",
+      "label": "C15 closes-> N56 (content comparison replaces size+mtime)"
+    },
+    {
+      "from": "wg:djeli-branch:C15",
+      "to": "wg:djeli-branch:N57",
+      "kind": "outbound",
+      "label": "C15 closes-> N57 (stage 4 repointed at the real store)"
+    },
+    {
+      "from": "wg:djeli-branch:C15",
+      "to": "wg:djeli-branch:C14",
+      "kind": "ontology",
+      "label": "C15 ontology-> C14 (the post-push block, now honest in both stages)"
     }
   ],
   "stats": {
-    "totalBranches": 46,
+    "totalBranches": 47,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 135,
+    "edgeCount": 142,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -3859,6 +3976,19 @@
       "newEdges": 8,
       "corrections": [
         "OA10"
+      ],
+      "refused": []
+    },
+    "amendPass33_2026_09_17": {
+      "newNodes": [
+        "N56",
+        "N57",
+        "N58",
+        "C15"
+      ],
+      "newEdges": 7,
+      "corrections": [
+        "OA8"
       ],
       "refused": []
     }
