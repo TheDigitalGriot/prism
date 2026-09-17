@@ -38,7 +38,8 @@
     "amendPass28": "2026-09-17 engine fix: N42 the allowlist defect that made corrections silent, N43 the CRLF non-drift, and S7's readiness re-applied on the fixed engine.",
     "amendPass29": "2026-09-17 mirror-tab branch: C8 attempted and WITHDRAWN (shadow-DOM lost the workgraph edges), N44 the gates that passed a broken build, N45 CDN-dependent codexes, N46 entity-encoded SVG, N47 the base-restore trap, OA9 the surface question.",
     "amendPass30": "2026-09-17 the gates: C9 rebuild-dgs-mirrors, C10 dgs-sync-all (the closing move of dgs-plan-update), N48 the stale header.",
-    "amendPass31": "Encoding: the orchestrator corrupted the plan it guards, and the damage compounded three runs deep. Repaired provably, gated at two levels, and swept across 6,776 files because Gavin refused to let a class-of-one fix stand. Plus the hub stated as one system - plan, reflect and codexes feeding both graphs, bound for Djeli."
+    "amendPass31": "Encoding: the orchestrator corrupted the plan it guards, and the damage compounded three runs deep. Repaired provably, gated at two levels, and swept across 6,776 files because Gavin refused to let a class-of-one fix stand. Plus the hub stated as one system - plan, reflect and codexes feeding both graphs, bound for Djeli.",
+    "amendPass32": "The nine surfaces declared as one system and gated: SURFACES registry + Ecosystem Map mirror (C13), verify-surfaces.mjs as stage 4b closing OA10 (C14). Three defects recorded honestly, one of them mine twice over - I guessed an owner the plan had already written down, and my parser silently dropped the row it was built to check."
   },
   "groups": [
     {
@@ -2486,13 +2487,104 @@
       "localId": "OA10",
       "kind": "open",
       "group": "new-findings",
-      "state": "open",
+      "state": "closed",
       "direction": "outbound",
-      "title": "Meridian is not yet a stage in the sync spine",
+      "title": "Meridian is now a gated stage in the sync spine (closed by C14)",
       "description": "dgs-sync-all.ps1 walks workgraph, mirrors, stamp, codex-plan-sync, cards and repos - but not the Meridian lane. griot-meridian-reflect writes Going Dark and Day Surface and feeds the same graphs, so it can drift from the hub exactly the way the artifact cards did before the card gate existed. Gavin raised the interconnection explicitly while this was being built. Needs a gated Meridian stage plus an edge in the graph.",
       "verification": {
-        "evidence": "dgs-sync-all.ps1 stage list read directly: 0 encoding, 0b sweep, 1 workgraph parity, 2 mirrors, 3 stamp, 4 prism codex-plan-sync, 5 cards, 6 push. No Meridian stage present. Raised by Gavin mid-session: the plan, dgs-plan-update and griot-meridian-reflect 'all feed back into the global work graph and the global branch work graph system'.",
-        "result": "open - named and scoped, not yet built"
+        "evidence": "dgs-sync-all.ps1 stage list now reads: 0 encoding, 0b ecosystem sweep, 1 workgraph parity, 2 mirrors, 3 stamp, 4 prism codex-plan-sync, 4b surface registry + meridian, 5 push, 6 cards. Run output: '[OK  ] surface registry + meridian   9 surfaces owned, embedded, current'.",
+        "result": "closed - verified by the run that closed it"
+      },
+      "correction": {
+        "correctedAt": "2026-09-17 amendPass32",
+        "wasClaimed": "Meridian is not yet a stage in the sync spine - griot-meridian-reflect feeds the same graphs but dgs-sync-all.ps1 does not touch that lane, so it can drift from the hub the way the artifact cards did.",
+        "isTrue": "Closed. Stage 4b (surface registry + meridian) now walks the SURFACES registry and holds the reflect lane, checking channel-going-dark and channel-day-surface by parsed newest-entry key against the 4am day boundary.",
+        "cause": "Named and scoped in the same session it was built, then closed once C14 shipped and the full sync reported 'surface registry + meridian OK - 9 surfaces owned, embedded, current'."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C13",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C13",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "The SURFACES registry - nine mirrors declared as one system",
+      "description": "Gavin: 'the Dashboard and the ecosystem dashboard and the day surface and parts of the briefing seem disconnected when they all operate different parts of the same system and are equally important.' They were. Nine mirrors sat embedded in the plan with no declared owner and nothing checking them. The registry is a const SURFACES inside the plan naming, for each surface, its ontology layer - branch workgraph, global workgraph, global ontology, observer, observe stage 05, design mirror, refraction surface - and the ONE skill that owns it. The Ecosystem Map tab renders the table straight from that array, so the registry cannot disagree with the page it describes. He also told me not to guess, and he was right: the definitions already existed in the plan's Refraction Surfaces table, recovered verbatim from the griot-ecosystem-map and refraction-pattern artifacts, and in the plan's own MERIDIAN array.",
+      "verification": {
+        "evidence": "const SURFACES (9 rows) + a ninth mirror tab for griot-ecosystem-map.html added to dgs-definitive-plan.html, matching the existing mirror markup (tab button, mirror-note, eager iframe, fallback card). Verified in chrome-devtools on the rendered page: tab label 'Ecosystem Map mirror', section visible, registry renders 9 rows, iframe src=griot-ecosystem-map.html loading=eager, 22 tabs, 9 mirror frames, 0 mojibake. Spec sourced from the plan's own Refraction Surfaces section and MERIDIAN array rather than invented.",
+        "result": "verified in a browser - 9 rows rendered from the array, not hand-written"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C14",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C14",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "tools/verify-surfaces.mjs - stage 4b, and the close of OA10",
+      "description": "The gate that makes the registry mean something, and the Meridian stage the spine was missing. It reads SURFACES out of the plan itself and asserts, per surface: the file exists, the plan has a tab with that key, an eager iframe points at it, and it is committed. The two reflect-owned channels get a freshness check on the 4am day boundary by PARSING channel-going-dark and channel-day-surface and comparing the newest entry key - the parse doubles as a check that a broken block has not silently blanked the whole view. It also refuses to run if it parses fewer rows than the registry declares, because a gate that silently skips a row is worse than no gate. This closes OA10: griot-meridian-reflect is now held by the same spine as everything else.",
+      "verification": {
+        "evidence": "griot-live-artifacts/tools/verify-surfaces.mjs, wired as stage 4b of dgs-sync-all.ps1. First run failed honestly on a real condition, then on the corrected registry returned VERIFY_SURFACES_OK - 9 surfaces, briefing showing 'going-dark 2026-09-17 / day-surface 2026-09-17' read from parsed JSON. Full sync run reports 'surface registry + meridian OK 9 surfaces owned, embedded, current' and '9 frames, missing: none'.",
+        "result": "verified - the gate failed first, then passed on a real fix, which is the only proof that counts"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N53",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N53",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "I mistook a finished design mirror for stale data and nearly 'fixed' it",
+      "description": "My first registry assigned meridian-day-surface.html to griot-meridian-reflect, so the gate reported it 44.8 days stale with no entry for today and told me to run the reflect. Wrong on both counts. That file is the design MIRROR of the day-surface view; the live dated data lives in the Briefing artifact's channel-day-surface block. The plan's own MERIDIAN array had already said so - owner 'design . dgs-plan-update', u '2026-07-19' - which is exactly the note Gavin told me existed and told me not to guess past. The file was finished, not stale. A gate built on a guessed owner manufactures work and erodes trust in every other row it prints.",
+      "verification": {
+        "evidence": "Parsed the briefing's channel blocks directly: channel-going-dark 31 entries newest 2026-09-17, channel-day-surface 34 entries newest 2026-09-17, briefings-archive 47 entries - all current. meridian-day-surface.html is 17,421 b, titled 'Meridian - day surface (Mirror)', and contains no channel-day-surface block at all. Registry corrected to layer 'design mirror' / owner 'dgs-plan-update'; the gate then returned VERIFY_SURFACES_OK with no work invented.",
+        "result": "verified by parsing both files - the disagreement was in my registry, not in the suite"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N54",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N54",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "The surface parser silently skipped a row and the count still looked plausible",
+      "description": "One registry entry spells its name with double quotes because it contains an apostrophe - The Griot's Equation. The extraction regex only accepted single quotes, so that row vanished from the gate's output entirely. Eight rows printed, all green, nothing complained; the equation surface was simply not being checked. A validator that drops input silently is indistinguishable from one that passes it. Fixed by accepting both quote styles AND adding a self-check that counts declared rows against parsed rows and exits non-zero on a mismatch, so the next skipped row is loud instead of invisible.",
+      "verification": {
+        "evidence": "First run printed 8 rows (workgraph, ontology, drift, gold, dashboard, surface, briefing, ecomap) with no error; equation was absent. After the fix the run prints 9 including 'equation observer griot-equation 4.2d old'. The PARSE MISMATCH guard was added in the same change and exits 2 with the declared-vs-parsed counts.",
+        "result": "verified - the missing row reappeared, and the guard now makes that class loud"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N55",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N55",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "The card check ran before the commit, so fresh edits read as in sync",
+      "description": "Card freshness compares each live file against its published card by GIT COMMIT TIME, because mtime lies - a bulk copy resets it. But the stage ran before the push, so a file edited during the run but not yet committed still compared as byte-identical to a card that was about to be stale. It hid the drift codex on the run that re-rendered it: the gate said 87 in sync, 1 stale, and the drift card was quietly in the wrong bucket. Commit first, then check what the world can actually see.",
+      "verification": {
+        "evidence": "Reordered dgs-sync-all.ps1 to push -> cards -> report, with the reasoning written into the file as an ORDERING NOTE so it is not re-broken. The run immediately after reported DGS_SYNC_OK with 'artifact cards current: all in sync' only once the commit had actually landed, and the subsequent run correctly flagged dgs-definitive-plan as the single stale card after it was edited again.",
+        "result": "verified - the gate now flags on the next run what it previously hid"
       }
     }
   ],
@@ -3258,15 +3350,63 @@
       "to": "wg:djeli-branch:C12",
       "kind": "ontology",
       "label": "OA10 ontology-> C12 (named by the same principle that says the hub is one system)"
+    },
+    {
+      "from": "wg:djeli-branch:C13",
+      "to": "wg:djeli-branch:C12",
+      "kind": "ontology",
+      "label": "C13 ontology-> C12 (the hub stated as one system, now declared in data instead of understanding)"
+    },
+    {
+      "from": "wg:djeli-branch:C14",
+      "to": "wg:djeli-branch:OA10",
+      "kind": "outbound",
+      "label": "C14 closes-> OA10 (the Meridian lane is now a gated stage of the spine)"
+    },
+    {
+      "from": "wg:djeli-branch:C14",
+      "to": "wg:djeli-branch:C13",
+      "kind": "inbound",
+      "label": "C14 inbound-> C13 (a registry with no gate behind it is decoration)"
+    },
+    {
+      "from": "wg:djeli-branch:C14",
+      "to": "wg:djeli-branch:C10",
+      "kind": "ontology",
+      "label": "C14 ontology-> C10 (stage 4b of the loop-closing command)"
+    },
+    {
+      "from": "wg:djeli-branch:N53",
+      "to": "wg:djeli-branch:C13",
+      "kind": "inbound",
+      "label": "N53 inbound-> C13 (the guessed owner the plan had already answered)"
+    },
+    {
+      "from": "wg:djeli-branch:N54",
+      "to": "wg:djeli-branch:C14",
+      "kind": "inbound",
+      "label": "N54 inbound-> C14 (the gate that silently skipped a row it was built to check)"
+    },
+    {
+      "from": "wg:djeli-branch:N55",
+      "to": "wg:djeli-branch:C10",
+      "kind": "inbound",
+      "label": "N55 inbound-> C10 (ordering false-negative in the card stage)"
+    },
+    {
+      "from": "wg:djeli-branch:N53",
+      "to": "wg:djeli-branch:N50",
+      "kind": "ontology",
+      "label": "N53 ontology-> N50 (same lesson twice: read what is already written down before acting)"
     }
   ],
   "stats": {
-    "totalBranches": 44,
+    "totalBranches": 46,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 127,
+    "edgeCount": 135,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -3706,6 +3846,20 @@
       ],
       "newEdges": 9,
       "corrections": [],
+      "refused": []
+    },
+    "amendPass32_2026_09_17": {
+      "newNodes": [
+        "C13",
+        "C14",
+        "N53",
+        "N54",
+        "N55"
+      ],
+      "newEdges": 8,
+      "corrections": [
+        "OA10"
+      ],
       "refused": []
     }
   },
