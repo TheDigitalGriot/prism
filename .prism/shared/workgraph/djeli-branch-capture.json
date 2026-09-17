@@ -33,7 +33,8 @@
     "amendPass23": "B27 closed. PlayStake codex committed, so an anchor now exists.",
     "amendPass24": "2026-09-16 graph-close: the 7 CORRECT rows from the 2026-09-15 disposition sheet, applied. B10 overturns a pass-14 MISMATCH that was an instrument failure - the five tab buttons are at live/griot-ontology-codex.html:106-110 under commit dd0c7b3, which predates the check; state stays precedent-identified-ungeneralized. N4 N23 N25 N26 N29 S3 record that resolved-verified and resolved-done were in neither closure list, so six closed nodes were counted as neither closed nor open from their introducing pass through pass 23.",
     "amendPass25": "2026-09-16 closeout: the brainstorm companion became a decision hub (C2 registry + four transients, C3 the public surface that unsealed it, C4 the working hub screen, C5 the live two-second variant), plus two defects filed with measured evidence - N30 the shell renderer that drew lanes instead of chrome, re-proven fixed by the engine's own six-artifact comparator, and N31 a run that printed DONE with three of its own criteria unmet.",
-    "amendPass26": "2026-09-17 morning-briefing run: source-fidelity findings (Decoder RSS empty, AI Dev Signals 12d lag, Reallusion dry), positive verification that the artifact-publish step is running, and external evidence bearing on subagent fan-out defaults."
+    "amendPass26": "2026-09-17 morning-briefing run: source-fidelity findings (Decoder RSS empty, AI Dev Signals 12d lag, Reallusion dry), positive verification that the artifact-publish step is running, and external evidence bearing on subagent fan-out defaults.",
+    "amendPass27": "2026-09-17 card-sync branch: C6 the 72-card sweep, C7 the verify-cards gate, N37-N41 the defects found (two of them committed by this run itself), S7 corrected with a readiness block, OA8 routed to Gavin."
   },
   "groups": [
     {
@@ -2003,6 +2004,12 @@
       "verification": {
         "evidence": "Grounded in N33's measurement (newest edition 2026-09-05 vs newest source article 2026-09-16, read in the same run). Contract step 5 as written in the scheduled-task file describes the source as 'Near-daily; if the newest edition predates today, use the most recent available and note its date' - which on a 12-day lag produces a note rather than a signal. On this run the entire newsletter was deduped out, contributing zero items to the published edition.",
         "result": "proposed - no contract change made; the skill file is unedited and step 5 still runs as written"
+      },
+      "correction": {
+        "correctedAt": "2026-09-17 amendPass27",
+        "wasClaimed": "S7 was filed in amendPass26 as a complete suggestion node, carrying title, description, state awaiting-disposition and a verification block - and was treated as done.",
+        "isTrue": "S7 was filed WITHOUT a readiness block, which every other node in the suggested lane (S1-S6) carries. The suggested-lane renderer defaults a missing readiness to score 0 and colours anything under 65 with the miss hue, so S7 would render to Gavin as a red 0% card - unassessed and failing looking identical on a decision surface. Scored here against the graph declared readinessModel: evidence 20 measured, tooling 20 measured, blastRadius 16 judged, dependency 20 measured, decisionDebt 10 judged = 86, weakest decision debt.",
+        "cause": "The amendPass26 payload was written from the node-shape contract in the skill file, which lists localId/kind/title/state/direction/verification as required and does not mention readiness - readiness is enforced by the RENDERER and by lane convention, not by the amend helper validator. So a suggested-lane node missing it passes validation, passes the verifier, passes three-copy parity, and is only visibly wrong once the lane renders. The lane had not rendered since before the scope bug recorded as N42, which is why nobody had seen it."
       }
     },
     {
@@ -2020,6 +2027,142 @@
       "verification": {
         "evidence": "Edition 2026-09-17 as published carries index-only links on 9 of 16 newsletter items: all of TLDR AI (2), TLDR Dev (3), TLDR Design (2) and TLDR Data (2). The Rundown AI, The Decoder and The AI Data Engineer items all carry primary URLs because those sources expose them in the body. The same pattern is recorded in the previous edition's notes field: 'A few TLDR items link to the TLDR section index rather than a primary URL because the newsletter body did not expose one.'",
         "result": "open - recurring across at least two consecutive editions, no disposition recorded"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C6",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C6",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "local",
+      "title": "The card-sync sweep - 72 artifact cards republished from committed HEAD in one pass",
+      "description": "Started as 'republish two cards' and opened into an ecosystem-wide audit. A SHA-256 sweep of every live/*.html against its artifact card found 19 cards behind their committed repo file and 14 repo files with no card at all; a second pass on a corrected predicate found 39 more. All 72 were republished from committed HEAD. The branch matters less for the 72 publishes than for what it exposed: the repo half of every codex was current and the card half had been quietly optional for six weeks, so the ecosystem's readable surface had been drifting from its source of truth while every run reported done.",
+      "verification": {
+        "evidence": "Sweep script over C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\*.html vs C:\\Users\\digit\\OneDrive\\Documents\\Claude\\Artifacts\\<id>\\index.html. First pass: 37 byte-identical, 19 stale, 14 missing. Worst prism-codex 215 KB card vs 1,397 KB repo (85% absent, 29 days). Second pass after the predicate fix: 39 more. Publishes issued via mcp__cowork__update_artifact (58) and create_artifact (14). Final gate run 2026-09-17 11:28: 87 in sync, 1 stale (since resolved), 0 missing.",
+        "result": "verified - gate returns VERIFY_CARDS_OK with exit 0 after the sweep; every codex and live artifact current"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C7",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C7",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "verify-cards.ps1 - the gate that closes ungated propagation target #5",
+      "description": "The durable half of C6. Invariant I11 named the register bullet 'live artifacts - both halves, every time' on 2026-09-05 and it still rotted, because no command could fail on it. This is that command: it hashes every live/*.html against its card, judges staleness by the GIT COMMIT time of the file rather than filesystem mtime, and exits 1 with CARDS_OUT_OF_SYNC=n. Committed to griot-live-artifacts so any surface can run it. The lesson it encodes is the one this branch is really about: a rule with no gate is decoration.",
+      "verification": {
+        "evidence": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\verify-cards.ps1, committed 4886d4c. Proven in both directions in-session: exit 1 listing 39 stale before the second sweep, exit 0 VERIFY_CARDS_OK after it, then exit 1 again the moment drift entry #52 landed without a republish.",
+        "result": "verified - the gate has now caught real drift three separate times in one session, including drift this session itself created"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N37",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N37",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "The first sweep filtered on size delta and silently missed four codexes whose content changed without changing size",
+      "description": "The first pass ranked staleness by KB missing and treated a 0 KB delta as nothing to do. Four codexes had been edited without their byte count moving, so they passed a size test while being a month behind. This is the same shape as the defect the whole branch is about - a check that looks like verification but measures the wrong quantity - committed by the very run that was fixing it. Recorded as a defect against MY pass, not against the codexes: the publishes that landed were correct, the completeness claim was not.",
+      "verification": {
+        "evidence": "First-pass filter used deltaKB >= 1 and reported 'all 33 published'. The gate, run immediately after on git-commit-time, returned exit 1 listing kaleidoscope-codex (37d), damus-codex (37d), griothub-codex (37d) and thegriotmodel-codex (29d), each with missingKB=0. All four confirmed stale by git log on live/<id>.html versus the card's publish timestamp, and republished in the second sweep.",
+        "result": "verified and fixed - the gate caught the under-fix within minutes of being written, which is the argument for writing it"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N38",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N38",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "The gate shipped with a 60-minute grace window that hid an hour of real drift",
+      "description": "The first version of verify-cards.ps1 allowed a card published within 60 minutes of the file's commit to count as current, to absorb publish-wrapper timing noise. Drift entry #52 was appended, committed, and left unpublished inside that window, and the gate returned VERIFY_CARDS_OK over it. A gate that tolerates an hour of unknown has an hour-shaped hole in it. Replaced with a 2-minute clock-skew allowance: the card must have been published at or after the commit that last changed the file, full stop.",
+      "verification": {
+        "evidence": "Gate run 11:27 returned 89 in sync / 0 stale while live/suite-drift-codex.html carried entry #52 committed at 4886d4c and its card still held 51. After narrowing GRACE_MIN=60 to SKEW_MIN=2, the 11:28 run returned CARDS_OUT_OF_SYNC=1 naming suite-drift-codex exactly.",
+        "result": "verified - the same state read OK before the narrowing and FAIL after, with no other change"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N39",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N39",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "adjacent",
+      "title": "The DGS mirror tabs and the wgstats header are structurally claude.ai-only under the Cowork sandbox",
+      "description": "The DGS plan's Workgraph, Ontology, Drift, Gold and Equation tabs embed sibling codex files by relative iframe, and the seven-tile header stat row fetches djeli-branch-capture-workgraph.json at load. The Cowork artifact sandbox sets frame-src 'none' and connect-src 'none', so all five tabs render empty and the stat row stays hidden - by its own design, which chooses to hide rather than show a stale number. Nothing is broken and no data is lost; the mirror-tab pattern simply was never surface-independent. Flagged not fixed: inlining the codexes and the JSON at publish time would make every tab render on every surface, at the cost of roughly 500 KB.",
+      "verification": {
+        "evidence": "Cowork artifact debug log for dgs-definitive-plan, load 2026-09-17T15:09:57Z: five 'Framing ... violates ... frame-src none' errors at index.html lines 760/766/772/778/784, plus 'Connecting to ... djeli-branch-capture-workgraph.json violates ... connect-src none' at line 2419. Source read: line 375 ships <div id=\"wgstats\" hidden>, line 2419 fetches the JSON, line 2440 is the only thing that clears hidden, and line 2442 catches and stays hidden with the comment 'stay hidden rather than lie'.",
+        "result": "verified - cause located in both the sandbox policy and the page source; not damage, and not a regression from this session's republish"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N40",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N40",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "The doctrine itself said the artifact tools were deprecated, and that sentence manufactured the blocker",
+      "description": "The canonical CLAUDE.md publish section stated that create_artifact / update_artifact were deprecated and frequently unmounted in cloud. On this surface they are neither - they are the working socket, and were used to publish 72 cards in one session. The false line did real damage: it licensed a session to announce the card could not be refreshed and substitute a workaround, which is the DEFINED ERROR the Stuck Protocol names. Gavin's ruling was to REMOVE the claim rather than annotate it, on the grounds that a false statement quoted inside doctrine still reads as doctrine. Replaced with THE ACCESS PATH - beacon, call the cards, read the path, publish, both halves - and the record of the error moved to the drift ledger, where a wrong thing belongs.",
+      "verification": {
+        "evidence": "Canonical C:\\Users\\digit\\GriotMeta\\griot-ontology\\claude\\CLAUDE.md, section rewritten and committed f189973. Post-patch verification: the string 'are DEPRECATED / frequently unmounted' returns false on all four propagation surfaces, and 'THE ACCESS PATH' / 'CALL THE CARDS' / 'ALWAYS CURRENT' return true on all four. propagate.ps1 run confirms canonical, ~/.claude/CLAUDE.md, the agent-ontology compat mirror and ~/.codex/AGENTS.md are byte-identical at SHA B55645AB.",
+        "result": "verified - four-surface parity confirmed by hash after propagation"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N41",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N41",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "A suggestion with no readiness block renders as a red 0% card, reading as failure rather than as unassessed",
+      "description": "The suggested-lane renderer defaults a missing readiness to {score:0} and colours anything under 65 with the miss hue. S7 was filed in amendPass26 without a readiness assessment, so the moment the lane started rendering (after the scope fix in C3/N42) it would have shown Gavin a red zero against a suggestion that had simply never been scored. Unassessed and failing must not look the same on a decision surface - that is the entire argument for the measured/judged tagging in the readiness model.",
+      "verification": {
+        "evidence": "Renderer at djeli-branch-capture-codex.html line 427: var r = n.readiness || {factors:{}, score:0, measured:{}}; line 428 selects var(--miss) for score < 65. Graph query confirmed S1-S6 each carry a readiness block and S7 did not. Fixed in this pass by scoring S7 against the declared readinessModel to 86, weakest factor decision debt at 10.",
+        "result": "verified and fixed - S7 now carries a decomposable score whose lowest factor names the actual blocker, per the readinessModel rule"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA8",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA8",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Two cards are LARGER than their repo file - which side is the truth?",
+      "description": "The gate refuses to publish repo-over-card when the card is bigger, because that direction could destroy content rather than refresh it. Two cards sit in that state. The likeliest explanation is benign - the publish pipeline wraps the HTML and adds roughly a kilobyte - in which case the repo is the truth and they can be republished like any other. But the alternative is that a card was edited or published from a newer source that never made it back to the repo, in which case publishing over it would delete work. The ask is whether Gavin wants the delta diffed and reconciled into the repo first, or the wrapper hypothesis confirmed once and the pair treated as noise forever. Never inferred: only he knows whether either card was ever edited outside the repo path.",
+      "verification": {
+        "evidence": "Gate output 2026-09-17 11:28, section 'CARD AHEAD OF REPO (manual)': prism-channel-rollout-status (card 1 KB larger) and fastapi-vs-flask-kente (card 1 KB larger). Both flagged, neither published. The +1 KB magnitude matches the wrapper delta seen on cards republished this session, which is suggestive but not proof - the diff has not been read.",
+        "result": "open - deliberately not resolved by inference; the gate's manual lane exists precisely so this question reaches a person"
       }
     }
   ],
@@ -2605,15 +2748,69 @@
       "to": "wg:djeli-branch:N34",
       "kind": "ontology",
       "label": "N35 ontology-> N34 (both distinguish 'checked and empty' from 'never ran' - the failure mode a silent omission hides)"
+    },
+    {
+      "from": "wg:djeli-branch:N40",
+      "to": "wg:djeli-branch:C6",
+      "kind": "outbound",
+      "label": "N40 outbound-> C6 (removing the false 'deprecated' line is what unblocked the sweep; the doctrine was the blocker)"
+    },
+    {
+      "from": "wg:djeli-branch:C6",
+      "to": "wg:djeli-branch:N37",
+      "kind": "splinter",
+      "label": "C6 splinter-> N37 (the sweep's own first pass measured the wrong quantity and under-fixed by four codexes)"
+    },
+    {
+      "from": "wg:djeli-branch:C7",
+      "to": "wg:djeli-branch:N37",
+      "kind": "outbound",
+      "label": "C7 outbound-> N37 (the gate is what caught the under-fix - the case for building it, made by it)"
+    },
+    {
+      "from": "wg:djeli-branch:C7",
+      "to": "wg:djeli-branch:N38",
+      "kind": "splinter",
+      "label": "C7 splinter-> N38 (the gate's own first cut carried a 60-minute blind spot)"
+    },
+    {
+      "from": "wg:djeli-branch:C7",
+      "to": "wg:djeli-branch:C6",
+      "kind": "awaits",
+      "label": "C7 awaits-> C6 (the gate only closes target #5 once the backlog it measures is actually published)"
+    },
+    {
+      "from": "wg:djeli-branch:N39",
+      "to": "wg:djeli-branch:C6",
+      "kind": "inbound",
+      "label": "N39 inbound-> C6 (surfaced by republishing the DGS card; a surface constraint the sweep revealed but did not cause)"
+    },
+    {
+      "from": "wg:djeli-branch:N41",
+      "to": "wg:djeli-branch:S7",
+      "kind": "inbound",
+      "label": "N41 inbound-> S7 (S7 was the node the missing-readiness defect was found on, and the one it fixed)"
+    },
+    {
+      "from": "wg:djeli-branch:OA8",
+      "to": "wg:djeli-branch:C7",
+      "kind": "splinter",
+      "label": "OA8 splinter-> C7 (the gate's manual lane routed this to a person instead of guessing - working as designed)"
+    },
+    {
+      "from": "wg:djeli-branch:N38",
+      "to": "wg:djeli-branch:N31",
+      "kind": "ontology",
+      "label": "N38 ontology-> N31 (both are a completion signal that passed while its own success criteria went unmet)"
     }
   ],
   "stats": {
-    "totalBranches": 37,
+    "totalBranches": 39,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 97,
+    "edgeCount": 106,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -2985,6 +3182,23 @@
       ],
       "newEdges": 4,
       "corrections": [],
+      "refused": []
+    },
+    "amendPass27_2026_09_17": {
+      "newNodes": [
+        "C6",
+        "C7",
+        "N37",
+        "N38",
+        "N39",
+        "N40",
+        "N41",
+        "OA8"
+      ],
+      "newEdges": 9,
+      "corrections": [
+        "wg:djeli-branch:S7"
+      ],
       "refused": []
     }
   },
