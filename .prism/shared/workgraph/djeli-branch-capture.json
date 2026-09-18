@@ -41,7 +41,8 @@
     "amendPass31": "Encoding: the orchestrator corrupted the plan it guards, and the damage compounded three runs deep. Repaired provably, gated at two levels, and swept across 6,776 files because Gavin refused to let a class-of-one fix stand. Plus the hub stated as one system - plan, reflect and codexes feeding both graphs, bound for Djeli.",
     "amendPass32": "The nine surfaces declared as one system and gated: SURFACES registry + Ecosystem Map mirror (C13), verify-surfaces.mjs as stage 4b closing OA10 (C14). Three defects recorded honestly, one of them mine twice over - I guessed an owner the plan had already written down, and my parser silently dropped the row it was built to check.",
     "amendPass33": "The two open items were one defect in two directions: a gate that reassures without checking. The card gate measured the wrong quantity and invented drift; the stories gate measured in the wrong place and invented calm. OA8 closed as a measurement artifact - nothing had been lost.",
-    "amendPass34": "The rename was authorised and NOT performed. Reading the stories contract showed s-hash is the compliant form and STORY-NNN the deviation - the opposite of what I had recorded. N58 corrected, OA11 opened for the two real follow-ups."
+    "amendPass34": "The rename was authorised and NOT performed. Reading the stories contract showed s-hash is the compliant form and STORY-NNN the deviation - the opposite of what I had recorded. N58 corrected, OA11 opened for the two real follow-ups.",
+    "amendPass35": "The POT_T fix campaign - seven staged fixes run as one pass: the stale account skill snapshot as root cause, the 171-tool shelf-to-POT_T migration, the drift dedupe, the last INV2 violation, repo hygiene, this amend, then the batch."
   },
   "groups": [
     {
@@ -2685,6 +2686,176 @@
         "evidence": ".prism/shared/contracts/stories-contract.md rule 4 and its _id_note read verbatim. scripts/workgraph-index.mjs header names Dialect B's STORY-001 ids as contract-forbidden. The conflicting line lives at rpm/plugin_01DWVft1gxrUEx7KKr8vKtga/skills/prism-codex-plan-sync/SKILL.md ('emit .prism/stories/stories.json with stable STORY-NNN ids'); no prism-plugin clone exists under GriotApps/GriotProducts/GriotMeta, so it cannot be edited here. git grep confirms STORY-001 appears in Prism docs only as an illustrative label, never as a reference to channel-adoption's actual stories - so a future migration would not break external links.",
         "result": "open - two concrete follow-ups named: fix the skill line in the prism-plugin repo, and decide on channel-adoption's 25 ids"
       }
+    },
+    {
+      "id": "wg:djeli-branch:C16",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C16",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "done",
+      "direction": "local",
+      "title": "The POT_T fix campaign - seven stages run as one pass instead of one defect every thirty minutes",
+      "description": "Gavin: 'can you please fix all of these issues rather than encountering them every 30 minutes... put together a workgraph for it and just get it done properly and batch the next videos after the fixes are done.' Seven staged fixes: the stale account skill snapshot (root cause), the POT_T migration, the drift dedupe, the last INV2 violation, repo hygiene, this workgraph amend, then the AI News batch.",
+      "verification": {
+        "evidence": "griot-live-artifacts commits b7643ee (POT_T migration) and 0959246 (drift merge + 4 entries); DGS plan card v41; Suite Drift Codex card v26; cinopsis verify_invariants.py RESULT: PASS on all three.",
+        "result": "done - stages S0 through S5 landed; S6 (the batch) runs on the cdp door which is clean."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N59",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N59",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "The account skill snapshot Cowork loads was 220 lines behind the device - the structural cause of the POT_T error",
+      "description": "The dgs-plan-update copy this cloud surface loads was the 2026-08-03 revision: 321 lines, md5 26823bc, with ZERO occurrences of POT_T, sunset or OSSMETA. The canonical device file is 541 lines, md5 fb2dcfe, committed at 1185033. The surface was therefore instructed to write OSS to the standalone shelf - exactly what the sunset rule forbids - and to call update_artifact, which is unmounted in cloud. The error was not carelessness; the doctrine never reached the surface that needed it. Standalone account skills have no device-side push route: griot-plugin-update and prism-sideload are for PLUGINS and running either on a standalone skill is itself documented drift. The socket is the skill review card.",
+      "verification": {
+        "evidence": "md5sum + wc -l + grep -c on both copies: account /root/.claude/skills/synced/.../dgs-plan-update/SKILL.md = 321 lines, POT_T x0, sunset x0, OSSMETA x0; device C:\\Users\\digit\\.claude\\skills\\dgs-plan-update\\SKILL.md = 541 lines, POT_T x1, sunset x3, OSSMETA x2, git log 1185033.",
+        "result": "defect-fixed - canonical 541-line SKILL.md proposed via the review card and saved by Gavin 2026-09-18; the account skill's description now carries 'OSS routes to POT_T in the plan only; the standalone shelf artifact is SUNSET.'"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N60",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N60",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "The shelf-to-POT_T leak was 171 tools across 41 source videos, not 115 from one bad pass",
+      "description": "POT_T is the ONE source for OSS since the 2026-09-03 sunset, but 171 tools on the sunset shelf had no POT_T row, spread across 41 different source videos - a long-standing leak, not one pass. The raw counts actively hid it: POT_T 1157 vs shelf 1263 reads as a gap of 106, because POT_T also holds 65 rows the shelf never had. A length delta is not a leak count; membership must be tested by slug AND normalized name in both directions.",
+      "verification": {
+        "evidence": "node extractor evaluating POT_T and the shelf T array from live/dgs-definitive-plan.html and live/griot-potluck-oss-repo.html; 171 missing by slug-or-normalized-name, src histogram spanning 41 distinct potluck:<videoId> values.",
+        "result": "defect-fixed - all 171 migrated additively, POT_T 1157 -> 1328, plus 115 OSSMETA and 54 OSSMETA_N provenance entries; post-write check reports zero shelf tools still missing. Commit b7643ee, card v41."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N61",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N61",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "corrected-verified",
+      "direction": "local",
+      "title": "The oss-inspo mirror already carried all 171 - so the fix was additive and stripped nothing",
+      "description": "Doctrine says regenerate oss-inspo from POT_T. Done naively here that would have deleted any oss-inspo item lacking a POT_T row - Gavin's content. Checking first showed the opposite of the expected shape: the 171 tools DID have hand-written oss-inspo items and were missing only from POT_T, which is precisely why nothing looked broken on the Potluck tab. Orphan count after migration: zero. So the mirror was left completely untouched rather than regenerated.",
+      "verification": {
+        "evidence": "ITEMS parsed from the plan: 1341 oss-inspo items; every one resolves to a POT_T row or to one of the 171 migrated rows - orphans = 0. Post-write: ITEMS 1857 -> 1857 and oss-inspo 1341 -> 1341, byte-identical.",
+        "result": "corrected-verified - the safe order is prove-orphans-zero BEFORE regenerating, and prefer additive when the mirror is already ahead of the source."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N62",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N62",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "331 oss-inspo items carry a placeholder instead of a real slug",
+      "description": "331 of 1341 oss-inspo items have no resolvable repo slug - they carry literal placeholders such as '- unverified (named in video)' or '- hosted (cloudflare workers ai)'. This is the bare-spoken-name class that video-oss-gate.py exists to fail loudly on. They all collapse into one key, so any slug-keyed analysis silently treats hundreds of distinct tools as one: a first dedupe pass reported 258 duplicates that were almost entirely this bucket. Real duplicate slugs number 59, and POT_T separately carries 52 real dup-slug keys over 250 extra rows.",
+      "verification": {
+        "evidence": "regex classification over the 1341 oss-inspo items: 331 placeholder-or-empty slugs; 59 real slugs appearing more than once; POT_T dup-slug analysis before/after the migration showed 52 -> 53 real dup keys, the one addition being mrdoob/three.js legitimately shared by three.js and TSL.",
+        "result": "flagged-not-fixed - resolve each placeholder from the video DESCRIPTION (captions garble repo names; descriptions do not) and confirm with gh api repos/<slug>. Until then never key dedupe or parity on slug alone."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N63",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N63",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "outbound",
+      "title": "Both bridge directions cache - the dgs-plan-update exemption for the commit direction is wrong",
+      "description": "dgs-plan-update Rule 2 step 4 says the stage cache is keyed by path but that cloud-to-device commit_files 'writes bytes directly and is not affected'. Both halves of that were disproven in one session. Commit direction: a rewrite to the same device path delivered the previous version - 1950 bytes in the container, 1905 on disk, reported written with no rejection, and the stale code then ran twice. Stage direction: a comparison silently read a copy staged earlier in the same session and reported the live plan card as in sync when it was a full commit behind, which nearly authorised a publish on a false premise.",
+      "verification": {
+        "evidence": "byte-length mismatch 1950 vs 1905 on the commit direction; and this pass, /mnt/user-data/uploads/.../dgs-definitive-plan.html dated 09:18 returned POT_T 1157 / ITEMS 1834 while the live artifact fetch returned the same - resolving against git HEAD instead showed the working file at ITEMS 1857.",
+        "result": "flagged-not-fixed - drift entry merged and updated, but the SKILL.md sentence granting the commit direction an exemption still stands and should be corrected at source."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N64",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N64",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "CRLF phantom churn traced to system-level core.autocrlf with no .gitattributes",
+      "description": "The recurring ~10-file phantom diff under live/ is not a mount quirk. git config reports core.autocrlf=true at the SYSTEM level, inherited by the repo, and griot-live-artifacts has no .gitattributes. So every checkout writes CRLF into the working tree and any tool that rewrites a file with LF manufactures a whole-file diff. Twelve files were confirmed CRLF-only this pass by comparing carriage-return-stripped hashes against git HEAD - zero real content at risk.",
+      "verification": {
+        "evidence": "git config --system core.autocrlf = true; repo core.autocrlf = true; .gitattributes absent. Per-file check: tr -d '\\r' hash of the working copy equals the same hash of git HEAD for all twelve dirty files. git checkout restored them; tree now clean.",
+        "result": "flagged-not-fixed - working tree cleaned, but the generator is still armed and will re-dirty on the next Windows-side write. Repo policy is Gavin's call - see S8."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N65",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N65",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "INV2 had one violation, not forty-five - and the one was a music mix, not a missing transcript",
+      "description": "An in-session claim that 45 INV2 violations remained across three sessions was wrong: the count had been taken before the description-source backfill landed. The real figure was one, and the offending record was not an AI video at all - 'Gentle & Smooth R&B Mix in a Brooklyn Loft, Set 52, Ceema' had ridden into the AI News catch-up session with captions disabled, so it carried a digest with no backing transcript and no declared source. Also corrected in the same pass: the claim that the next batch had to wait about four hours. Only the timedtext door was blocked; the cdp door was clean at fail_streak 0, so the batch was never actually gated.",
+      "verification": {
+        "evidence": "scripts/verify_invariants.py before: INV2 FAIL, 1 violation, cMvi1GS9R3E. yt-dlp metadata fetch (no caption request, so the blocked timedtext door was never touched) recovered a 2645-character description; a description-backed digest was written with digest_source='description' and an explicit 'OSS harvest: none - the description was read in full rather than skipped'. After: INV1 PASS, INV2 PASS, INV3 PASS.",
+        "result": "defect-fixed - first fully clean invariant gate; the video is retained and documented rather than dropped, per the rule that every video in the playlist is there for a reason."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S8",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S8",
+      "kind": "suggestion",
+      "group": "suggested",
+      "state": "open",
+      "direction": "local",
+      "title": "Add a .gitattributes to griot-live-artifacts to kill the CRLF churn at its source",
+      "description": "One line - '* text=auto eol=lf' - would end the recurring phantom diff permanently instead of cleaning it up each time. It is a repo-wide policy change affecting every file and every future checkout, so it is not something to apply unilaterally. Deliberately left as a proposal.",
+      "verification": {
+        "evidence": "Root cause established in N64: system-level core.autocrlf=true, no .gitattributes present in the repo.",
+        "result": "open - awaiting Gavin's yes or no."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S9",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S9",
+      "kind": "suggestion",
+      "group": "suggested",
+      "state": "open",
+      "direction": "local",
+      "title": "Resolve the 331 placeholder slugs from video descriptions, not captions",
+      "description": "Proposed pass: for each placeholder-slug oss-inspo item, pull its source video's description, extract the real owner/repo, confirm with gh api repos/<slug>, and write it back to POT_T plus its OSSMETA entry. Descriptions are the authoritative source here - captions garbled Colibri into Calibri and Hermes into Airmes on a previous run, while descriptions yielded 69 of 69 verified slugs.",
+      "verification": {
+        "evidence": "N62 classification: 331 of 1341 oss-inspo items carry a placeholder; 214 description files already exist on disk under cinopsis data/description_*.txt.",
+        "result": "open - awaiting Gavin's yes or no; sized but not started."
+      }
     }
   ],
   "edges": [
@@ -3551,15 +3722,75 @@
       "to": "wg:djeli-branch:N57",
       "kind": "ontology",
       "label": "OA11 ontology-> N57 (both found by repointing stage 4 at the real store)"
+    },
+    {
+      "from": "wg:djeli-branch:C16",
+      "to": "wg:djeli-branch:N59",
+      "kind": "in-epic",
+      "label": "root cause the campaign was built around"
+    },
+    {
+      "from": "wg:djeli-branch:C16",
+      "to": "wg:djeli-branch:N60",
+      "kind": "in-epic",
+      "label": "the leak the campaign closed"
+    },
+    {
+      "from": "wg:djeli-branch:C16",
+      "to": "wg:djeli-branch:N61",
+      "kind": "in-epic",
+      "label": "why the fix was additive"
+    },
+    {
+      "from": "wg:djeli-branch:C16",
+      "to": "wg:djeli-branch:N62",
+      "kind": "in-epic",
+      "label": "found while measuring the leak"
+    },
+    {
+      "from": "wg:djeli-branch:C16",
+      "to": "wg:djeli-branch:N63",
+      "kind": "in-epic",
+      "label": "bit the campaign twice while running"
+    },
+    {
+      "from": "wg:djeli-branch:C16",
+      "to": "wg:djeli-branch:N64",
+      "kind": "in-epic",
+      "label": "hygiene stage root cause"
+    },
+    {
+      "from": "wg:djeli-branch:C16",
+      "to": "wg:djeli-branch:N65",
+      "kind": "in-epic",
+      "label": "invariant stage"
+    },
+    {
+      "from": "wg:djeli-branch:N59",
+      "to": "wg:djeli-branch:N60",
+      "kind": "outbound",
+      "label": "the stale doctrine is why OSS kept landing on the sunset shelf"
+    },
+    {
+      "from": "wg:djeli-branch:N62",
+      "to": "wg:djeli-branch:S9",
+      "kind": "splinter",
+      "label": "proposed resolution pass"
+    },
+    {
+      "from": "wg:djeli-branch:N64",
+      "to": "wg:djeli-branch:S8",
+      "kind": "splinter",
+      "label": "proposed policy fix"
     }
   ],
   "stats": {
-    "totalBranches": 47,
+    "totalBranches": 48,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 144,
+    "edgeCount": 154,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -4036,6 +4267,23 @@
       "corrections": [
         "N58"
       ],
+      "refused": []
+    },
+    "amendPass35_2026_09_18": {
+      "newNodes": [
+        "C16",
+        "N59",
+        "N60",
+        "N61",
+        "N62",
+        "N63",
+        "N64",
+        "N65",
+        "S8",
+        "S9"
+      ],
+      "newEdges": 10,
+      "corrections": [],
       "refused": []
     }
   },
