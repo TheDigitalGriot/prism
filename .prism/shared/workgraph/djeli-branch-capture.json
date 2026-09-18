@@ -43,7 +43,8 @@
     "amendPass33": "The two open items were one defect in two directions: a gate that reassures without checking. The card gate measured the wrong quantity and invented drift; the stories gate measured in the wrong place and invented calm. OA8 closed as a measurement artifact - nothing had been lost.",
     "amendPass34": "The rename was authorised and NOT performed. Reading the stories contract showed s-hash is the compliant form and STORY-NNN the deviation - the opposite of what I had recorded. N58 corrected, OA11 opened for the two real follow-ups.",
     "amendPass35": "The POT_T fix campaign - seven staged fixes run as one pass: the stale account skill snapshot as root cause, the 171-tool shelf-to-POT_T migration, the drift dedupe, the last INV2 violation, repo hygiene, this amend, then the batch.",
-    "amendPass36": "Correcting N65 against myself: the INV2 count was measured through the bridge, which sees one store of two."
+    "amendPass36": "Correcting N65 against myself: the INV2 count was measured through the bridge, which sees one store of two.",
+    "amendPass37": "The YT playlist lane repaired via griot-agent-architect - three faults, one seam, and two bugs only a live pull could find."
   },
   "groups": [
     {
@@ -2863,6 +2864,91 @@
         "evidence": "N62 classification: 331 of 1341 oss-inspo items carry a placeholder; 214 description files already exist on disk under cinopsis data/description_*.txt.",
         "result": "open - awaiting Gavin's yes or no; sized but not started."
       }
+    },
+    {
+      "id": "wg:djeli-branch:C17",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C17",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "The YT playlist lane repaired - three independent faults, none of them the rate limit",
+      "description": "Gavin: 'when i say YT is broken this is what i mean - fix the /cinopsis:cinopsis code for the YT playlist side with the fixes we just discussed instead of duct taping it, use /prism:griot-agent-architect.' Run as an ICM stage-walk: a contract at .prism/shared/plans/yt-ladder-fix-CONTEXT.md carrying the verified findings and locked decisions, handed to a headless claude -p in the repo with a thin router prompt. The agent implemented, hit an execution boundary, and handed back DGS_SYNC_INCOMPLETE rather than claiming done; this session finished steps 7-9 and found two bugs only running it could surface.",
+      "verification": {
+        "evidence": "Cinopsis commit 18a9868, pushed, local HEAD == origin/main. 'claude plugin validate .' -> Validation passed. Live pull, no env vars set: HDGJJA__9FQ 354 segments, RTmTebnxwKc 277, oUHpTApgbhQ 512 - all via selenium-panel on the attached Profile 1 session.",
+        "result": "built-and-live - the lane pulls transcripts out of the box for the first time in weeks."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N66",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N66",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "Three independent faults each presented as the same symptom - 'all rungs failed'",
+      "description": "The YT lane's failure looked like one problem and was three. F1: the cdp-panel rung was OPT-IN and nothing ever set CINOPSIS_ENABLE_CDP, so the rung built specifically to survive an IP flag had never run. F2: selenium was not installed, so selenium-panel had never run either. F3: both panel rungs defaulted to HEADLESS, and YouTube does not render the transcript panel to a headless session. Any one of these produces the identical ladder output - 'all rungs failed' - which is indistinguishable from a rate-limit block. That is why weeks of playlist trouble kept getting attributed to hammering YouTube when the gate was in fact working perfectly the whole time.",
+      "verification": {
+        "evidence": "F1: '[cdp] CINOPSIS_ENABLE_CDP not set; skipping CDP rung (opt-in only)'. F2: '[selenium-panel] driver unavailable: ModuleNotFoundError: No module named selenium'. F3: same video, same scraper, same minute - PT.fetch_segments('fzobKIjUN_E', headed=True) returned 237 segments, headed=False returned 0.",
+        "result": "defect-fixed - cdp on by default, selenium pinned in requirements.txt at >=4.49.0, headed made structural rather than a flag."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N67",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N67",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "ONE ORIGINAL - the session problem was solved once and then forked",
+      "description": "grab_transcript_cdp.py had already solved YouTube session acquisition by importing the signed-in PROFILE_DIR from export_yt_cookies. panel_transcript.py independently re-solved the same problem badly, building its driver on tempfile.mkdtemp(prefix='ytpanel_') - signed out, no cookies, no Premium. Gavin named the principle directly: 'this is exactly what i meant when i said ONE ORIGINAL.' Two implementations of one idea, and the worse one silently won because it was the rung being called.",
+      "verification": {
+        "evidence": "scripts/chrome_session.py now exposes acquire_session() as the single seam; both panel rungs call it and nothing else. Its docstring records the rejected alternatives: a profile copy (WAL-journaled SQLite plus App-Bound Encryption), cookie-jar injection (the fork itself), and asking Gavin to close Chrome (named as duct tape in the contract).",
+        "result": "defect-fixed - one seam, consumed by both rungs, with the losing options written down rather than silently dropped."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N68",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N68",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "Chrome's singleton lock made the right profile unusable until the port was opened at launch",
+      "description": "Chrome enforces one process per --user-data-dir, and cannot enable remote debugging on an already-running process. Gavin's Chrome GB is normally open on Profile 1, so pointing Selenium at that directory crashed - observed as chromedriver's GetHandleVerifier stack, exit 1 - exactly when the panel rungs matter most. Telling him to close his browser to run a batch was explicitly ruled out as duct tape.",
+      "verification": {
+        "evidence": "scripts/launch_chrome_debug.ps1 probes 127.0.0.1:9333 first and only launches if nothing is listening. After running it: port 9333 returns Chrome/152.0.7977.83, and a real pull logs '[chrome-session] attached to existing Chrome on Profile 1 (port 9333)'.",
+        "result": "defect-fixed - one-time launch with the port open, every run afterwards attaches. Standing cost: a normal Chrome restart closes the port until relaunched through the script."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N69",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N69",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "corrected-verified",
+      "direction": "local",
+      "title": "Two bugs that reasoning could not have caught, and an agent that refused to claim done",
+      "description": "The headless architect run implemented everything and then hit a permission wall on Bash/python. It ran the Stuck Protocol across three surfaces, reported DGS_SYNC_INCOMPLETE, and explicitly declined to print DONE_YT_LADDER_FIX. Finishing the verification by hand found two defects no amount of reading could have surfaced. First, grab_transcript_cdp.py lost 'import json' during the refactor while still calling json in four places - NameError on every cdp attempt. Second, selenium-panel had been left opt-in on the stated reasoning that it is 'a redundant, slower backup behind cdp-panel driving the identical session'; on the SAME attached session cdp-panel reports 'transcript panel never populated' while selenium-panel returns 487 entries, so the reasoning was exactly inverted.",
+      "verification": {
+        "evidence": "Live ladder output: '[ladder] trying rung: cdp-panel' -> '[cdp] transcript panel never populated' -> '[ladder] trying rung: selenium-panel' -> '[ladder] selenium-panel succeeded (487 entries)' on OQipTxv9Qv0.",
+        "result": "corrected-verified - selenium-panel flipped ON by default with the correction written into the code at the decision point, not into a changelog. The honest incomplete is what made the fix real; a green checkmark would have shipped two live bugs."
+      }
     }
   ],
   "edges": [
@@ -3789,15 +3875,51 @@
       "to": "wg:djeli-branch:S8",
       "kind": "splinter",
       "label": "proposed policy fix"
+    },
+    {
+      "from": "wg:djeli-branch:C17",
+      "to": "wg:djeli-branch:N66",
+      "kind": "in-epic",
+      "label": "the three faults it repaired"
+    },
+    {
+      "from": "wg:djeli-branch:C17",
+      "to": "wg:djeli-branch:N67",
+      "kind": "in-epic",
+      "label": "the forked seam it unified"
+    },
+    {
+      "from": "wg:djeli-branch:C17",
+      "to": "wg:djeli-branch:N68",
+      "kind": "in-epic",
+      "label": "the lock it worked around"
+    },
+    {
+      "from": "wg:djeli-branch:C17",
+      "to": "wg:djeli-branch:N69",
+      "kind": "in-epic",
+      "label": "what only execution could find"
+    },
+    {
+      "from": "wg:djeli-branch:N67",
+      "to": "wg:djeli-branch:N68",
+      "kind": "outbound",
+      "label": "choosing the real profile is what exposed the lock"
+    },
+    {
+      "from": "wg:djeli-branch:C16",
+      "to": "wg:djeli-branch:C17",
+      "kind": "awaits",
+      "label": "the fix campaign cleared the ground for the lane repair"
     }
   ],
   "stats": {
-    "totalBranches": 48,
+    "totalBranches": 49,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 154,
+    "edgeCount": 160,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -4299,6 +4421,18 @@
       "corrections": [
         "N65"
       ],
+      "refused": []
+    },
+    "amendPass37_2026_09_18": {
+      "newNodes": [
+        "C17",
+        "N66",
+        "N67",
+        "N68",
+        "N69"
+      ],
+      "newEdges": 6,
+      "corrections": [],
       "refused": []
     }
   },
