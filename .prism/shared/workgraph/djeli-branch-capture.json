@@ -42,7 +42,8 @@
     "amendPass32": "The nine surfaces declared as one system and gated: SURFACES registry + Ecosystem Map mirror (C13), verify-surfaces.mjs as stage 4b closing OA10 (C14). Three defects recorded honestly, one of them mine twice over - I guessed an owner the plan had already written down, and my parser silently dropped the row it was built to check.",
     "amendPass33": "The two open items were one defect in two directions: a gate that reassures without checking. The card gate measured the wrong quantity and invented drift; the stories gate measured in the wrong place and invented calm. OA8 closed as a measurement artifact - nothing had been lost.",
     "amendPass34": "The rename was authorised and NOT performed. Reading the stories contract showed s-hash is the compliant form and STORY-NNN the deviation - the opposite of what I had recorded. N58 corrected, OA11 opened for the two real follow-ups.",
-    "amendPass35": "The POT_T fix campaign - seven staged fixes run as one pass: the stale account skill snapshot as root cause, the 171-tool shelf-to-POT_T migration, the drift dedupe, the last INV2 violation, repo hygiene, this amend, then the batch."
+    "amendPass35": "The POT_T fix campaign - seven staged fixes run as one pass: the stale account skill snapshot as root cause, the 171-tool shelf-to-POT_T migration, the drift dedupe, the last INV2 violation, repo hygiene, this amend, then the batch.",
+    "amendPass36": "Correcting N65 against myself: the INV2 count was measured through the bridge, which sees one store of two."
   },
   "groups": [
     {
@@ -2814,13 +2815,19 @@
       "localId": "N65",
       "kind": "finding",
       "group": "new-findings",
-      "state": "defect-fixed",
+      "state": "corrected-verified",
       "direction": "local",
       "title": "INV2 had one violation, not forty-five - and the one was a music mix, not a missing transcript",
       "description": "An in-session claim that 45 INV2 violations remained across three sessions was wrong: the count had been taken before the description-source backfill landed. The real figure was one, and the offending record was not an AI video at all - 'Gentle & Smooth R&B Mix in a Brooklyn Loft, Set 52, Ceema' had ridden into the AI News catch-up session with captions disabled, so it carried a digest with no backing transcript and no declared source. Also corrected in the same pass: the claim that the next batch had to wait about four hours. Only the timedtext door was blocked; the cdp door was clean at fail_streak 0, so the batch was never actually gated.",
       "verification": {
-        "evidence": "scripts/verify_invariants.py before: INV2 FAIL, 1 violation, cMvi1GS9R3E. yt-dlp metadata fetch (no caption request, so the blocked timedtext door was never touched) recovered a 2645-character description; a description-backed digest was written with digest_source='description' and an explicit 'OSS harvest: none - the description was read in full rather than skipped'. After: INV1 PASS, INV2 PASS, INV3 PASS.",
-        "result": "defect-fixed - first fully clean invariant gate; the video is retained and documented rather than dropped, per the rule that every video in the playlist is there for a reason."
+        "evidence": "bridge run: 'store: .../GriotApps/Cinopsis/data (canonical) -- 12 sessions' -> INV2 PASS. Native run: 'store: C:\\Users\\digit\\.claude\\plugins\\data\\cinopsis-cinopsis (canonical) -- 37 sessions' + 'store: ...GriotApps\\Cinopsis\\data -- 12 sessions' -> INV2 FAIL, 44 violations across 49 sessions; after syncing the 2026-09-02 description-backed digest into canonical, 43.",
+        "result": "corrected-verified - the node's own claim is overturned by a wider measurement, and the lesson is the measurement surface, not the number: always run the invariant gate natively, never through the bridge."
+      },
+      "correction": {
+        "correctedAt": "2026-09-18 amendPass36",
+        "wasClaimed": "INV2 had ONE violation, not forty-five - and the earlier count of 45 was wrong because it predated the description-source backfill.",
+        "isTrue": "INV2 has 43 violations, concentrated in two July sessions (2026-07-14 comparison-oss-repo-roundups and 2026-07-29 kimi-k3-landscape-griot-model). The originally-reported figure of ~45 was close to correct; the correction claiming 'one' was itself the error. The single violation that WAS found and fixed - the Brooklyn-loft R&B mix with captions disabled - is real and remains fixed, and syncing that fix into the canonical store moved the count 44 -> 43.",
+        "cause": "verify_invariants.py was run through device_bash, whose Linux VM mounts only C:\\Users\\digit\\GriotApps\\Cinopsis\\data - ONE store, 12 sessions. Run natively it enumerates TWO stores, adding the canonical plugin store at C:\\Users\\digit\\.claude\\plugins\\data\\cinopsis-cinopsis with 37 more sessions, for 49 sessions and 1378 digest entries. The gate was reporting honestly about a partial view; the surface it ran on silently narrowed the corpus. A count taken through the bridge is a count of the repo, never of the ecosystem."
       }
     },
     {
@@ -4284,6 +4291,14 @@
       ],
       "newEdges": 10,
       "corrections": [],
+      "refused": []
+    },
+    "amendPass36_2026_09_18": {
+      "newNodes": [],
+      "newEdges": 0,
+      "corrections": [
+        "N65"
+      ],
       "refused": []
     }
   },
