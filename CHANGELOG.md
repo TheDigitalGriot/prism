@@ -4,6 +4,30 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.17.3] - 2026-09-20
+
+Developer/ path drift repointed, and gitnexus re-indexed to HEAD.
+
+### Fixed
+
+- **`Developer/` path drift repointed across nine sites.** `Developer/prism-design-engine` →
+  `GriotApps/prism-design-engine`, `Developer/SkillsForge` → `GriotMeta/SkillsForge`, plus
+  `PROJECT_SUMMARY.md`'s "This Repository" line, which still named the pre-move address.
+  Historical references to `Developer/paseo`, `paseo-upstream`, `prism-mobile`,
+  `prism-plugin`, and `clief-notes-archive` were verified as still-existing directories and
+  deliberately preserved — not drift, and not touched.
+- **gitnexus re-indexed to HEAD** (43,693 symbols / 96,170 relationships), clearing
+  `verify-code-intel` invariant I12 (index freshness).
+
+### Known issues (not fixed this cycle)
+
+- `apps/prism-setup/resources/plugin/skills/prism-design/SKILL.md` diverges from its
+  `skills/` original: unquoted frontmatter `description`, and a reference to
+  `skills/icm-architect/`, the deprecated alias for `spectrum-architect`.
+- `codebase-memory-mcp`'s `list_projects` reads a zero-byte `_config.db` and under-reports
+  indexed projects. `index_status` and `search_graph` by project name are correct and
+  unaffected — this is a `list_projects`-only reporting gap.
+
 ## [4.17.1] - 2026-09-12
 
 Propagation gating for `prism-codex-plan-sync`, and a dead artifact call retired.
