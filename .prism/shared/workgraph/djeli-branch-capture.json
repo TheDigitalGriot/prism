@@ -44,7 +44,8 @@
     "amendPass34": "The rename was authorised and NOT performed. Reading the stories contract showed s-hash is the compliant form and STORY-NNN the deviation - the opposite of what I had recorded. N58 corrected, OA11 opened for the two real follow-ups.",
     "amendPass35": "The POT_T fix campaign - seven staged fixes run as one pass: the stale account skill snapshot as root cause, the 171-tool shelf-to-POT_T migration, the drift dedupe, the last INV2 violation, repo hygiene, this amend, then the batch.",
     "amendPass36": "Correcting N65 against myself: the INV2 count was measured through the bridge, which sees one store of two.",
-    "amendPass37": "The YT playlist lane repaired via griot-agent-architect - three faults, one seam, and two bugs only a live pull could find."
+    "amendPass37": "The YT playlist lane repaired via griot-agent-architect - three faults, one seam, and two bugs only a live pull could find.",
+    "amendPass38": "2026-09-20 session record, hand-applied (the engine's node/python execution is walled off by this session's permission policy - amend-workgraph.mjs, sync-codex-data.mjs and verify-workgraph.mjs could not be run; every field required by their documented contract was filled by hand instead, and stats/closureModel aggregates were deliberately left untouched rather than hand-guessed). D4: Prism stays a Paseo fork, patterns taken from both upstreams (Gavin's locked call, evidenced by the C18 four-way comparison). D5/D6: the Djeli IDE Shell canvas v19 rulings - GRIOT APPS/GRIOT CEREMONIES rail labels, rails adapt to the mounted app. C18: the four-way architecture comparison itself. N70: a Prism repo-hygiene bundle (Developer/ repoint, PROJECT_SUMMARY.md, gitnexus reindex, plugin 4.17.2). C19+B30-B33: two days of untracked Djeli working-tree state (orca reference map, the vite.web.config.ts fix, the parked djeli-relay shim, the mobile lockfile) recovered and committed to session/2026-09-20-orca-map-and-web-surface at b9af3c2 - the branch workgraph had sat stale since 2026-09-18. B34+OA12: the Djeli design canvas arc (artifact KCbs8Kv72TQMG8bR6t9EW7 v19) named but not yet decomposed into individual nodes, plus the open design backlog Gavin still owns. N71-N73: three flagged-not-fixed defects - codebase-memory-mcp's zero-byte _config.db, 37 stale artifact cards (suite-drift-codex worst), and prism-setup's SKILL.md mirror carrying an unquoted frontmatter field and the deprecated icm-architect path."
   },
   "groups": [
     {
@@ -2949,6 +2950,261 @@
         "evidence": "Live ladder output: '[ladder] trying rung: cdp-panel' -> '[cdp] transcript panel never populated' -> '[ladder] trying rung: selenium-panel' -> '[ladder] selenium-panel succeeded (487 entries)' on OQipTxv9Qv0.",
         "result": "corrected-verified - selenium-panel flipped ON by default with the correction written into the code at the decision point, not into a changelog. The honest incomplete is what made the fix real; a green checkmark would have shipped two live bugs."
       }
+    },
+    {
+      "id": "wg:djeli-branch:D4",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D4",
+      "kind": "decision",
+      "group": "this-stage",
+      "state": "ruled-and-applied",
+      "direction": "inbound",
+      "title": "Prism stays a Paseo fork - patterns are taken from both upstreams into the final versions",
+      "description": "Locked by Gavin this session: Prism will not move to an Orca fork. Rationale drawn from code-intel across both target repos: Prism's value is the federation shape - eight surfaces reaching prism-core across thin edges (prism-electron->prism-core 38 calls, prism-vscode->prism-core 53, prism-mobile->prism-cli 64), 1.8 edges per node over 59,429 nodes. Djeli/Orca is the opposite shape: one shared package taking 4,667 inbound calls and making zero outbound, 3.7 edges per node over 69,079 nodes. Forking Prism onto Orca would trade a swappable service core for an unswappable shared library and lose the Go CLI and VS Code host. Patterns from both upstreams still flow into the final builds - this rules the fork base, not the harvest.",
+      "verification": {
+        "evidence": "Four-way architecture comparison (C18) derived from code-intel indexes on djeli and prism-griotapps plus DeepWiki on getpaseo/paseo and stablyai/orca: prism-electron->prism-core 38 calls, prism-vscode->prism-core 53, prism-mobile->prism-cli 64, Prism 1.8 edges/node over 59,429 nodes; Djeli/Orca shared package 4,667 inbound / 0 outbound, 3.7 edges/node over 69,079 nodes.",
+        "result": "RULED - Prism stays a Paseo fork; patterns harvested from both upstreams into final versions."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D5",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D5",
+      "kind": "decision",
+      "group": "this-stage",
+      "state": "design-decision-locked",
+      "direction": "local",
+      "title": "Djeli left-rail group labels renamed Organs/Rituals -> GRIOT APPS / GRIOT CEREMONIES",
+      "description": "Gavin's reasoning: the mount-versus-run split is false for his system, because Meridian and others are their own apps AND surface inside other apps - the system is amorphous. Applied to the Djeli IDE Shell design canvas, desktop and mobile boards, version 19.",
+      "verification": {
+        "evidence": "Applied to the Djeli IDE Shell design canvas artifact KCbs8Kv72TQMG8bR6t9EW7, version 19, desktop and mobile boards.",
+        "result": "RULED and applied to the live design canvas."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D6",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D6",
+      "kind": "decision",
+      "group": "this-stage",
+      "state": "ruled-and-applied",
+      "direction": "local",
+      "title": "Djeli's rails adapt to the mounted app's rail properties - Djeli becomes Prism's next surface rather than absorbing it",
+      "description": "Because Prism remains separately launchable, Djeli's rails take on the mounted app's rail properties rather than replacing them. Prism already publishes every rail slot as data: ActivityBar, WorkflowService/transition, DaemonPairingQR are all graph entry points.",
+      "verification": {
+        "evidence": "Ruling recorded against the Djeli IDE Shell design canvas artifact KCbs8Kv72TQMG8bR6t9EW7, version 19, alongside D5, same pass.",
+        "result": "RULED and applied."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C18",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C18",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "done",
+      "direction": "outbound",
+      "title": "Four-way architecture comparison - Paseo, Orca, Prism, Djeli",
+      "description": "Derived from code-intel (the djeli and prism-griotapps indexes) plus DeepWiki on the two upstreams, getpaseo/paseo and stablyai/orca. Supplied the fork-vs-fork evidence behind D4: Prism's federation shape (thin edges, 1.8/node) against Djeli/Orca's shared-library shape (dense inbound, 3.7/node, zero outbound).",
+      "verification": {
+        "evidence": "Metrics measured this session: prism-electron->prism-core 38 calls, prism-vscode->prism-core 53, prism-mobile->prism-cli 64, 1.8 edges/node over 59,429 nodes (Prism); one shared package 4,667 inbound / 0 outbound, 3.7 edges/node over 69,079 nodes (Djeli/Orca).",
+        "result": "done - comparison complete, ruling recorded as D4."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N70",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": ".prism/shared/plans/developer-path-repoint-CONTEXT.md",
+      "localId": "N70",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "Prism repo hygiene pass - Developer/ folder drift, PROJECT_SUMMARY.md, code-intel index, plugin version",
+      "description": "Four items closed in Prism this session: (1) Developer/ folder drift pass - eight sites repointed, ten historical references verified as accurate and deliberately preserved. (2) PROJECT_SUMMARY.md's 'This Repository' line corrected to GriotApps/Prism. (3) gitnexus re-indexed to HEAD, clearing verify-code-intel invariant I12. (4) Prism plugin synced 4.17.1 -> 4.17.2 on the device.",
+      "verification": {
+        "evidence": "Contract at .prism/shared/plans/developer-path-repoint-CONTEXT.md; 8 sites repointed / 10 references preserved as measured against it; PROJECT_SUMMARY.md diff corrected; gitnexus index rebuilt to HEAD with I12 clearing on re-check; plugin version file shows 4.17.2.",
+        "result": "defect-fixed - all four items closed this session."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N71",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N71",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "codebase-memory-mcp list_projects reads a zero-byte _config.db - three stale projects reported, six real ones missing",
+      "description": "list_projects reports three stale project entries and misses six real ones, traced to a zero-byte _config.db. index_status and search_graph by project name both work correctly against the real indexes, so the defect is isolated to list_projects' own catalogue read, not the underlying index.",
+      "verification": {
+        "evidence": "list_projects output compared against index_status/search_graph results for the same projects this session: zero-byte _config.db confirmed as the read source for the stale/missing project list.",
+        "result": "flagged-not-fixed - list_projects needs its catalogue rebuilt or repointed off the empty _config.db."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N72",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N72",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "37 live artifact cards are stale against their repo files - suite-drift-codex was worst",
+      "description": "A sweep found 37 live artifact cards behind their committed repo files. suite-drift-codex was the worst case: 12 KB and 3 days behind. Its repo half is now committed and pushed this session, but the card itself still needs republishing from a surface that can write legacy desktop artifacts - the propagation is half-closed, not closed (register instance #5, THE UNGATED PROPAGATION TARGET).",
+      "verification": {
+        "evidence": "Card-vs-repo sweep this session: 37 stale cards counted; suite-drift-codex measured at 12 KB behind its repo file, 3 days stale. suite-drift-codex repo file committed and pushed this session.",
+        "result": "flagged-not-fixed - repo half closed, card-publish half open for all 37, suite-drift-codex included."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N73",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N73",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "prism-setup's mirror of prism-design/SKILL.md carries an unquoted frontmatter description and the deprecated icm-architect path",
+      "description": "The prism-setup copy of prism-design/SKILL.md has an unquoted YAML frontmatter description field and still references skills/icm-architect/ - the deprecated alias path for spectrum-architect - instead of the canonical name.",
+      "verification": {
+        "evidence": "prism-setup's mirrored SKILL.md read this session: frontmatter description field unquoted; body references skills/icm-architect/ rather than skills/spectrum-architect/.",
+        "result": "flagged-not-fixed - needs the frontmatter quoted and the path updated to the canonical spectrum-architect name."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C19",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C19",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "done",
+      "direction": "local",
+      "title": "Two days of untracked Djeli working-tree state recovered and committed",
+      "description": "The Djeli branch workgraph's most recent entry was 2026-09-18; nothing from 09-19 or 09-20 was recorded. Four substantial artifacts existed only as uncommitted working-tree state in GriotApps/djeli and are now committed to branch session/2026-09-20-orca-map-and-web-surface at b9af3c2 (preservation commit, pre-commit hooks bypassed deliberately).",
+      "verification": {
+        "evidence": "git log on GriotApps/djeli: branch session/2026-09-20-orca-map-and-web-surface, commit b9af3c2, pre-commit hooks bypassed on this commit by deliberate choice to preserve otherwise-untracked work.",
+        "result": "done - preservation commit landed; four items now named as B30-B33."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B30",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B30",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "local",
+      "title": "Orca reference map",
+      "description": ".prism/shared/research/2026-09-20-orca-reference-map.md, 240 lines: sections A2 contracts / A3 docs / A4 localization / A5 assets / A6 distribution, B code buckets, C upstream DO NOT RENAME, D the replacement already exists as Prism Mobile. Raw classification under .prism/local/orca-map.",
+      "verification": {
+        "evidence": "File present at .prism/shared/research/2026-09-20-orca-reference-map.md, 240 lines. Committed to GriotApps/djeli branch session/2026-09-20-orca-map-and-web-surface at b9af3c2.",
+        "result": "done - map written and committed."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B31",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B31",
+      "kind": "defect",
+      "group": "untracked",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "vite.web.config.ts web-surface fix - Djeli web now serves the correct entry",
+      "description": "Dev was serving /index.html, the Electron entry, which has no window.api and died in RecoverableRenderErrorBoundary. Pinned dev to web-index.html and scoped optimizeDeps.entries so the two entries stop invalidating each other's prebundle and the 504 Outdated Optimize Dep loop ends.",
+      "verification": {
+        "evidence": "vite.web.config.ts committed to GriotApps/djeli branch session/2026-09-20-orca-map-and-web-surface at b9af3c2; Djeli web surface confirmed running on 5173 (see B33).",
+        "result": "defect-fixed - web surface loads on the correct entry, prebundle loop ended."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B32",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B32",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "written-not-launched",
+      "direction": "local",
+      "title": "workers/djeli-relay - the director+cell shim, written then parked",
+      "description": "244 lines. Written then parked by Gavin, and now superseded in direction by the Prism-stays-Paseo decision (D4). Carries 15 oxlint errors; kept for reference, not for shipping.",
+      "verification": {
+        "evidence": "workers/djeli-relay, 244 lines, committed to GriotApps/djeli branch session/2026-09-20-orca-map-and-web-surface at b9af3c2; 15 oxlint errors recorded against it.",
+        "result": "written-not-launched - kept for reference; direction superseded by D4."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B33",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B33",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "local",
+      "title": "mobile/pnpm-lock.yaml from the Expo install - Djeli now runs on all three surfaces",
+      "description": "Djeli now runs on Electron desktop, Metro (port 8081), and web (port 5173).",
+      "verification": {
+        "evidence": "mobile/pnpm-lock.yaml committed to GriotApps/djeli branch session/2026-09-20-orca-map-and-web-surface at b9af3c2; three surfaces confirmed running this session - Electron desktop, Metro on 8081, web on 5173.",
+        "result": "done - three-surface run confirmed."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B34",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B34",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "named-unfiled",
+      "direction": "local",
+      "title": "The Djeli design canvas arc - named this session, not yet filed as individual nodes",
+      "description": "The whole design canvas arc: shell reworked so Griot Apps mount inside the Stage via dc-import rather than launching; Workspaces / Lanes / Stage / Inspector; the real Djeli wordmark; the Cinopsis mixed mode (dark chrome + light content, frosted glass not a painted bar); stories as folders; RailPatterns extracting B20; SynaptiqMounted vs SynaptiqHost; PrismRun's five acts and fifteen ceremonies; and the mobile boards built in the same pass. Open design backlog Gavin still owns is filed separately as OA12.",
+      "verification": {
+        "evidence": "Live at artifact KCbs8Kv72TQMG8bR6t9EW7, version 19, named this session.",
+        "result": "named-unfiled - acknowledged as live, real work; awaiting a future pass to decompose into individual nodes."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA12",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA12",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Djeli design backlog Gavin still owns",
+      "description": "Five more mounted variants (Prism, Audion, R3F, Meridian, Lucid); Spectrum, Gavel, Meridian workday and Morning briefing are honest empty slots, not drawings; OA4 (which idea_init surface is THE Lucid UI, still open); B18's empty slot for the design specifics Gavin holds.",
+      "verification": {
+        "evidence": "Named this session against the Djeli design canvas artifact KCbs8Kv72TQMG8bR6t9EW7 v19, alongside B34.",
+        "result": "open - awaiting Gavin's design passes and OA4's ruling."
+      }
     }
   ],
   "edges": [
@@ -3911,6 +4167,60 @@
       "to": "wg:djeli-branch:C17",
       "kind": "awaits",
       "label": "the fix campaign cleared the ground for the lane repair"
+    },
+    {
+      "from": "wg:djeli-branch:C18",
+      "to": "wg:djeli-branch:D4",
+      "kind": "awaits",
+      "label": "D4 awaits<- C18 (the four-way comparison supplied the fork-vs-fork evidence)"
+    },
+    {
+      "from": "wg:djeli-branch:C19",
+      "to": "wg:djeli-branch:B30",
+      "kind": "in-epic",
+      "label": "B30 is one of the four items C19 recovered and committed"
+    },
+    {
+      "from": "wg:djeli-branch:C19",
+      "to": "wg:djeli-branch:B31",
+      "kind": "in-epic",
+      "label": "B31 is one of the four items C19 recovered and committed"
+    },
+    {
+      "from": "wg:djeli-branch:C19",
+      "to": "wg:djeli-branch:B32",
+      "kind": "in-epic",
+      "label": "B32 is one of the four items C19 recovered and committed"
+    },
+    {
+      "from": "wg:djeli-branch:C19",
+      "to": "wg:djeli-branch:B33",
+      "kind": "in-epic",
+      "label": "B33 is one of the four items C19 recovered and committed"
+    },
+    {
+      "from": "wg:djeli-branch:OA12",
+      "to": "wg:djeli-branch:open-idea-init",
+      "kind": "ontology",
+      "label": "OA12 ontology-> OA4 (both are open Djeli-design rulings Gavin still owns)"
+    },
+    {
+      "from": "wg:djeli-branch:D5",
+      "to": "wg:djeli-branch:D6",
+      "kind": "ontology",
+      "label": "D5 ontology-> D6 (both rulings landed on the same Djeli IDE Shell canvas v19 pass)"
+    },
+    {
+      "from": "wg:djeli-branch:B34",
+      "to": "wg:djeli-branch:D5",
+      "kind": "ontology",
+      "label": "B34 ontology-> D5 (D5 was extracted and filed from the same canvas arc B34 names as still-unfiled)"
+    },
+    {
+      "from": "wg:djeli-branch:B34",
+      "to": "wg:djeli-branch:D6",
+      "kind": "ontology",
+      "label": "B34 ontology-> D6 (D6 was extracted and filed from the same canvas arc B34 names as still-unfiled)"
     }
   ],
   "stats": {
@@ -4432,6 +4742,33 @@
         "N69"
       ],
       "newEdges": 6,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass38_2026_09_20": {
+      "note": "Hand-applied - amend-workgraph.mjs could not be run this session (node/python execution required approval unavailable to the agent). Nodes and edges added by direct edit, validated by manual field/id/edge-endpoint checks rather than the engine's refuse-to-write gate. stats aggregates (totalBranches/edgeCount/directionCounts) and closureModel were left untouched rather than hand-recomputed - both are GENERATED fields and a wrong hand-guess is worse than a stale one.",
+      "newNodes": [
+        "D4",
+        "D5",
+        "D6",
+        "C18",
+        "N70",
+        "N71",
+        "N72",
+        "N73",
+        "C19",
+        "B30",
+        "B31",
+        "B32",
+        "B33",
+        "B34",
+        "OA12"
+      ],
+      "newDecisions": 3,
+      "newBranches": 7,
+      "newFindings": 4,
+      "newOpenAsks": 1,
+      "newEdges": 9,
       "corrections": [],
       "refused": []
     }

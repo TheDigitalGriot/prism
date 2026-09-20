@@ -27,7 +27,7 @@ const pathFlagIdx = args.indexOf("--griotwave-path")
 const griotwavePath =
   pathFlagIdx >= 0 && args[pathFlagIdx + 1]
     ? args[pathFlagIdx + 1]
-    : "C:/Users/digit/Developer/SkillsForge/griotwave/griotwave-library/_master/griotwave.tokens.json"
+    : "C:/Users/digit/GriotMeta/SkillsForge/griotwave/griotwave-library/_master/griotwave.tokens.json"
 
 const FRAME_PATH = path.join(__dirname, "frame-template.html")
 const START_MARKER = "/* griotwave-tokens-start */"

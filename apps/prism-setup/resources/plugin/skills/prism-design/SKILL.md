@@ -171,10 +171,10 @@ If the engine isn't installed:
 
 ```bash
 # Clone the fork
-git clone git@github.com:TheDigitalGriot/prism-design-engine.git ~/Developer/prism-design-engine
+git clone git@github.com:TheDigitalGriot/prism-design-engine.git ~/GriotApps/prism-design-engine
 
 # Install dependencies
-cd ~/Developer/prism-design-engine
+cd ~/GriotApps/prism-design-engine
 pnpm install
 
 # Start the daemon

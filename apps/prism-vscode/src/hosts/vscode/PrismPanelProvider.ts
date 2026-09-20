@@ -714,7 +714,7 @@ export class PrismPanelProvider implements vscode.WebviewViewProvider {
     if (!fs.existsSync(engineDaemon)) {
       void vscode.window.showErrorMessage(
         `Prism Design Engine not found at ${this._designEngineRepoPath()}. ` +
-        'Clone TheDigitalGriot/prism-design-engine to ~/Developer/prism-design-engine first.',
+        'Clone TheDigitalGriot/prism-design-engine to ~/GriotApps/prism-design-engine first.',
       );
       this._designEngineStatus = 'error';
       await this._pushDesignEngineState();

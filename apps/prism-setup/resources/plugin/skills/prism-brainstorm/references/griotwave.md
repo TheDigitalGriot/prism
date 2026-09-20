@@ -5,7 +5,7 @@ Griotwave is the visual language underlying all prism visual output — the brai
 ## Token source
 
 Canonical W3C-style tokens:
-`C:\Users\digit\Developer\SkillsForge\griotwave\griotwave-library\griotwave.tokens.json`
+`C:\Users\digit\GriotMeta\SkillsForge\griotwave\griotwave-library\griotwave.tokens.json`
 
 The `port-griotwave.cjs` script in `scripts/` reads this file and rewrites the marker block in `frame-template.html`. Run it after griotwave token updates.
 

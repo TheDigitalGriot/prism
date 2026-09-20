@@ -8,7 +8,7 @@
  *   3. Exposes a minimal REST relay for the prism VSCode extension
  *   4. Watches .prism/shared/designs/ for new artifacts
  *
- * The engine itself lives at: ~/Developer/prism-design-engine
+ * The engine itself lives at: ~/GriotApps/prism-design-engine
  * Fork source: https://github.com/TheDigitalGriot/prism-design-engine
  * Upstream:    https://github.com/nexu-io/open-design
  */
