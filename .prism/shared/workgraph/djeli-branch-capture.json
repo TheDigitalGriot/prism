@@ -45,7 +45,9 @@
     "amendPass35": "The POT_T fix campaign - seven staged fixes run as one pass: the stale account skill snapshot as root cause, the 171-tool shelf-to-POT_T migration, the drift dedupe, the last INV2 violation, repo hygiene, this amend, then the batch.",
     "amendPass36": "Correcting N65 against myself: the INV2 count was measured through the bridge, which sees one store of two.",
     "amendPass37": "The YT playlist lane repaired via griot-agent-architect - three faults, one seam, and two bugs only a live pull could find.",
-    "amendPass38": "2026-09-20 session record, hand-applied (the engine's node/python execution is walled off by this session's permission policy - amend-workgraph.mjs, sync-codex-data.mjs and verify-workgraph.mjs could not be run; every field required by their documented contract was filled by hand instead, and stats/closureModel aggregates were deliberately left untouched rather than hand-guessed). D4: Prism stays a Paseo fork, patterns taken from both upstreams (Gavin's locked call, evidenced by the C18 four-way comparison). D5/D6: the Djeli IDE Shell canvas v19 rulings - GRIOT APPS/GRIOT CEREMONIES rail labels, rails adapt to the mounted app. C18: the four-way architecture comparison itself. N70: a Prism repo-hygiene bundle (Developer/ repoint, PROJECT_SUMMARY.md, gitnexus reindex, plugin 4.17.2). C19+B30-B33: two days of untracked Djeli working-tree state (orca reference map, the vite.web.config.ts fix, the parked djeli-relay shim, the mobile lockfile) recovered and committed to session/2026-09-20-orca-map-and-web-surface at b9af3c2 - the branch workgraph had sat stale since 2026-09-18. B34+OA12: the Djeli design canvas arc (artifact KCbs8Kv72TQMG8bR6t9EW7 v19) named but not yet decomposed into individual nodes, plus the open design backlog Gavin still owns. N71-N73: three flagged-not-fixed defects - codebase-memory-mcp's zero-byte _config.db, 37 stale artifact cards (suite-drift-codex worst), and prism-setup's SKILL.md mirror carrying an unquoted frontmatter field and the deprecated icm-architect path."
+    "amendPass38": "2026-09-20 session record, hand-applied (the engine's node/python execution is walled off by this session's permission policy - amend-workgraph.mjs, sync-codex-data.mjs and verify-workgraph.mjs could not be run; every field required by their documented contract was filled by hand instead, and stats/closureModel aggregates were deliberately left untouched rather than hand-guessed). D4: Prism stays a Paseo fork, patterns taken from both upstreams (Gavin's locked call, evidenced by the C18 four-way comparison). D5/D6: the Djeli IDE Shell canvas v19 rulings - GRIOT APPS/GRIOT CEREMONIES rail labels, rails adapt to the mounted app. C18: the four-way architecture comparison itself. N70: a Prism repo-hygiene bundle (Developer/ repoint, PROJECT_SUMMARY.md, gitnexus reindex, plugin 4.17.2). C19+B30-B33: two days of untracked Djeli working-tree state (orca reference map, the vite.web.config.ts fix, the parked djeli-relay shim, the mobile lockfile) recovered and committed to session/2026-09-20-orca-map-and-web-surface at b9af3c2 - the branch workgraph had sat stale since 2026-09-18. B34+OA12: the Djeli design canvas arc (artifact KCbs8Kv72TQMG8bR6t9EW7 v19) named but not yet decomposed into individual nodes, plus the open design backlog Gavin still owns. N71-N73: three flagged-not-fixed defects - codebase-memory-mcp's zero-byte _config.db, 37 stale artifact cards (suite-drift-codex worst), and prism-setup's SKILL.md mirror carrying an unquoted frontmatter field and the deprecated icm-architect path.",
+    "amendPass39": "2026-09-20 AFTERNOON pass: D7-D9 ember-palette/icon-display/collapsed-rail rulings on canvas v22; C20 restores the ten-app Griot Apps roster (Mixar rebuilt, Damus/Kente/Cinopsis rebuilt from their own codexes); N74 names the second occurrence of the Mixar search-shape miss OA1 first recorded; N75/B35/B36 are the brand-mark landings (Prism extracted, Kente wired, Cinopsis drafted first-pass); OA13-OA16 are the open calls the afternoon's palette work surfaced (Cinopsis ratification, Damus/Synaptiq periwinkle collision, Mixar's missing ember, Djeli's own gold-vs-purple conflict); C21 is the full 90-card resync that closes N72; B37/B38 record the djeli-codex.html lineage amendment for D4 and the Prism closing-ceremony version bump.",
+    "amendPass40": "N72 advanced: the 90-card resync (C21), freshly re-verified this session via verify-cards.ps1, closes the 37-stale-card defect N72 flagged."
   },
   "groups": [
     {
@@ -3061,13 +3063,20 @@
       "localId": "N72",
       "kind": "defect",
       "group": "new-findings",
-      "state": "flagged-not-fixed",
+      "state": "defect-fixed",
       "direction": "local",
       "title": "37 live artifact cards are stale against their repo files - suite-drift-codex was worst",
       "description": "A sweep found 37 live artifact cards behind their committed repo files. suite-drift-codex was the worst case: 12 KB and 3 days behind. Its repo half is now committed and pushed this session, but the card itself still needs republishing from a surface that can write legacy desktop artifacts - the propagation is half-closed, not closed (register instance #5, THE UNGATED PROPAGATION TARGET).",
       "verification": {
         "evidence": "Card-vs-repo sweep this session: 37 stale cards counted; suite-drift-codex measured at 12 KB behind its repo file, 3 days stale. suite-drift-codex repo file committed and pushed this session.",
         "result": "flagged-not-fixed - repo half closed, card-publish half open for all 37, suite-drift-codex included."
+      },
+      "priorState": "flagged-not-fixed",
+      "advanced": {
+        "advancedAt": "2026-09-20 amendPass40",
+        "from": "flagged-not-fixed",
+        "to": "defect-fixed",
+        "evidence": "Ran verify-cards.ps1 this session (2026-09-20 17:45): in sync (body hash match) 90, STALE 0, NO CARD 0, card-ahead-of-repo 0. Output: VERIFY_CARDS_OK -- every codex and live artifact is current. Supersedes the 37-card count N72 originally flagged."
       }
     },
     {
@@ -3204,6 +3213,261 @@
       "verification": {
         "evidence": "Named this session against the Djeli design canvas artifact KCbs8Kv72TQMG8bR6t9EW7 v19, alongside B34.",
         "result": "open - awaiting Gavin's design passes and OA4's ruling."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D7",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D7",
+      "kind": "decision",
+      "group": "this-stage",
+      "state": "ruled-and-applied",
+      "direction": "local",
+      "title": "Per-app ember palette drives the Djeli rails",
+      "description": "Every app's ember comes from its own codex brand-matrix run, not invention. Selecting a workspace tints the row, indicator bar and label in that app's colour, and the Lanes tree and Inspector take the same accent, so the rails shift with the mounted context. Ceremonies and anything without a confirmed ember fall to the Djeli purple #8b5cf6.",
+      "verification": {
+        "evidence": "Applied to the Djeli IDE Shell design canvas artifact KCbs8Kv72TQMG8bR6t9EW7, version 22, afternoon pass, alongside D8 and D9.",
+        "result": "RULED and applied to the live design canvas."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D8",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D8",
+      "kind": "decision",
+      "group": "this-stage",
+      "state": "ruled-and-applied",
+      "direction": "local",
+      "title": "Icon display setting: Condensed vs Expanded, segmented control in the Workspaces rail header",
+      "description": "Condensed is the tight row with the app's white glyph. Expanded is a 26px glossy rounded-square tile in the app's ember, rows grown to 42px. The control lives in the Workspaces rail header.",
+      "verification": {
+        "evidence": "Applied to the Djeli IDE Shell design canvas artifact KCbs8Kv72TQMG8bR6t9EW7, version 22, afternoon pass, alongside D7 and D9.",
+        "result": "RULED and applied to the live design canvas."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D9",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D9",
+      "kind": "decision",
+      "group": "this-stage",
+      "state": "ruled-and-applied",
+      "direction": "local",
+      "title": "Collapsed Workspaces rail always shows the full app icon, regardless of the Condensed/Expanded setting",
+      "description": "When the Workspaces rail is collapsed to its icon column, it always shows the full app icon. The Condensed/Expanded setting (D8) only governs the open rail, never the collapsed one.",
+      "verification": {
+        "evidence": "Applied to the Djeli IDE Shell design canvas artifact KCbs8Kv72TQMG8bR6t9EW7, version 22, afternoon pass, alongside D7 and D8.",
+        "result": "RULED and applied to the live design canvas."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C20",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C20",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "done",
+      "direction": "local",
+      "title": "Griot Apps roster restored to ten: Synaptiq, Prism, Cinopsis, Mixar, Damus, Kente, Audion, R3F Studio, Lucid, Meridian",
+      "description": "Mixar had been missed from the Workspaces rail roster; it is rebuilt from Surfaces.dc.html (keeping its original glyph path) after being dropped during an orphan-board cleanup. Damus, Kente and Cinopsis are rebuilt from their own codexes. This closes the roster gap surfaced by the second occurrence of the Mixar search-shape miss (N74).",
+      "verification": {
+        "evidence": "Applied to the Djeli IDE Shell design canvas artifact KCbs8Kv72TQMG8bR6t9EW7, version 22, afternoon pass. Mixar rebuilt from Surfaces.dc.html; Damus, Kente, Cinopsis rebuilt from their own codexes; brand marks landed as N75/B35/B36.",
+        "result": "done - ten-app Workspaces roster live on the canvas."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N74",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N74",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "recurrence-confirmed-resolved",
+      "direction": "local",
+      "title": "Mixar's search-shape miss recurred a second time - same cause OA1 already named",
+      "description": "Mixar was missed again from the Griot Apps roster because searches ran over the Griot roots on C: and came back empty. OA1 (2026-09-13) already recorded the exact same failure mode: Mixar is a repo (Mixar-AI/mixar-app, HEAD a55ba08) living at ~/mixar-app inside the MixarBuild WSL distro, invisible to any search confined to top-level Griot dirs on C:. The same search shape produced the same miss a second time before this session recovered it and rebuilt the roster entry (C20).",
+      "verification": {
+        "evidence": "Mixar confirmed live at Mixar-AI/mixar-app, HEAD a55ba08, inside the MixarBuild WSL distro (~/mixar-app) - same facts OA1 recorded 2026-09-13. Roster entry rebuilt from Surfaces.dc.html this session, original glyph path preserved.",
+        "result": "recurrence-confirmed-resolved - Mixar restored to the roster; the recurring search-shape gap is named so a third occurrence is recognizable on sight."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N75",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N75",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "done",
+      "direction": "local",
+      "title": "Prism brand mark extracted via griot-app-icons into GriotBranding/Prism/mark/",
+      "description": "prism-icon-512.png plus prism-glyph-white-256.png and prism-glyph-white-256.svg extracted via the griot-app-icons skill, landed in GriotBranding/Prism/mark/. Feeds D7's per-app ember palette and D8's Expanded-icon tile for the Prism rail row.",
+      "verification": {
+        "evidence": "Files present at GriotBranding/Prism/mark/: prism-icon-512.png, prism-glyph-white-256.png, prism-glyph-white-256.svg.",
+        "result": "done - Prism's Workspaces rail row and Expanded tile have a real extracted mark, not a placeholder."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B35",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B35",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "local",
+      "title": "Kente's existing mark set wired into the Djeli rail",
+      "description": "kente-mark-amber-512 and kente-mark-glyph-white, Kente's own existing brand assets, wired into the Workspaces rail row rather than a new mark being drawn.",
+      "verification": {
+        "evidence": "kente-mark-amber-512 and kente-mark-glyph-white wired into the Djeli IDE Shell canvas, artifact KCbs8Kv72TQMG8bR6t9EW7 version 22.",
+        "result": "done - Kente's rail row carries its own existing mark."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B36",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B36",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "first-pass-unratified",
+      "direction": "local",
+      "title": "Cinopsis's first brand mark, designed from its own meaning - not yet ratified",
+      "description": "Cinopsis had no brand assets, so a first mark was designed from Cine + opsis (seeing applied to recorded video): a lens/eye outline with a play-triangle pupil, YT-Red ember #EF233C on #0D0D0D. Saved to GriotBranding/Cinopsis/mark/ as cinopsis-icon-512.png and cinopsis-glyph-white-256.png. Explicitly a first pass, not a ratified identity - see OA13.",
+      "verification": {
+        "evidence": "Files present at GriotBranding/Cinopsis/mark/: cinopsis-icon-512.png, cinopsis-glyph-white-256.png. YT-Red #EF233C on #0D0D0D, lens/eye + play-triangle pupil motif.",
+        "result": "first-pass-unratified - a real mark exists and is wired into the rail, but Gavin has not signed off on it as Cinopsis's identity."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA13",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA13",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Is the drafted Cinopsis mark (B36) the identity, or a placeholder to iterate on?",
+      "description": "The lens/eye + play-triangle-pupil mark in YT-Red #EF233C on #0D0D0D was designed this session with no prior brand asset to work from. It is live on the rail but explicitly unratified - Gavin's call on whether it stands or gets iterated.",
+      "verification": {
+        "evidence": "B36's own verification result states 'first-pass-unratified'; no ratification recorded anywhere else this session.",
+        "result": "open - awaiting Gavin's ruling on the Cinopsis mark."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA14",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA14",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Damus and Synaptiq are both locked to periwinkle #7c7cf0 in their own codexes - they read identically in the rail",
+      "description": "D7's per-app ember palette pulls each app's colour from its own codex brand-matrix run. Damus's and Synaptiq's codexes both lock periwinkle #7c7cf0, so the two rows, indicator bars and accents are indistinguishable in the Workspaces rail, Lanes tree and Inspector.",
+      "verification": {
+        "evidence": "Damus codex and Synaptiq codex both record ember #7c7cf0; surfaced when D7's per-app palette was applied to the ten-app roster (C20) this session.",
+        "result": "open - awaiting Gavin's ruling on which app keeps periwinkle and what the other takes instead."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA15",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA15",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Mixar has no codex, no data node, and no ember - runs on the Djeli purple fallback",
+      "description": "Mixar was restored to the roster this session (C20, N74) but has never had a griot-app-codex or brand-matrix run, so D7's per-app ember palette has nothing to pull for it and it falls to the Djeli purple #8b5cf6 fallback like Ceremonies.",
+      "verification": {
+        "evidence": "No Mixar entry found in the codex/brand-matrix set consulted for D7's palette this session; Mixar's rail row renders on #8b5cf6 by fallback rule.",
+        "result": "open - needs Gavin's call on whether Mixar gets its own griot-app-codex + brand-matrix run, or stays on the fallback."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA16",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA16",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Djeli's own ember is both gold #E0A458 (its codex) and purple #8b5cf6 (shell chrome + ceremony fallback) - both in use",
+      "description": "Djeli's own codex records ember #E0A458 gold, but the shell chrome and the agreed Ceremony fallback (D7) are purple #8b5cf6. Both colours are live in the product at once, on different surfaces of the same app.",
+      "verification": {
+        "evidence": "djeli-codex.html records ember #E0A458; the Djeli IDE Shell canvas (KCbs8Kv72TQMG8bR6t9EW7 v22) shell chrome and D7's ceremony fallback both use #8b5cf6.",
+        "result": "open - awaiting Gavin's ruling on which ember is canonical for Djeli itself, or whether both stand for different surfaces."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C21",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C21",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "done",
+      "direction": "local",
+      "title": "All 90 live artifact cards resynced from their repo sources - verify-cards.ps1 now exits 0",
+      "description": "Every live/*.html card resynced against its committed repo source this session. This closes N72's 37-stale-card finding (the flagged-not-fixed card-publish half) - the propagation is now fully closed, not half-closed, and it supersedes N72's count: all 90 were checked, not just the 37 previously found stale.",
+      "verification": {
+        "evidence": "verify-cards.ps1 run this session against all 90 live/*.html cards: exits 0, no card reported stale or missing.",
+        "result": "done - full card-repo parity restored across the live-artifacts catalogue."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B37",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B37",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "local",
+      "title": "djeli-codex.html lineage amended in place for the Prism-stays-Paseo decision (D4)",
+      "description": "djeli-codex.html's lineage record amended to carry D4's ruling - Prism stays a Paseo fork, patterns taken from both upstreams - committed to the repo.",
+      "verification": {
+        "evidence": "Commit 0e00b03 amends djeli-codex.html's lineage section in place to record D4.",
+        "result": "done - D4's ruling is now traceable from Djeli's own codex lineage."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B38",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B38",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "confirmed-running",
+      "direction": "local",
+      "title": "Prism closing ceremony confirmed at 4.17.3 and running",
+      "description": "Continues N70's plugin-version thread (4.17.1 -> 4.17.2, synced that session). Prism's version has advanced to 4.17.3 and its closing ceremony is confirmed running this afternoon.",
+      "verification": {
+        "evidence": "Prism plugin version file reads 4.17.3; closing ceremony process confirmed running this session.",
+        "result": "confirmed-running - version advanced past N70's 4.17.2 checkpoint, ceremony in progress."
       }
     }
   ],
@@ -4221,15 +4485,117 @@
       "to": "wg:djeli-branch:D6",
       "kind": "ontology",
       "label": "B34 ontology-> D6 (D6 was extracted and filed from the same canvas arc B34 names as still-unfiled)"
+    },
+    {
+      "from": "wg:djeli-branch:B34",
+      "to": "wg:djeli-branch:D7",
+      "kind": "ontology",
+      "label": "B34 ontology-> D7 (D7 was extracted and filed from the same canvas arc B34 names as still-unfiled)"
+    },
+    {
+      "from": "wg:djeli-branch:B34",
+      "to": "wg:djeli-branch:D8",
+      "kind": "ontology",
+      "label": "B34 ontology-> D8 (D8 was extracted and filed from the same canvas arc B34 names as still-unfiled)"
+    },
+    {
+      "from": "wg:djeli-branch:B34",
+      "to": "wg:djeli-branch:D9",
+      "kind": "ontology",
+      "label": "B34 ontology-> D9 (D9 was extracted and filed from the same canvas arc B34 names as still-unfiled)"
+    },
+    {
+      "from": "wg:djeli-branch:D7",
+      "to": "wg:djeli-branch:D8",
+      "kind": "ontology",
+      "label": "D7 ontology-> D8 (both rulings landed on the same Djeli IDE Shell canvas v22 afternoon pass)"
+    },
+    {
+      "from": "wg:djeli-branch:D8",
+      "to": "wg:djeli-branch:D9",
+      "kind": "ontology",
+      "label": "D8 ontology-> D9 (D9 refines D8's setting for the collapsed rail case)"
+    },
+    {
+      "from": "wg:djeli-branch:C20",
+      "to": "wg:djeli-branch:N74",
+      "kind": "in-epic",
+      "label": "N74 is the finding that led C20 to restore Mixar to the roster"
+    },
+    {
+      "from": "wg:djeli-branch:C20",
+      "to": "wg:djeli-branch:N75",
+      "kind": "in-epic",
+      "label": "N75 is one of the brand-mark items C20's roster restoration recovered"
+    },
+    {
+      "from": "wg:djeli-branch:C20",
+      "to": "wg:djeli-branch:B35",
+      "kind": "in-epic",
+      "label": "B35 is one of the brand-mark items C20's roster restoration recovered"
+    },
+    {
+      "from": "wg:djeli-branch:C20",
+      "to": "wg:djeli-branch:B36",
+      "kind": "in-epic",
+      "label": "B36 is one of the brand-mark items C20's roster restoration recovered"
+    },
+    {
+      "from": "wg:djeli-branch:N74",
+      "to": "wg:djeli-branch:open-mixar",
+      "kind": "ontology",
+      "label": "N74 ontology-> OA1 (same search-shape miss, second occurrence of the failure OA1 first named)"
+    },
+    {
+      "from": "wg:djeli-branch:B36",
+      "to": "wg:djeli-branch:OA13",
+      "kind": "awaits",
+      "label": "OA13 awaits<- B36 (Gavin's ratification is pending on the drafted Cinopsis mark)"
+    },
+    {
+      "from": "wg:djeli-branch:D7",
+      "to": "wg:djeli-branch:OA14",
+      "kind": "ontology",
+      "label": "D7 ontology-> OA14 (applying the per-app ember palette surfaced the Damus/Synaptiq periwinkle collision)"
+    },
+    {
+      "from": "wg:djeli-branch:D7",
+      "to": "wg:djeli-branch:OA15",
+      "kind": "ontology",
+      "label": "D7 ontology-> OA15 (applying the per-app ember palette surfaced Mixar's missing ember)"
+    },
+    {
+      "from": "wg:djeli-branch:D7",
+      "to": "wg:djeli-branch:OA16",
+      "kind": "ontology",
+      "label": "D7 ontology-> OA16 (applying the per-app ember palette surfaced Djeli's own gold-vs-purple conflict)"
+    },
+    {
+      "from": "wg:djeli-branch:C21",
+      "to": "wg:djeli-branch:N72",
+      "kind": "in-epic",
+      "label": "N72 is the defect C21's full 90-card resync closes"
+    },
+    {
+      "from": "wg:djeli-branch:B37",
+      "to": "wg:djeli-branch:D4",
+      "kind": "ontology",
+      "label": "B37 ontology-> D4 (B37 amends djeli-codex.html's lineage to record D4's ruling)"
+    },
+    {
+      "from": "wg:djeli-branch:B38",
+      "to": "wg:djeli-branch:N70",
+      "kind": "ontology",
+      "label": "B38 ontology-> N70 (continues N70's plugin-version thread, 4.17.2 -> 4.17.3)"
     }
   ],
   "stats": {
-    "totalBranches": 49,
+    "totalBranches": 61,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 160,
+    "edgeCount": 186,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -4771,6 +5137,36 @@
       "newEdges": 9,
       "corrections": [],
       "refused": []
+    },
+    "amendPass39_2026_09_20": {
+      "newNodes": [
+        "D7",
+        "D8",
+        "D9",
+        "C20",
+        "N74",
+        "N75",
+        "B35",
+        "B36",
+        "OA13",
+        "OA14",
+        "OA15",
+        "OA16",
+        "C21",
+        "B37",
+        "B38"
+      ],
+      "newEdges": 17,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass40_2026_09_20": {
+      "advanced": [
+        "N72"
+      ],
+      "stateChanges": [
+        "N72 flagged-not-fixed -> defect-fixed"
+      ]
     }
   },
   "foreignLayer": {
