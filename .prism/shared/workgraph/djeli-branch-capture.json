@@ -48,7 +48,8 @@
     "amendPass38": "2026-09-20 session record, hand-applied (the engine's node/python execution is walled off by this session's permission policy - amend-workgraph.mjs, sync-codex-data.mjs and verify-workgraph.mjs could not be run; every field required by their documented contract was filled by hand instead, and stats/closureModel aggregates were deliberately left untouched rather than hand-guessed). D4: Prism stays a Paseo fork, patterns taken from both upstreams (Gavin's locked call, evidenced by the C18 four-way comparison). D5/D6: the Djeli IDE Shell canvas v19 rulings - GRIOT APPS/GRIOT CEREMONIES rail labels, rails adapt to the mounted app. C18: the four-way architecture comparison itself. N70: a Prism repo-hygiene bundle (Developer/ repoint, PROJECT_SUMMARY.md, gitnexus reindex, plugin 4.17.2). C19+B30-B33: two days of untracked Djeli working-tree state (orca reference map, the vite.web.config.ts fix, the parked djeli-relay shim, the mobile lockfile) recovered and committed to session/2026-09-20-orca-map-and-web-surface at b9af3c2 - the branch workgraph had sat stale since 2026-09-18. B34+OA12: the Djeli design canvas arc (artifact KCbs8Kv72TQMG8bR6t9EW7 v19) named but not yet decomposed into individual nodes, plus the open design backlog Gavin still owns. N71-N73: three flagged-not-fixed defects - codebase-memory-mcp's zero-byte _config.db, 37 stale artifact cards (suite-drift-codex worst), and prism-setup's SKILL.md mirror carrying an unquoted frontmatter field and the deprecated icm-architect path.",
     "amendPass39": "2026-09-20 AFTERNOON pass: D7-D9 ember-palette/icon-display/collapsed-rail rulings on canvas v22; C20 restores the ten-app Griot Apps roster (Mixar rebuilt, Damus/Kente/Cinopsis rebuilt from their own codexes); N74 names the second occurrence of the Mixar search-shape miss OA1 first recorded; N75/B35/B36 are the brand-mark landings (Prism extracted, Kente wired, Cinopsis drafted first-pass); OA13-OA16 are the open calls the afternoon's palette work surfaced (Cinopsis ratification, Damus/Synaptiq periwinkle collision, Mixar's missing ember, Djeli's own gold-vs-purple conflict); C21 is the full 90-card resync that closes N72; B37/B38 record the djeli-codex.html lineage amendment for D4 and the Prism closing-ceremony version bump.",
     "amendPass40": "N72 advanced: the 90-card resync (C21), freshly re-verified this session via verify-cards.ps1, closes the 37-stale-card defect N72 flagged.",
-    "amendPass41_2026_09_21": "Morning-briefing + Meridian-reflect session. Findings are measured: an 84-repo all-roots scan (git age + working-tree dirtiness) and the artifact's own channel key lists. No corrections this pass."
+    "amendPass41_2026_09_21": "Morning-briefing + Meridian-reflect session. Findings are measured: an 84-repo all-roots scan (git age + working-tree dirtiness) and the artifact's own channel key lists. No corrections this pass.",
+    "amendPass42_2026_09_21": "2026-09-21 session sync: griot-seed v1/xplat/companion/fix, account skill saves, gold 8 + ontology skill-save rule, i-have-adhd comb and ontology/ICM alignment comb feeding the Griot output style"
   },
   "groups": [
     {
@@ -3606,6 +3607,295 @@
         "evidence": "All-roots scan 2026-09-21: valence-context-platform daysSince=174.4 dirty=5; griot-hub daysSince=166.4 dirty=1. Both appear in the plan's dark:true set (Valence 4 items, Griot Hub 2 items).",
         "result": "open - recorded as a disagreement between lenses, deliberately not resolved by inference."
       }
+    },
+    {
+      "id": "wg:djeli-branch:B39",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B39",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "outbound",
+      "title": "griot-seed v1 - the skill that lifts the Griot ecosystem into a recipient seed (HWC first)",
+      "description": "Built via griot-agent-architect on an ICM stage contract: lift chip with ecosystem versions, ecosystem-install, starter templates (HWC Definitive Plan, Morning Briefing), first-run onboarding that writes identity into the recipient ontology. Saved to the Cowork account via propose_skills after the device-only copy proved invisible to Cowork.",
+      "verification": {
+        "evidence": "digital-griot-skills commit 084022a; contract .prism/shared/plans/griot-seed-CONTEXT.md; account snapshot now carries griot-seed/SKILL.md.",
+        "result": "done - built, committed, saved to account. Seven rulings in seed.config.example.hwc.json still null (see OA19)."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B40",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B40",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "outbound",
+      "title": "griot-seed cross-platform installer - macOS, Windows, Linux reproduce the Claude Desktop setup",
+      "description": "install.sh + install.ps1 + platform-adapters.mjs so Kayla (Mac) and any seed recipient get the same Claude Desktop install. Merge preserves existing MCP servers.",
+      "verification": {
+        "evidence": "Commits e1f0946, bede8cd, d922194; contract griot-seed-xplat-CONTEXT.md; Linux install run in cloud against a fake HOME (existing server preserved); Windows sandbox dry-run; forced darwin row.",
+        "result": "done on Linux + Windows + simulated darwin; a real Mac rehearsal (references/mac-rehearsal.md) not yet run - see OA19."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B41",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B41",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "built-and-live",
+      "direction": "local",
+      "title": "griot-seed companion app - nested skill/plugin toggles, diagrammed workflows, notes, right-rail ontology seed + install walkthrough",
+      "description": "seed-companion.mjs + companion-inventory.mjs + companion/ UI. Nested toggles for skills, plugins and plugin skills; all workflows diagrammed; recipient notes and name fields; right rail shows generated ontology seed and install walkthrough.",
+      "verification": {
+        "evidence": "Commits 3f39368, 77cda5f, 89f5bb4, fix f74f3f4; tests/companion.test.mjs 155 pass; live server PID 47208 on :51920 reviewed by Gavin.",
+        "result": "built-and-live - rendered, reviewed, fix verified live (savebar stable at 75px across 100 renders)."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N81",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N81",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "Companion savebar measured its own height into a CSS var that set its own min-height - a feedback loop that grew until it hid the UI",
+      "description": "companion.js:82 wrote --savebar = bar height + 8px; companion.css:574 set the bar min-height: var(--savebar). Each render grew the bar by 8px. Gavin saw the broken render before any test did.",
+      "verification": {
+        "evidence": "companion.js:82 and companion.css:574 read at f74f3f4 parent; live measure 75px before and after 100 renders post-fix.",
+        "result": "defect-fixed in f74f3f4 by removing the min-height coupling. Drift entry still owed (silent success of the pre-fix test pass)."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N82",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N82",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "resolved-done",
+      "direction": "outbound",
+      "title": "Skills authored on device were never saved to the Cowork account - the reverse gap of N59",
+      "description": "Diffing the synced account list against device skill folders surfaced skills created but never saved; each was saved through propose_skills cards (new or improvement) with the account SKILL.md read in full first for improvements.",
+      "verification": {
+        "evidence": "Synced snapshot /root/.claude/skills/synced vs device ~/.claude/skills listing, 2026-09-21; Gavin clicked save/update on each card.",
+        "result": "resolved-done - account now carries them; rule generalised into the ontology (B42)."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B42",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B42",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "local",
+      "title": "Gold entry 8 + standing ontology rule: saving and updating skills in the Cowork account",
+      "description": "Gold entry recorded through the gold-log engine; CLAUDE.md gained the locked section on account skill saves, placed before the open-in-cursor section, and propagated.",
+      "verification": {
+        "evidence": "griot-live-artifacts c9cbc52 (gold entry 8, gold card artifact v8); griot-ontology 316b043; propagate.ps1 to ~/.claude/CLAUDE.md, agent-ontology mirror, ~/.codex/AGENTS.md and 15 repos.",
+        "result": "done - ledger, card and ontology all carry it."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N83",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N83",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "--help on griot-seed scripts executed the real action (install, server start) because apply was the default",
+      "description": "ecosystem-install.mjs --help began a real install (cut at the prereq layer, nothing written); seed-companion.mjs --help started a server.",
+      "verification": {
+        "evidence": "Observed runs 2026-09-21; fixed in the companion run (--help exits 0, unknown flags exit 2) and f74f3f4 for seed-companion.",
+        "result": "defect-fixed."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N84",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N84",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "Republish stripping regex </?head[^>]*> also removed <header> from the Gold card",
+      "description": "The head-tag strip before Artifact republish was a prefix match, so it ate <header>. A verification subagent caught it before it stood.",
+      "verification": {
+        "evidence": "Gold card republish diff 2026-09-21; fixed with an exact tag match; gold card artifact republished at v8.",
+        "result": "defect-fixed. Drift entry still owed."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C23",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C23",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "done",
+      "direction": "inbound",
+      "title": "Fine-tooth comb of i-have-adhd (ayghri) for anti-patterns before borrowing into a Griot output style",
+      "description": "Cloned to GriotSandbox, full SKILL.md + evals/rubric.md read. Verdicts: reshape rules 3, 6, 10; adapt 5, 9, 4, 7, 1; keep numbering, matter-of-fact errors, real hedges, no idioms, destructive-confirm, debug-spiral, first/last-line test; missing: visual-first.",
+      "verification": {
+        "evidence": "C:/Users/digit/GriotSandbox/i-have-adhd at 839872f; SKILL.md rules 1-10 + Persistence + When to break the rules (6) + pre-send check; rubric weights Correctness 35 / Autonomy 25 / Actionability 20 / Safety 10 / Concision 10.",
+        "result": "done - verdicts revised against full text (see N86)."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N86",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N86",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "verified-reframe",
+      "direction": "inbound",
+      "title": "i-have-adhd is softer than the first skim judged - rule 9 keeps items, rule 5 defers to the task tool, break-rule 5 allows 2-4 ranked options",
+      "description": "First-pass read flagged rules 4, 5, 9 as anti-patterns against the full option space and the task list. Full text: rule 9 is a display cap that says never omit relevant items; rule 5 says the checklist does the restating; break-rule 5 gives 2-4 ranked options; break-rule 6 lets the harness outrank the skill. Real anti-patterns that remain: rule 3 one-thing, rule 6 time estimates, rule 10 no recap (conflicts with visualization recap), and no visual-first.",
+      "verification": {
+        "evidence": "SKILL.md at 839872f, rules 3/4/5/6/9/10 and break-rules 5/6 quoted in session.",
+        "result": "verified-reframe - 4 verdicts moved from reshape to adapt; 3 reshape + 1 missing stand."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C24",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C24",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "done",
+      "direction": "local",
+      "title": "Alignment comb: output-style streams vs griot-ontology, Spectrum/Prism ICM stage-contract ideology and ICM sources",
+      "description": "Subagent comb of CLAUDE.md, ICM stage-contract docs and Spectrum ideology against the proposed style callouts. Tensions: one-thing vs propose-before-acting nod; mid-work silence vs check-in heartbeat; gold/drift callouts need full axes and status. Missing rules to carry: our-names rule (the ICM workflow name), em-dash rule, skim-and-discard, token burn, frequency voice, silent retrieval, full option space, interjection handling, subagent disclosure, clickable nodes, research first.",
+      "verification": {
+        "evidence": "Subagent abbb13cd66b1d8009 report 2026-09-21 over griot-ontology/claude/CLAUDE.md and .prism/shared/plans stage contracts.",
+        "result": "done - findings N85, N87 and suggestion S11."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N85",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N85",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "A Tangent callout has no home - the doctrine has no tangential lane and btw asides are acted on immediately",
+      "description": "Chips are inbound, outbound, adjacent, parked; drift routes parked side-quests. A style that shunts asides to a Tangent rail would contradict Act on btw asides immediately.",
+      "verification": {
+        "evidence": "griot-ontology CLAUDE.md btw rule; helper.js:218-220 direction vocabulary; alignment report item H (CONFLICT).",
+        "result": "flagged - needs Gavin ruling (OA18)."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N87",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N87",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "Ontology contradictions surfaced by the comb: ICM has two expansions, heartbeat paths differ across contracts, gold status held is undefined",
+      "description": "Three source-level inconsistencies the output style would otherwise inherit.",
+      "verification": {
+        "evidence": "Alignment report contradictions section, 2026-09-21.",
+        "result": "flagged-not-fixed - route to an ontology fix pass."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S11",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S11",
+      "kind": "suggestion",
+      "group": "suggested",
+      "state": "awaiting-disposition",
+      "direction": "local",
+      "title": "Ship the Griot output style as a thin router (<60 lines) in the factory, with a named invariant and a propagate.ps1 gate",
+      "description": "Three streams: explanatory Insight rail, the adapted i-have-adhd rules, Griot ideology. Router points at CLAUDE.md instead of restating it; lives at L3 in the factory; invariant carries an Upheld-by.",
+      "verification": {
+        "evidence": "C23 verdicts + C24 ICM delivery recommendation; explanatory-output-style hooks.json SessionStart rail.",
+        "result": "awaiting-disposition - build in a fresh session once OA18 rules."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA18",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA18",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Callout names and routes for the Griot output style - Insight, Ruling, Tangent, Drift, Gold?",
+      "description": "Tangent conflicts with the btw rule (N85); Drift and Gold callouts must carry status and full axes or stay pointers to the engines.",
+      "verification": {
+        "evidence": "N85, C24 report items H and M.",
+        "result": "open - Gavin to rule."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA19",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA19",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "outbound",
+      "title": "griot-seed release gates: 7 null rulings, real Mac rehearsal, Afrik font redistribution",
+      "description": "digitalGriotNaming, griotwaveNaming, bareGriotInProse, hardcodedUserPaths, relayDomain, prismKeepsName, pluginVersionSource all null; mac-rehearsal.md unrun; definitive-plan template embeds the Afrik font (OI2).",
+      "verification": {
+        "evidence": "seed.config.example.hwc.json; references/mac-rehearsal.md; templates/definitive-plan.template.html 507KB.",
+        "result": "open - before handing the seed to Kayla."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N88",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N88",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "Desktop ~/.claude/skills clone is 13 behind origin with in-flight edits in five skills",
+      "description": "dgs-plan-update, griot-meridian-reflect, griot-suite-context, griot-workgraph-update (amend-workgraph.mjs), ideation_team_skill carry uncommitted edits. Left untouched deliberately.",
+      "verification": {
+        "evidence": "git status / rev-list on C:/Users/digit/.claude/skills, 2026-09-21.",
+        "result": "flagged-not-fixed - never clobber; land or reconcile with Gavin."
+      }
     }
   ],
   "edges": [
@@ -4760,15 +5050,105 @@
       "to": "wg:djeli-branch:S10",
       "kind": "splinter",
       "label": "the exclusion list proposed from the measured over-flag"
+    },
+    {
+      "from": "wg:djeli-branch:B39",
+      "to": "wg:djeli-branch:B40",
+      "kind": "in-epic",
+      "label": "installer half of the seed"
+    },
+    {
+      "from": "wg:djeli-branch:B39",
+      "to": "wg:djeli-branch:B41",
+      "kind": "in-epic",
+      "label": "companion half of the seed"
+    },
+    {
+      "from": "wg:djeli-branch:B41",
+      "to": "wg:djeli-branch:N81",
+      "kind": "splinter",
+      "label": "render defect found live"
+    },
+    {
+      "from": "wg:djeli-branch:B39",
+      "to": "wg:djeli-branch:N83",
+      "kind": "splinter",
+      "label": "--help ran the real action"
+    },
+    {
+      "from": "wg:djeli-branch:N82",
+      "to": "wg:djeli-branch:B42",
+      "kind": "splinter",
+      "label": "the gap became a standing rule"
+    },
+    {
+      "from": "wg:djeli-branch:N82",
+      "to": "wg:djeli-branch:N59",
+      "kind": "ontology",
+      "label": "reverse direction of the same account-snapshot cause"
+    },
+    {
+      "from": "wg:djeli-branch:B42",
+      "to": "wg:djeli-branch:N84",
+      "kind": "splinter",
+      "label": "found during the gold card republish"
+    },
+    {
+      "from": "wg:djeli-branch:C23",
+      "to": "wg:djeli-branch:N86",
+      "kind": "splinter",
+      "label": "full-text re-read"
+    },
+    {
+      "from": "wg:djeli-branch:C24",
+      "to": "wg:djeli-branch:N85",
+      "kind": "splinter",
+      "label": "conflict item H"
+    },
+    {
+      "from": "wg:djeli-branch:C24",
+      "to": "wg:djeli-branch:N87",
+      "kind": "splinter",
+      "label": "contradictions section"
+    },
+    {
+      "from": "wg:djeli-branch:C23",
+      "to": "wg:djeli-branch:S11",
+      "kind": "splinter",
+      "label": "adapted rules stream"
+    },
+    {
+      "from": "wg:djeli-branch:C24",
+      "to": "wg:djeli-branch:S11",
+      "kind": "splinter",
+      "label": "delivery shape"
+    },
+    {
+      "from": "wg:djeli-branch:S11",
+      "to": "wg:djeli-branch:OA18",
+      "kind": "awaits",
+      "label": "callout ruling"
+    },
+    {
+      "from": "wg:djeli-branch:B39",
+      "to": "wg:djeli-branch:OA19",
+      "kind": "awaits",
+      "label": "release gates"
+    },
+    {
+      "from": "wg:djeli-branch:N88",
+      "to": "wg:djeli-branch:skills-clone-restored-to-origin",
+      "kind": "ontology",
+      "label": "same clone, drifted again after restore"
     }
   ],
   "stats": {
-    "totalBranches": 62,
+    "totalBranches": 68,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 192,
+    "edgeCount": 207,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -5353,6 +5733,30 @@
         "OA17"
       ],
       "newEdges": 6,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass42_2026_09_21_2026_09_21": {
+      "newNodes": [
+        "B39",
+        "B40",
+        "B41",
+        "N81",
+        "N82",
+        "B42",
+        "N83",
+        "N84",
+        "C23",
+        "N86",
+        "C24",
+        "N85",
+        "N87",
+        "S11",
+        "OA18",
+        "OA19",
+        "N88"
+      ],
+      "newEdges": 15,
       "corrections": [],
       "refused": []
     }
