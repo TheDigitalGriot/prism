@@ -49,7 +49,9 @@
     "amendPass39": "2026-09-20 AFTERNOON pass: D7-D9 ember-palette/icon-display/collapsed-rail rulings on canvas v22; C20 restores the ten-app Griot Apps roster (Mixar rebuilt, Damus/Kente/Cinopsis rebuilt from their own codexes); N74 names the second occurrence of the Mixar search-shape miss OA1 first recorded; N75/B35/B36 are the brand-mark landings (Prism extracted, Kente wired, Cinopsis drafted first-pass); OA13-OA16 are the open calls the afternoon's palette work surfaced (Cinopsis ratification, Damus/Synaptiq periwinkle collision, Mixar's missing ember, Djeli's own gold-vs-purple conflict); C21 is the full 90-card resync that closes N72; B37/B38 record the djeli-codex.html lineage amendment for D4 and the Prism closing-ceremony version bump.",
     "amendPass40": "N72 advanced: the 90-card resync (C21), freshly re-verified this session via verify-cards.ps1, closes the 37-stale-card defect N72 flagged.",
     "amendPass41_2026_09_21": "Morning-briefing + Meridian-reflect session. Findings are measured: an 84-repo all-roots scan (git age + working-tree dirtiness) and the artifact's own channel key lists. No corrections this pass.",
-    "amendPass42_2026_09_21": "2026-09-21 session sync: griot-seed v1/xplat/companion/fix, account skill saves, gold 8 + ontology skill-save rule, i-have-adhd comb and ontology/ICM alignment comb feeding the Griot output style"
+    "amendPass42_2026_09_21": "2026-09-21 session sync: griot-seed v1/xplat/companion/fix, account skill saves, gold 8 + ontology skill-save rule, i-have-adhd comb and ontology/ICM alignment comb feeding the Griot output style",
+    "amendPass43_2026_09_21": "Record the DGS #wg-data refresh gap surfaced during the amendPass42 republish",
+    "amendPass44_2026_09_21": "Gavin correction: tangents are harnessed; i-have-adhd rule 4 back to reshape"
   },
   "groups": [
     {
@@ -3769,13 +3771,19 @@
       "localId": "N86",
       "kind": "finding",
       "group": "new-findings",
-      "state": "verified-reframe",
+      "state": "corrected",
       "direction": "inbound",
       "title": "i-have-adhd is softer than the first skim judged - rule 9 keeps items, rule 5 defers to the task tool, break-rule 5 allows 2-4 ranked options",
       "description": "First-pass read flagged rules 4, 5, 9 as anti-patterns against the full option space and the task list. Full text: rule 9 is a display cap that says never omit relevant items; rule 5 says the checklist does the restating; break-rule 5 gives 2-4 ranked options; break-rule 6 lets the harness outrank the skill. Real anti-patterns that remain: rule 3 one-thing, rule 6 time estimates, rule 10 no recap (conflicts with visualization recap), and no visual-first.",
       "verification": {
         "evidence": "SKILL.md at 839872f, rules 3/4/5/6/9/10 and break-rules 5/6 quoted in session.",
         "result": "verified-reframe - 4 verdicts moved from reshape to adapt; 3 reshape + 1 missing stand."
+      },
+      "correction": {
+        "correctedAt": "2026-09-21 amendPass44_2026_09_21",
+        "wasClaimed": "Rules 4, 5 and 9 of i-have-adhd are softer than first judged and move from reshape to adapt; rule 4's deferral of the second question is safe to borrow.",
+        "isTrue": "Rules 5 and 9 do soften to adapt. Rule 4 does not: offering the second thread as a separate question and holding mid-work questions to the end is deferral of a tangent, and Gavin thinks in tangents and harnesses them rather than suppressing them. Rule 4 stays reshape. Standing test for this stream: the more a borrowed rule constrains how he thinks, the higher the bar to adopt it.",
+        "cause": "Judged rule 4 against its literal softness (it still answers the question) instead of against how Gavin actually thinks; he corrected it directly 2026-09-21: the way I think is in tangents, I harness my ADHD, so the more I think about it the more careful I want to be in adopting bad things from i-have-adhd."
       }
     },
     {
@@ -3803,13 +3811,19 @@
       "localId": "N85",
       "kind": "finding",
       "group": "new-findings",
-      "state": "flagged-not-fixed",
+      "state": "corrected",
       "direction": "local",
       "title": "A Tangent callout has no home - the doctrine has no tangential lane and btw asides are acted on immediately",
       "description": "Chips are inbound, outbound, adjacent, parked; drift routes parked side-quests. A style that shunts asides to a Tangent rail would contradict Act on btw asides immediately.",
       "verification": {
         "evidence": "griot-ontology CLAUDE.md btw rule; helper.js:218-220 direction vocabulary; alignment report item H (CONFLICT).",
         "result": "flagged - needs Gavin ruling (OA18)."
+      },
+      "correction": {
+        "correctedAt": "2026-09-21 amendPass44_2026_09_21",
+        "wasClaimed": "A Tangent callout has no home because the doctrine has no tangential lane and btw asides are acted on immediately.",
+        "isTrue": "Tangents are Gavin's native mode of thought and are harnessed, not routed away. The conflict is deferral or shunting of a tangent (i-have-adhd rule 4), not the existence of a callout for one. A Tangent callout that follows the thread in place and ties it back to the work is aligned with the btw-now rule; OA18 still needs his ruling on the name and shape.",
+        "cause": "Reasoned from the lane vocabulary (inbound, outbound, adjacent, parked) rather than from how Gavin works; corrected by his statement 2026-09-21."
       }
     },
     {
@@ -3895,6 +3909,57 @@
       "verification": {
         "evidence": "git status / rev-list on C:/Users/digit/.claude/skills, 2026-09-21.",
         "result": "flagged-not-fixed - never clobber; land or reconcile with Gavin."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N89",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N89",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "No engine refreshes the DGS plan's inline #wg-data block - every amend leaves the plan's Workgraph tab and header tiles stale until someone hand-swaps it",
+      "description": "The Cowork sandbox sets connect-src 'none' and frame-src 'none', so the plan cannot fetch the workgraph JSON or iframe the codex. inline-mirror-tabs.js therefore aliases the codex's workgraph-data to the plan's single #wg-data copy, making that block the one source for BOTH the Workgraph tab and the #wgstats tiles. Nothing writes it: amend-workgraph, sync-codex-data, verify-workgraph, rebuild-dgs-mirrors and dgs-sync-all never touch it. It has been refreshed by hand twice (c6c561c for amendPass41; DGS v46 for amendPass42). The griot-workgraph-update SKILL.md step 6 still says the tiles fetch the JSON live, which has been false since the fetch was removed.",
+      "verification": {
+        "evidence": "griot-live-artifacts: Select-String wg-data over tools/inline-mirror-tabs.js lines 14, 76, 152, 163, 167 (read and alias only, never write); 0 hits in griot-workgraph-update/scripts/*.mjs; live/dgs-definitive-plan.html line 3070 documents connect-src 'none'; git log c6c561c 'wg-data 101->180 nodes, amendPass41'; device plan wg-data read 180/192 after amendPass42 while JSON was 197/207.",
+        "result": "flagged-not-fixed - pipeline gap; proposed fix S12 awaits Gavin."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N90",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N90",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "DGS v46 was published from a cloud hand-swap, leaving the committed device plan behind the live card (180 vs 197)",
+      "description": "The amendPass42 republish swapped #wg-data in the cloud copy of the plan and published it, but live/dgs-definitive-plan.html on the device was never updated or committed, so the repo trailed the live card. Recorded as the concrete instance of N89 in this session.",
+      "verification": {
+        "evidence": "Device read of live/dgs-definitive-plan.html #wg-data: nodes=180 edges=192 after DGS v46 went live with 197/207; last commit touching it c6c561c.",
+        "result": "defect-fixed in amendPass43: device plan #wg-data rewritten from the synced codex block, committed, and the DGS card republished from the device file."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S12",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S12",
+      "kind": "suggestion",
+      "group": "suggested",
+      "state": "awaiting-disposition",
+      "direction": "local",
+      "title": "Give sync-codex-data a --plan target that rewrites the DGS #wg-data block under the same drop-guard, and correct SKILL.md step 6",
+      "description": "One more target for the existing sync: replace the plan's #wg-data inner text with the codex's workgraph-data text, refusing if the swap would drop a node, and add the plan to verify-workgraph's parity check (four copies, not three). Fix the SKILL.md claim that the tiles fetch live.",
+      "verification": {
+        "evidence": "N89 evidence; sync-codex-data.mjs already carries the node-drop guard for the codex swap.",
+        "result": "awaiting-disposition - Gavin's engine, needs his yes before any edit."
       }
     }
   ],
@@ -5140,6 +5205,18 @@
       "to": "wg:djeli-branch:skills-clone-restored-to-origin",
       "kind": "ontology",
       "label": "same clone, drifted again after restore"
+    },
+    {
+      "from": "wg:djeli-branch:N90",
+      "to": "wg:djeli-branch:N89",
+      "kind": "ontology",
+      "label": "this session's instance of the gap"
+    },
+    {
+      "from": "wg:djeli-branch:N89",
+      "to": "wg:djeli-branch:S12",
+      "kind": "splinter",
+      "label": "the engine fix it proposes"
     }
   ],
   "stats": {
@@ -5148,7 +5225,7 @@
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 207,
+    "edgeCount": 209,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -5758,6 +5835,25 @@
       ],
       "newEdges": 15,
       "corrections": [],
+      "refused": []
+    },
+    "amendPass43_2026_09_21_2026_09_21": {
+      "newNodes": [
+        "N89",
+        "N90",
+        "S12"
+      ],
+      "newEdges": 2,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass44_2026_09_21_2026_09_21": {
+      "newNodes": [],
+      "newEdges": 0,
+      "corrections": [
+        "wg:djeli-branch:N86",
+        "wg:djeli-branch:N85"
+      ],
       "refused": []
     }
   },
