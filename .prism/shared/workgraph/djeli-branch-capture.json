@@ -47,7 +47,8 @@
     "amendPass37": "The YT playlist lane repaired via griot-agent-architect - three faults, one seam, and two bugs only a live pull could find.",
     "amendPass38": "2026-09-20 session record, hand-applied (the engine's node/python execution is walled off by this session's permission policy - amend-workgraph.mjs, sync-codex-data.mjs and verify-workgraph.mjs could not be run; every field required by their documented contract was filled by hand instead, and stats/closureModel aggregates were deliberately left untouched rather than hand-guessed). D4: Prism stays a Paseo fork, patterns taken from both upstreams (Gavin's locked call, evidenced by the C18 four-way comparison). D5/D6: the Djeli IDE Shell canvas v19 rulings - GRIOT APPS/GRIOT CEREMONIES rail labels, rails adapt to the mounted app. C18: the four-way architecture comparison itself. N70: a Prism repo-hygiene bundle (Developer/ repoint, PROJECT_SUMMARY.md, gitnexus reindex, plugin 4.17.2). C19+B30-B33: two days of untracked Djeli working-tree state (orca reference map, the vite.web.config.ts fix, the parked djeli-relay shim, the mobile lockfile) recovered and committed to session/2026-09-20-orca-map-and-web-surface at b9af3c2 - the branch workgraph had sat stale since 2026-09-18. B34+OA12: the Djeli design canvas arc (artifact KCbs8Kv72TQMG8bR6t9EW7 v19) named but not yet decomposed into individual nodes, plus the open design backlog Gavin still owns. N71-N73: three flagged-not-fixed defects - codebase-memory-mcp's zero-byte _config.db, 37 stale artifact cards (suite-drift-codex worst), and prism-setup's SKILL.md mirror carrying an unquoted frontmatter field and the deprecated icm-architect path.",
     "amendPass39": "2026-09-20 AFTERNOON pass: D7-D9 ember-palette/icon-display/collapsed-rail rulings on canvas v22; C20 restores the ten-app Griot Apps roster (Mixar rebuilt, Damus/Kente/Cinopsis rebuilt from their own codexes); N74 names the second occurrence of the Mixar search-shape miss OA1 first recorded; N75/B35/B36 are the brand-mark landings (Prism extracted, Kente wired, Cinopsis drafted first-pass); OA13-OA16 are the open calls the afternoon's palette work surfaced (Cinopsis ratification, Damus/Synaptiq periwinkle collision, Mixar's missing ember, Djeli's own gold-vs-purple conflict); C21 is the full 90-card resync that closes N72; B37/B38 record the djeli-codex.html lineage amendment for D4 and the Prism closing-ceremony version bump.",
-    "amendPass40": "N72 advanced: the 90-card resync (C21), freshly re-verified this session via verify-cards.ps1, closes the 37-stale-card defect N72 flagged."
+    "amendPass40": "N72 advanced: the 90-card resync (C21), freshly re-verified this session via verify-cards.ps1, closes the 37-stale-card defect N72 flagged.",
+    "amendPass41_2026_09_21": "Morning-briefing + Meridian-reflect session. Findings are measured: an 84-repo all-roots scan (git age + working-tree dirtiness) and the artifact's own channel key lists. No corrections this pass."
   },
   "groups": [
     {
@@ -3469,6 +3470,142 @@
         "evidence": "Prism plugin version file reads 4.17.3; closing ceremony process confirmed running this session.",
         "result": "confirmed-running - version advanced past N70's 4.17.2 checkpoint, ceremony in progress."
       }
+    },
+    {
+      "id": "wg:djeli-branch:C22",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C22",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "done",
+      "direction": "local",
+      "title": "Morning briefing and Meridian reflect both published and mirrored in one pass",
+      "description": "The ai-creative-tech-morning-briefing harvest (10 sources) and the griot-meridian-reflect channels (Going Dark + Day Surface) were both written into the griot-morning-briefing artifact and pushed to the griot-live-artifacts mirror in a single session, each proven landed by local-HEAD == origin/main ref equality rather than by the absence of red stderr.",
+      "verification": {
+        "evidence": "Two commits on TheDigitalGriot/griot-live-artifacts: 8e208fb 'live: morning briefing 2026-09-21' and e44160f 'live: meridian reflect 2026-09-21 (going-dark + day-surface, 09-20 backfill)'. Both followed by the ref-equality check printing IN SYNC with the matching hash.",
+        "result": "done - both channels live on the card and in the repo, parity proven twice."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N76",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N76",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "The briefings-archive carries two multi-week holes, not one - 07-24 to 08-17 and 08-17 to 09-11",
+      "description": "The morning-briefing skill documents a single 49-day silent gap starting 2026-07-24. The archive's actual key list shows the publishing stopped at 2026-07-24, produced exactly one isolated edition on 2026-08-17, then resumed daily from 2026-09-11. So the outage was two gaps of 24 and 25 days bridged by a single orphan edition - which is why a spot-check on 08-17 would have found an edition present and concluded the channel was healthy. Recorded, not repaired; the historical editions are gone.",
+      "verification": {
+        "evidence": "patch-briefing.js printed the full prior key list before amending: '... 2026-07-22, 2026-07-23, 2026-07-24, 2026-08-17, 2026-09-11, 2026-09-14 ...' - 48 keys total, with those two jumps visible in sequence.",
+        "result": "flagged-not-fixed - the gap is historical and unrecoverable; publishing has been unbroken since 09-11."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N77",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N77",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "Both Meridian channels had no 2026-09-20 key despite 13 commits that day",
+      "description": "channel-going-dark and channel-day-surface both ended at 2026-09-18 while git showed 13 commits on 2026-09-20 across djeli, Prism, digital-griot-skills and griot-live-artifacts - including the D4-D6 fork ruling and amendPass39-40. The reflect simply did not run that Sunday. Backfilled in this pass from the live-artifacts and all-roots logs rather than left as a hole, per the skill's backfill-is-fair-game clause.",
+      "verification": {
+        "evidence": "PowerShell dump of both channel key lists ended at 2026-09-18; 'git log --since=2026-09-19 04:00' across all five roots returned 13 commits stamped 2026-09-20 11:39-18:01. publish-channels.js then reported 'channel-day-surface: OK, 37 keys (was 35, +2026-09-20,2026-09-21)'.",
+        "result": "defect-fixed - 09-20 Day Surface backfilled and published; all 13 commits fell inside the 4am boundary so no night-owl reassignment was needed."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N78",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N78",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "Developer/prism-mobile holds 1,733 uncommitted files and has never had a commit on main",
+      "description": "The working-tree lens found prism-mobile with 1,733 changed files and a main branch carrying zero commits - not stale work, unbacked work. No going-dark lens would surface this: the freshness lens cannot compute an age with no HEAD, and the plan lens has no dark flag on it. It is the loudest signal in the 84-repo scan and it is invisible to every existing flag.",
+      "verification": {
+        "evidence": "All-roots scan 2026-09-21: 'git -C C:\\\\Users\\\\digit\\\\Developer\\\\prism-mobile log -1' returned \"fatal: your current branch 'main' does not have any commits yet\"; 'git status --porcelain' counted 1733 entries.",
+        "result": "flagged-not-fixed - reported, not touched. Committing someone else's working tree is not this pass's call."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N79",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N79",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "Developer/prism-plugin sits 98.5 days behind with 205 dirty files while GriotApps/Prism committed 0.7 days ago",
+      "description": "Two clones of the same lineage have diverged badly: the Developer/ authoring clone has a 98.5-day-old HEAD carrying 205 uncommitted files, while the GriotApps/Prism working repo committed within the last day. This is exactly the stale-authoring-clone hazard griot-plugin-update warns about - a commit from the stale side would clobber, and the 205 dirty files mean the divergence is not merely positional.",
+      "verification": {
+        "evidence": "All-roots scan 2026-09-21: Developer/prism-plugin daysSince=98.5, dirty=205; GriotApps/Prism daysSince=0.7, dirty=0.",
+        "result": "flagged-not-fixed - the reconcile is a decision about which side is authoritative, not a mechanical fast-forward."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N80",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N80",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "The going-dark freshness lens over-flags by 23 because deliberate reference archives look identical to abandonment",
+      "description": "Of the repos the >14d-and-clean rule marked truly silent, 23 are deliberate parked reference material - 22 under kuzu-archive/ (346-658 days) and one under milanote-archive/ - which the lens cannot distinguish from a project that quietly died. They were excluded by hand this pass, which means the exclusion is not reproducible and the next run will re-flag all 23.",
+      "verification": {
+        "evidence": "All-roots scan 2026-09-21 TRULY-SILENT block listed kuzu-archive/graph-rag 657.6d through kuzu-archive/graphdb-demo 346d (22 entries) plus milanote-archive/electron-react-vite-ts-starter 235.8d, all clean.",
+        "result": "flagged-not-fixed - hand-excluded in this run's notes; no durable exclusion exists yet."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S10",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S10",
+      "kind": "suggestion",
+      "group": "suggested",
+      "state": "awaiting-disposition",
+      "direction": "local",
+      "title": "Give the going-dark freshness lens a declared archive-exclusion list",
+      "description": "Add an explicit archives list (kuzu-archive, milanote-archive, gbfolio-archivev, and any future parked reference root) that the freshness lens skips and reports separately as 'parked reference', so the truly-silent set stays small enough to act on. Declared in data rather than applied by hand each run, so the exclusion is auditable and a repo leaving the archive is a visible edit.",
+      "verification": {
+        "evidence": "Proposed from N80's measured over-flag of 23 repos in the 2026-09-21 all-roots scan; no code written this pass.",
+        "result": "awaiting-disposition - proposal only, awaiting Gavin's yes or no."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA17",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA17",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Dirty working trees on half-year-old HEADs - commit the work or let the branch go?",
+      "description": "valence-context-platform (174.4 days, 5 dirty) and griot-hub (166.4 days, 1 dirty) both carry uncommitted edits on a HEAD from roughly six months ago. The working-tree lens reads dirty as 'still alive' and clears them; the freshness lens reads the age and flags them. Both readings are honest and they disagree, so the lens cannot settle it - only Gavin can say whether those edits are work to land or residue to drop.",
+      "verification": {
+        "evidence": "All-roots scan 2026-09-21: valence-context-platform daysSince=174.4 dirty=5; griot-hub daysSince=166.4 dirty=1. Both appear in the plan's dark:true set (Valence 4 items, Griot Hub 2 items).",
+        "result": "open - recorded as a disagreement between lenses, deliberately not resolved by inference."
+      }
     }
   ],
   "edges": [
@@ -4587,15 +4724,51 @@
       "to": "wg:djeli-branch:N70",
       "kind": "ontology",
       "label": "B38 ontology-> N70 (continues N70's plugin-version thread, 4.17.2 -> 4.17.3)"
+    },
+    {
+      "from": "wg:djeli-branch:N76",
+      "to": "wg:djeli-branch:C22",
+      "kind": "in-epic",
+      "label": "the archive gap became visible while this stage was publishing into it"
+    },
+    {
+      "from": "wg:djeli-branch:N77",
+      "to": "wg:djeli-branch:C22",
+      "kind": "in-epic",
+      "label": "backfilled inside this stage rather than deferred"
+    },
+    {
+      "from": "wg:djeli-branch:N78",
+      "to": "wg:djeli-branch:N79",
+      "kind": "ontology",
+      "label": "same shape - unbacked work sitting in Developer/ with no floor under it"
+    },
+    {
+      "from": "wg:djeli-branch:N79",
+      "to": "wg:djeli-branch:OA17",
+      "kind": "splinter",
+      "label": "the dirty-on-stale-HEAD question this raises, generalised"
+    },
+    {
+      "from": "wg:djeli-branch:N78",
+      "to": "wg:djeli-branch:OA17",
+      "kind": "ontology",
+      "label": "the sharpest instance of the same disagreement"
+    },
+    {
+      "from": "wg:djeli-branch:N80",
+      "to": "wg:djeli-branch:S10",
+      "kind": "splinter",
+      "label": "the exclusion list proposed from the measured over-flag"
     }
   ],
   "stats": {
-    "totalBranches": 61,
+    "totalBranches": 62,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 186,
+    "edgeCount": 192,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -5167,6 +5340,21 @@
       "stateChanges": [
         "N72 flagged-not-fixed -> defect-fixed"
       ]
+    },
+    "amendPass41_2026_09_21_2026_09_21": {
+      "newNodes": [
+        "C22",
+        "N76",
+        "N77",
+        "N78",
+        "N79",
+        "N80",
+        "S10",
+        "OA17"
+      ],
+      "newEdges": 6,
+      "corrections": [],
+      "refused": []
     }
   },
   "foreignLayer": {
