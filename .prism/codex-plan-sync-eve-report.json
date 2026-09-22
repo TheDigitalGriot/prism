@@ -1,0 +1,136 @@
+{
+  "stage": "codex-plan-sync forward pass + story reconcile (evening)",
+  "date": "2026-09-22",
+  "contract": ".prism/shared/plans/2026-09-22-codex-plan-sync-eve-CONTEXT.md",
+  "direction": "FORWARD (codex + plan -> stories)",
+  "skill": "prism:prism-codex-plan-sync v4.17.2, references/forward.md",
+  "reasonThisPassExists": "the stage-4 staleness gate",
+
+  "stage4Verdicts": {
+    "note": "Counted by PARSE, never by id shape. Days are git commit time, not mtime.",
+    "beforeThisRun": { "stores": 5, "stories": 57, "done": 32 },
+    "afterThisRun": { "stores": 6, "stories": 63, "done": 32 },
+    "epics": [
+      { "epic": "ceremony-review-audit-gate", "stories": 4, "done": 4, "ids": "s-hash (contract rule 4)", "days": 1, "verdict": "GREEN - done, every commitHash resolves" },
+      { "epic": "prism-gavel", "stories": 5, "done": 5, "ids": "s-hash (contract rule 4)", "days": 1, "verdict": "GREEN - done, every commitHash resolves and every commit is id-scoped" },
+      { "epic": "griot-codeintel-hygiene", "stories": 6, "done": 0, "ids": "s-hash (contract rule 4)", "days": 0, "verdict": "NEW - emitted by this run" },
+      { "epic": "channel-adoption", "stories": 25, "done": 0, "ids": "STORY-NNN (dialect B)", "days": 50, "verdict": "AMBER - >30d, zero git trace, reported not re-scoped per D4 (OA20 / OD-3)" },
+      { "epic": "griot-mcp-comm-layer", "stories": 8, "done": 8, "ids": "GMCL-CN (a THIRD convention)", "days": 54, "verdict": "AMBER - loose at the stories root, no epic back-link (OA21 / OD-6)" },
+      { "epic": "plan-story-source-unification", "stories": 15, "done": 15, "ids": "s-hash (contract rule 4)", "days": 62, "verdict": "AMBER - loose at the stories root, no epic back-link (OA21 / OD-6)" }
+    ]
+  },
+
+  "boundarySplit": {
+    "rule": "D2 - an item whose decision is Gavin's is NOT decomposed. Decomposing it would decide it by writing it down as work.",
+    "gavelNotDecomposed": 12,
+    "decomposed": 6,
+    "candidatesConsidered": "workgraph S13 S14 S15, N94-N103, OA20-OA22; harvest openItems O1-O7; the 13 plan items added today"
+  },
+
+  "storiesCreated": {
+    "epic": "griot-codeintel-hygiene",
+    "planBackLink": ".prism/shared/plans/2026-09-22-griot-codeintel-hygiene.md",
+    "coverage": ".prism/stories/griot-codeintel-hygiene/coverage.md",
+    "idDerivation": "s- + md5(title) first 8 hex. PROVEN against the three existing contract-compliant stores: 19/24 exact. The 5 misses are all in prism-gavel and are post-emission title edits - stories-contract rule 4 working as designed (the id stays put when the text moves), not drift.",
+    "validation": "key-shape parity with ceremony-review-audit-gate exact; epic is a string; blockedBy arrays; no dangling edges; No-Placeholders scan clean",
+    "stories": [
+      { "id": "s-4bee6675", "priority": 1, "blockedBy": [], "title": "Split I15 capability verdicts so one degraded capability cannot mask another", "source": "harvest O5 / workgraph N103", "verification": "node scripts/verify-code-intel.mjs emits one verdict per capability; exit code stays honest while any capability has no provider", "evidence": "run this stage: 4 pass / 1 FAIL, exit 1. gitnexus.json declares fts=unavailable (no reason recorded) and vectorSearch=unavailable (reason: LadybugDB VECTOR disabled on this platform). The fallback is gated on bad.every(b => b.startsWith('vectorSearch')), so fts being down suppresses the vectorSearch fallback even though .code-review-graph/graph.db (455MB) is present and is the exact witness the fallback looks for." },
+      { "id": "s-b02d6c48", "priority": 1, "blockedBy": [], "title": "Make verify-cards compare the published body it actually read back", "source": "workgraph N99", "verification": "gate reports in sync for a card whose read-back is byte-identical; no previously in-sync card flips", "evidence": "2026-09-22 14:11 - DGS v52 and Branch Capture v31 read back byte-identical and were still listed stale with 46KB and 41KB deltas. CARDS_OUT_OF_SYNC=8, 84 in sync, 6 stale, 2 no-card.", "hypothesisNotDiagnosis": "the strip at verify-cards.ps1:44 requires type=\"application/json\" to precede id=\"cowork-artifact-meta\"; a different attribute order would leave the wrapper in the hashed body. Story is written OBSERVATION-LED per I7: capture a real card first, confirm, then edit." },
+      { "id": "s-3eeb40a6", "priority": 2, "blockedBy": ["s-b02d6c48"], "title": "Resolve codex cards through the registry instead of reporting NO CARD", "source": "workgraph N100", "verification": "zero NO-CARD rows for codexes carrying a registry row; a genuinely cardless codex is still reported", "evidence": "re-verified this run: both griot-branch-codex-branch-capture-codex and gbfolio-branch-capture-codex now return 2 matches each in live/dgs-definitive-plan.html, so the registry rows exist and the remaining defect is that the gate does not read them." },
+      { "id": "s-5ff38680", "priority": 2, "blockedBy": [], "title": "Give the global workgraph index a regeneration owner and a staleness gate", "source": "workgraph N96", "verification": "a new scripts/verify-workgraph-index.mjs fails on a stale stamp and passes after node scripts/workgraph-index.mjs", "evidence": "index.json 804 nodes / 778 edges, generated 2026-09-12T01:34:09.315Z = 11 days stale as measured today (the contract said 10; a day passed)." },
+      { "id": "s-10c2e47d", "priority": 3, "blockedBy": ["s-4bee6675"], "title": "Correct the declared codebase-memory-mcp tool count and gate it", "source": "harvest O6", "verification": "grep -rn '11 tools' --include=*.md . | grep -v '/evals/' returns nothing; a check fails on declared-vs-actual drift", "evidence": "14 tools observed live in this session; four non-snapshot files declare 11." },
+      { "id": "s-8f068ed6", "priority": 3, "blockedBy": [], "title": "Give the Griot Ontology Codex render an owner and a freshness gate", "source": "workgraph N102", "verification": "a check fails when the render is older than the ontology's last commit; passes after regeneration", "evidence": "live/griot-ontology-codex.html mtime 2026-09-11 05:46 vs griot-ontology claude/CLAUDE.md at 5e6668b dated 2026-09-22 = 11 days, across three doctrine additions it does not show." }
+    ],
+    "executorRouting": {
+      "recommended": "prism-subagent",
+      "why": "six stories with two blockedBy edges and file overlap on scripts/verify-code-intel.mjs and verify-cards.ps1. Not prism-dispatch - files[] are not disjoint so true fan-out would collide. Not spectrum - below the 10+ threshold.",
+      "crossRepoWarning": "s-b02d6c48 and s-3eeb40a6 land in griot-live-artifacts; s-8f068ed6 lands in griot-ontology. Only the other three are Prism-local."
+    }
+  },
+
+  "epicsReconciled": {
+    "rule": "D4 - keep the done epics done, never delete a story, never rename an id, report channel-adoption rather than re-scope it.",
+    "ceremony-review-audit-gate": { "kept": "done 4/4", "shasResolve": "4/4 RESOLVE", "note": "all four point to the SAME commit cc29846, scoped feat(ceremony): not by story id. The reverse channel keys on git commit scopes, so it would harvest NOTHING for this epic even though the work demonstrably landed. Reported as a gap in the reverse-harvest mechanism, not a defect in the epic." },
+    "prism-gavel": { "kept": "done 5/5", "shasResolve": "5/5 RESOLVE", "note": "every commit id-scoped (feat(s-xxxx):) - the textbook case the reverse channel is built for." },
+    "channel-adoption": { "kept": "untouched at 0/25", "shasResolve": "0/25 have a commitHash; 0/25 appear in any git log message", "note": "reported, not re-scoped. OA20 / OD-3 remains Gavin's call." },
+    "idsRenamed": 0,
+    "storiesDeleted": 0
+  },
+
+  "storesOutsideScope": [
+    { "path": ".prism/stories/griot-mcp-comm-layer.stories.json", "stories": 8, "ids": "GMCL-CN", "issue": "loose at the stories root, no epic back-link, and a THIRD id convention the stage-4 gate classifies as unknown", "action": "reported only per D4" },
+    { "path": ".prism/stories/stories.json", "epic": "plan-story-source-unification", "stories": 15, "ids": "s-hash", "issue": "loose at the stories root, no epic back-link", "action": "reported only per D4" }
+  ],
+
+  "openDecisions": {
+    "note": "NONE of these was decided in this run. Options are offered; the ruling is Gavin's. OD-1 through OD-6 are carried forward from codex-plan-sync-0921-report.json and remain OPEN.",
+    "carriedForwardStillOpen": ["OD-1 pre-release audit passes having scanned 0 files", "OD-2 digital-griot-skills has no version scheme", "OD-3 channel-adoption 0/25 disposition", "OD-4 the contract names a workgraph node finding-prism-cli-tui that does not exist (N15 is the singular semantic match)", "OD-5 N93 is recorded flagged-not-fixed but measures RESOLVED", "OD-6 two loose story stores at the stories root"],
+    "new": [
+      { "id": "OD-7", "source": "workgraph S15 / harvest lifts", "decision": "The nine gortex lifts L1-L9 - which, if any, proceed.", "why": "One drop-in (L1 theme/icon/chart into viz-templates and the Djeli ops tab), six patterns, two reference-only. L1 needs a Griotwave ruling; L2's seam is already clear - components/graph/* import no API layer, everything arrives as props from one view file.", "options": ["A) Take L1 only, as a drop-in behind a Griotwave ruling", "B) Take L1+L2 (theme plus the four view modes)", "C) Take the pattern set L2-L7 and skip the drop-in", "D) Defer all nine pending the consolidation ruling in OD-9"], "status": "OPEN - not decided in this run (D2)" },
+      { "id": "OD-8", "source": "the DGS plan POT_T row, deliberately undecided", "decision": "gortex itself - adopt / trial / defer / pass, with role and stage set together.", "why": "The POT_T row was left undecided on purpose. The harvest found no capability we lack; it found consolidation. Note the shelf gap: gortex is not on the Potluck at all, so a ruling also needs a T[] row plus a paired oss-inspo item first.", "options": ["A) adopt / scaffold / now", "B) trial / pattern / next", "C) defer / pattern / later", "D) pass - reviewed, not using"], "status": "OPEN - not decided in this run (D2). Adding the shelf row is a dgs-plan-update call this stage does not make." },
+      { "id": "OD-9", "source": "harvest O4 / workgraph N103", "decision": "Consolidation vs specialisation across three code-intel engines (~1.07GB of indexes).", "why": "Explicitly recorded as a decision, not a defect. codebase-memory-mcp 94,184 nodes / 196,191 edges / 275MB; GitNexus 43,693 symbols / 96,170 rels / 339MB; code-review-graph 455MB and wired into ZERO skills or agents - invariant I8 territory. Only graph-navigator touches a graph at all; locator, analyzer and pattern-finder are grep-only.", "options": ["A) Consolidate onto one engine and retire the other two", "B) Keep all three, give each a declared role, and wire the unused one", "C) Keep two, retire code-review-graph", "D) Status quo and revisit after OD-7"], "status": "OPEN - not decided in this run (D2). Story s-4bee6675 deliberately stops at making the capability verdicts honest and does NOT wire code-review-graph, because wiring it is this decision." },
+      { "id": "OD-10", "source": "workgraph S13 / harvest O1", "decision": "Scope of the Djeli code-intel workspace under Griot Operations / Ceremonies.", "why": "The harvest's own finding is that this is mostly a LISTING and ROUTING problem, not a build-a-graph-view problem - three UIs exist and one is already running on :9749. Underlying gap is N94: tools ship web UIs Gavin is not using or tracking because each is buried under its own app.", "options": ["A) A listing/routing surface only - enumerate, live-status, open", "B) Listing plus embedded views for the graph surfaces", "C) Full workspace with its own graph rendering"], "status": "OPEN - not decided in this run (D2)" },
+      { "id": "OD-11", "source": "workgraph S14", "decision": "The four-layer sync design - one shape for N branch graphs, the regenerated global index, declared codex fan-out, and a verifier covering every layer.", "why": "Resolves N95, N96, N97 and the app-codex gap together. Today sync-codex-data takes one --json path and the plan's Workgraph tab reads the Djeli graph alone while being labelled workgraph.", "options": ["A) Build all four together as one shape", "B) Layers 1-2 now (N branch graphs + index regeneration), 3-4 later", "C) Take only the verifier first so the gaps fail loudly before any redesign"], "status": "OPEN - not decided in this run (D2). Story s-5ff38680 covers ONLY the index-regeneration slice (N96) and does not presuppose this design." },
+      { "id": "OD-12", "source": "stage contract D2", "decision": "App-codex fan-out: A vs B.", "why": "A workgraph node does not reach the 50 live codex pages today (suggestion S14 / open suggestion S14 in the plan's terms).", "options": ["A) as named in the plan", "B) as named in the plan"], "status": "OPEN - not decided in this run (D2). Recorded as UNKNOWN in one respect: the contract names the fan-out as A vs B without stating the two options in a form this stage could read, so the options are NOT restated here rather than invented." },
+      { "id": "OD-13", "source": "harvest O7", "decision": "Licence posture if L1 or L2 proceed - the gortex engine is Apache-2.0, the UI is PolyForm-Small-Business-based.", "why": "The harvest records this as fields and states the call is Gavin's alone. Apache-2.0 is code-safe; PolyForm-Small-Business is not a permissive licence and the UI would be pattern-only.", "options": ["A) Engine code-safe, UI pattern-only (re-implement native)", "B) Pattern-only for both", "C) Do not proceed with L1/L2"], "status": "OPEN - not decided in this run (D2)" },
+      { "id": "OD-14", "source": "workgraph OA22", "decision": "Port 51900 for the brainstorm hub appears only in Gavin's own session note; the documented port is 52341.", "why": "The harvest found no source for 51900 outside the workgraph node written from that note. Deliberately not corrected silently - it is Gavin's own observation and he may have run it on a custom port.", "options": ["A) It was a custom port - keep the note, annotate it", "B) It was a typo - correct the node to 52341", "C) Leave as-is pending a live check"], "status": "OPEN - not decided in this run. One direct question, not a silent rewrite." },
+      { "id": "OD-15", "source": "THIS RUN - a two-authority conflict inside the stage contract itself", "decision": "Story id convention: s-<hash8> (content hash) or STORY-NNN (sequential)?", "why": "D3 says 'stable STORY-NNN ids per the stories contract', but the cited authority contradicts the shape it names. .prism/shared/contracts/stories-contract.md rule 4 states the id is a hash of the requirement text, 'stable across re-emits, NOT a sequential label like STORY-001'. dgs-sync-all.ps1:210-219 classifies s-<hash8> as 'contract rule 4' and STORY-NNN as 'dialect B ... ids that the contract forbids', and says outright that the prism-codex-plan-sync SKILL.md line is the thing to fix (OA11). This run executed D3's CITED AUTHORITY and emitted s-<hash8>; it did not re-litigate the decision, and the choice is one command to reverse either way since the epic has no in-flight status. A THIRD convention also exists and is unaddressed: griot-mcp-comm-layer uses GMCL-CN, which the stage-4 gate reads as 'unknown'.", "options": ["A) Confirm s-<hash8> everywhere; fix the SKILL.md line (OA11) and migrate channel-adoption's 25 ids - safe only because all 25 are pending with no in-flight status to lose", "B) Confirm s-<hash8> for NEW epics only and leave channel-adoption and griot-mcp-comm-layer as tolerated dialects, documented", "C) Amend the stories contract to bless STORY-NNN and re-emit the three s-hash epics - note this breaks the stability property the ids exist for", "D) Rule on the third convention (GMCL-CN) separately"], "status": "OPEN - not decided in this run. Flagged loudly rather than absorbed." }
+    ]
+  },
+
+  "planEditsForTheSession": {
+    "note": "D6 - this run must not edit the DGS plan HTML and must not publish. Each edit below is NAMED for the session that runs the dgs-plan-update loop, not made here.",
+    "edits": [
+      { "what": "Add gortex to the Potluck T[] shelf plus a paired DGS oss-inspo item, then close its decision", "source": "harvest O2 / OD-8", "why": "a tool must be on the shelf before it can be ruled on" },
+      { "what": "Correct the code-review-graph shelf blurb - version reads 4.17.0 but the tool is 2.3.8, and the 31,000-star claim needs verifying at source", "source": "harvest O3", "why": "shelf data quality; a factual correction, but it is a Potluck/plan edit" },
+      { "what": "Add a CODEXES/registry row check note for the two branch codexes now that their rows exist", "source": "workgraph N100", "why": "the rows landed this session; the gate change itself is story s-3eeb40a6" },
+      { "what": "Record the griot-codeintel-hygiene epic in whatever plan surface tracks active epics", "source": "this run", "why": "a new epic that no plan surface names will rot unseen (the N94 class)" },
+      { "what": "Record OD-7 through OD-15 in the plan's decision store (the Gavel) when each is ruled", "source": "this run", "why": "a ruling is made in the plan's decision store, never in a workgraph node" }
+    ]
+  },
+
+  "propagationTargets": [
+    { "target": "Prism repo (.prism plans + stories)", "gate": "git commit + push, proven by ref equality", "state": "GREEN - d989066, local HEAD == origin/main, verified this run" },
+    { "target": "the epic back-link .prism/shared/plans/2026-09-22-griot-codeintel-hygiene.md", "gate": "the epic: frontmatter slug", "state": "GREEN - epic: griot-codeintel-hygiene, resolves to .prism/stories/griot-codeintel-hygiene/stories.json" },
+    { "target": "stage-4 of dgs-sync-all.ps1", "gate": "parses every stories.json under .prism/stories", "state": "GREEN - re-run this stage sees 6 stores / 63 stories; the new epic appears at 0d" },
+    { "target": "the DGS plan HTML", "gate": "dgs-plan-update loop", "state": "DEFERRED BY D6 - five named edits above. STALE BY DEFAULT until the session runs the loop." },
+    { "target": "every live gallery card", "gate": "the publish tool for the surface (Artifact / update_artifact) plus verify-cards", "state": "DEFERRED BY D6 - this run published nothing. Note that verify-cards itself is under repair by s-b02d6c48 and s-3eeb40a6, so its verdicts are not currently trustworthy in either direction." },
+    { "target": "the branch workgraph (Djeli)", "gate": "griot-workgraph-update -> sync-codex-data -> verify-workgraph, three-copy parity", "state": "NOT TOUCHED - workgraph writes belong to griot-workgraph-update, not to this stage. The findings this run produced (see newFindings) need nodes; naming them here is the handoff." },
+    { "target": "the global workgraph index", "gate": "NONE TODAY - that absence is the defect", "state": "RED - 11 days stale. Story s-5ff38680 exists to give it a gate." },
+    { "target": "the Griot Ontology Codex render", "gate": "NONE TODAY - propagate.ps1 copies, it does not render", "state": "RED - 11 days behind. Story s-8f068ed6 exists to give it an owner and a gate." }
+  ],
+
+  "publishList": {
+    "note": "D6 reserves publishing for the session. This run published nothing and claims nothing published.",
+    "cards": []
+  },
+
+  "newFindings": [
+    { "finding": "A THIRD story-id convention exists, not two. griot-mcp-comm-layer uses GMCL-CN, which the stage-4 gate's classifier reads as 'unknown'.", "evidence": "parsed this run across all 6 stores; dgs-sync-all.ps1 classifier handles only STORY-* and s-* explicitly" },
+    { "finding": "The reverse-harvest channel would find nothing for ceremony-review-audit-gate. All four stories carry commitHash cc29846 and all four resolve, but that commit is scoped feat(ceremony): not by story id, and the reverse channel keys on git commit scopes.", "evidence": "git log -1 --format=%s cc29846 = 'feat(ceremony): Review & Audit gate - self-hardening release path'; grep of git log for each of the 4 ids returns nothing" },
+    { "finding": "The 11-tool claim is in FOUR non-snapshot places, not the two the contract names, and CLAUDE.md is not one of them. One of the four is apps/prism-setup/resources/plugin/agents/graph-navigator.md - a propagation-target copy, so correcting only the authored agent would ship the wrong scaffold.", "evidence": "grep -rn '11 tools' --include=*.md excluding /evals/" },
+    { "finding": "A naming drift rides along with the tool count: the graph-navigator body calls the tool trace_call_path; the server's actual tool is trace_path.", "evidence": "harvest A5-our-codeintel.md:297; live tool list this session" },
+    { "finding": "verify-code-intel.mjs I15 reproduces the exact bundling bug its own comment says the I12/I15 split was made to prevent - 'each verdict answers exactly one question'. Inside I15, fts and vectorSearch share one verdict, and fts being down suppresses the vectorSearch fallback.", "evidence": "scripts/verify-code-intel.mjs, the bad.every(b => b.startsWith('vectorSearch')) guard; run output 4 pass / 1 fail" }
+  ],
+
+  "decisionsMade": {
+    "byThisRun": [
+      "Emitted the new epic with s-<hash8> ids, executing the authority D3 cites rather than the shape D3 names. Flagged as OD-15 rather than absorbed silently.",
+      "Scoped story s-4bee6675 to stop at honest per-capability verdicts and explicitly NOT to wire code-review-graph, because wiring it is OD-9.",
+      "Scoped story s-5ff38680 to the index-regeneration slice only, so it does not presuppose the S14 design that is OD-11.",
+      "Wrote story s-b02d6c48 observation-led per I7 - the attribute-order hypothesis is recorded as a lead to test, never as the diagnosis."
+    ],
+    "gavinDecisionsDecided": 0
+  },
+
+  "successCriteria": {
+    "notOneGavinDecisionDecided": "PASS - 0 decided; 12 boundary items surfaced, 9 new open decisions recorded with options",
+    "everyD3DefectHasACheckableVerification": "PASS - 6/6, each with a command that can fail",
+    "newEpicHasBackLinkAndStableIds": "PASS - epic: frontmatter set; ids derived by the proven generator",
+    "threeExistingEpicsKeepEveryId": "PASS - 0 renamed, 0 deleted, channel-adoption untouched",
+    "prismPushedWithRefEquality": "PASS - d989066, local HEAD == origin/main",
+    "reportNamesEveryPlanEditLeftForTheSession": "PASS - 5 named under planEditsForTheSession"
+  },
+
+  "terminal": "DONE"
+}
