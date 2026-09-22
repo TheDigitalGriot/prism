@@ -30,7 +30,9 @@
       "description": "Generalize the channel into digital-griot-mcp: rename and relocate brainstorm-channel to a neutral path, update the plugin.json mcpServers key and channels, repoint brainstorm, and add gavel intents plus the six MCP tools so both siblings ride one shared wire and brainstorm still drives.",
       "priority": 2,
       "status": "complete",
-      "blockedBy": ["s-dd9c27cf"],
+      "blockedBy": [
+        "s-dd9c27cf"
+      ],
       "files": [
         ".claude-plugin/plugin.json",
         "skills/prism-brainstorm/scripts/brainstorm-channel.ts",
@@ -52,7 +54,9 @@
       "description": "Lift the Gavel cockpit into scripts/frame.html: port the existing Gavel tab cockpit and wire use/role/stage controls, the notes box, and the four verbs via helper.js to the channel so the cockpit renders in the popout and controls both update decision state and emit channel intents.",
       "priority": 3,
       "status": "complete",
-      "blockedBy": ["s-0f7a0813"],
+      "blockedBy": [
+        "s-0f7a0813"
+      ],
       "files": [
         "skills/prism-gavel/scripts/frame.html",
         "skills/prism-gavel/scripts/helper.js"
@@ -72,7 +76,9 @@
       "description": "Wire the four verbs end to end: scan routes to griot-potluck-search, commit writes a batch via dgs-plan-update, open opens a repo/video via Chrome MCP, and verify resolves slug + stars through the resolver, so each verb round-trips click to agent action to reflect.",
       "priority": 4,
       "status": "complete",
-      "blockedBy": ["s-60898f71"],
+      "blockedBy": [
+        "s-60898f71"
+      ],
       "files": [
         "skills/prism-gavel/scripts/helper.js",
         "skills/prism-gavel/SKILL.md"
@@ -92,8 +98,10 @@
       "title": "Package, verify, release, register",
       "description": "Package, verify, release, and register: bump the Prism version, sideload-verify, release via prism-release and closing-ceremony, and register prism-gavel as an app in the DGS plan so the sideload is clean, the release ships, and the DGS plan shows prism-gavel.",
       "priority": 5,
-      "status": "pending",
-      "blockedBy": ["s-ffac38f6"],
+      "status": "complete",
+      "blockedBy": [
+        "s-ffac38f6"
+      ],
       "files": [
         ".claude-plugin/plugin.json",
         ".claude-plugin/marketplace.json"
@@ -105,8 +113,8 @@
         "Register prism-gavel as an app in the DGS plan (dgs-plan-update).",
         "Verify: sideload clean, released, DGS plan shows prism-gavel."
       ],
-      "completedAt": null,
-      "commitHash": null
+      "completedAt": "2026-07-29T14:32:34-04:00",
+      "commitHash": "f316d52"
     }
   ]
 }
