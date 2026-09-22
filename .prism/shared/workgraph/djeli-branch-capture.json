@@ -54,7 +54,8 @@
     "amendPass44_2026_09_21": "Gavin correction: tangents are harnessed; i-have-adhd rule 4 back to reshape",
     "amendPass45_2026_09_21": "griot-closeout landed: S12, output style, CLI pill seed, drift x7, skills clone reconciled, potluck closes",
     "amendPass47_2026_09_22": "codex-plan-sync reverse pass + epic verdicts",
-    "amendPass49_2026_09_22": "Gavin's note: a Griot code-intel workspace in Djeli (Griot Operations / Ceremonies), sparked by gortex"
+    "amendPass49_2026_09_22": "Gavin's note: a Griot code-intel workspace in Djeli (Griot Operations / Ceremonies), sparked by gortex",
+    "amendPass50_2026_09_22": "Gavin caught the layer conflation; plan chip defect fixed"
   },
   "groups": [
     {
@@ -4261,6 +4262,91 @@
         "evidence": "https://github.com/zzet/gortex and its assets/graph.png, brought by Gavin 2026-09-22; harvest skill present device-side at prism skills/griot-harvest.",
         "result": "in-progress - harvest running; comparison and lift list to follow."
       }
+    },
+    {
+      "id": "wg:djeli-branch:N95",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N95",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "Everything called the workgraph tonight was one layer of four - the Djeli branch graph; Gavin caught the conflation",
+      "description": "Four distinct layers exist: branch workgraphs (3), per-project workgraphs, the global generated index, and the codex pages (50 live). S12 and every sync run 2026-09-21/22 touched the Djeli branch graph alone, and the plan's Workgraph tab and header tiles read only that one while being labelled workgraph.",
+      "verification": {
+        "evidence": "live/: djeli 215/224, gbfolio 15/13, griot-branch-codex 27/26 workgraph JSONs with their own codex pages; 50 *-codex.html; only Prism carries .prism/shared/workgraph; sync-codex-data --plan writes the plan block from the Djeli codex only.",
+        "result": "flagged - Gavin, chat 2026-09-22: are you sure none of these concepts are lost."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N96",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N96",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "The global workgraph index is ten days stale and nothing in the nightly loops regenerates it",
+      "description": "index.json carries 804 nodes / 778 edges generated 2026-09-12. workgraph-index.mjs exists and is idempotent (generate, never maintain), but no skill or sync script re-runs it, so the global view silently trails every branch and project change.",
+      "verification": {
+        "evidence": "C:/Users/digit/GriotApps/Prism/.prism/shared/workgraph/index.json generated=2026-09-12T01:34:09.315Z, read 2026-09-22; Prism/scripts/workgraph-index.mjs present.",
+        "result": "flagged-not-fixed."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N97",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N97",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "The gbfolio and griot-branch-codex branch graphs have no sync and no place in the plan",
+      "description": "Both have a workgraph JSON and a rendered codex page, both were last written by hand on 2026-09-21, neither is covered by sync-codex-data, neither appears in the plan's Workgraph tab, and the verifier never checks them.",
+      "verification": {
+        "evidence": "live/gbfolio-branch-capture-workgraph.json 15/13 and live/griot-branch-codex-branch-capture-workgraph.json 27/26, both mtime 2026-09-21; sync-codex-data.mjs takes one --json path.",
+        "result": "flagged-not-fixed."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N98",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N98",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "local",
+      "title": "The plan header freshness chip froze at 5 days ago because the stamp only ran when the plan file was dirty",
+      "description": "dgs-sync-all stage 3 re-stamped only when the plan had uncommitted changes. Every loop edits the plan, commits, then syncs, so the file is always clean by then and the stamp was skipped on every run since 2026-09-17. Gavin saw the chip. Fixed by comparing the stamp against the plan's own last commit time as well, which is self-healing and cannot churn (a stamp-only commit lands at the same instant).",
+      "verification": {
+        "evidence": "dgs-definitive-plan.html data-stamp 2026-09-17T17:19:12.768Z while the plan was committed on 2026-09-22; dgs-sync-all.ps1 stage 3 patched 2026-09-22 (dirty-or-behind-commit test).",
+        "result": "defect-fixed in the script; proven on the next sync-all run."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S14",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S14",
+      "kind": "suggestion",
+      "group": "suggested",
+      "state": "awaiting-disposition",
+      "direction": "local",
+      "title": "One shape for all four layers: N branch graphs, a regenerated global index, declared codex fan-out, and a verifier that covers every layer",
+      "description": "1 sync takes N branch graphs rather than a hard-wired one, and the plan tab can show any of them. 2 the same run regenerates the global index and verifies its freshness. 3 a node declares which project codexes it reaches, and only machine-owned blocks are written. 4 verify covers every layer so a missing one fails loudly.",
+      "verification": {
+        "evidence": "N95, N96, N97 plus the app-codex gap raised with Gavin 2026-09-22.",
+        "result": "awaiting-disposition - Gavin picks the shape before any build."
+      }
     }
   ],
   "edges": [
@@ -5607,6 +5693,30 @@
       "to": "wg:djeli-branch:finding-prism-cli-tui",
       "kind": "ontology",
       "label": "same shape: a built surface nothing routes to"
+    },
+    {
+      "from": "wg:djeli-branch:N95",
+      "to": "wg:djeli-branch:S14",
+      "kind": "splinter",
+      "label": "the fix it asks for"
+    },
+    {
+      "from": "wg:djeli-branch:N96",
+      "to": "wg:djeli-branch:S14",
+      "kind": "splinter",
+      "label": "global index regeneration"
+    },
+    {
+      "from": "wg:djeli-branch:N97",
+      "to": "wg:djeli-branch:S14",
+      "kind": "splinter",
+      "label": "N branch graphs"
+    },
+    {
+      "from": "wg:djeli-branch:N98",
+      "to": "wg:djeli-branch:B43",
+      "kind": "ontology",
+      "label": "same family: a sync step that could not fire"
     }
   ],
   "stats": {
@@ -5615,7 +5725,7 @@
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 224,
+    "edgeCount": 228,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -6303,6 +6413,18 @@
         "B49"
       ],
       "newEdges": 3,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass50_2026_09_22_2026_09_22": {
+      "newNodes": [
+        "N95",
+        "N96",
+        "N97",
+        "N98",
+        "S14"
+      ],
+      "newEdges": 4,
       "corrections": [],
       "refused": []
     }
