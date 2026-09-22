@@ -58,7 +58,8 @@
     "amendPass50_2026_09_22": "Gavin caught the layer conflation; plan chip defect fixed",
     "amendPass51_2026_09_22": "nine tracking systems locked in the ontology; card-gate and registry findings",
     "amendPass52_2026_09_22": "gortex is multi-repo: it targets layer 4; ontology codex render has no owner",
-    "amendPass53_2026_09_22": "gortex harvest landed: consolidation finding, nine ranked lifts, port open-ask"
+    "amendPass53_2026_09_22": "gortex harvest landed: consolidation finding, nine ranked lifts, port open-ask",
+    "amendPass55_2026_09_22": "codex-plan-sync forward pass, story-layer findings, concurrent-write hazard"
   },
   "groups": [
     {
@@ -4493,6 +4494,74 @@
         "evidence": "gortex-harvest-report.json corrections C16; surface inventory lists 52341 for the brainstorm companion and 52342 for the gavel cockpit.",
         "result": "open - Gavin confirms which port he saw."
       }
+    },
+    {
+      "id": "wg:djeli-branch:B51",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": ".prism/shared/plans/2026-09-22-codex-plan-sync-eve-CONTEXT.md",
+      "localId": "B51",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "local",
+      "title": "codex-plan-sync forward pass: the griot-codeintel-hygiene epic - six defects decomposed, every Gavin decision left undecided",
+      "description": "Forward direction under a Gavel boundary. Decomposed only work needing no ruling: split the I15 capability verdicts so one degraded capability cannot mask another (s-4bee6675); correct the declared codebase-memory tool count and gate it (s-10c2e47d); give the global workgraph index a regeneration owner and staleness gate (s-5ff38680); make verify-cards compare the published body it actually read back (s-b02d6c48); resolve codex cards through the registry instead of reporting NO CARD (s-3eeb40a6); give the Griot Ontology Codex render an owner and a freshness gate (s-8f068ed6). Epic back-link written. Existing epics untouched: ceremony-review-audit-gate 4/4 and prism-gavel 5/5 stay done, channel-adoption stays 0/25 as OA20.",
+      "verification": {
+        "evidence": "Prism d989066 + bd88be8 (report .prism/codex-plan-sync-eve-report.json: stores 5 to 6, stories 57 to 63, 0 decided); griot-live-artifacts plan items and 2 edges in bd6a1e03, DGS card v54, drift ledger 82 to 88.",
+        "result": "done - six stories pending, zero decisions taken."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N104",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N104",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "The story layer has three id conventions, not two, and the reverse-harvest channel is blind to commits scoped by feature rather than story",
+      "description": "A third convention GMCL-CN exists (griot-mcp-comm-layer) which the stage-4 classifier reads as unknown. Separately, all four ceremony-review-audit-gate stories resolve to commit cc29846, but that commit is scoped feat(ceremony): rather than by story id, so the reverse-harvest channel keyed on commit scope would find nothing for a finished epic.",
+      "verification": {
+        "evidence": "codex-plan-sync-eve-report.json newFindings, parsed across all six stores this run; dgs-sync-all.ps1 classifier handles STORY- and s-hash only.",
+        "result": "flagged-not-fixed - logged to the drift ledger this pass."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N105",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N105",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "corrected",
+      "direction": "local",
+      "title": "The stale 11-tool claim lives in four places including a propagation-target copy - and CLAUDE.md is not one of them",
+      "description": "Correcting the record: the earlier note said CLAUDE.md carried the 11-tool claim. It does not. The claim sits in four non-snapshot places, one of which is apps/prism-setup/resources/plugin/agents/graph-navigator.md - a propagation target, so fixing only the authored copy would leave the stale number shipping. A naming drift rides along: graph-navigator names the tool trace_call_path while the server's tool is trace_path.",
+      "verification": {
+        "evidence": "codex-plan-sync-eve-report.json newFindings; harvest A5-our-codeintel.md:297 and the live tool list this session.",
+        "result": "corrected - the four places and the CLAUDE.md correction are written into the drift entry; the fix is story s-10c2e47d."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N106",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N106",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "Concurrent sessions are writing the same repo - one swept another process's untracked files into a commit, and a blind push re-added them",
+      "description": "During this pass a second session ran its own plan update on the same repo (HEAD moved to 360018b, ITEMS 1920, EDGES 64) and an agent's git add -A swept untracked codex-addons files belonging to another process into a commit; the revert was then undone by dgs-sync-all's blind push. Every edit from this pass was re-verified intact at the newer HEAD, and a 9th-89th uncommitted drift entry belonging to the other session was deliberately left in the working tree.",
+      "verification": {
+        "evidence": "griot-live-artifacts bd6a1e03, 4f02c43 (untrack), 9c60069 (dgs-sync-all re-add), aa06e5e (ledger correction); concurrent session_018hCiA5EBRenRw2aeEnsaXV HEAD 360018b.",
+        "result": "flagged-not-fixed - dgs-sync-all commits with git add -A, which is unsafe while a second session is writing."
+      }
     }
   ],
   "edges": [
@@ -5923,15 +5992,51 @@
       "to": "wg:djeli-branch:S13",
       "kind": "outbound",
       "label": "L1 and L2 land in the Djeli operations workspace"
+    },
+    {
+      "from": "wg:djeli-branch:C25",
+      "to": "wg:djeli-branch:B51",
+      "kind": "in-epic",
+      "label": "the forward pass of the same skill"
+    },
+    {
+      "from": "wg:djeli-branch:B51",
+      "to": "wg:djeli-branch:N104",
+      "kind": "splinter",
+      "label": "story-layer gaps found while decomposing"
+    },
+    {
+      "from": "wg:djeli-branch:B51",
+      "to": "wg:djeli-branch:N105",
+      "kind": "splinter",
+      "label": "tool-count claim, corrected"
+    },
+    {
+      "from": "wg:djeli-branch:B51",
+      "to": "wg:djeli-branch:N106",
+      "kind": "splinter",
+      "label": "concurrent-write hazard"
+    },
+    {
+      "from": "wg:djeli-branch:N105",
+      "to": "wg:djeli-branch:N103",
+      "kind": "ontology",
+      "label": "same cmm tool-count drift"
+    },
+    {
+      "from": "wg:djeli-branch:B51",
+      "to": "wg:djeli-branch:N96",
+      "kind": "outbound",
+      "label": "index regeneration now has a story"
     }
   ],
   "stats": {
-    "totalBranches": 77,
+    "totalBranches": 78,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 238,
+    "edgeCount": 244,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -6670,6 +6775,17 @@
       "stateChanges": [
         "B49 in-progress -> done"
       ]
+    },
+    "amendPass55_2026_09_22_2026_09_22": {
+      "newNodes": [
+        "B51",
+        "N104",
+        "N105",
+        "N106"
+      ],
+      "newEdges": 6,
+      "corrections": [],
+      "refused": []
     }
   },
   "foreignLayer": {
