@@ -1,0 +1,24 @@
+# STAGE CONTRACT - gortex harvest vs the Griot code-intel suite (2026-09-22, headless)
+
+Gavin brought https://github.com/zzet/gortex and asked for /prism:griot-harvest plus a grounded comparison against our own code-intel tooling, so a lift list is evidence-based. His spark is gortex's web UI (assets/graph.png). Full green light. Never call the Prism workflow RPIV. Unknowns are recorded as unknown.
+
+## Inputs (exact paths)
+- HARVEST SUBJECT (read only, never modify): C:\Users\digit\GriotSandbox\gortex (clone at 1b834f7, 4868 files; dirs cmd, internal, pkg, docs, examples, eval, bench, scripts, assets). Its web UI screenshot: assets/graph.png. Read its docs/ and cmd/ and any web or ui or server package directly.
+- OUR SIDE (read only): the codebase-memory-mcp server that backs the prism graph-navigator agent (find it under the Prism repo or the plugin cache); prism skills graphify, prism-wiki, griot-harvest, griot-harvest-ux-ui; the prism discovery agents codebase-locator, codebase-analyzer, codebase-pattern-finder, graph-navigator; Prism scripts workgraph-index.mjs and workgraph-distil.mjs; prism-cli (apps/prism-cli, a compiled Charm TUI that knows worktrees but has no workgraph view).
+- CONTEXT: workgraph nodes N94 (buried web UIs), S13 (a Griot code-intel workspace as a Djeli tab under Griot Operations / Ceremonies), B49 (this harvest) in C:\Users\digit\GriotMeta\griot-live-artifacts\live\djeli-branch-capture-workgraph.json
+- OUTPUTS: heartbeat .prism\gortex-harvest-progress.txt ; report .prism\gortex-harvest-report.json ; long-form notes .prism\shared\research\2026-09-22-gortex-vs-griot-codeintel.md
+
+## Locked decisions
+- D1 Run /prism:griot-harvest over gortex exactly as that skill defines. Use the discovery agents and the code graph to read gortex; never photocopy whole files into context.
+- D2 The comparison is per-capability and evidence-backed. For EVERY row cite a file and line (or a command output) on both sides. A capability we cannot find on our side is recorded as ABSENT with the search that failed, never guessed.
+- D3 Capability axes to cover, each as its own row: what is indexed (languages, symbols, call graph, imports, tests, docs); how the index is built and refreshed (parser, incremental, watch); where it is stored (format, on-disk location, size); how it is queried (CLI, MCP, HTTP, library); what it renders (web UI, TUI, static export); agent integration (MCP tools, prompts, token cost per query); performance claims and any benchmark in the repo (bench/ and eval/ exist - read them); license and language; maturity signals (stars, release cadence, tests).
+- D4 The web UI gets its own deep section: how the graph view is served, the stack behind it, the data contract it consumes, the interactions it supports, and exactly which pieces are liftable into a Griot surface versus which assume gortex internals. Ground it in the code, not the screenshot.
+- D5 LIFT LIST: rank every lift candidate as drop-in library, pattern to reimplement, or reference only, with the Griot target named (graphify, codebase-memory-mcp, prism-cli, Djeli operations tab, Valence, Graft), effort in steps, and what it would replace or extend. Follow the studio norm: grafting a pattern is the norm, adopting a whole tool is the exception, and say which this is.
+- D6 Also inventory OUR hidden surfaces for S13: every Griot web UI, TUI, cockpit, codex page or local server you can find, with how it is launched, its default port if any, and whether anything currently lists it. This is the raw material for the Djeli operations workspace.
+- D7 Read only. No commits, no pushes, no publishes, no changes to gortex or to any Griot repo except writing the three output files above. Decide nothing that is Gavin's to decide.
+
+## Process (heartbeat after each: STEP n START | STEP n OK detail | STEP n FAIL reason)
+1 Load griot-harvest and run it over gortex. 2 Map gortex per D3 with citations. 3 Map our side per D3 with citations, using the discovery agents. 4 Web UI deep read per D4. 5 Lift list per D5. 6 Hidden-surface inventory per D6. 7 Write the report JSON (machine readable: capabilities as rows with ours, theirs, verdict, evidence; lifts; surfaces) plus the long-form notes. Terminal line DONE or BLOCKED: reason, written last.
+
+## Success criteria
+Every capability row cites evidence on both sides or says ABSENT with the failed search; the web UI section names the actual serving code and data contract; every lift names a Griot target, a class and an effort; the surface inventory is complete enough to build a launcher from; nothing outside the three output files was written.

@@ -1,0 +1,478 @@
+{
+  "stage": "gortex-harvest",
+  "date": "2026-09-22",
+  "status": "DONE",
+  "contract": ".prism/shared/plans/2026-09-22-gortex-harvest-CONTEXT.md",
+  "outputs": {
+    "heartbeat": ".prism/gortex-harvest-progress.txt",
+    "report": ".prism/gortex-harvest-report.json",
+    "notes": ".prism/shared/research/2026-09-22-gortex-vs-griot-codeintel.md"
+  },
+  "scratch": {
+    "dir": ".prism/local/gortex-harvest/",
+    "gitignored": true,
+    "gitignoreRule": ".gitignore:53",
+    "note": "agent detail on disk (skill invariants I2/I3) while honouring D7 - nothing tracked was modified",
+    "files": [
+      "A1-indexer-core.md (717 lines)",
+      "A2-query-surfaces.md (540)",
+      "A3-web-ui.md (210)",
+      "A3b-web-ui-source.md (253)",
+      "A4-bench-maturity.md (330)",
+      "A5-our-codeintel.md (484)",
+      "A6-surface-inventory.md (184)"
+    ]
+  },
+  "subjects": [
+    {
+      "repo": "zzet/gortex",
+      "path": "C:/Users/digit/GriotSandbox/gortex",
+      "head": "1b834f7",
+      "date": "2026-09-21",
+      "ageDays": 0,
+      "files": 4868,
+      "dirs": 300,
+      "licence": "Apache-2.0",
+      "lang": "Go",
+      "releaseCadence": "12 tags in ~5 weeks; HEAD is dependabot merge #817"
+    },
+    {
+      "repo": "gortexhq/web",
+      "path": "C:/Users/digit/GriotSandbox/gortex-web/web",
+      "head": "9b0b48a",
+      "date": "2026-04-24",
+      "ageDays": 150,
+      "files": 93,
+      "dirs": 24,
+      "licence": "Gortex License - Part 1 based on PolyForm Small Business 1.0.0 (source-available; free use enumerated for small business / individual / OSS / education / nonprofit; commercial licence required for larger companies)",
+      "lang": "TypeScript / Next",
+      "note": "NOT in the engine repo. Cloned during this stage per docs/server.md:60. Licence differs from the engine."
+    }
+  ],
+  "headline": "gortex has NO capability our stack lacks. What it has is CONSOLIDATION - one binary, one store, one daemon, one UI, one install. We hold the same capabilities across three engines, ~1.07GB of indexes and three-plus web UIs, with nothing that lists any of them. The harvest confirms and enlarges workgraph N94: we already built the thing the screenshot made us want, and it is invisible.",
+  "capabilities": [
+    {
+      "axis": "what is indexed",
+      "theirs": "35 node kinds, ~64 edge kinds - internal/graph/node.go + internal/graph/edge.go. Covers HTTP routes, pub/sub topics, ORM tables, docs, contracts, capability edges (env reads, process exec), MinHash clone detection.",
+      "ours": "cmm live on Prism today: 94,184 nodes / 196,191 edges at HEAD, incl. Route label (143 nodes) and HTTP_CALLS/GRPC_CALLS/CONFIGURES edges. gnx: 43,693 symbols / 96,170 relationships / 300 flows. crg: 455MB live index. PLUS a second graph domain gortex has no equivalent of - the project/story workgraph, 804 nodes / 778 edges.",
+      "verdict": "PARITY on code structure; OURS-ONLY on project/work structure"
+    },
+    {
+      "axis": "how the index is built and refreshed",
+      "theirs": "Three parser tiers: ~30 bespoke tree-sitter / ~60 regex / ~165 forest-backed = 256. CORRECTION: tiers 1 and 2 are not architecturally distinct - both are hand-written Extractor structs registered identically (119 total); only the forest tier (170 wired of 212 declared in go.mod) is a separate generic engine. Live fsnotify, incremental restart.",
+      "ours": "Three mechanisms: cmm auto_watch=true config; gnx analyze update-if-stale + PostToolUse hook prompt (README:50); crg a real multi-repo watch daemon (daemon verb).",
+      "verdict": "PARITY - crg is the closest match to gortex's watcher and is the engine we never call"
+    },
+    {
+      "axis": "where it is stored",
+      "theirs": "~/.gortex/store/store.sqlite. Pure-Go SQLite (modernc.org/sqlite, NO cgo) - this is what makes the single-binary claim true. Schema v21 keyed off PRAGMA user_version, explicit drop-and-rebuild-as-derived-cache philosophy.",
+      "ours": "cmm: SQLite per-project under ~/.cache/codebase-memory-mcp/, 275MB binary at %LOCALAPPDATA%/Prism/bin/. gnx: LadybugDB store in .gitnexus/ - 339MB. crg: 455MB.",
+      "verdict": "PARITY on mechanism; OURS IS 3x THE FOOTPRINT (~1.07GB across three stores on one machine)"
+    },
+    {
+      "axis": "how it is queried",
+      "theirs": "Four surfaces. MCP: 178 tools (internal/mcp/promote_call_gate_test.go:37, docs/mcp-facade-v1.md:57; README's 175 is stale), 18 resources (13 addResource + 5 addResourceTemplate; README's 16 is stale), 3 prompts - but a structurally-enforced 21-tool compact facade (internal/mcp/facade_registry.go:265-477) is what every named client actually receives. HTTP: 20 /v1/* routes + /mcp Streamable-HTTP. CLI. Library: pkg/gortex/api.go, 181 lines, 10 methods, genuinely daemon-free. All clients share ONE AF_UNIX socket including on Windows (internal/daemon/paths.go:43-44) - not a named pipe.",
+      "ours": "MCP on all three: cmm 14 tools (CLAUDE.md and graph-navigator frontmatter both say 11 - drift), gnx 17, crg ~30. HTTP: gnx serve, crg serve --http, cmm --ui.",
+      "verdict": "PARITY on MCP/HTTP. ABSENT on our side: an embeddable in-process library.",
+      "absentSearchThatFailed": "Searched all three engines for a pkg/-style importable graph API. None exists - all three are server processes only."
+    },
+    {
+      "axis": "what it renders",
+      "theirs": "gortexhq/web - Next 16.2.4 / React 19.2.5 (docs say Next.js 15), 4 graph modes (docs say 5), 10 routes.",
+      "ours": "THREE web UIs, all live, none listed. cmm HTTP viz server on :9749 CONFIRMED RUNNING via netstat - a real Vite+React app at GriotMeta/codebase-memory-mcp/graph-ui. gnx gitnexus.vercel.app or gitnexus serve. crg visualize. Plus griot-ecosystem-viz on :5174.",
+      "verdict": "PARITY IN EXISTENCE, DEFICIT IN REACH - they have one UI you can find, we have three-plus you cannot"
+    },
+    {
+      "axis": "agent integration",
+      "theirs": "20 agent adapters (cmd/gortex/init.go:123-142, exactly 20 Register() calls; README's 19 double-counts vscode+copilotcli into one bullet). Claude Code specifically: .mcp.json, 8 wired hook events, permissions, skills, slash commands, sub-agents - all MERGE-NOT-OVERWRITE with dedup and healing logic.",
+      "ours": "Exactly one agent touches a graph server: graph-navigator (agents/graph-navigator.md:4-8, haiku / low effort / maxTurns 5) -> cmm. codebase-locator, codebase-analyzer and codebase-pattern-finder are Read+Glob+Grep+Bash only, no graph access. crg is wired to zero agents.",
+      "verdict": "THEIRS IS AHEAD - their install wires 20 agents; our three engines are wired to one"
+    },
+    {
+      "axis": "compact wire format for agent responses",
+      "theirs": "GCX1, -27% vs JSON - CONFIRMED and reproducible, checked in at bench/wire-format/scorecard.md:28. Caveat: the 20 fixtures are self-authored synthetic tool responses.",
+      "ours": "toon - cmm search_graph/trace_path --format toon is the DEFAULT, claims ~60% fewer tokens vs json. Searched gnx and crg READMEs for toon: no match, both JSON-only.",
+      "verdict": "PARITY - and ours claims the larger saving. Neither number is third-party verified."
+    },
+    {
+      "axis": "speculative edit preview",
+      "theirs": "preview_edit / simulate_chain - what would change if this WorkspaceEdit were applied, without touching disk.",
+      "ours": "crg only, and cleanly: refactor_tool (preview) -> apply_refactor_tool (apply), an explicit propose-then-commit pair. gnx rename is single-shot with no separate preview step.",
+      "verdict": "PARITY - located entirely in the engine we never call"
+    },
+    {
+      "axis": "PR review grounded in the graph",
+      "theirs": "gortex prs (per-PR blast radius, merge-order conflicts, AI-ranked queue) + gortex review (line-anchored findings, BLOCK/REVIEW/APPROVE).",
+      "ours": "crg only, by name: get_review_context_tool, get_minimal_context_tool, get_suggested_questions_tool.",
+      "verdict": "PARITY - located entirely in the engine we never call"
+    },
+    {
+      "axis": "blast radius / impact analysis",
+      "theirs": "ADVERTISED MECHANISM IS DEAD CODE - see corrections[1]. Live path is reach.Lookup: lazy per-seed BFS with memoisation.",
+      "ours": "All three. cmm trace_path --risk-labels + detect_changes. gnx impact + api_impact + group impact (cross-repo). crg get_impact_radius_tool + detect_changes_tool. Wired into CLAUDE.md as a mandatory pre-edit gate.",
+      "verdict": "PARITY, and ours is arguably better evidenced because it is gated"
+    },
+    {
+      "axis": "semantic / embedding search over code",
+      "theirs": "Embedded GloVe-50d measured at 3,830,458 bytes - the 3.8MB claim is exact. Store-native FTS5/BM25 + vector with adaptive alpha fusion, zero deps.",
+      "ours": "Present in all three - BUT DEGRADED HERE RIGHT NOW: gnx reports FTS and vector search BOTH unavailable on this platform. The repo's own scripts/verify-code-intel.mjs gate ran 4 pass / 1 fail, that being the failure.",
+      "verdict": "PARITY ON PAPER, DEGRADED IN FACT - a live, fixable defect on our side, found by our own gate"
+    },
+    {
+      "axis": "HTTP route + API contract extraction",
+      "theirs": "First-class node and edge kinds for routes, topics, ORM tables and cross-service contracts, with provider/consumer matching.",
+      "ours": "cmm Route label (143 nodes) + HTTP_CALLS/GRPC_CALLS/CONFIGURES. gnx route_map / api_impact / shape_check - the richest of the three. crg narrow/PARTIAL.",
+      "verdict": "PARITY"
+    }
+  ],
+  "lifts": [
+    {
+      "id": "L1",
+      "lift": "app/globals.css OKLCH token system (Ink / Paper / Terminal themes) + primitives/Icon.tsx (~40 hand-drawn SVG icons) + primitives/Charts.tsx (hand-rolled SVG donut/bar/sparkline)",
+      "class": "drop-in library (vendor whole)",
+      "target": "viz-templates, Djeli operations tab",
+      "effortSteps": "1-2",
+      "effect": "extends",
+      "note": "Zero gortex imports, pure CSS-variable tokens. A ruling is needed where the OKLCH ramp disagrees with the Griotwave tokens - record it, never silently merge."
+    },
+    {
+      "id": "L2",
+      "lift": "three-common.tsx + views/layout.ts + the four view components (Constellation / Galaxies / Strata / City)",
+      "class": "pattern to reimplement",
+      "target": "Djeli Griot Operations / Ceremonies tab (S13); prism-viz-engine",
+      "effortSteps": "4-6",
+      "effect": "extends",
+      "note": "Our workgraph ALREADY satisfies the data contract: node id/name/kind/bucket, edge from/to, plus a {id,color} palette that fallbackRepoColor() (views/layout.ts:18-26) can synthesize. The seam is unusually clean - no file under components/graph/ imports lib/api.ts; everything flows as props from GraphView.tsx."
+    },
+    {
+      "id": "L3",
+      "lift": "The 21-tool compact facade over 178 tools (internal/mcp/facade_registry.go:265-477)",
+      "class": "pattern to reimplement",
+      "target": "codebase-memory-mcp + code-review-graph + GitNexus (our three servers expose ~61 tools with no facade)",
+      "effortSteps": "3-4",
+      "effect": "extends",
+      "note": "The single most transferable idea in the engine. Attacks agent context bloat directly."
+    },
+    {
+      "id": "L4",
+      "lift": "gortex init merge-not-overwrite agent wiring - 20 adapters, 8 hook events, dedup and healing",
+      "class": "pattern to reimplement",
+      "target": "griot-plugin-update, propagate.ps1",
+      "effortSteps": "3-5",
+      "effect": "extends",
+      "note": "A worked pattern for safe writes into a user's agent config - directly relevant to the ungated propagation target class (invariant I11)."
+    },
+    {
+      "id": "L5",
+      "lift": "/v1/subgraph bounded endpoint - cap 200 nodes, depth 2 (internal/server/subgraph.go:15,18)",
+      "class": "pattern to reimplement",
+      "target": "codebase-memory-mcp graph-ui (:9749)",
+      "effortSteps": "1-2",
+      "effect": "extends",
+      "note": "The guard their own /v1/graph lacks - see doNotCopy.ui."
+    },
+    {
+      "id": "L6",
+      "lift": "pkg/gortex/api.go - a 181-line, 10-method, daemon-free embeddable library",
+      "class": "pattern to reimplement",
+      "target": "codebase-memory-mcp",
+      "effortSteps": "2-3",
+      "effect": "fills our one ABSENT capability row"
+    },
+    {
+      "id": "L7",
+      "lift": "The honest benchmark table - publish the row where your own tool loses",
+      "class": "pattern to reimplement",
+      "target": "scripts/verify-code-intel.mjs",
+      "effortSteps": "1",
+      "effect": "extends",
+      "note": "Our toon claims ~60% fewer tokens with no published harness; theirs publishes a 0.23x loss against ripgrep."
+    },
+    {
+      "id": "L8",
+      "lift": "GCX1 wire format",
+      "class": "reference only",
+      "target": null,
+      "effortSteps": "0",
+      "effect": "none",
+      "note": "We already have toon, claiming a larger saving. No action."
+    },
+    {
+      "id": "L9",
+      "lift": "The gortex engine itself",
+      "class": "reference only",
+      "target": null,
+      "effortSteps": "0",
+      "effect": "none",
+      "note": "Adopting a whole tool is the studio exception, not the norm - and it duplicates three engines we already run."
+    }
+  ],
+  "liftListNote": "Studio norm applied: grafting a pattern is the norm, adopting a whole tool is the exception. Seven of nine lifts are patterns, one is a drop-in, two are reference only. Nothing here is decided - these are ranked candidates for Gavin.",
+  "corrections": [
+    {
+      "n": 1,
+      "against": "gortex README",
+      "claim": "Extremely fast analysis - a precomputed depth-3 reach index turns blast-radius queries into O(seeds x reach) map lookups",
+      "finding": "DESCRIBES DEAD CODE. reach.BuildIndex has ZERO production callers - 45 references, all in _test.go; every production hit is a comment. The eager pass was deliberately retired at internal/indexer/indexer.go ~4150 with their own numbers: on kubernetes/kubernetes ~2000s to build to save ~10ms per query, a ~200,000-query breakeven. Live mechanism is reach.Lookup, lazy per-seed BFS with memoisation.",
+      "honestFraming": "The capability exists; the advertised mechanism does not run. Blast radius is still fast, just not fast the way the README says.",
+      "severity": "loudest",
+      "verifiedBy": "orchestrator grep of the call graph - not taken on an agent's word"
+    },
+    {
+      "n": 2,
+      "against": "cross-agent conflict within this harvest",
+      "claim": "A4 marked the reach index SOURCED, citing the doc-comment at internal/reach/reach.go:1-5. A1 said dead code, citing the call site.",
+      "finding": "ADJUDICATED, NOT AVERAGED - A1 is correct. Both agents read real text; only one read the call graph. Merging them into 'mostly sourced' would have shipped the README's claim with a citation stapled to it - the exact failure the harvest Iron Law names.",
+      "severity": "method"
+    },
+    {
+      "n": 3,
+      "against": "gortex README",
+      "claim": "175 (configurable) MCP tools",
+      "finding": "178 - confirmed by two independent in-code sources (internal/mcp/promote_call_gate_test.go:37, docs/mcp-facade-v1.md:57). README is stale."
+    },
+    {
+      "n": 4,
+      "against": "gortex README",
+      "claim": "16 resources",
+      "finding": "18 - counted from 13 addResource + 5 addResourceTemplate call sites. docs/mcp.md's own header also says 18."
+    },
+    {
+      "n": 5,
+      "against": "gortex README",
+      "claim": "19 coding agents supported",
+      "finding": "20 - exactly 20 Register() calls at cmd/gortex/init.go:123-142. The README double-counts vscode + copilotcli into one bullet."
+    },
+    {
+      "n": 6,
+      "against": "gortex README",
+      "claim": "257 languages/grammars",
+      "finding": "256 - their own docs/languages.md and the actual extractor file count both say 256. Off by one."
+    },
+    {
+      "n": 7,
+      "against": "gortex docs/server.md:77",
+      "claim": "standalone Next.js 15 UI",
+      "finding": "next 16.2.4 / react 19.2.5 - a full major version out. The UI repo's own AGENTS.md warns 'this is NOT the Next.js you know'."
+    },
+    {
+      "n": 8,
+      "against": "gortex docs/server.md:77",
+      "claim": "Sigma.js 2D + five react-three-fiber 3D modes",
+      "finding": "sigma is ABSENT from package.json, package-lock.json AND src/. There is no 2D renderer at all: Constellation is an @react-three/fiber ORTHOGRAPHIC WebGL scene - custom GLSL point-cloud shader plus line segments, flattened to z=0 with rotation disabled."
+    },
+    {
+      "n": 9,
+      "against": "gortex docs/server.md:77",
+      "claim": "five 3D graph modes",
+      "finding": "FOUR. The app's own CommandPalette.tsx:12 says '4 view modes'. Graph3D is the switcher component's filename, not a fifth style."
+    },
+    {
+      "n": 10,
+      "against": "gortex-web AGENTS.md",
+      "claim": "Strata and City are still SVG",
+      "finding": "Both are react-three-fiber Canvas scenes today. Their own agent-facing doc is stale against their own repo."
+    },
+    {
+      "n": 11,
+      "against": "the harvest's working assumption",
+      "claim": "the web UI is in the gortex repo",
+      "finding": "It is not in the repo at all. docs/server.md:60 points to gortexhq/web. No go:embed of UI assets, no web/ or ui/ directory, no gortex web|ui|serve command. The ts:35 the survey counted are Angular/NestJS DI-parser TEST FIXTURES under bench/fixtures/di/. internal/tui is a Go Bubble Tea terminal dashboard, unrelated to the browser UI."
+    },
+    {
+      "n": 12,
+      "against": "gortex BENCHMARK.md",
+      "claim": "scale table - linux 1.69M nodes, vscode 204K nodes",
+      "finding": "UNSOURCED - no date, no run id, no artifact, unlike every other table in the same file."
+    },
+    {
+      "n": 13,
+      "against": "the dependency-mountain assumption",
+      "claim": "the pinned dependencies carry the look",
+      "finding": "INVERTED. Six pinned deps carry zero rendered pixels - shadcn, @base-ui/react, lucide-react, recharts, mermaid, tw-animate-css all have zero import sites outside their own scaffold files. The design system is 100% hand-authored: globals.css with three OKLCH themes, Icon.tsx with ~40 hand-drawn SVGs, Charts.tsx with hand-rolled SVG. Load-bearing deps are three + @react-three/fiber + drei + graphology-layout-forceatlas2.",
+      "doctrineNote": "The standing rule is never strip a dependency because it is heavy - ask what it CARRIES. This is the mirror case and proves the same rule: you cannot tell what carries the look from the manifest. Lifting this dependency list would have delivered none of the screenshot."
+    },
+    {
+      "n": 14,
+      "against": "the DGS plan shelf blurb",
+      "claim": "code-review-graph INSTALLED 2026-09-12 (v4.17.0)",
+      "finding": "The true version is 2.3.8/2.3.9. 4.17.0 is the PRISM PLUGIN's version - the blurb conflates the two. This correction overturned a premise stated in this harvest's own agent brief."
+    },
+    {
+      "n": 15,
+      "against": "the DGS plan shelf blurb",
+      "claim": "code-review-graph - 31,000 stars",
+      "finding": "UNVERIFIED offline. Flagged, not asserted. No web access this stage."
+    },
+    {
+      "n": 16,
+      "against": "workgraph node N94",
+      "claim": "Kayla's prism-brainstorm hub on :51900",
+      "finding": "UNCONFIRMED. 51900 appears ONLY inside the workgraph JSON itself - no code or config claims it. The documented port is 52341 (skills/prism-brainstorm/visual-companion.md). NOT silently corrected: it is Gavin's own note, and whether this was a typo or an ephemeral dev port is his call."
+    }
+  ],
+  "metricSources": {
+    "ironLawVerdict": "The failure this harvest exists to catch - a third party's measurement of the PROBLEM repeated as the tool's RESULT - DID NOT RECUR. Every gortex headline number traces to a gortex-authored harness in bench/, run against its own repo or real external repos. Ripgrep baselines are gortex's own wrapper runs, not quoted third-party figures.",
+    "rows": [
+      {
+        "claim": "Up to 50x fewer tokens per response",
+        "verdict": "SOURCED, self-measured, thin",
+        "detail": "BENCHMARK.md:80-92. n=8 hand-picked queries, single corpus. True range 0.23x-94.5x. BENCHMARK.md:90 DISCLOSES a row where gortex is roughly 4x WORSE than ripgrep - the strongest maturity signal in the survey."
+      },
+      {
+        "claim": "GCX1 - an additional -27% tokens vs JSON",
+        "verdict": "SOURCED, reproducible",
+        "detail": "bench/wire-format/scorecard.md:28, real checked-in scorecard. Caveat: the 20 fixtures are self-authored synthetic tool responses."
+      },
+      {
+        "claim": "precomputed depth-3 reach index",
+        "verdict": "DESCRIBES DEAD CODE",
+        "detail": "See corrections[1]. A4 initially read this as SOURCED from the doc-comment; the call graph says otherwise."
+      },
+      {
+        "claim": "embedded GloVe-50d, 3.8 MB",
+        "verdict": "EXACT",
+        "detail": "3,830,458 bytes on disk. But ZERO licence attribution for the model in NOTICE or THIRD_PARTY_NOTICES.md."
+      },
+      {
+        "claim": "SLSA Level 3 / Sigstore signed / VirusTotal 0-91 / OpenSSF Scorecard",
+        "verdict": "CONFIRMED REAL",
+        "detail": "Actual .github/workflows configuration, not decorative badges."
+      },
+      {
+        "claim": "SWE-bench results and agent-graded eval",
+        "verdict": "METHODOLOGY ONLY, ZERO NUMBERS",
+        "detail": "docs/04-evaluation/README.md:11; BENCHMARK-SWE.md is entirely TBD. So the token saving is a measured RETRIEVAL property, not a measured OUTCOME property - different claims, only one with evidence."
+      },
+      {
+        "claim": "stars / community size",
+        "verdict": "UNKNOWN-FROM-CLONE",
+        "detail": "No web access this stage. Only in-repo signals observed (Discord badge, trendshift id, mcptoplist). Not guessed."
+      },
+      {
+        "claim": "test suite",
+        "verdict": "MEASURED",
+        "detail": "4,574 Go files of which 2,701 are tests. CI tracks coverage; no enforced minimum found. Their own CLAUDE.md self-reports a file count stale by ~3.4x."
+      }
+    ]
+  },
+  "doNotCopy": {
+    "engine": [
+      "Unauthenticated-by-default HTTP and pprof - safety lives only in the CLI callers, not in the server package (internal/server/auth.go:9-27)",
+      "CORS defaults to *",
+      "178 tools is sprawl that the 21-tool facade exists to paper over",
+      "gortex call BYPASSES the facade's tool-name authorization boundary from the CLI",
+      "Single-writer-mutex SQLite serialization",
+      "A prior OOM in LSH clone detection on a 150k-item corpus (since fixed with streaming plus a bounded dedup map)",
+      "Subprocess crash-isolation is required because native grammars crash"
+    ],
+    "ui": [
+      "GET /v1/graph has ZERO pagination - their own code comment estimates a ~32MB pointer slice for a 4M-edge repo, before JSON overhead",
+      "ForceAtlas2 runs SYNCHRONOUSLY on the main thread (non-worker build)",
+      "A dead focus= deep-link param",
+      "An inert caveat-filter checkbox group",
+      "A legend that describes a colour mapping the canvas does not actually use",
+      "Scoped requests silently zero out stats"
+    ],
+    "docs": [
+      "README.md, docs/server.md, AGENTS.md and their own CLAUDE.md are each stale against their own code. The pattern to avoid is documentation that is never gated against the source - eleven of this harvest's sixteen corrections are doc-vs-code drift."
+    ]
+  },
+  "surfaces": {
+    "counts": {
+      "webAppsWithDevScript": 28,
+      "liveHtmlCards": 93,
+      "liveHtmlMirroredInPlan": 9,
+      "liveHtmlOrphaned": 84,
+      "tuis": 4,
+      "desktopTargets": 12,
+      "serversWithConfirmedPorts": 8
+    },
+    "portMap": [
+      { "port": 6767, "owner": "Prism agent daemon", "evidence": "ecosystem doctrine" },
+      { "port": 6780, "owner": "Prism broker", "evidence": "ecosystem doctrine" },
+      { "port": 7456, "owner": "prism-design-engine", "evidence": "A6" },
+      { "port": 7457, "owner": "prism-design-engine", "evidence": "A6" },
+      { "port": 5123, "owner": "Cinopsis compare viewer", "evidence": "A6 + workgraph N94" },
+      { "port": 8888, "owner": "Jupyter", "evidence": "A6" },
+      { "port": 7520, "owner": "3D-gen", "evidence": "A6" },
+      { "port": 9749, "owner": "codebase-memory-mcp graph-ui", "state": "RUNNING (confirmed via netstat)", "dirVerified": "C:/Users/digit/GriotMeta/codebase-memory-mcp/graph-ui", "listedAnywhere": false },
+      { "port": 5174, "owner": "griot-ecosystem-viz", "listedAnywhere": false },
+      { "port": 51920, "owner": "griot-seed COMPOSE companion", "evidence": ".claude/skills/.prism/griot-seed-companion-report.json" },
+      { "port": 52341, "owner": "prism-brainstorm visual companion", "evidence": "skills/prism-brainstorm/visual-companion.md" },
+      { "port": 52342, "owner": "prism-gavel cockpit", "evidence": "dgs-plan-update + griot-suite-context SKILL.md" },
+      { "port": 9333, "owner": "Chrome CDP - not an app surface", "evidence": "A6" }
+    ],
+    "collisions": [
+      { "port": 3000, "claimants": ["Valence web", "agentlens web", "prism-design-engine web"], "guard": "none" },
+      { "port": 5173, "claimants": ["prism-installer", "prism-mobile website", "prism-vscode webview x3", "quiz-assistant", "keylink-scaffold", "Prism docs"], "guard": "none" }
+    ],
+    "buriedRanked": [
+      "codebase-memory-mcp/graph-ui :9749 - a finished graph web UI over OUR OWN code graph, running right now, referenced by no skill, doc or artifact",
+      "griot-ecosystem-viz :5174 - same shape",
+      "Prism Design Studio",
+      "prism-cli TUI",
+      "lucid TUI",
+      "prism-mobile website/server",
+      "Cinopsis viewer.html cockpit",
+      "the 84 orphaned codex cards in griot-live-artifacts/live/"
+    ],
+    "burialEvidence": "A grep for 9749 and 5174 across .claude/skills, Prism/skills and griot-live-artifacts returns ZERO hits. This is positive evidence of burial, not absence of evidence.",
+    "prismCli": {
+      "workgraphView": false,
+      "codeGraphView": false,
+      "evidence": "zero-match repo-wide grep against NewModel()'s 6 wired plugins",
+      "verdict": "hypothesis CONFIRMED - it knows worktrees and stories only"
+    },
+    "coverageCaveat": "GBFolio's real code lives at C:/Users/digit/GBFolio and Developer/gbfolio-*, OUTSIDE the assigned roots, and was NOT searched. Kweli, Damus, Sigil, Ashe, Kente and Graft have no local app directory under the assigned roots. GriotMeta was sampled, not walked exhaustively. Completeness is not claimed beyond this."
+  },
+  "shelf": {
+    "searched": true,
+    "tool": "griot-potluck-search",
+    "plan": "live/dgs-definitive-plan.html",
+    "itemsScanned": 1354,
+    "gortexOnShelf": false,
+    "gortexPlanMention": "amendPass49 note plus workgraph S13/B49 only - no oss-inspo row",
+    "familyPresent": [
+      { "name": "Understand-Anything", "slug": "Egonex-AI/Understand-Anything", "decision": "undecided/later" },
+      { "name": "Code Review Graph", "slug": "tirth8205/code-review-graph", "decision": "adopt/now", "note": "INSTALLED - but the blurb's version (4.17.0) and star count (31,000) are both suspect. See corrections 14 and 15." },
+      { "name": "codebase-memory-mcp", "slug": "DeusData/codebase-memory-mcp", "decision": "undecided/later", "note": "Gavin runs his OWN fork, TheDigitalGriot/codebase-memory-mcp, MIT" },
+      { "name": "Graft (OSS)", "slug": "unverified", "decision": "undecided/later" },
+      { "name": "LadybugDB", "slug": "LadybugDB/ladybug", "decision": "adopt/now" }
+    ]
+  },
+  "openItems": [
+    "S13 scope: the harvest's finding is that this is mostly a LISTING and ROUTING problem, not a build-a-graph-view problem. Three UIs exist and one is running on :9749.",
+    "Shelf gap: gortex is not on the Potluck shelf. Adding it plus a paired oss-inspo row and the derived mirror is a dgs-plan-update call, which this stage does not make.",
+    "Shelf data quality: code-review-graph's blurb version (4.17.0 -> 2.3.8) and its 31,000-star claim both need correcting or verifying at source.",
+    "Three engines, ~1.07GB, one caller: code-review-graph is installed, indexed at 455MB, and wired into ZERO skills or agents - invariant I8 territory. Consolidation vs specialisation is a decision, not a defect.",
+    "LIVE DEFECT: GitNexus FTS and vector search both report unavailable on this platform - caught by our own scripts/verify-code-intel.mjs (4 pass / 1 fail).",
+    "codebase-memory-mcp tool-count drift: 14 real tools; CLAUDE.md and graph-navigator's frontmatter both say 11.",
+    "Licence ruling if L1 or L2 proceed: the engine is Apache-2.0, the UI is PolyForm-Small-Business-based. Facts recorded as fields; the call is Gavin's alone."
+  ],
+  "contractCompliance": {
+    "D1": "griot-harvest invoked and followed - survey script run unmodified, shelf checked before any web search, one agent per pattern, landing zone grounded by a separate agent.",
+    "D2": "Every capability row cites evidence on both sides. The single ABSENT row (embeddable in-process library) records the search that failed.",
+    "D3": "All nine axes covered as their own rows - what is indexed, how built/refreshed, where stored, how queried, what it renders, agent integration, performance claims with benchmarks, licence and language, maturity signals.",
+    "D4": "The web UI has its own deep section, grounded in the UI SOURCE after cloning gortexhq/web - not in the screenshot. Serving code, stack, data contract, interactions and the liftability split are all cited.",
+    "D5": "Nine lifts, each with class, named Griot target, effort in steps, and what it replaces or extends. Studio norm stated: grafting is the norm, adopting is the exception.",
+    "D6": "Surface inventory with grouped counts, a port map, two real collisions, a ranked buried list, and an explicit earned coverage caveat.",
+    "D7": "READ ONLY upheld. No commits, no pushes, no publishes. Nothing modified in gortex, gortex-web, or any Griot repo. Only the three contract outputs plus gitignored scratch were written. No decision taken that is Gavin's - every one is recorded in openItems."
+  },
+  "deviations": [
+    {
+      "what": "Cloned gortexhq/web into GriotSandbox/gortex-web/ during the stage",
+      "why": "D4 requires the web UI to be grounded in code, and docs/server.md:60 established the UI is not in the engine repo. Used the harvest skill's own survey script, whose step 1 clones into the sandbox. Touches no Griot repo and no gortex file. Without it, D4 would have rested on a single line of their prose."
+    },
+    {
+      "what": "Agent detail written to .prism/local/gortex-harvest/ rather than per-tool docs in .prism/shared/research/",
+      "why": "Reconciles the skill's I2/I3 requirement (bulk detail on disk, never in the orchestrator's context) with D7 (only the three contract outputs). .prism/local/ is gitignored at .gitignore:53, so nothing tracked changed."
+    }
+  ],
+  "provenance": {
+    "agents": 7,
+    "method": "Each agent was given the prior hypothesis verbatim and labelled unverified, told to attack it, required to cite file:line for every claim and to name the source of every metric, asked explicitly what NOT to copy, and bounded to a ~10-line return with detail on disk.",
+    "correctionsProduced": 16,
+    "correctionsBreakdown": "11 against gortex's own documentation, 1 cross-agent conflict adjudicated at the call graph, 2 against the DGS shelf, 1 against this harvest's own agent brief, 1 against workgraph N94's recorded port"
+  }
+}

@@ -57,7 +57,8 @@
     "amendPass49_2026_09_22": "Gavin's note: a Griot code-intel workspace in Djeli (Griot Operations / Ceremonies), sparked by gortex",
     "amendPass50_2026_09_22": "Gavin caught the layer conflation; plan chip defect fixed",
     "amendPass51_2026_09_22": "nine tracking systems locked in the ontology; card-gate and registry findings",
-    "amendPass52_2026_09_22": "gortex is multi-repo: it targets layer 4; ontology codex render has no owner"
+    "amendPass52_2026_09_22": "gortex is multi-repo: it targets layer 4; ontology codex render has no owner",
+    "amendPass53_2026_09_22": "gortex harvest landed: consolidation finding, nine ranked lifts, port open-ask"
   },
   "groups": [
     {
@@ -4434,6 +4435,57 @@
         "evidence": "live/griot-ontology-codex.html mtime 2026-09-11 05:46 against griot-ontology 5e6668b today; propagate.ps1 is the only script in that repo and it syncs copies, it does not render.",
         "result": "flagged-not-fixed - the render step has no owner."
       }
+    },
+    {
+      "id": "wg:djeli-branch:N103",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N103",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "Three code-intel engines, about 1.07GB of indexes, and almost no callers - the harvest found consolidation, not a missing capability",
+      "description": "gortex has no capability we lack; it has one binary, one store, one daemon, one UI, one install. We have codebase-memory-mcp (94,184 nodes / 196,191 edges, 275MB), GitNexus (43,693 symbols / 96,170 rels, 339MB) and code-review-graph (455MB). code-review-graph is wired into ZERO skills or agents. Only graph-navigator touches a graph at all; locator, analyzer and pattern-finder are grep-only. Our three servers expose about 61 tools with no facade, against their 178 behind a 21-tool facade. LIVE DEFECT: GitNexus text and vector search both report unavailable on this machine, caught by our own verify-code-intel script (4 pass / 1 fail). Also: cmm exposes 14 tools while CLAUDE.md and the graph-navigator frontmatter both say 11.",
+      "verification": {
+        "evidence": "gortex-harvest-report.json capabilities (12 rows, both sides cited) and openItems O4, O5, O6; scripts/verify-code-intel.mjs run this stage.",
+        "result": "flagged-not-fixed - consolidation vs specialisation is Gavin's call, the GitNexus search defect is a fix."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S15",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S15",
+      "kind": "suggestion",
+      "group": "suggested",
+      "state": "awaiting-disposition",
+      "direction": "inbound",
+      "title": "Nine ranked lifts from gortex - one drop-in, six patterns, two reference only",
+      "description": "L1 theme/icon/chart system into viz-templates and the Djeli ops tab (drop-in, needs a Griotwave ruling). L2 the four view modes over our workgraph for the Djeli Griot Operations tab (pattern; our workgraph already satisfies their renderer data contract and no graph component imports their API layer). L3 a compact tool facade over our three servers. L4 merge-not-overwrite agent-config wiring for propagate and plugin-update. L5 a bounded subgraph endpoint for the cmm graph UI. L6 an embeddable in-process library for cmm, our one absent capability. L7 an honest benchmark harness for toon. L8 GCX1 and L9 the engine itself are reference only.",
+      "verification": {
+        "evidence": "gortex-harvest-report.json lifts (9 rows with class, target, effort); web UI seam: components/graph/* import no API layer, everything arrives as props from one view file.",
+        "result": "awaiting-disposition - Gavin ranks and rules; licence check owed if L1 or L2 proceed (engine Apache-2.0, UI on a PolyForm-Small-Business licence)."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA22",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA22",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Port 51900 for the brainstorm hub appears only in your own note - the documented port is 52341",
+      "description": "The harvest found no source for 51900 outside the workgraph node written from Gavin's session note; prism-brainstorm documents its visual companion on 52341. Deliberately not corrected silently, because it is Gavin's own observation and he may have run it on a custom port.",
+      "verification": {
+        "evidence": "gortex-harvest-report.json corrections C16; surface inventory lists 52341 for the brainstorm companion and 52342 for the gavel cockpit.",
+        "result": "open - Gavin confirms which port he saw."
+      }
     }
   ],
   "edges": [
@@ -5840,6 +5892,30 @@
       "to": "wg:djeli-branch:B50",
       "kind": "splinter",
       "label": "found while locking the tracking systems"
+    },
+    {
+      "from": "wg:djeli-branch:B49",
+      "to": "wg:djeli-branch:S15",
+      "kind": "splinter",
+      "label": "the ranked lift list"
+    },
+    {
+      "from": "wg:djeli-branch:B49",
+      "to": "wg:djeli-branch:N103",
+      "kind": "splinter",
+      "label": "consolidation finding"
+    },
+    {
+      "from": "wg:djeli-branch:N103",
+      "to": "wg:djeli-branch:N94",
+      "kind": "ontology",
+      "label": "three engines, three UIs, nothing lists them"
+    },
+    {
+      "from": "wg:djeli-branch:S15",
+      "to": "wg:djeli-branch:S13",
+      "kind": "outbound",
+      "label": "L1 and L2 land in the Djeli operations workspace"
     }
   ],
   "stats": {
@@ -5848,7 +5924,7 @@
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 234,
+    "edgeCount": 238,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -6567,6 +6643,16 @@
         "N102"
       ],
       "newEdges": 3,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass53_2026_09_22_2026_09_22": {
+      "newNodes": [
+        "N103",
+        "S15",
+        "OA22"
+      ],
+      "newEdges": 4,
       "corrections": [],
       "refused": []
     }
