@@ -55,7 +55,8 @@
     "amendPass45_2026_09_21": "griot-closeout landed: S12, output style, CLI pill seed, drift x7, skills clone reconciled, potluck closes",
     "amendPass47_2026_09_22": "codex-plan-sync reverse pass + epic verdicts",
     "amendPass49_2026_09_22": "Gavin's note: a Griot code-intel workspace in Djeli (Griot Operations / Ceremonies), sparked by gortex",
-    "amendPass50_2026_09_22": "Gavin caught the layer conflation; plan chip defect fixed"
+    "amendPass50_2026_09_22": "Gavin caught the layer conflation; plan chip defect fixed",
+    "amendPass51_2026_09_22": "nine tracking systems locked in the ontology; card-gate and registry findings"
   },
   "groups": [
     {
@@ -4347,6 +4348,57 @@
         "evidence": "N95, N96, N97 plus the app-codex gap raised with Gavin 2026-09-22.",
         "result": "awaiting-disposition - Gavin picks the shape before any build."
       }
+    },
+    {
+      "id": "wg:djeli-branch:B50",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B50",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "outbound",
+      "title": "The nine tracking systems documented in the ontology and propagated - shape, owner, gate, and the citation direction between them",
+      "description": "New locked section: branch workgraph, branch-capture codex, project workgraph, global index, project/app codex pages, the DGS plan as backlog plus the one decision store, the drift and gold ledgers, the Meridian surfaces, and the ontology itself. Plus the citation rule (a record lives in one system and is cited by the others, never copied) and a REGISTRATION rule - an unlisted surface does not exist and will rot, which is the class N94 named.",
+      "verification": {
+        "evidence": "griot-ontology 5e6668b, section '# the tracking systems - each has its own shape, owner and gate (standing rule - locked 2026-09-22)'; propagate.ps1 synced ~/.claude/CLAUDE.md, the agent-ontology mirror, ~/.codex/AGENTS.md and 15 repo roots; output-style parity OK.",
+        "result": "done - grounded in counts read this session (3 branch graphs, 42 brainstorm sessions, 3 story epics, index 804/778 at 2026-09-12, 50 codex pages, drift 78, gold 8)."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N99",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N99",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "verify-cards reports a card stale straight after a publish whose read-back matched byte for byte",
+      "description": "Right after DGS v52 and Branch Capture v31 were published and read back identical to the published files, the gate listed both as stale with a missingKB delta (46KB and 41KB). So its measure is not published body content. Four of its six stale rows are 4-5KB deltas of the same shape.",
+      "verification": {
+        "evidence": "verify-cards.ps1 run 2026-09-22 14:11: CARDS_OUT_OF_SYNC=8, 84 in sync, 6 stale, 2 no-card; read-backs of both cards byte-identical to the published files.",
+        "result": "flagged-not-fixed - same family as the earlier card-gate defect."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N100",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N100",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "Two codexes with live cards are reported as having no card - a registry gap, not a missing card",
+      "description": "verify-cards lists griot-branch-codex-branch-capture-codex and gbfolio-branch-capture-codex as NO CARD, but both have cards. Their CODEXES/registry rows are missing, so the gate cannot see them.",
+      "verification": {
+        "evidence": "verify-cards.ps1 2026-09-22; cards 1Gic4C4XR93Ua538kZzACP (created this session) and Qucc6tFXG2UDioBm4AddM7.",
+        "result": "flagged-not-fixed - fix by upserting their registry rows."
+      }
     }
   ],
   "edges": [
@@ -5717,15 +5769,33 @@
       "to": "wg:djeli-branch:B43",
       "kind": "ontology",
       "label": "same family: a sync step that could not fire"
+    },
+    {
+      "from": "wg:djeli-branch:N95",
+      "to": "wg:djeli-branch:B50",
+      "kind": "splinter",
+      "label": "the conflation, written down"
+    },
+    {
+      "from": "wg:djeli-branch:B50",
+      "to": "wg:djeli-branch:N94",
+      "kind": "ontology",
+      "label": "registration rule answers the buried-surface gap"
+    },
+    {
+      "from": "wg:djeli-branch:N100",
+      "to": "wg:djeli-branch:N97",
+      "kind": "ontology",
+      "label": "same two unwired branch graphs"
     }
   ],
   "stats": {
-    "totalBranches": 76,
+    "totalBranches": 77,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 228,
+    "edgeCount": 231,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -6425,6 +6495,16 @@
         "S14"
       ],
       "newEdges": 4,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass51_2026_09_22_2026_09_22": {
+      "newNodes": [
+        "B50",
+        "N99",
+        "N100"
+      ],
+      "newEdges": 3,
       "corrections": [],
       "refused": []
     }
