@@ -1,0 +1,25 @@
+# STAGE CONTRACT - codex-plan-sync forward pass + story reconcile (2026-09-22 evening, headless)
+
+Gavin invoked /dgs-plan-update with the argument /prism:prism-codex-plan-sync right after the gortex harvest landed (griot-live-artifacts 42561e8 + e4ce2e2; DGS card v53; djeli-codex v8; workgraph 228/238). Full green light stands EXCEPT the Hotwater Creative / Kayla rollout. Never call the Prism workflow RPIV. Unknowns are recorded as unknown.
+
+## Inputs (exact paths)
+- C:\Users\digit\GriotMeta\griot-live-artifacts\live\dgs-definitive-plan.html (the master; 13 items added today incl. the nine gortex lifts, the S13 Djeli code-intel workspace, the GitNexus search defect and the cmm tool-count drift)
+- C:\Users\digit\GriotMeta\griot-live-artifacts\live\djeli-codex.html (carries the new OPEN thread for the Griot code-intel workspace) and live\prism-codex.html (carries the gortex harvest row)
+- C:\Users\digit\GriotApps\Prism\.prism\stories\ (3 epics: ceremony-review-audit-gate 4/4 done, prism-gavel 5/5 done, channel-adoption 0/25 open at 49 days) and the two loose stores at the .prism\stories root (workgraph OA21)
+- C:\Users\digit\GriotMeta\griot-live-artifacts\live\djeli-branch-capture-workgraph.json (S13, S14, S15, N94-N103, OA20-OA22)
+- Harvest evidence: .prism\gortex-harvest-report.json and .prism\shared\research\2026-09-22-gortex-vs-griot-codeintel.md
+- OUTPUTS: heartbeat .prism\codex-plan-sync-eve-progress.txt ; report .prism\codex-plan-sync-eve-report.json
+
+## Locked decisions
+- D1 Run /prism:prism-codex-plan-sync exactly as the skill defines. Direction FORWARD (codex and plan to stories), with the stage-4 staleness gate as the reason this pass exists.
+- D2 GAVEL BOUNDARY, load-bearing: an item whose decision is Gavin's is NOT decomposed. Surface it as an open decision with options and stop there. That covers the nine gortex lifts L1-L9, the gortex adopt/trial/defer/pass ruling itself (POT_T row is deliberately undecided), the S13 workspace SCOPE, S14 the four-layer sync fix, and the app-codex fan-out A vs B. Decomposing any of these would decide them by writing them down as work - do not.
+- D3 DO decompose the work that needs no ruling, because each is a defect or a mechanical gap with an owner: (a) GitNexus text and vector search report unavailable on this machine, caught by scripts/verify-code-intel.mjs 4 pass / 1 fail (harvest O5); (b) codebase-memory-mcp exposes 14 tools while CLAUDE.md and the graph-navigator frontmatter say 11 (O6); (c) the global workgraph index is 10 days stale and nothing re-runs the generator (workgraph N96); (d) verify-cards reports cards stale immediately after a publish whose read-back matched byte for byte (N99); (e) two codexes with live cards were reported NO CARD until their registry rows were added, so the gate needs to read the registry it now has (N100); (f) the Griot Ontology Codex render has no owner and is 11 days behind the ontology (N102). Each becomes a story with acceptance criteria and a verification command, in ONE new epic keyed griot-codeintel-hygiene, using stable STORY-NNN ids per the stories contract.
+- D4 Reconcile the three existing epics against git evidence: keep ceremony-review-audit-gate and prism-gavel as done; do NOT re-open them. channel-adoption stays as it is and is reported, not re-scoped - that is workgraph OA20, Gavin's call. Never delete a story; never rename an existing id. Report the two loose stores at the stories root (OA21) without moving them.
+- D5 Epic back-links: the new epic gets its plan back-link file under .prism\shared\plans\ so the propagation-targets law is satisfied and stage 4 can see it.
+- D6 Commit and push Prism with ref equality. Do NOT publish any artifact and do NOT edit the DGS plan HTML in this run - the Cowork session runs the dgs-plan-update loop after this and owns both. If the pass implies a plan edit, NAME it in the report instead of making it.
+
+## Process (heartbeat after each: STEP n START | STEP n OK detail | STEP n FAIL reason)
+1 Load the skill and its references; state the stage-4 verdict for every epic. 2 Read the two codexes and the plan for what changed today; list every candidate. 3 Split candidates by the D2/D3 boundary and record the split. 4 Decompose only the D3 set into the new epic with acceptance criteria and verification commands. 5 Write the epic back-link. 6 Reconcile the three existing epics per D4. 7 Commit and push Prism, ref equality. 8 Report JSON: stage-4 verdicts, the decision list for Gavin (with options, none decided), stories created with ids, epics reconciled, plan edits the session must make, propagation targets and their gate state. Terminal line DONE or BLOCKED: reason, written last.
+
+## Success criteria
+Not one Gavin decision decided; every D3 defect has a story with a checkable verification; the new epic has a back-link and stable ids; the three existing epics keep every id; Prism pushed with ref equality; the report names every plan edit left for the session.
