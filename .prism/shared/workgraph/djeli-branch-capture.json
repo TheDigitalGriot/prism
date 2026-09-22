@@ -56,7 +56,8 @@
     "amendPass47_2026_09_22": "codex-plan-sync reverse pass + epic verdicts",
     "amendPass49_2026_09_22": "Gavin's note: a Griot code-intel workspace in Djeli (Griot Operations / Ceremonies), sparked by gortex",
     "amendPass50_2026_09_22": "Gavin caught the layer conflation; plan chip defect fixed",
-    "amendPass51_2026_09_22": "nine tracking systems locked in the ontology; card-gate and registry findings"
+    "amendPass51_2026_09_22": "nine tracking systems locked in the ontology; card-gate and registry findings",
+    "amendPass52_2026_09_22": "gortex is multi-repo: it targets layer 4; ontology codex render has no owner"
   },
   "groups": [
     {
@@ -4399,6 +4400,40 @@
         "evidence": "verify-cards.ps1 2026-09-22; cards 1Gic4C4XR93Ua538kZzACP (created this session) and Qucc6tFXG2UDioBm4AddM7.",
         "result": "flagged-not-fixed - fix by upserting their registry rows."
       }
+    },
+    {
+      "id": "wg:djeli-branch:N101",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N101",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "inbound",
+      "title": "gortex is multi-repo by default - it lands on the one Griot layer that is generated once and left: the global index",
+      "description": "Gavin 2026-09-22: gortex is multi-repo by default so there is a lot to look at and how it relates to our workgraphs/branches. Our shapes are per-capture (three branch workgraphs, each one capture) and per-repo (only Prism has a project workgraph); the ONLY multi-root read we own is the generated index.json, at 804/778 from 2026-09-12. So a multi-repo indexer is not a competitor to the branch graphs - it is a candidate for layer 4, where the gap already is (N96). The harvest must answer: what gortex indexes per repo, how it joins repos, whether its join is a graph our workgraph edges could be projected into, and whether the web UI can show a multi-repo view our branch codexes cannot.",
+      "verification": {
+        "evidence": "Gavin, chat 2026-09-22; index.json generated 2026-09-12 (804/778); live/ holds three branch-capture workgraph JSONs, each scoped to one capture; only Prism carries .prism/shared/workgraph.",
+        "result": "flagged - routed into the running gortex harvest (B49) as a required comparison axis."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N102",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N102",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "The Griot Ontology Codex render is eleven days behind the ontology it renders",
+      "description": "CLAUDE.md gained the skills-save rule (2026-09-21), the output style (2026-09-21) and the nine tracking systems (2026-09-22); its rendered codex page has not been regenerated since 2026-09-11, and propagate.ps1 does not build it.",
+      "verification": {
+        "evidence": "live/griot-ontology-codex.html mtime 2026-09-11 05:46 against griot-ontology 5e6668b today; propagate.ps1 is the only script in that repo and it syncs copies, it does not render.",
+        "result": "flagged-not-fixed - the render step has no owner."
+      }
     }
   ],
   "edges": [
@@ -5787,6 +5822,24 @@
       "to": "wg:djeli-branch:N97",
       "kind": "ontology",
       "label": "same two unwired branch graphs"
+    },
+    {
+      "from": "wg:djeli-branch:N101",
+      "to": "wg:djeli-branch:B49",
+      "kind": "inbound",
+      "label": "required axis for the harvest"
+    },
+    {
+      "from": "wg:djeli-branch:N101",
+      "to": "wg:djeli-branch:N96",
+      "kind": "ontology",
+      "label": "same layer: the generated global index"
+    },
+    {
+      "from": "wg:djeli-branch:N102",
+      "to": "wg:djeli-branch:B50",
+      "kind": "splinter",
+      "label": "found while locking the tracking systems"
     }
   ],
   "stats": {
@@ -5795,7 +5848,7 @@
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 231,
+    "edgeCount": 234,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -6503,6 +6556,15 @@
         "B50",
         "N99",
         "N100"
+      ],
+      "newEdges": 3,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass52_2026_09_22_2026_09_22": {
+      "newNodes": [
+        "N101",
+        "N102"
       ],
       "newEdges": 3,
       "corrections": [],
