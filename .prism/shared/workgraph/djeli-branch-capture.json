@@ -53,7 +53,8 @@
     "amendPass43_2026_09_21": "Record the DGS #wg-data refresh gap surfaced during the amendPass42 republish",
     "amendPass44_2026_09_21": "Gavin correction: tangents are harnessed; i-have-adhd rule 4 back to reshape",
     "amendPass45_2026_09_21": "griot-closeout landed: S12, output style, CLI pill seed, drift x7, skills clone reconciled, potluck closes",
-    "amendPass47_2026_09_22": "codex-plan-sync reverse pass + epic verdicts"
+    "amendPass47_2026_09_22": "codex-plan-sync reverse pass + epic verdicts",
+    "amendPass49_2026_09_22": "Gavin's note: a Griot code-intel workspace in Djeli (Griot Operations / Ceremonies), sparked by gortex"
   },
   "groups": [
     {
@@ -4209,6 +4210,57 @@
         "evidence": "codex-plan-sync-0921-report.json storesOutsideScope + openDecisions OD-6.",
         "result": "open - fold into an epic or retire, Gavin's call."
       }
+    },
+    {
+      "id": "wg:djeli-branch:N94",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N94",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "Gavin's tools ship web UIs and features he is not using or tracking, because each one is buried under layers of its own app",
+      "description": "Named by Gavin 2026-09-22: a lot of my tools have web ui and features that i am not using or tracking because its hidden away beneath layers. Instances visible in this session alone: the griot-seed COMPOSE companion on :51920, Kayla's prism-brainstorm hub on :51900, the Cinopsis compare viewer on :5123, the prism-gavel cockpit on :52342, the rendered branch codex and the four mirror codex pages, and prism-cli, a compiled Charm TUI that knows worktrees but has no workgraph view. There is no one surface that lists them, says which are running, and opens them.",
+      "verification": {
+        "evidence": "Gavin, chat 2026-09-22; ports and surfaces observed live this session; workgraph finding-prism-cli-tui for the prism-cli case.",
+        "result": "flagged - the gap S13 proposes to close."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S13",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S13",
+      "kind": "suggestion",
+      "group": "suggested",
+      "state": "awaiting-disposition",
+      "direction": "local",
+      "title": "A dedicated Griot code-intel workspace as a Djeli tab, under Griot Operations / Ceremonies",
+      "description": "Gavin's thought, recorded verbatim in intent 2026-09-22: a dedicated griot code intel workspace in djeli, in the Griot Operations / Ceremonies tab. One surface that gathers the code-intel tooling and the web UIs that are currently buried - graph views, the gavel cockpit, brainstorm hubs, codex pages, the code graph itself - and makes them listed, live-statused and openable instead of remembered. Sparked by the gortex web UI (assets/graph.png): a graph view good enough to want in our own operations tab.",
+      "verification": {
+        "evidence": "Gavin, chat 2026-09-22 (gortex link plus the Djeli Griot Operations / Ceremonies tab named directly); N94 for the underlying gap.",
+        "result": "awaiting-disposition - recorded and tracked, not yet scoped."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B49",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B49",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "in-progress",
+      "direction": "inbound",
+      "title": "Harvest zzet/gortex and compare it against the Griot code-intel suite (codebase-memory-mcp, graph-navigator, graphify, prism-wiki)",
+      "description": "Run /prism:griot-harvest over gortex, then map both stacks side by side - what each indexes, how it is queried, what it renders - individually and together, so the lift list is grounded. The web UI (assets/graph.png) is the spark and the first candidate to lift into the Djeli operations tab (S13).",
+      "verification": {
+        "evidence": "https://github.com/zzet/gortex and its assets/graph.png, brought by Gavin 2026-09-22; harvest skill present device-side at prism skills/griot-harvest.",
+        "result": "in-progress - harvest running; comparison and lift list to follow."
+      }
     }
   ],
   "edges": [
@@ -5537,15 +5589,33 @@
       "to": "wg:djeli-branch:OA21",
       "kind": "splinter",
       "label": "OD-6"
+    },
+    {
+      "from": "wg:djeli-branch:N94",
+      "to": "wg:djeli-branch:S13",
+      "kind": "splinter",
+      "label": "the workspace this gap asks for"
+    },
+    {
+      "from": "wg:djeli-branch:B49",
+      "to": "wg:djeli-branch:S13",
+      "kind": "inbound",
+      "label": "gortex web UI is the spark"
+    },
+    {
+      "from": "wg:djeli-branch:S13",
+      "to": "wg:djeli-branch:finding-prism-cli-tui",
+      "kind": "ontology",
+      "label": "same shape: a built surface nothing routes to"
     }
   ],
   "stats": {
-    "totalBranches": 75,
+    "totalBranches": 76,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 221,
+    "edgeCount": 224,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -6225,6 +6295,16 @@
       "stateChanges": [
         "N93 flagged-not-fixed -> resolved-done"
       ]
+    },
+    "amendPass49_2026_09_22_2026_09_22": {
+      "newNodes": [
+        "N94",
+        "S13",
+        "B49"
+      ],
+      "newEdges": 3,
+      "corrections": [],
+      "refused": []
     }
   },
   "foreignLayer": {
