@@ -52,7 +52,8 @@
     "amendPass42_2026_09_21": "2026-09-21 session sync: griot-seed v1/xplat/companion/fix, account skill saves, gold 8 + ontology skill-save rule, i-have-adhd comb and ontology/ICM alignment comb feeding the Griot output style",
     "amendPass43_2026_09_21": "Record the DGS #wg-data refresh gap surfaced during the amendPass42 republish",
     "amendPass44_2026_09_21": "Gavin correction: tangents are harnessed; i-have-adhd rule 4 back to reshape",
-    "amendPass45_2026_09_21": "griot-closeout landed: S12, output style, CLI pill seed, drift x7, skills clone reconciled, potluck closes"
+    "amendPass45_2026_09_21": "griot-closeout landed: S12, output style, CLI pill seed, drift x7, skills clone reconciled, potluck closes",
+    "amendPass47_2026_09_22": "codex-plan-sync reverse pass + epic verdicts"
   },
   "groups": [
     {
@@ -4142,13 +4143,71 @@
       "localId": "N93",
       "kind": "finding",
       "group": "new-findings",
-      "state": "flagged-not-fixed",
+      "state": "resolved-done",
       "direction": "local",
       "title": "worktrunk has two oss-inspo mirror items in the DGS plan - the one-shelf-row to one-plan-item rule is broken",
       "description": "One from chat, one from potluck:d4Wfpg6Y7J4; both set identically in 0b9a680 and left in place rather than deleting either.",
       "verification": {
         "evidence": "Subagent readback of the plan at 0b9a680.",
         "result": "flagged-not-fixed - dedupe via dgs-plan-update."
+      },
+      "priorState": "flagged-not-fixed",
+      "advanced": {
+        "advancedAt": "2026-09-22 amendPass48_2026_09_22",
+        "from": "flagged-not-fixed",
+        "to": "resolved-done",
+        "evidence": "Duplicate worktrunk oss-inspo item collapsed to one in griot-live-artifacts 3d42b6f; measured resolved by the codex-plan-sync pass (report OD-5, 5b85c63)."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C25",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": ".prism/shared/plans/2026-09-21-codex-plan-sync-CONTEXT.md",
+      "localId": "C25",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "done",
+      "direction": "local",
+      "title": "prism-codex-plan-sync reverse pass: today's build harvested into prism-codex and djeli-codex, three stale epics given verdicts",
+      "description": "Reverse direction (build to codex) from git scopes: prism-codex amend 2026-09-21-cli-workgraph-seed (pills seed, prism-cli is a Charm TUI that knows worktrees not the workgraph, S12); djeli-codex amend 2026-09-21-worktrunk-split. Epics: ceremony-review-audit-gate 4/4 done and prism-gavel 5/5 done (5 flips, commit anchors plus verify-ceremony-gate 7/7 PASS); channel-adoption 0/25 open at 49 days. Six open decisions recorded, none decided.",
+      "verification": {
+        "evidence": "Prism e000eb3 and griot-live-artifacts 5b85c63, both REF_EQUAL; report .prism/codex-plan-sync-0921-report.json; 34 story ids unchanged, 0 deleted.",
+        "result": "done - codex cards republished after this pass; OD-1..OD-6 open for Gavin."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA20",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA20",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "channel-adoption epic is 0 of 25 stories at 49 days - still live work, re-scope, or park?",
+      "description": "The only epic on stable STORY-NNN ids; plan back-link resolves (2026-08-04-channel-adoption.md) but nothing in git maps to any of its 25 stories. Recorded as OD-3 by the codex-plan-sync pass.",
+      "verification": {
+        "evidence": "codex-plan-sync-0921-report.json epics[channel-adoption] verdicts done 0 / stillOpen 25; openDecisions OD-3.",
+        "result": "open - Gavin's call."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA21",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA21",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Two story stores sit loose at .prism/stories root with no epic back-link, one mixing id conventions",
+      "description": "Recorded as OD-6; they sit outside the epic-keyed layout the skill emits, so no gate reads them.",
+      "verification": {
+        "evidence": "codex-plan-sync-0921-report.json storesOutsideScope + openDecisions OD-6.",
+        "result": "open - fold into an epic or retire, Gavin's call."
       }
     }
   ],
@@ -5454,15 +5513,39 @@
       "to": "wg:djeli-branch:N88",
       "kind": "ontology",
       "label": "resolves the flag"
+    },
+    {
+      "from": "wg:djeli-branch:C25",
+      "to": "wg:djeli-branch:B45",
+      "kind": "inbound",
+      "label": "harvested into prism-codex"
+    },
+    {
+      "from": "wg:djeli-branch:C25",
+      "to": "wg:djeli-branch:N91",
+      "kind": "ontology",
+      "label": "OD-1 carries the audit fix options"
+    },
+    {
+      "from": "wg:djeli-branch:C25",
+      "to": "wg:djeli-branch:OA20",
+      "kind": "splinter",
+      "label": "OD-3"
+    },
+    {
+      "from": "wg:djeli-branch:C25",
+      "to": "wg:djeli-branch:OA21",
+      "kind": "splinter",
+      "label": "OD-6"
     }
   ],
   "stats": {
-    "totalBranches": 74,
+    "totalBranches": 75,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 217,
+    "edgeCount": 221,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -6123,6 +6206,24 @@
         "S11 awaiting-disposition -> ruled-and-applied",
         "OA18 open -> closed",
         "N88 flagged-not-fixed -> resolved-done"
+      ]
+    },
+    "amendPass47_2026_09_22_2026_09_22": {
+      "newNodes": [
+        "C25",
+        "OA20",
+        "OA21"
+      ],
+      "newEdges": 4,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass48_2026_09_22_2026_09_22": {
+      "advanced": [
+        "N93"
+      ],
+      "stateChanges": [
+        "N93 flagged-not-fixed -> resolved-done"
       ]
     }
   },
