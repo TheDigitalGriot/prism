@@ -4257,13 +4257,20 @@
       "localId": "B49",
       "kind": "branch",
       "group": "untracked",
-      "state": "in-progress",
+      "state": "done",
       "direction": "inbound",
       "title": "Harvest zzet/gortex and compare it against the Griot code-intel suite (codebase-memory-mcp, graph-navigator, graphify, prism-wiki)",
       "description": "Run /prism:griot-harvest over gortex, then map both stacks side by side - what each indexes, how it is queried, what it renders - individually and together, so the lift list is grounded. The web UI (assets/graph.png) is the spark and the first candidate to lift into the Djeli operations tab (S13).",
       "verification": {
         "evidence": "https://github.com/zzet/gortex and its assets/graph.png, brought by Gavin 2026-09-22; harvest skill present device-side at prism skills/griot-harvest.",
         "result": "in-progress - harvest running; comparison and lift list to follow."
+      },
+      "priorState": "in-progress",
+      "advanced": {
+        "advancedAt": "2026-09-22 amendPass54_2026_09_22",
+        "from": "in-progress",
+        "to": "done",
+        "evidence": "gortex-harvest headless run finished exit 0 with report .prism/gortex-harvest-report.json (12 capability rows, 9 lifts, 16 corrections); recorded in griot-live-artifacts commit 94f0719 and Prism commit 94dd5b2; VERIFY_WORKGRAPH_OK on the same pass."
       }
     },
     {
@@ -6655,6 +6662,14 @@
       "newEdges": 4,
       "corrections": [],
       "refused": []
+    },
+    "amendPass54_2026_09_22_2026_09_22": {
+      "advanced": [
+        "B49"
+      ],
+      "stateChanges": [
+        "B49 in-progress -> done"
+      ]
     }
   },
   "foreignLayer": {
