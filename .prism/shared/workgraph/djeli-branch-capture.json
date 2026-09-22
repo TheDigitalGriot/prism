@@ -51,7 +51,8 @@
     "amendPass41_2026_09_21": "Morning-briefing + Meridian-reflect session. Findings are measured: an 84-repo all-roots scan (git age + working-tree dirtiness) and the artifact's own channel key lists. No corrections this pass.",
     "amendPass42_2026_09_21": "2026-09-21 session sync: griot-seed v1/xplat/companion/fix, account skill saves, gold 8 + ontology skill-save rule, i-have-adhd comb and ontology/ICM alignment comb feeding the Griot output style",
     "amendPass43_2026_09_21": "Record the DGS #wg-data refresh gap surfaced during the amendPass42 republish",
-    "amendPass44_2026_09_21": "Gavin correction: tangents are harnessed; i-have-adhd rule 4 back to reshape"
+    "amendPass44_2026_09_21": "Gavin correction: tangents are harnessed; i-have-adhd rule 4 back to reshape",
+    "amendPass45_2026_09_21": "griot-closeout landed: S12, output style, CLI pill seed, drift x7, skills clone reconciled, potluck closes"
   },
   "groups": [
     {
@@ -3851,13 +3852,20 @@
       "localId": "S11",
       "kind": "suggestion",
       "group": "suggested",
-      "state": "awaiting-disposition",
+      "state": "ruled-and-applied",
       "direction": "local",
       "title": "Ship the Griot output style as a thin router (<60 lines) in the factory, with a named invariant and a propagate.ps1 gate",
       "description": "Three streams: explanatory Insight rail, the adapted i-have-adhd rules, Griot ideology. Router points at CLAUDE.md instead of restating it; lives at L3 in the factory; invariant carries an Upheld-by.",
       "verification": {
         "evidence": "C23 verdicts + C24 ICM delivery recommendation; explanatory-output-style hooks.json SessionStart rail.",
         "result": "awaiting-disposition - build in a fresh session once OA18 rules."
+      },
+      "priorState": "awaiting-disposition",
+      "advanced": {
+        "advancedAt": "2026-09-22 amendPass46_2026_09_21",
+        "from": "awaiting-disposition",
+        "to": "ruled-and-applied",
+        "evidence": "Built as B44 (cdada5a), deployed with sha parity, ontology 4c0e37b."
       }
     },
     {
@@ -3868,13 +3876,20 @@
       "localId": "OA18",
       "kind": "open-ask",
       "group": "open-ask",
-      "state": "open",
+      "state": "closed",
       "direction": "local",
       "title": "Callout names and routes for the Griot output style - Insight, Ruling, Tangent, Drift, Gold?",
       "description": "Tangent conflicts with the btw rule (N85); Drift and Gold callouts must carry status and full axes or stay pointers to the engines.",
       "verification": {
         "evidence": "N85, C24 report items H and M.",
         "result": "open - Gavin to rule."
+      },
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-09-22 amendPass46_2026_09_21",
+        "from": "open",
+        "to": "closed",
+        "evidence": "Gavin locked Insight, Ruling, Tangent, Drift, Gold plus workgraph direction pills, 2026-09-21; enforced by lint-style in digital-griot-skills cdada5a (DONE_LINT_STYLE)."
       }
     },
     {
@@ -3902,13 +3917,20 @@
       "localId": "N88",
       "kind": "finding",
       "group": "new-findings",
-      "state": "flagged-not-fixed",
+      "state": "resolved-done",
       "direction": "local",
       "title": "Desktop ~/.claude/skills clone is 13 behind origin with in-flight edits in five skills",
       "description": "dgs-plan-update, griot-meridian-reflect, griot-suite-context, griot-workgraph-update (amend-workgraph.mjs), ideation_team_skill carry uncommitted edits. Left untouched deliberately.",
       "verification": {
         "evidence": "git status / rev-list on C:/Users/digit/.claude/skills, 2026-09-21.",
         "result": "flagged-not-fixed - never clobber; land or reconcile with Gavin."
+      },
+      "priorState": "flagged-not-fixed",
+      "advanced": {
+        "advancedAt": "2026-09-22 amendPass46_2026_09_21",
+        "from": "flagged-not-fixed",
+        "to": "resolved-done",
+        "evidence": "B47: skills clone 4c20a08 == origin/main, in-flight edits preserved (closeout H1 RECONCILED both passes)."
       }
     },
     {
@@ -3919,13 +3941,20 @@
       "localId": "N89",
       "kind": "finding",
       "group": "new-findings",
-      "state": "flagged-not-fixed",
+      "state": "defect-fixed",
       "direction": "local",
       "title": "No engine refreshes the DGS plan's inline #wg-data block - every amend leaves the plan's Workgraph tab and header tiles stale until someone hand-swaps it",
       "description": "The Cowork sandbox sets connect-src 'none' and frame-src 'none', so the plan cannot fetch the workgraph JSON or iframe the codex. inline-mirror-tabs.js therefore aliases the codex's workgraph-data to the plan's single #wg-data copy, making that block the one source for BOTH the Workgraph tab and the #wgstats tiles. Nothing writes it: amend-workgraph, sync-codex-data, verify-workgraph, rebuild-dgs-mirrors and dgs-sync-all never touch it. It has been refreshed by hand twice (c6c561c for amendPass41; DGS v46 for amendPass42). The griot-workgraph-update SKILL.md step 6 still says the tiles fetch the JSON live, which has been false since the fetch was removed.",
       "verification": {
         "evidence": "griot-live-artifacts: Select-String wg-data over tools/inline-mirror-tabs.js lines 14, 76, 152, 163, 167 (read and alias only, never write); 0 hits in griot-workgraph-update/scripts/*.mjs; live/dgs-definitive-plan.html line 3070 documents connect-src 'none'; git log c6c561c 'wg-data 101->180 nodes, amendPass41'; device plan wg-data read 180/192 after amendPass42 while JSON was 197/207.",
         "result": "flagged-not-fixed - pipeline gap; proposed fix S12 awaits Gavin."
+      },
+      "priorState": "flagged-not-fixed",
+      "advanced": {
+        "advancedAt": "2026-09-22 amendPass46_2026_09_21",
+        "from": "flagged-not-fixed",
+        "to": "defect-fixed",
+        "evidence": "S12 landed in digital-griot-skills 28e3086: sync-codex-data --plan writes the plan #wg-data; verify-workgraph checks four copies (54/54)."
       }
     },
     {
@@ -3953,13 +3982,173 @@
       "localId": "S12",
       "kind": "suggestion",
       "group": "suggested",
-      "state": "awaiting-disposition",
+      "state": "ruled-and-applied",
       "direction": "local",
       "title": "Give sync-codex-data a --plan target that rewrites the DGS #wg-data block under the same drop-guard, and correct SKILL.md step 6",
       "description": "One more target for the existing sync: replace the plan's #wg-data inner text with the codex's workgraph-data text, refusing if the swap would drop a node, and add the plan to verify-workgraph's parity check (four copies, not three). Fix the SKILL.md claim that the tiles fetch live.",
       "verification": {
         "evidence": "N89 evidence; sync-codex-data.mjs already carries the node-drop guard for the codex swap.",
         "result": "awaiting-disposition - Gavin's engine, needs his yes before any edit."
+      },
+      "priorState": "awaiting-disposition",
+      "advanced": {
+        "advancedAt": "2026-09-22 amendPass46_2026_09_21",
+        "from": "awaiting-disposition",
+        "to": "ruled-and-applied",
+        "evidence": "Gavin green light 2026-09-21; built as B43 (28e3086)."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B43",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": ".prism/shared/plans/2026-09-21-griot-closeout-CONTEXT.md",
+      "localId": "B43",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "local",
+      "title": "S12 landed - the DGS plan is the fourth copy in the workgraph sync",
+      "description": "sync-codex-data --plan rewrites the plan's single #wg-data block under the same node-drop guard as the codex swap; verify-workgraph checks four copies; SKILL.md step 6 corrected (the plan cannot fetch; the block feeds both the Workgraph tab and the header tiles).",
+      "verification": {
+        "evidence": "digital-griot-skills 28e3086 (+5d33e6e review fixes); suite 54/54; VERIFY_WORKGRAPH_OK on live files; griot-closeout-progress.txt FINAL STATE 2026-09-21T20:09.",
+        "result": "done - no more hand swaps of #wg-data."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B44",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": ".prism/shared/plans/2026-09-21-griot-closeout-CONTEXT.md",
+      "localId": "B44",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "built-and-live",
+      "direction": "local",
+      "title": "Griot output style - Insight, Ruling, Tangent, Drift, Gold callouts and workgraph direction pills, tangents followed never deferred",
+      "description": "Thin router under 60 body lines pointing at CLAUDE.md; three streams (explanatory Insight rail, adapted i-have-adhd, Griot ideology); callout names locked by Gavin; pills use the dirOf vocabulary; lint-style refuses deferral language, missing callouts or pills, glyph drift and RPIV; invariant tangents-are-followed-never-deferred.",
+      "verification": {
+        "evidence": "digital-griot-skills cdada5a; style suite 78/78; DONE_LINT_STYLE; ~/.claude/output-styles/griot.md sha256 parity; griot-ontology 4c0e37b adds the section and the propagate.ps1 target; CHANGELOG c000303.",
+        "result": "built-and-live on device CLI; Cowork support for output styles undocumented."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B45",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B45",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "inbound",
+      "title": "CLI workgraph view seed - pills.json shared spec + render-pills, grounded in worktrunk (B16) and prism-cli (N15)",
+      "description": "One pill spec read by the chat style and the terminal; render-pills prints workgraph nodes with ANSI pills, addressed by id (worktrunk's address-by-name principle); written so prism-cli can render the same spec with lipgloss.",
+      "verification": {
+        "evidence": "griot-output-style/pills.json + scripts/render-pills.mjs in cdada5a; covered by the 78/78 suite (--help exits 0, unknown flag exits 2).",
+        "result": "done - seed; the prism-cli view itself is the next build."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B46",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B46",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "local",
+      "title": "Seven drift entries through the engine - the four owed from this session plus three the closeout run surfaced itself",
+      "description": "show_widget html param silent success; head-regex ate header; savebar feedback loop; wg-data gap parked in a recap; plus three from the run (including a recurring skill-guard write block).",
+      "verification": {
+        "evidence": "griot-live-artifacts f7811de (69->73) and af984f0 (73->76), pushed.",
+        "result": "done in the ledger; live drift card republish follows this pass."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B47",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B47",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "direction": "local",
+      "title": "Desktop skills clone reconciled to origin with every in-flight edit preserved",
+      "description": "Stash, fast-forward, pop - twice (before and after the stage's own pushes); patch backup and per-file sha256 kept; untracked griot-branch-codex untouched; the 2026-09-15 stash entry kept.",
+      "verification": {
+        "evidence": "griot-closeout report H1: RECONCILED (not restored) both passes; ~/.claude/skills 4c20a08 == origin/main.",
+        "result": "done - supersedes the N88 flag."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N91",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N91",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "The closing ceremony's pre-release audit prints PASS having scanned 0 files on a standalone-skills repo",
+      "description": "Two independent causes: its diff base resolves to main while HEAD is main, so the diff is empty; and every structural check walks a skills/ directory this repo does not have. The run compensated by running the checks on the 10 changed files (no failures).",
+      "verification": {
+        "evidence": "griot-closeout-progress.txt STEP 8 note 2026-09-21T19:59:44.",
+        "result": "flagged-not-fixed - prism-closing-ceremony needs a standalone-skills repo shape."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N92",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N92",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "digital-griot-skills has no version scheme and no tags - the first CHANGELOG entry is keyed by date and stage",
+      "description": "The ceremony's bookend and release phases assume a VERSION or plugin.json; none exists, none was invented.",
+      "verification": {
+        "evidence": "verify-branch-integrated warnings (no VERSION, no tags); CHANGELOG c000303; report openItems (3).",
+        "result": "flagged - version scheme is Gavin's call."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B48",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B48",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "ruled-and-applied",
+      "direction": "inbound",
+      "title": "Potluck closes for the CLI workgraph view - worktrunk adopt/pattern/now, nix-graph trial/pattern/next, both to Prism",
+      "description": "Closed through the dgs-plan-update loop from git HEAD on Gavin's green light. worktrunk gives branch state in a terminal and address-by-name; nix-graph gives TUI graph navigation over edges.",
+      "verification": {
+        "evidence": "griot-live-artifacts 0b9a680: POT_T rows and oss-inspo items updated; Playwright render ok, 0 page errors, counts unchanged.",
+        "result": "ruled-and-applied."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N93",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N93",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "worktrunk has two oss-inspo mirror items in the DGS plan - the one-shelf-row to one-plan-item rule is broken",
+      "description": "One from chat, one from potluck:d4Wfpg6Y7J4; both set identically in 0b9a680 and left in place rather than deleting either.",
+      "verification": {
+        "evidence": "Subagent readback of the plan at 0b9a680.",
+        "result": "flagged-not-fixed - dedupe via dgs-plan-update."
       }
     }
   ],
@@ -5217,15 +5406,63 @@
       "to": "wg:djeli-branch:S12",
       "kind": "splinter",
       "label": "the engine fix it proposes"
+    },
+    {
+      "from": "wg:djeli-branch:N89",
+      "to": "wg:djeli-branch:B43",
+      "kind": "splinter",
+      "label": "the gap the fix closes"
+    },
+    {
+      "from": "wg:djeli-branch:S11",
+      "to": "wg:djeli-branch:B44",
+      "kind": "splinter",
+      "label": "the suggestion as built"
+    },
+    {
+      "from": "wg:djeli-branch:B44",
+      "to": "wg:djeli-branch:B45",
+      "kind": "in-epic",
+      "label": "the shared pill spec"
+    },
+    {
+      "from": "wg:djeli-branch:B45",
+      "to": "wg:djeli-branch:B16",
+      "kind": "inbound",
+      "label": "worktrunk address-by-name"
+    },
+    {
+      "from": "wg:djeli-branch:B45",
+      "to": "wg:djeli-branch:finding-prism-cli-tui",
+      "kind": "outbound",
+      "label": "prism-cli renders the same pills"
+    },
+    {
+      "from": "wg:djeli-branch:B48",
+      "to": "wg:djeli-branch:B16",
+      "kind": "ontology",
+      "label": "B16 closed on the shelf"
+    },
+    {
+      "from": "wg:djeli-branch:B48",
+      "to": "wg:djeli-branch:N93",
+      "kind": "splinter",
+      "label": "duplicate found while closing"
+    },
+    {
+      "from": "wg:djeli-branch:B47",
+      "to": "wg:djeli-branch:N88",
+      "kind": "ontology",
+      "label": "resolves the flag"
     }
   ],
   "stats": {
-    "totalBranches": 68,
+    "totalBranches": 74,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 209,
+    "edgeCount": 217,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -5855,6 +6092,38 @@
         "wg:djeli-branch:N85"
       ],
       "refused": []
+    },
+    "amendPass45_2026_09_21_2026_09_22": {
+      "newNodes": [
+        "B43",
+        "B44",
+        "B45",
+        "B46",
+        "B47",
+        "N91",
+        "N92",
+        "B48",
+        "N93"
+      ],
+      "newEdges": 8,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass46_2026_09_21_2026_09_22": {
+      "advanced": [
+        "N89",
+        "S12",
+        "S11",
+        "OA18",
+        "N88"
+      ],
+      "stateChanges": [
+        "N89 flagged-not-fixed -> defect-fixed",
+        "S12 awaiting-disposition -> ruled-and-applied",
+        "S11 awaiting-disposition -> ruled-and-applied",
+        "OA18 open -> closed",
+        "N88 flagged-not-fixed -> resolved-done"
+      ]
     }
   },
   "foreignLayer": {
