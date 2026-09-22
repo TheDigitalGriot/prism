@@ -1,0 +1,297 @@
+{
+  "stage": "codex-plan-sync",
+  "date": "2026-09-21",
+  "contract": ".prism/shared/plans/2026-09-21-codex-plan-sync-CONTEXT.md",
+  "direction": "REVERSE (build -> codex), per D1",
+  "skill": "prism:prism-codex-plan-sync (loaded from plugin cache 4.17.2)",
+
+  "codexes": [
+    {
+      "codex": "prism-codex",
+      "file": "griot-live-artifacts/live/prism-codex.html",
+      "lastUpdateAnchor": "3d42b6f (2026-09-21)",
+      "sectionsAmended": [
+        {
+          "id": "data-amend=2026-09-21-cli-workgraph-seed",
+          "placement": "appended before </body>, house amend-section pattern",
+          "claims": [
+            "CLI workgraph view seed: griot-output-style pills.json + render-pills, one spec read by chat style and terminal, nodes addressed by id (worktrunk address-by-name), written for prism-cli/lipgloss. Workgraph B45, inbound B16.",
+            "Grounding correction: prism-cli is a full Charm TUI (bubbletea 1.3.4, 22 packages, prism.exe 25,238,528 b) already parsing worktrees at messages.go:214-230 and plugin_monitor.go:77, but grep for workgraph returns nothing - so the view is a SEED, not a shipped feature. Workgraph N15; B16 awaits N15.",
+            "S12: the DGS plan is the fourth copy in the workgraph sync; sync-codex-data --plan under the node-drop guard, verify-workgraph checks four copies. Closes N89 (nothing ever wrote the plan inline wg-data block; Cowork CSP connect-src/frame-src none forces the single inline block to feed both the Workgraph tab and the wgstats tiles) and N90 (device plan 180n/192e vs live card 197n/207e).",
+            "Still OPEN N91 plus sibling N92 - recorded as open, not decided."
+          ],
+          "evidenceShas": ["cdada5a", "28e3086", "5d33e6e", "0b9a680", "3d42b6f", "0e00b03"],
+          "workgraphNodes": ["B16", "B43", "B44", "B45", "B48", "N15", "N89", "N90", "N91", "N92"],
+          "bytes": { "before": 1454475, "added": 4906, "after": 1459381, "exact": true },
+          "triad": { "sizeDeltaExact": true, "uniqueIdExactlyOnce": true, "dataAmendDelta": "+1 (2->3)", "sectionDelta": "+1", "pfxDataJsonParses": true, "pfxFrameRecords": 15 }
+        }
+      ],
+      "notAmended": "worktrunk ADOPT and nix-graph TRIAL harvest rows - already landed at 3d42b6f (verified present at lines 528 and 480). Not duplicated."
+    },
+    {
+      "codex": "djeli-codex",
+      "file": "griot-live-artifacts/live/djeli-codex.html",
+      "lastUpdateAnchor": "8a92cd5 (2026-09-20)",
+      "sectionsAmended": [
+        {
+          "id": "data-amend=2026-09-21-worktrunk-split",
+          "placement": "appended before </body>; first data-amend section in this codex",
+          "claims": [
+            "worktrunk was ruled adopt/pattern/now to PRISM, not Djeli. The existing Djeli harvest row stays study deliberately: parallel worktrees per agent in the IDE is a different harvest than branch-state-in-terminal for the CLI workgraph view. Recorded explicitly so a later sweep does not tidy the Djeli row up to adopt.",
+            "Why it is still Djeli business: Djeli is Prism next surface, not its container (lineage 0e00b03). The pill spec is renderer-agnostic, so Djeli inherits the vocabulary rather than minting a third.",
+            "The shared grounding correction (prism-cli has no workgraph concept) recorded so this codex does not inherit the earlier Prism-TUI-is-missing framing."
+          ],
+          "evidenceShas": ["0b9a680", "0e00b03", "cdada5a"],
+          "workgraphNodes": ["B16", "B45", "B48", "N15"],
+          "bytes": { "before": 341796, "added": 3812, "after": 345608, "exact": true },
+          "triad": { "sizeDeltaExact": true, "uniqueIdExactlyOnce": true, "dataAmendDelta": "+1 (0->1)", "sectionDelta": "+1" }
+        }
+      ],
+      "existingContentTouched": "none - edit is purely additive per D5; the existing worktrunk row at line 472 was read, not reworded"
+    }
+  ],
+
+  "codexesConsideredAndExcluded": {
+    "rule": "D2 - add others only if git scopes show a codex-backed app was built on since its last codex update",
+    "result": "none added",
+    "notes": [
+      "griot-seed (B39-B41) and griot-branch-codex shipped this session and have branch-capture workgraph JSONs in live/, but neither has an <app>-codex.html to amend - they are new skills, not codex-backed apps.",
+      "gbfolio-branch-capture-workgraph.json and griot-branch-codex-branch-capture-workgraph.json appeared 2026-09-21; listed as candidates for a future codex, not amended."
+    ]
+  },
+
+  "codexRenderGate": {
+    "tool": "playwright chromium, file:// load of the real committed files",
+    "prism-codex": { "pageErrors": 0, "consoleErrorsReal": 0, "dataAmend": 3, "verdict": "OK" },
+    "djeli-codex": { "pageErrors": 0, "consoleErrorsReal": 0, "dataAmend": 1, "verdict": "OK" },
+    "RENDER_GATE": "PASS",
+    "limit": "file:// has NO CSP. This proves the DOM and the logic only. Only verify_artifact on the published card proves the sandbox surface - that half is deferred to the session per D5."
+  },
+
+  "epics": [
+    {
+      "epic": "ceremony-review-audit-gate",
+      "path": ".prism/stories/ceremony-review-audit-gate/stories.json",
+      "stories": 4,
+      "idConvention": "s-hash (contract-compliant, stories-contract rule 4)",
+      "ageDays": 59,
+      "verdicts": { "done": 4, "stillOpen": 0, "superseded": 0 },
+      "flips": [
+        {
+          "ids": ["s-c8ea5007", "s-156a9fb6", "s-87466af0", "s-246325ec"],
+          "from": "pending",
+          "to": "complete",
+          "anchors": [
+            "commit cc29846 (2026-07-22T08:57:51-04:00) feat(ceremony): Review & Audit gate - self-hardening release path - touched EXACTLY the four files these four stories name",
+            "PASSING VERIFY TOKEN: node scripts/verify-ceremony-gate.mjs -> 7/7 PASS, ALL PASS, exit 0, run this session"
+          ],
+          "completedAt": "2026-07-22T08:57:51-04:00",
+          "commitHash": "cc29846"
+        }
+      ],
+      "caveat": "s-87466af0 deliverable (pre-release-audit.mjs) EXISTS and runs, but carries open defect N91 on standalone-skills repos. Story complete; defect recorded open, not folded into the story."
+    },
+    {
+      "epic": "prism-gavel",
+      "path": ".prism/stories/prism-gavel/stories.json",
+      "stories": 5,
+      "idConvention": "s-hash (contract-compliant, stories-contract rule 4)",
+      "ageDays": 54,
+      "verdicts": { "done": 5, "stillOpen": 0, "superseded": 0 },
+      "flips": [
+        {
+          "ids": ["s-f6bbcf35"],
+          "from": "pending",
+          "to": "complete",
+          "anchors": [
+            "version bumped: v4.8.0 shipped, repo now 4.17.3",
+            "released: commit f316d52 (2026-07-29T14:32:34-04:00) plus git tag v4.8.0 - both resolve",
+            "registered: DGS plan APPS[] carries id prismgavel, status shipped, stage use (40 apps)",
+            "sideload/drive loop proven live in v4.8.0 per the DGS release narrative"
+          ],
+          "completedAt": "2026-07-29T14:32:34-04:00",
+          "commitHash": "f316d52"
+        }
+      ],
+      "nearMiss": "prism-gavel appears 0 times in .claude-plugin/plugin.json, which reads as an unfinished registration. The CONTROL disproves it: prism-brainstorm and prism-closing-ceremony are also 0, and plugin.json has no skills key at all - skills are discovered by directory. Absence there is the convention, not a gap. Reported because the false finding was one step away."
+    },
+    {
+      "epic": "channel-adoption",
+      "path": ".prism/stories/channel-adoption/stories.json",
+      "stories": 25,
+      "idConvention": "STORY-NNN (the deviation per stories-contract rule 4; reported, NOT renamed)",
+      "ageDays": 49,
+      "verdicts": { "done": 0, "stillOpen": 25, "superseded": 0 },
+      "flips": [],
+      "method": "The epic own quality gate is the check: the converted SKILL.md references SCREEN_DIR (option/progress cards) and STATE_DIR/events (rulings). Tested by parse of each target file, not by shape.",
+      "measured": "25/25 target SKILL.md files EXIST; 0/25 contain the SCREEN_DIR token; 0/25 contain the STATE_DIR/events token; 0 commits anywhere scoped to a STORY-0xx id.",
+      "falseNegativeRuledOut": "The convention is real and in use in 17 files (prism-brainstorm, prism-gavel, griot-agent-architect, fragment-sync) - but those are the REFERENCE CONSUMERS the plan itself excludes from the convert list (plan line 73: the two reference consumers already exist). The token is the right token; the 25 simply have not been converted.",
+      "conclusion": "NOT STARTED - not merely unrecorded. 49 days: reported for a decision per the age rule, run not stopped."
+    }
+  ],
+
+  "epicTotals": {
+    "epics": 3,
+    "stories": 34,
+    "done": 9,
+    "stillOpen": 25,
+    "superseded": 0,
+    "flips": 5,
+    "storiesDeleted": 0,
+    "idsRenamed": 0
+  },
+
+  "storesOutsideScope": [
+    {
+      "path": ".prism/stories/stories.json",
+      "epicName": null,
+      "stories": 15,
+      "ids": "s-hash",
+      "status": "15 done",
+      "note": "root store, no epic back-link; uses status done not complete (the known done/complete dialect drift)"
+    },
+    {
+      "path": ".prism/stories/griot-mcp-comm-layer.stories.json",
+      "epicName": null,
+      "stories": 8,
+      "ids": "MIXED",
+      "status": "8 done",
+      "note": "loose file, not in an epic directory; mixed id conventions inside one store"
+    }
+  ],
+
+  "openDecisions": [
+    {
+      "id": "OD-1",
+      "source": "workgraph N91 (flagged-not-fixed)",
+      "decision": "The closing ceremony pre-release audit prints PASS having scanned 0 files on a standalone-skills repo.",
+      "why": "Two independent causes: the diff base resolves to main while HEAD is main (empty diff), and every structural check walks a skills/ directory that repo does not have. A gate that cannot fail is decoration, and it reassures - strictly worse than silence.",
+      "options": [
+        "A) Resolve the diff base against the last tag/release rather than main-vs-main",
+        "B) Make a zero-file scan a hard FAIL rather than a PASS",
+        "C) Make the structural checks REPORT-and-skip explicitly when skills/ is absent, so the absence is visible",
+        "D) Scope the audit to repos that declare a plugin manifest, and say so out loud on the others"
+      ],
+      "status": "OPEN - not decided in this run (D4)"
+    },
+    {
+      "id": "OD-2",
+      "source": "workgraph N92 (flagged-not-fixed)",
+      "decision": "digital-griot-skills has no version scheme and no tags, while the ceremony bookend and release phases assume a VERSION or plugin.json.",
+      "why": "The first CHANGELOG entry is keyed by date and stage because nothing else existed. None was invented, correctly.",
+      "options": [
+        "A) Adopt the date+stage CHANGELOG scheme formally",
+        "B) Introduce a VERSION file plus tags",
+        "C) Exempt standalone-skill repos from bookend/release"
+      ],
+      "status": "OPEN - not decided in this run (D4)"
+    },
+    {
+      "id": "OD-3",
+      "source": "this reconcile",
+      "decision": "channel-adoption is 0/25 at 49 days. Is it still live work?",
+      "why": "The epic is well-specified and its transport already exists (plan line 73: no server or transport code changes needed - each story is a SKILL.md edit plus a headless smoke-run). Nothing blocks it; it was simply never started. Age is reported, never a reason to fail the run.",
+      "options": [
+        "A) Keep and schedule - it is cheap per story",
+        "B) Re-scope to the seven p1 stories only",
+        "C) Mark superseded if the passive-bus floor has been overtaken"
+      ],
+      "status": "OPEN - not decided in this run (D4)"
+    },
+    {
+      "id": "OD-4",
+      "source": "the stage contract itself",
+      "decision": "The contract names a workgraph node finding-prism-cli-tui. No node carries that localId or id.",
+      "why": "Recorded as UNKNOWN rather than guessed, per the contract own rule. The semantic match is strong and singular: N15 (CORRECTION - the Prism TUI is not absent. It is built, compiled, and already parses worktrees) is the only prism-cli TUI finding, and it is the node both B16 (awaits) and B45 (outbound) wire to. The amends cite N15 by its real id.",
+      "options": [
+        "A) Confirm N15 was meant - no action",
+        "B) A node by that name exists in another workgraph and should be cross-linked",
+        "C) It was never created and should be"
+      ],
+      "status": "OPEN - reported as unknown, N15 used with its real id"
+    },
+    {
+      "id": "OD-5",
+      "source": "measurement vs workgraph N93",
+      "decision": "N93 is recorded flagged-not-fixed but measures RESOLVED.",
+      "why": "N93 says worktrunk has two oss-inspo mirror items in the DGS plan. Measured this run: exactly ONE prism/worktrunk/oss-inspo entry in ITEMS[]. The other five worktrunk mentions are different tools (Homebrew, Cargo, SignPath, Rust) citing it in prose, plus the pills feature item. Commit 3d42b6f states: collapse duplicate worktrunk mirror item (N93). The fix landed; the node never heard - the same ungated-copy shape the node class exists to catch.",
+      "options": [
+        "A) Correct N93 to defect-fixed via griot-workgraph-update with this measurement as evidence"
+      ],
+      "status": "OPEN - reported, not edited. Workgraph writes belong to griot-workgraph-update, not to this stage."
+    },
+    {
+      "id": "OD-6",
+      "source": "this reconcile",
+      "decision": "Two story stores sit loose at .prism/stories root with no epic back-link, and one mixes id conventions.",
+      "why": "The epic back-link is the entire plan-to-stories spine. A store without one cannot be reached from a plan.",
+      "options": [
+        "A) Give each an epic dir plus back-link",
+        "B) Archive them as historical",
+        "C) Leave and document as pre-convention"
+      ],
+      "status": "OPEN - not decided in this run (D4)"
+    }
+  ],
+
+  "propagationTargets": [
+    {
+      "target": "codex HTML in griot-live-artifacts",
+      "gate": "git commit",
+      "state": "GREEN - 5b85c63, pushed, local HEAD == origin/main"
+    },
+    {
+      "target": "the live gallery card for each codex",
+      "gate": "the publish tool for the surface (Artifact / update_artifact)",
+      "state": "DEFERRED BY D5 - this run must not publish. STALE BY DEFAULT until the session publishes. Named on the publish list below."
+    },
+    {
+      "target": ".prism/shared/plans/<plan>.md",
+      "gate": "the epic back-link",
+      "state": "GREEN for channel-adoption (back-link resolves to 2026-08-04-channel-adoption.md, file present, 14801 b). N/A for the two s-hash epics, which predate the convention. RED for the two loose stores - see OD-6."
+    },
+    {
+      "target": ".prism/stories/stories.json",
+      "gate": "stable STORY-NNN ids",
+      "state": "GREEN - 34 ids unchanged, 0 renamed, 0 deleted; both id dialects preserved as found"
+    },
+    {
+      "target": "DGS master ITEMS[] decision row",
+      "gate": "the dgs-plan-update loop",
+      "state": "GREEN, no new row owed - the worktrunk/nix-graph closes already landed at 0b9a680 and the pills feature item is present in ITEMS[]. This run made no new ruling (D4), so it owes no decision row."
+    },
+    {
+      "target": "CLI plugin cache (prism-marketplace/prism/)",
+      "gate": "griot-plugin-update Step 2A",
+      "state": "AMBER - cache tops out at 4.17.2 while the repo is 4.17.3. This skill ran from the 4.17.2 cache. Observation, not a blocker for this stage."
+    },
+    {
+      "target": "Prism repo .prism stores + stage artifacts",
+      "gate": "git commit + ref equality",
+      "state": "GREEN - a2e97cd plus the report commit, pushed, local HEAD == origin/main"
+    }
+  ],
+
+  "publishList": {
+    "why": "D5 forbids publishing from this run. The repo half is done and pushed; the card half is the session to close. Both halves, or the run is incomplete.",
+    "cards": [
+      {
+        "card": "prism-codex",
+        "file": "griot-live-artifacts/live/prism-codex.html",
+        "reason": "amend 2026-09-21-cli-workgraph-seed, +4906 b",
+        "commit": "5b85c63"
+      },
+      {
+        "card": "djeli-codex",
+        "file": "griot-live-artifacts/live/djeli-codex.html",
+        "reason": "amend 2026-09-21-worktrunk-split, +3812 b",
+        "commit": "5b85c63"
+      }
+    ],
+    "after": "verify_artifact each and READ the console log - a card can publish successfully and still throw on load."
+  },
+
+  "decisionsMade": "none that belonged to Gavin. 5 status flips, each on a commit sha and/or a passing verify token. No codex content reworded or removed. No id renamed. No story deleted. No workgraph node edited. No OPEN decision closed.",
+
+  "terminal": "DONE"
+}
