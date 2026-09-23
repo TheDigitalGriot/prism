@@ -61,7 +61,9 @@
     "amendPass53_2026_09_22": "gortex harvest landed: consolidation finding, nine ranked lifts, port open-ask",
     "amendPass55_2026_09_22": "codex-plan-sync forward pass, story-layer findings, concurrent-write hazard",
     "amendPass56_2026_09_23": "New branch B52: programmatic surface sync. The parallel workstreams drift apart and reconcile only on a prompt. Six findings from the 2026-09-23 repo sweep, two open asks (the canonical surface set, and the branch name), three suggestions. Foundational to the Griot Frequency with any agent.",
-    "amendPass57_2026_09_23": "B53 the unified workgraph surface entity - nine tracking systems read as one, drawn and templated but not yet named (OA25). N113 the drift card a day behind its repo. N114 the ontology cited the workgraph 47 times and described it never. N115 a wrong conclusion desynced the canonical copy. N116 Select-Object halts a piped script, so propagates repo-root stage never ran. N117 four documented node kinds against seven live. S19 interop-map as the standing drawing. S20 griot-ontology-seed."
+    "amendPass57_2026_09_23": "B53 the unified workgraph surface entity - nine tracking systems read as one, drawn and templated but not yet named (OA25). N113 the drift card a day behind its repo. N114 the ontology cited the workgraph 47 times and described it never. N115 a wrong conclusion desynced the canonical copy. N116 Select-Object halts a piped script, so propagates repo-root stage never ran. N117 four documented node kinds against seven live. S19 interop-map as the standing drawing. S20 griot-ontology-seed.",
+    "amendPass58": "OA25 ruled: Riddim = the through-line. The four workgraph layers are versions over one riddim, not four systems. Named 2026-09-23 from a prism:web-search-researcher field report; landed in griot-ontology 7a838c0 with four-surface parity 3EF7A2D9CDCC.",
+    "amendPass59": "Field report shape proven and filed as viz template 10; the canvas render found to enforce its rule structurally; Dub named as the naming pipeline's missing middle step, not yet built."
   },
   "groups": [
     {
@@ -4912,13 +4914,20 @@
       "group": "open-ask",
       "kind": "open-ask",
       "direction": "local",
-      "state": "open",
+      "state": "ruled-and-applied",
       "title": "The name for the unified workgraph surface entity",
       "description": "Gavin asked for suggestions from the Griot universe. Offered: Nyansapo (Adinkra wisdom knot - the junction where threads meet), Nkonsonkonson (Adinkra chain link, we are linked in both life and death - literally a graph, but a mouthful), Fihankra (the compound house with one entrance - maps onto the registration rule), and Lattice as the optical-line option beside Prism and Spectrum. Noted that Kente would be the perfect metaphor and is already taken by the Creative workstream.",
       "verification": {
         "checked": true,
         "evidence": "Gavin 2026-09-23: 'as for the name do you have any sugestions int he griot universe?' and 'this unified workgraphs surface entity yet to be named'.",
         "result": "OPEN - naming is Gavin's, per the nomenclature rule."
+      },
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-09-23 amendPass58",
+        "from": "open",
+        "to": "ruled-and-applied",
+        "evidence": "griot-ontology 7a838c0 names Riddim = the through-line in CLAUDE.md # our nomenclature; four-surface parity 3EF7A2D9CDCC at 947 lines"
       }
     },
     {
@@ -4955,6 +4964,54 @@
         "checked": true,
         "evidence": "The ceremony was run by hand six times on 2026-09-23 - ontology x5, drift x3, gold x3 - and every one of the five gates caught something at least once. Gavin: 'i think we should also make a skill with /prism:griot-agent-architect that wraps the griot-ontology/propagate/gold-log or drift-log workflow compltely programtically'.",
         "result": "PROPOSED - contract not yet written."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N118",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N118",
+      "kind": "finding",
+      "title": "Research renders its own gaps - viz template 10, field-report",
+      "state": "built-and-live",
+      "direction": "local",
+      "group": "new-findings",
+      "verification": {
+        "evidence": "viz-templates/templates/10-field-report.html written at 5029 bytes; manifest.json 1.4.0 -> 1.5.0 with id field-report at ten templates; CLAUDE.md FIELD REPORT bullet added in the viz-templates section; all in griot-ontology 7a838c0, four-surface parity 3EF7A2D9CDCC at 947 lines",
+        "result": "Templates 01-09 all render what landed and none had a band for what a search failed to reach, which is how an inferred claim becomes a fact three sessions later. Template 10 carries confidence and source per finding, names what it rejected rather than omitting it, and makes the gaps band mandatory and never empty."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N119",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N119",
+      "kind": "finding",
+      "title": "prism_viz_engine already enforces the field-report rule structurally",
+      "state": "done",
+      "direction": "local",
+      "group": "new-findings",
+      "verification": {
+        "evidence": "prism_viz_engine mode=layers returned eleven layer roles plus a first-class unplaceable state, sourced from apps/prism-viz-engine/src/core/layer-roles.ts; the tool contract states it never invents a node and renders harvested data or refuses",
+        "result": "The chip render trusts my discipline; the canvas render cannot. Because the engine refuses to invent a node, a field report rendered as a canvas cannot carry an unverified claim as a finding, and unplaceable is already its native word for the gaps band. Layer six is Governance Governor, the role Arkestra was named into."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:B54",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B54",
+      "kind": "branch",
+      "title": "Dub - the Namer, the missing middle step of the naming pipeline",
+      "state": "named-unfiled",
+      "direction": "local",
+      "group": "untracked",
+      "verification": {
+        "evidence": "Two prior naming skills located: digital-griot-skills/brand-naming-strategies (256 lines, SMILE SCRATCH and sound symbolism) and brand-namespace-sweep (168 lines, RDAP and og:title handle truth). Neither carries lineage sourcing, the X = the Y role gloss, layer routing, or the sacred and litigated hard stops. Named in griot-ontology 7a838c0 under # our nomenclature.",
+        "result": "Both prior skills predate this ontology and are brackets around Dub rather than replacements for it: strategies stress-tests a word, Dub sources and routes it, the sweep proves it is claimable. Not yet built - must be built through griot-agent-architect device-side, never hand-written."
       }
     }
   ],
@@ -6542,15 +6599,27 @@
       "to": "wg:djeli-branch:B52",
       "kind": "ontology",
       "label": "B52 ontology<- B53 (the unified entity is WHAT B52 is trying to keep in sync)"
+    },
+    {
+      "from": "wg:djeli-branch:N118",
+      "to": "wg:djeli-branch:B54",
+      "kind": "splinter",
+      "label": "the naming skill splintered out of the field report run"
+    },
+    {
+      "from": "wg:djeli-branch:N119",
+      "to": "wg:djeli-branch:N118",
+      "kind": "ontology",
+      "label": "the canvas render enforces what the chip template only states"
     }
   ],
   "stats": {
-    "totalBranches": 80,
+    "totalBranches": 81,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 264,
+    "edgeCount": 266,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -7333,6 +7402,24 @@
         "S20"
       ],
       "newEdges": 9,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass58_2026_09_23": {
+      "advanced": [
+        "OA25"
+      ],
+      "stateChanges": [
+        "OA25 open -> ruled-and-applied"
+      ]
+    },
+    "amendPass59_2026_09_23": {
+      "newNodes": [
+        "N118",
+        "N119",
+        "B54"
+      ],
+      "newEdges": 2,
       "corrections": [],
       "refused": []
     }
