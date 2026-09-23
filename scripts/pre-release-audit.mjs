@@ -131,23 +131,39 @@ const inScope = (p) => changed !== null && changed.has(p);
 // Structural checks report on THEIR OWN result. Sharing the global `failed` counter made an
 // earlier verify-*.mjs failure stamp [FAIL] on this line too, misattributing which gate broke.
 const failedBeforeStructural = failed;
+// N91: a loop that examines nothing leaves `failed` unchanged, which used to read as a silent
+// PASS — indistinguishable from "examined every file and found no problems". That happened for
+// two independent reasons at once on a real run: HEAD diffed against itself (base resolved to
+// `main` while already on `main`, so `changed.size === 0`) AND this repo's skills live directly
+// at the repo root rather than under a top-level `skills/` directory, so `walk('skills')` finds
+// nothing regardless of what changed. Track how many files were actually opened and read below;
+// zero of them is reported as its own loud FAIL, never folded into the ordinary PASS/FAIL line.
+let scanned = 0;
 
 // 4a. SKILL.md size — progressive disclosure (< 500 lines)
 for (const p of walk('skills').filter(p => p.endsWith('SKILL.md') && inScope(p))) {
+  scanned++;
   const n = readFileSync(p, 'utf8').split('\n').length;
   if (n > 500) { failed++; line('FAIL', `${p} is ${n} lines (>500 — push detail to references/)`); }
 }
 // 4b. Frontmatter present on changed skills/commands/agents
 for (const p of [...walk('skills').filter(p => p.endsWith('SKILL.md')), ...walk('commands'), ...walk('agents')].filter(p => p.endsWith('.md') && inScope(p))) {
+  scanned++;
   if (!readFileSync(p, 'utf8').startsWith('---')) { failed++; line('FAIL', `${p} missing YAML frontmatter`); }
 }
 // 4c. No hardcoded absolute plugin paths in changed skills/commands/hooks
 const HARDCODED = /[A-Za-z]:\\Users\\|\/(?:Users|home)\/[^\/\s"']+\//;
 for (const p of [...walk('skills'), ...walk('commands'), ...walk('hooks')].filter(p => /\.(md|json|sh|js)$/.test(p) && inScope(p))) {
+  scanned++;
   if (HARDCODED.test(readFileSync(p, 'utf8'))) { failed++; line('FAIL', `${p} contains a hardcoded absolute path (use \${CLAUDE_PLUGIN_ROOT} / project-relative)`); }
 }
 
-line(failed === failedBeforeStructural ? 'PASS' : 'FAIL', `structural checks (scoped to ${changed ? changed.size + ' changed files' : 'skipped'})`);
+if (scanned === 0) {
+  failed++;
+  line('FAIL', `structural checks scanned 0 files (scoped to ${changed ? changed.size + ' changed files' : 'skipped'}) — AUDIT_STRUCTURAL_ZERO_SCAN, not a pass`);
+} else {
+  line(failed === failedBeforeStructural ? 'PASS' : 'FAIL', `structural checks (scoped to ${changed.size} changed files, ${scanned} examined)`);
+}
 
 // 5. Marketplace mirror freshness — the gate this audit shipped without. Two independent mirrors
 // drifted silently and nothing failed: TheDigitalGriot/prism-plugin froze at 4.15.2 (4.16.0-4.16.2
