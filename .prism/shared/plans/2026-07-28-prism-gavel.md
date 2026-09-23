@@ -13,6 +13,10 @@ epic: prism-gavel
 > executor reads) via the `decompose_plan` engine. See `.prism/shared/contracts/stories-contract.md`.
 > Stories for this epic live at `.prism/stories/prism-gavel/stories.json`.
 
+> **Note:** this document carries at least one **SUPERSEDED** ruling (see Locked decisions below).
+> A dated document can still answer its question wrongly for today — check a rule's date before
+> applying it; a rule quoted without its date reads as current when it is not.
+
 # prism-gavel — Implementation Plan
 
 *Dogfood via prism-plan · 2026-07-28 · plugin: prism (GriotApps/Prism)*
@@ -26,6 +30,20 @@ Wire the Gavel decision cockpit into Prism as a sibling skill to `prism-brainsto
 - **Home:** `skills/prism-gavel/` inside the Prism plugin — sibling to `prism-brainstorm`, Prism core untouched.
 - **Channel:** rename `brainstorm-channel` → **`digital-griot-mcp`**, relocated to a neutral home (out of `prism-brainstorm/scripts/`); both siblings ride the one wire; more Griot tooling routes through it later.
 - **Decision state:** stays in the DGS plan data + git (`griot-live-artifacts`, GriotMeta). No new store.
+
+  > **SUPERSEDED 2026-09-23.** Replaced by a living knowledge graph with **per-fact ownership**: the
+  > DGS plan remains SOT for roster and plan facts; work facts live in the three branch-capture
+  > workgraphs (djeli, gbfolio, griot-branch-codex); event facts live in the drift and gold ledgers;
+  > projections live in the derived board digest; decision transitions will live in a decision event
+  > log now being designed. The original line was correct when written — at the time the DGS plan
+  > *was* the store, so "no new store" was the right guard against fragmentation, not an error. What
+  > changed since: the ecosystem has grown three branch-capture graphs (304 nodes), two append-only
+  > ledgers, a derived board digest, and a gavel card set — the question moved from "one store or
+  > many" to "which store owns which fact." Canonical ownership map: the griot-ontology SOT,
+  > `claude/CLAUDE.md`. Gavin, on the ruling: *"that was me previously trying to wrangle my store
+  > with the DGS Definitive which is still the SOT for many things but we are slowly building a
+  > living knowledge graph store."*
+
 - **v1 surface:** the whole cockpit as driver — use·role·stage buttons + notes box + the four verbs.
 - **Governance:** it's a change to the Prism plugin → follow `cl-plugin-structure`; ship via `prism-release` + closing-ceremony.
 

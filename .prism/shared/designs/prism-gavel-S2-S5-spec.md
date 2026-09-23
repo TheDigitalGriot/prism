@@ -4,6 +4,10 @@
 `helper.js`, `plugin.json`, and a full `brainstorm-channel` blast-radius grep. This is the context
 S2–S5 need so the build runs without stopping. Drop into `.prism/shared/designs/`.*
 
+> **Note:** this document carries at least one **SUPERSEDED** ruling (see §0, "The surface question").
+> A dated document can still answer its question wrongly for today — check a rule's date before
+> applying it; a rule quoted without its date reads as current when it is not.
+
 ---
 
 ## 0. The resolved architecture (read this first)
@@ -32,6 +36,19 @@ same reason). So:
 - **prism-gavel popout (Claude Code)** = the agentic driving surface. Wakes Claude, runs verbs.
 - **DGS plan Gavel tab (Cowork artifact)** = the portable snapshot + the decision store
   (`griot-live-artifacts`), which the popout reads from and commits back to.
+
+  > **SUPERSEDED 2026-09-23.** Replaced by a living knowledge graph with **per-fact ownership**: the
+  > DGS plan remains SOT for roster and plan facts; work facts live in the three branch-capture
+  > workgraphs (djeli, gbfolio, griot-branch-codex); event facts live in the drift and gold ledgers;
+  > projections live in the derived board digest; decision transitions will live in a decision event
+  > log now being designed. The original line was correct when written — at the time the DGS plan
+  > *was* the store, so treating `griot-live-artifacts` as *the* decision store was the right call,
+  > not an error. What changed since: the ecosystem has grown three branch-capture graphs (304
+  > nodes), two append-only ledgers, a derived board digest, and a gavel card set — the question
+  > moved from "one store or many" to "which store owns which fact." Canonical ownership map: the
+  > griot-ontology SOT, `claude/CLAUDE.md`. Gavin, on the ruling: *"that was me previously trying to
+  > wrangle my store with the DGS Definitive which is still the SOT for many things but we are
+  > slowly building a living knowledge graph store."*
 
 They are not redundant; they are read/store vs. drive. Do not try to make the Cowork artifact wake
 the agent — it can't.
