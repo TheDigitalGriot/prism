@@ -64,7 +64,8 @@
     "amendPass57_2026_09_23": "B53 the unified workgraph surface entity - nine tracking systems read as one, drawn and templated but not yet named (OA25). N113 the drift card a day behind its repo. N114 the ontology cited the workgraph 47 times and described it never. N115 a wrong conclusion desynced the canonical copy. N116 Select-Object halts a piped script, so propagates repo-root stage never ran. N117 four documented node kinds against seven live. S19 interop-map as the standing drawing. S20 griot-ontology-seed.",
     "amendPass58": "OA25 ruled: Riddim = the through-line. The four workgraph layers are versions over one riddim, not four systems. Named 2026-09-23 from a prism:web-search-researcher field report; landed in griot-ontology 7a838c0 with four-surface parity 3EF7A2D9CDCC.",
     "amendPass59": "Field report shape proven and filed as viz template 10; the canvas render found to enforce its rule structurally; Dub named as the naming pipeline's missing middle step, not yet built.",
-    "amendPass60": "Meridian surface findings, measured from the rendered card against the repo file: a ten-day card lag with no freshness chip, a calendar trailing pad that pushes the array length, a workgraph channel too narrow to carry Riddim, and the SURFACES registry modelling pages but not channels."
+    "amendPass60": "Meridian surface findings, measured from the rendered card against the repo file: a ten-day card lag with no freshness chip, a calendar trailing pad that pushes the array length, a workgraph channel too narrow to carry Riddim, and the SURFACES registry modelling pages but not channels.",
+    "amendPass61": "B13 built. Named 2026-09-13 as one state machine, two vocabularies; built 2026-09-23 as the Riddim channel with the direction mesh. Ten days named-unfiled."
   },
   "groups": [
     {
@@ -1098,13 +1099,20 @@
       "title": "Meridian x the capture - one state machine, two vocabularies",
       "description": "Gavin asked for the intersection of Meridian ideology, the Meridian workday view, griot-meridian-reflect and the Griot Morning Briefing. The finding is not that they CAN be joined - it is that they ALREADY ARE the same machine, built twice in two vocabularies, never connected. MERIDIAN, verbatim from meridian-day-surface.html: the lifecycle is 'spark -> first light -> peak -> bringing it home -> done'; 'Let one reach its peak before you light the next'; '3 lit now - only so many you can keep bright'; 'catch a spark (note it, don't light it)'; going dark is 'Projects losing your attention. The antidote to silent drift - resurface, park, or close'; reflections are 'Neutral mirrors from what actually happened - never nags'; and it reports 'close-rate 61% of dark projects resolved, not drifted'. THE MAPPING, one to one: 'catch a spark, note it don't light it' IS the S lane (a suggestion held, not started); first light is B (named, untracked); peak is C (this stage, in flight); bringing it home is A (written, awaiting close); done is the closure model's closed set; 'going dark' IS the Suite Drift Codex - Meridian already calls it 'the antidote to silent drift' in its own copy; and 'neutral mirrors, never nags' IS the gold log's invariant no-gold-without-its-trace, which refuses a narrated trace for exactly that reason. THE SYNESTHETIC HALF, and it is already half-built: griot-meridian-reflect locks a stable 7-colour domain palette (apps #2DD4BF, products #3B82F6, clients #22C55E, personal #A855F7, altruism #F97362, biomed #EC4899, cultural #F59E0B) and meridian-day-surface.html renders the day as coloured blocks over hours. So a work item already has a COLOUR by life-domain on one surface. If that hue travelled with the node across the ontology graph, the workgraph lanes, the day surface, the drift ledger and the gold ledger, and BRIGHTNESS encoded lifecycle stage (spark dim -> peak full -> going dark fading -> done settled), the whole suite becomes one two-channel chromatic language: hue says which part of the life it belongs to, brightness says where it is in its life. Readable at a glance, and fully computable from data that already exists in one place. CONVERGENCE WORTH NOTING: Meridian reports close-rate 61%; this capture's independently computed lane closure is 52%. The same metric, derived on two surfaces that have never spoken to each other. STRUCTURAL READ: the surfaces are six PROJECTIONS over one substrate, not six apps - ontology = the graph in SPACE, the capture = the graph in STATE, Day Surface = the graph in TIME, Going Dark = the graph in DECAY, the Morning Briefing = the graph in SIGNAL (what arrived from outside), gold and drift = the graph in JUDGMENT. B3 already named meridian-day-surface, griot-studio-dashboard and griot-morning-briefing as pages that become workflow tabs; this branch says what they become tabs OF. HONEST GAPS: Meridian's estimate-vs-actual is dormant until its M2 check-ins exist (the skill says so plainly, and blocks are activity windows, not measured effort); the 4am day boundary is applied by hand until the M1 collector lands; and nothing yet carries a domain hue outside Meridian. Named, not built.",
       "outputs": [],
-      "state": "named-unfiled",
+      "state": "built-and-live",
       "direction": "outbound",
       "contractPath": null,
       "verification": {
         "checked": true,
         "evidence": "meridian-day-surface.html read directly - the light lifecycle, the 'catch a spark' copy, the going-dark framing, the reflections framing and the 61% close-rate are quoted verbatim from it, and the 7 domain hex values were matched in its DOMAINS array. griot-meridian-reflect's SKILL.md read directly for the channel structure (briefings-archive / channel-going-dark / channel-day-surface), the 4am boundary, the three going-dark lenses and the stated dormancy of estimate-vs-actual. The 52% figure is this capture's own computed closureModel.",
         "result": "CONFIRMED - the mapping is drawn from both sources' own words, not imposed on them."
+      },
+      "priorState": "named-unfiled",
+      "advanced": {
+        "advancedAt": "2026-09-23 amendPass61",
+        "from": "named-unfiled",
+        "to": "built-and-live",
+        "evidence": "griot-live-artifacts b878a0b built the mesh B13 named: the Meridian workgraph channel is renamed Riddim and widened to the four workgraph layers plus branch codexes, live cards and Selectah rulings; Selectah rows gain the graph's own local/inbound/outbound/adjacent direction vocabulary so the owed-outward tile has an input for the first time; 57 of 57 amendPass keys dated from git evidence with 0 skipped, Branch Capture 3 to 10 days covering 34 passes. Briefing card republished at v7."
       }
     },
     {
@@ -7510,6 +7518,14 @@
       "newEdges": 2,
       "corrections": [],
       "refused": []
+    },
+    "amendPass61_2026_09_23": {
+      "advanced": [
+        "B13"
+      ],
+      "stateChanges": [
+        "B13 named-unfiled -> built-and-live"
+      ]
     }
   },
   "foreignLayer": {
