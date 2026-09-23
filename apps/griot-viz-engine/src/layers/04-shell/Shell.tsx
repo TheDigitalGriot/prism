@@ -223,7 +223,7 @@ export function Shell({ host, library, sources = [], onChange, reveal, subscribe
   return (
     <div className="vz-shell" style={{ ["--lane-h" as string]: `${LANE_H}px`, ...motionCssVars() }}>
       <header className="vz-bar">
-        <span className="vz-brand">prism-viz-engine</span>
+        <span className="vz-brand">griot-viz-engine</span>
         <span className="vz-host">{host}</span>
 
         <select className="vz-picker" value={source?.id ?? ""} onChange={(e) => setSourceId(e.target.value)}>

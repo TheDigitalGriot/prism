@@ -56,7 +56,7 @@ Run **`griot-potluck-search`** before any web search. It is usually already ther
 Distil keywords to **mechanisms, and to the whole family**. The 2026-09-06 miss: a search for
 `canvas, component, provenance` returned canvases and missed the entire *diagram* family — 7 of 9
 repos Gavin named were already on the shelf, one already at `trial/next`. Also glob **artifact
-names, not just `*codex*`**: the `prism-viz-engine-cluster` artifact was invisible to a `*codex*`
+names, not just `*codex*`**: the `griot-viz-engine-cluster` artifact was invisible to a `*codex*`
 glob and turned out to hold the answer.
 
 ### 3. Delegate — one agent PER PATTERN, not per repo

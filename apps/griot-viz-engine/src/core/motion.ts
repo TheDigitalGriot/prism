@@ -1,7 +1,7 @@
 /**
  * The motion layer — one clock for the whole engine.
  *
- * The point of prism-viz-engine is not four tools side by side; it is their motion
+ * The point of griot-viz-engine is not four tools side by side; it is their motion
  * design and methodologies fused into one coherent thing. Each of the three sources
  * owns a different layer, which is why they compose instead of collide:
  *

@@ -1,6 +1,6 @@
 ---
 name: prism-viz-generate
-description: Layer 01 of prism-viz-engine — turn a real system into a diagram. Authors archify-shaped JSON IR from source you can cite, gates it against archify's own validator plus a grounding rule, and hands it to the engine, which picks the renderer from the diagram's shape. Use when Gavin asks to diagram, map, or draw a system — "diagram our Cloudflare setup", "map the CC5 to Blender pipeline", "draw how this repo fits together", "show me the deployment" — or when a harvest or codex needs a picture. Never invents a component: every non-external node cites path and line. Does not render (layer 02 does) and does not decide the canvas (route.ts does).
+description: Layer 01 of griot-viz-engine — turn a real system into a diagram. Authors archify-shaped JSON IR from source you can cite, gates it against archify's own validator plus a grounding rule, and hands it to the engine, which picks the renderer from the diagram's shape. Use when Gavin asks to diagram, map, or draw a system — "diagram our Cloudflare setup", "map the CC5 to Blender pipeline", "draw how this repo fits together", "show me the deployment" — or when a harvest or codex needs a picture. Never invents a component: every non-external node cites path and line. Does not render (layer 02 does) and does not decide the canvas (route.ts does).
 model: opus
 ---
 
@@ -18,7 +18,7 @@ skill and not a module.
 | Job | Owner | This skill's move |
 |---|---|---|
 | Schema validation | archify's vendored `validator.mjs` | **Call it.** Never write a second validator against the same five schemas. |
-| Choosing the canvas | `apps/prism-viz-engine/src/layers/02-render/route.ts` | Set `diagram_type` honestly; the router reads it. Do not pick a renderer here. |
+| Choosing the canvas | `apps/griot-viz-engine/src/layers/02-render/route.ts` | Set `diagram_type` honestly; the router reads it. Do not pick a renderer here. |
 | Drawing | layer 02 | Nothing in this skill renders. |
 | Finding the source | `griot-harvest` / `griot-harvest-ux-ui` / the repo itself | Cite what they found; do not re-survey. |
 
@@ -43,7 +43,7 @@ and say so wherever it is published. Full rules:
 
 ### 3. Author the IR
 Read the mode schema **and** `common.schema.json` (the `$ref` target holding the shared
-enums), both at `apps/prism-viz-engine/vendor/archify/schemas/`. Then read the nearest
+enums), both at `apps/griot-viz-engine/vendor/archify/schemas/`. Then read the nearest
 example in `vendor/archify/examples/` for structure — and author fresh ids, wording,
 facts and layout. archify's own authoring contract says it plainly:
 *"Do not invent fields. Use the nearest matching example for structure."*

@@ -1,7 +1,7 @@
 /**
  * Layer 02 — "the right canvas per shape."
  *
- * That phrase is the layer's own subtitle in prism-viz-engine-cluster.html, and it is a
+ * That phrase is the layer's own subtitle in griot-viz-engine-cluster.html, and it is a
  * routing rule, not a description. The shape of the thing being drawn picks the renderer;
  * the user does not toggle it. An infrastructure topology wants a floor plan. A pipeline
  * wants an ordered chain. A code graph wants force.

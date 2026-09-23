@@ -83,7 +83,7 @@ const CHANNEL_PORT = process.env.BRAINSTORM_CHANNEL_PORT || '52342';
 const SESSION_ID = path.basename(SESSION_DIR);
 
 // viz-companion-fusion Step 3 — the node-graph state channel, alongside decisions.json.
-// Populated either by prism-viz-engine's `emit-screen.mjs --companion` (which seeds it the
+// Populated either by griot-viz-engine's `emit-screen.mjs --companion` (which seeds it the
 // moment it writes a screen) or by the agent directly (references/workgraph-state.md), same
 // read-merge-write discipline as decisions.json. Never required to exist: the GET route and
 // the default below both degrade to a genesis-only seed rather than an empty structure, per

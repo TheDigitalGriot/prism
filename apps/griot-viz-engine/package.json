@@ -6,15 +6,15 @@
   "griot": {
     "canonicalName": "griot-viz-engine",
     "deprecatedAlias": "prism-viz-engine",
-    "aliasNote": "A4 Decision 1 (Gavin ruled 2026-09-13). prism-viz-engine RESOLVES and is never what we say. The alias is load-bearing in exactly three places: the npm package, the MCP tool binding (prism_viz_engine), and module imports. Removing it is OUT of scope; keeping it resolving is the compatibility guarantee. The DIRECTORY stays apps/prism-viz-engine because root package.json workspaces, package-lock.json and skills/prism-viz-generate/scripts/gate-ir.mjs all resolve it by hard path.",
+    "aliasNote": "A4 Decision 1 (Gavin ruled 2026-09-13). prism-viz-engine RESOLVES and is never what we say. The alias is load-bearing in exactly three places: the npm package (the registry still holds prism-viz-engine@0.1.0 — no republish from an agent, ever), the MCP tool binding (prism_viz_engine), and module imports. Removing it is OUT of scope; keeping it resolving is the compatibility guarantee. DECISION SUPERSEDED 2026-09-23 (vizrename stage): the directory moved to apps/griot-viz-engine in the same commit as root package.json workspaces, package-lock.json and skills/prism-viz-generate/scripts/gate-ir.mjs, so the three hard-path resolvers this note originally cited as the reason to hold still are exactly the three that moved together.",
     "publishIsGavins": "A4 Decision 3 - no npm publish, login or adduser from an agent, ever."
   },
   "author": "digitalgriot",
-  "homepage": "https://github.com/TheDigitalGriot/prism/tree/main/apps/prism-viz-engine",
+  "homepage": "https://github.com/TheDigitalGriot/prism/tree/main/apps/griot-viz-engine",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TheDigitalGriot/prism.git",
-    "directory": "apps/prism-viz-engine"
+    "directory": "apps/griot-viz-engine"
   },
   "keywords": [
     "diagram",

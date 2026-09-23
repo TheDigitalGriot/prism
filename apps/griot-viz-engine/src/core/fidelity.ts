@@ -2,7 +2,7 @@
  * Fidelity — INSIDE the engine, per shape.
  *
  * WHY THIS FILE EXISTS. Before it, `fidelity` had zero occurrences anywhere under
- * apps/prism-viz-engine/src (measured 2026-09-16, 20/20 files, case-insensitive). The only
+ * apps/griot-viz-engine/src (measured 2026-09-16, 20/20 files, case-insensitive). The only
  * fidelity that existed was a CSS custom-property cascade in the companion emitter: a
  * `data-fidelity` attribute plus a ramp of blur/saturate/bloom values. CSS can restyle an
  * element. It cannot decide not to emit one. So lo/mid/hi could only ever re-tint whatever had

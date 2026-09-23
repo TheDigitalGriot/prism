@@ -1,4 +1,4 @@
-# prism-viz-engine
+# griot-viz-engine
 
 **The canvas is the instrument.** A diagramming engine where every box on screen is a real
 module file that opens — not a picture of a system, the system drawing itself.

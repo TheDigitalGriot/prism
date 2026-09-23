@@ -202,7 +202,7 @@ export function selfCanvas(): JSONCanvas {
         layer: s.layer,
         walkLevel: "component" as const,
         ui: {
-          origin: { repo: "prism-viz-engine", file: s.file, line: s.line },
+          origin: { repo: "griot-viz-engine", file: s.file, line: s.line },
           mountPoint: s.sub ?? s.label,
           notCopy: s.state === "seam" ? ["declared, not built — the router says so rather than pretending"] : [],
         },
@@ -213,7 +213,7 @@ export function selfCanvas(): JSONCanvas {
           role: "component" as const,
           stage: s.state === "built" ? ("now" as const) : ("next" as const),
         },
-        provenance: { harvestedBy: "prism-viz-engine", harvestedAt: "2026-09-11", sourceCommit: null },
+        provenance: { harvestedBy: "griot-viz-engine", harvestedAt: "2026-09-11", sourceCommit: null },
       },
     } as unknown as CanvasNode
     ;(n as any).label = s.label

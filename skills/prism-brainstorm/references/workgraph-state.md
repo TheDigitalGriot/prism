@@ -2,7 +2,7 @@
 
 The qrail-graph rail's WORKGRAPH direction lane, LAYERS state lane, and TIMELINE view all read a
 second state file, alongside `$STATE_DIR/decisions.json`: `$STATE_DIR/workgraph.json`. It carries
-harvested/emitted nodes — what `prism-viz-engine`'s `scripts/emit-screen.mjs --companion` target
+harvested/emitted nodes — what `griot-viz-engine`'s `scripts/emit-screen.mjs --companion` target
 draws — so the rail reflects the canvas, not just the decision spine.
 
 **decisions.json and workgraph.json are two independent channels, not one merged file.** The
@@ -66,7 +66,7 @@ opening question for THIS session. This is what makes LAYERS and TIMELINE non-em
 first paint, before any decision exists — an empty panel at session start is a defect, not a
 neutral initial state.
 
-If `prism-viz-engine`'s `emit-screen.mjs --companion` target runs first (because the session's
+If `griot-viz-engine`'s `emit-screen.mjs --companion` target runs first (because the session's
 first screen is a harvested-component canvas), it writes this seed for you — it is one write in
 the same file, not two competing writers. If your session has no engine screen, write the seed
 yourself, same as decisions.json:

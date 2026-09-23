@@ -1,7 +1,7 @@
 /**
  * Layer 02 — the node. A Waku box: every box IS a real module file.
  *
- * The prism-viz-engine thesis ends "...ships them as interactive, source-wired surfaces
+ * The griot-viz-engine thesis ends "...ships them as interactive, source-wired surfaces
  * in the Waku mold — not static SVGs." So this component refuses to be a label:
  *
  *   Wiring A — click selects it and the shell reveals its detail (hash-deep-linkable)

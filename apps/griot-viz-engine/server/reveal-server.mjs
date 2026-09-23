@@ -35,7 +35,7 @@ const UX_NODES = join(PRISM_ROOT, ".prism", "shared", "workgraph", "uxui-canvas-
 /** Where griot-harvest cloned the layer-01 cluster. The engine's examples come from here. */
 const VIZ_CLUSTER = process.env.VIZ_CLUSTER ?? join(SANDBOX, "viz-generate")
 /** The vendored trees inside the engine — the gallery is served from here, not the sandbox. */
-const VIZ_VENDOR = join(PRISM_ROOT, "apps", "prism-viz-engine", "vendor")
+const VIZ_VENDOR = join(PRISM_ROOT, "apps", "griot-viz-engine", "vendor")
 
 /** Where a repo id actually lives on disk. Djeli is in GriotApps; the rest are sandboxed. */
 const REPO_ROOTS = {
@@ -308,7 +308,7 @@ createServer(async (req, res) => {
   return json(res, 404, { ok: false, why: "no such route" })
 }).listen(PORT, "127.0.0.1", () => {
   const ux = loadUx()
-  console.log(`prism-viz-engine sidecar  http://127.0.0.1:${PORT}`)
+  console.log(`griot-viz-engine sidecar  http://127.0.0.1:${PORT}`)
   console.log(`  prism root   ${PRISM_ROOT}`)
   console.log(`  ux nodes     ${existsSync(UX_NODES) ? `${ux.nodes.length} loaded` : `MISSING (${UX_NODES})`}`)
   console.log(`  plan         ${existsSync(PLAN) ? "found" : `MISSING (${PLAN})`}`)

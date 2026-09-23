@@ -60,7 +60,7 @@ the first decision:
 ```
 
 See `references/workgraph-state.md` for the full schema and the read-merge-write protocol. Skip
-this only if `prism-viz-engine`'s `emit-screen.mjs --companion` target is about to render the
+this only if `griot-viz-engine`'s `emit-screen.mjs --companion` target is about to render the
 session's first screen — it seeds this file for you.
 
 ## The Content Loop

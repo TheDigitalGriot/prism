@@ -11,7 +11,7 @@
     "apps/prism-electron/webview-ui",
     "apps/prism-installer",
     "apps/prism-design-studio",
-    "apps/prism-viz-engine"
+    "apps/griot-viz-engine"
   ],
   "scripts": {
     "workgraph": "node scripts/workgraph-index.mjs .prism/shared/workgraph/index.json",

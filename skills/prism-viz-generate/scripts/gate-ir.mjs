@@ -3,7 +3,7 @@
  * gate-ir.mjs — the deterministic half of prism-viz-generate (layer 01).
  *
  * WHAT THIS DOES NOT DO: validate. archify's own validator is vendored at
- * `apps/prism-viz-engine/vendor/archify/renderers/shared/validator.mjs`, is standalone
+ * `apps/griot-viz-engine/vendor/archify/renderers/shared/validator.mjs`, is standalone
  * -compiled with zero runtime dependencies, and already emits repair-shaped diagnostics
  * ("/components/2 (id/label: \"gateway\") must have required property 'label'"). Writing
  * a second validator against the same five schemas would be a second thing to drift.
@@ -35,7 +35,7 @@ import { join, dirname, basename, resolve } from "node:path"
 import { pathToFileURL } from "node:url"
 
 const PRISM_ROOT = resolve(process.env.PRISM_ROOT ?? join(import.meta.dirname, "..", "..", ".."))
-const VENDOR = join(PRISM_ROOT, "apps", "prism-viz-engine", "vendor", "archify")
+const VENDOR = join(PRISM_ROOT, "apps", "griot-viz-engine", "vendor", "archify")
 const DEFAULT_OUT = join(PRISM_ROOT, ".prism", "shared", "workgraph", "diagrams")
 
 const argv = process.argv.slice(2)
@@ -79,7 +79,7 @@ try {
 } catch (e) {
   if (/Cannot find module|ERR_MODULE_NOT_FOUND/.test(e.message)) {
     console.error(`gate-ir: archify is not vendored at ${VENDOR}`)
-    console.error(`  fix: this skill validates against the vendored archify schemas — restore apps/prism-viz-engine/vendor/archify`)
+    console.error(`  fix: this skill validates against the vendored archify schemas — restore apps/griot-viz-engine/vendor/archify`)
     process.exit(1)
   }
   console.error("gate-ir: SCHEMA — archify rejects this diagram.\n")

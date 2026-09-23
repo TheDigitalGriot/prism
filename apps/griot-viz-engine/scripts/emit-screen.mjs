@@ -2,7 +2,7 @@
 /**
  * emit-screen.mjs — the engine as a brainstorm panel.
  *
- * Gavin's read, and it closes the loop: prism-viz-engine should be dogfooded by the
+ * Gavin's read, and it closes the loop: griot-viz-engine should be dogfooded by the
  * brainstorm companion exactly the way Gavel and the workgraph panels are. The mechanism
  * already exists and needed nothing new —
  *
@@ -154,7 +154,7 @@ const edges = (canvas.edges ?? []).filter((e) => byId.has(e.fromNode) && byId.ha
 if (!COMPANION) {
 const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
-<title>${esc(title)} · prism-viz-engine</title>
+<title>${esc(title)} · ${BRAND}</title>
 <style>
 :root{--void:#0a0a0c;--panel:#101418;--panel2:#0d1116;--line:rgba(255,255,255,.08);
  --line2:rgba(255,255,255,.14);--ink:#e8ecf2;--mute:#9aa3b2;--dim:#6b7385;--mint:#10ffba;
@@ -193,7 +193,7 @@ svg.ed path{fill:none;stroke:var(--dim);stroke-width:1.5;opacity:.55}
 </style></head><body>
 <div class="hd"><h1>${esc(title)}</h1>
 <span class="m">${placed.length} nodes · ${edges.length} edges · ${packed.size}/11 layers</span>
-<span class="m" style="color:var(--mint)">prism-viz-engine · static screen</span></div>
+<span class="m" style="color:var(--mint)">${BRAND} · static screen</span></div>
 <div class="wrap"><div class="stage">
 ${LAYER_ROLES.map((r, i) => `<div class="lane" style="top:${i * LANE_H}px;height:${LANE_H}px;--e:${EMBER[r]}">
   <div class="lane-hd"><span class="lane-nm">${esc(r)}</span></div></div>`).join("")}

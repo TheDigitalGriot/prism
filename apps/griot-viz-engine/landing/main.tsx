@@ -29,7 +29,7 @@ async function boot() {
   // that would have been copy is on the canvas.
   root.innerHTML = `
     <header class="gw-mast">
-      <div class="gw-mark" aria-label="prism-viz-engine">prism-viz-engine</div>
+      <div class="gw-mark" aria-label="griot-viz-engine">griot-viz-engine</div>
       <p class="gw-voice">
         The canvas is the instrument. Every box below is a real file in this engine —
         <span class="gw-ember">open one and it opens.</span>
@@ -46,7 +46,7 @@ async function boot() {
   const sources: VizSource[] = [
     {
       id: "the-engine",
-      label: "prism-viz-engine · itself",
+      label: "griot-viz-engine · itself",
       note: "every node cites a real file:line in this repo",
       canvas: selfCanvas(),
       composable: false,

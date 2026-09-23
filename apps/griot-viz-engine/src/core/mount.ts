@@ -80,7 +80,7 @@ export function detectHost(): VizHost {
 export const WAKE_CHANNEL = "http://127.0.0.1:52342"
 
 export async function drive(verb: string, payload: Record<string, unknown> = {}): Promise<{ rung: string; ok: boolean }> {
-  const msg = { skill: "prism-viz-engine", verb, ...payload }
+  const msg = { skill: "griot-viz-engine", verb, ...payload }
   const w = globalThis as any
 
   // rung 0 — MCP App widget: JSON-RPC over postMessage to the host

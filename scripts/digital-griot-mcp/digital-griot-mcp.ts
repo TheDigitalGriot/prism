@@ -1026,7 +1026,7 @@ function handleGriotAssert(args: Record<string, unknown>) {
 }
 
 // ===========================================================================
-// prism_viz_engine — the engine, reachable as a tool call.
+// griot_viz_engine — the engine, reachable as a tool call.
 //
 // Gavin's rule, made mechanical: "when I ask for a diagram I mean a RENDERED
 // VISUAL." An agent that can only describe a picture will describe one. This
@@ -1051,7 +1051,7 @@ function resolveEngineDir(args: Record<string, unknown>): string {
     (typeof args.project_dir === "string" && args.project_dir) ||
     process.env.PRISM_PROJECT_DIR ||
     process.cwd()
-  return path.join(projectDir, "apps", "prism-viz-engine")
+  return path.join(projectDir, "apps", "griot-viz-engine")
 }
 
 /**
@@ -1103,14 +1103,14 @@ function readLayerRoles(engineDir: string): string[] {
   return [...lit.matchAll(/"([^"]+)"/g)].map((m) => m[1])
 }
 
-function handlePrismVizEngine(args: Record<string, unknown>) {
+function handleGriotVizEngine(args: Record<string, unknown>) {
   const mode = typeof args.mode === "string" ? args.mode : "render"
   const engineDir = resolveEngineDir(args)
 
   if (!fs.existsSync(engineDir)) {
     return okJson({
       ok: false,
-      tool: "prism_viz_engine",
+      tool: "griot_viz_engine",
       error: `engine not found at ${engineDir}. Pass project_dir, or set PRISM_PROJECT_DIR.`,
     })
   }
@@ -1120,7 +1120,7 @@ function handlePrismVizEngine(args: Record<string, unknown>) {
   if (mode === "layers") {
     return okJson({
       ok: roles.length > 0,
-      tool: "prism_viz_engine",
+      tool: "griot_viz_engine",
       mode: "layers",
       count: roles.length,
       layer_roles: roles,
@@ -1137,7 +1137,7 @@ function handlePrismVizEngine(args: Record<string, unknown>) {
     if (!p || !fs.existsSync(p)) {
       return okJson({
         ok: false,
-        tool: "prism_viz_engine",
+        tool: "griot_viz_engine",
         mode: "validate",
         error: `canvas_path required and must exist. Got: ${p || "(none)"}`,
       })
@@ -1146,7 +1146,7 @@ function handlePrismVizEngine(args: Record<string, unknown>) {
     try {
       parsed = JSON.parse(fs.readFileSync(p, "utf-8"))
     } catch (err) {
-      return okJson({ ok: false, tool: "prism_viz_engine", mode: "validate", error: String(err) })
+      return okJson({ ok: false, tool: "griot_viz_engine", mode: "validate", error: String(err) })
     }
     const nodes = Array.isArray(parsed)
       ? (parsed as Record<string, unknown>[])
@@ -1163,7 +1163,7 @@ function handlePrismVizEngine(args: Record<string, unknown>) {
     const unfilled = roles.filter((r) => !used.has(r))
     return okJson({
       ok: true,
-      tool: "prism_viz_engine",
+      tool: "griot_viz_engine",
       mode: "validate",
       canvas_path: p,
       nodes: nodes.length,
@@ -1180,13 +1180,13 @@ function handlePrismVizEngine(args: Record<string, unknown>) {
   // mode === "render"
   const script = path.join(engineDir, "scripts", "emit-screen.mjs")
   if (!fs.existsSync(script)) {
-    return okJson({ ok: false, tool: "prism_viz_engine", error: `emit-screen.mjs not found at ${script}` })
+    return okJson({ ok: false, tool: "griot_viz_engine", error: `emit-screen.mjs not found at ${script}` })
   }
   const contentDir = resolveBrainstormContentDir(args)
   if (!contentDir) {
     return okJson({
       ok: false,
-      tool: "prism_viz_engine",
+      tool: "griot_viz_engine",
       mode: "render",
       error:
         "No brainstorm content dir found. Start a companion session first (prism-brainstorm " +
@@ -1214,7 +1214,7 @@ function handlePrismVizEngine(args: Record<string, unknown>) {
     const e = err as { stderr?: string; stdout?: string; message?: string }
     return okJson({
       ok: false,
-      tool: "prism_viz_engine",
+      tool: "griot_viz_engine",
       mode: "render",
       error: (e.stderr || e.stdout || e.message || String(err)).trim(),
       note: "The emitter refuses to draw an empty or ungrounded canvas. That refusal is the feature.",
@@ -1227,7 +1227,7 @@ function handlePrismVizEngine(args: Record<string, unknown>) {
 
   return okJson({
     ok: true,
-    tool: "prism_viz_engine",
+    tool: "griot_viz_engine",
     mode: "render",
     nodes: stats ? Number(stats[1]) : null,
     edges: stats ? Number(stats[2]) : null,
@@ -1299,7 +1299,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // Canonical first, alias second - both land on the one handler (A4 Decision 2).
       case "griot_viz_engine":
       case "prism_viz_engine":
-        return handlePrismVizEngine(args)
+        return handleGriotVizEngine(args)
       default:
         return errJson(`Unknown tool: ${name}`)
     }

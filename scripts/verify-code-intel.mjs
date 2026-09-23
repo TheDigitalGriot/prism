@@ -148,7 +148,7 @@ const CACHE = join(homedir(), '.cache', 'codebase-memory-mcp')
 // is no viewer/ directory" — true of the copy, false of the project — and every
 // pass afterwards reasoned about a partial tree.
 {
-  const vend = join(ROOT, 'apps', 'prism-viz-engine', 'vendor')
+  const vend = join(ROOT, 'apps', 'griot-viz-engine', 'vendor')
   if (!existsSync(vend)) {
     rec('I13', 'vendored trees are complete', 'unverified', 'no vendor/ directory in this repo')
   } else {
@@ -202,7 +202,7 @@ const CACHE = join(homedir(), '.cache', 'codebase-memory-mcp')
     // that "adopted" has to be falsifiable, not a label.
     const witnesses = {
       'code-review-graph': [join(ROOT, '.code-review-graph'), join(homedir(), 'GriotMeta', 'code-intel-harvest', 'code-review-graph')],
-      archify: [join(ROOT, 'apps', 'prism-viz-engine', 'vendor', 'archify')],
+      archify: [join(ROOT, 'apps', 'griot-viz-engine', 'vendor', 'archify')],
       ladybug: [join(ROOT, '.gitnexus', 'lbug'), join(homedir(), 'GriotMeta', 'kuzu-archive')],
     }
     const missing = []

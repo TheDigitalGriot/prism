@@ -68,7 +68,7 @@ The visual companion's right-side drawer renders from `$STATE_DIR/decisions.json
 The qrail-graph rail (left side — LAYERS, WORKGRAPH, and TIMELINE) reads a second file,
 `$STATE_DIR/workgraph.json`, alongside decisions.json. **Write a genesis seed to it immediately
 after starting the server** — one node naming the actual inbound context or opening question for
-this session — so the rail is never empty before Q1. If `prism-viz-engine`'s companion emit
+this session — so the rail is never empty before Q1. If `griot-viz-engine`'s companion emit
 target renders the session's first screen, it writes this seed for you.
 
 **Load [references/workgraph-state.md](references/workgraph-state.md) before starting a session** — it has the schema, the seed requirement, and the read-merge-write protocol.

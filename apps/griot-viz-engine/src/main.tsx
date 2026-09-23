@@ -85,7 +85,7 @@ async function boot() {
       })
     },
     onChange: (c) => {
-      try { localStorage.setItem("prism-viz-engine:canvas", JSON.stringify(c)) } catch {}
+      try { localStorage.setItem("griot-viz-engine:canvas", JSON.stringify(c)) } catch {}
     },
   })
 

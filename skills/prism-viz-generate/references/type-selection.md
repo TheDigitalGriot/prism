@@ -1,7 +1,7 @@
 # Choosing the type — it chooses the renderer
 
 `diagram_type` is not a label. It is the routing decision, read by
-`apps/prism-viz-engine/src/layers/02-render/route.ts`, and layer 02's own rule is
+`apps/griot-viz-engine/src/layers/02-render/route.ts`, and layer 02's own rule is
 **"the right canvas per shape."** Pick it from what the subject IS, not from what the
 request called it.
 

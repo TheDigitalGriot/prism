@@ -85,7 +85,7 @@ export async function loadIcons(
     } catch (e) {
       // Say it. A silent catch here is what made the first version draw nothing while
       // reporting success.
-      console.warn(`[prism-viz-engine] icon pack "${p}" failed to load`, e)
+      console.warn(`[griot-viz-engine] icon pack "${p}" failed to load`, e)
     }
   }
   CATALOGUE = out
