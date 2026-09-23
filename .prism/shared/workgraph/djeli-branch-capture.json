@@ -63,7 +63,8 @@
     "amendPass56_2026_09_23": "New branch B52: programmatic surface sync. The parallel workstreams drift apart and reconcile only on a prompt. Six findings from the 2026-09-23 repo sweep, two open asks (the canonical surface set, and the branch name), three suggestions. Foundational to the Griot Frequency with any agent.",
     "amendPass57_2026_09_23": "B53 the unified workgraph surface entity - nine tracking systems read as one, drawn and templated but not yet named (OA25). N113 the drift card a day behind its repo. N114 the ontology cited the workgraph 47 times and described it never. N115 a wrong conclusion desynced the canonical copy. N116 Select-Object halts a piped script, so propagates repo-root stage never ran. N117 four documented node kinds against seven live. S19 interop-map as the standing drawing. S20 griot-ontology-seed.",
     "amendPass58": "OA25 ruled: Riddim = the through-line. The four workgraph layers are versions over one riddim, not four systems. Named 2026-09-23 from a prism:web-search-researcher field report; landed in griot-ontology 7a838c0 with four-surface parity 3EF7A2D9CDCC.",
-    "amendPass59": "Field report shape proven and filed as viz template 10; the canvas render found to enforce its rule structurally; Dub named as the naming pipeline's missing middle step, not yet built."
+    "amendPass59": "Field report shape proven and filed as viz template 10; the canvas render found to enforce its rule structurally; Dub named as the naming pipeline's missing middle step, not yet built.",
+    "amendPass60": "Meridian surface findings, measured from the rendered card against the repo file: a ten-day card lag with no freshness chip, a calendar trailing pad that pushes the array length, a workgraph channel too narrow to carry Riddim, and the SURFACES registry modelling pages but not channels."
   },
   "groups": [
     {
@@ -5013,6 +5014,70 @@
         "evidence": "Two prior naming skills located: digital-griot-skills/brand-naming-strategies (256 lines, SMILE SCRATCH and sound symbolism) and brand-namespace-sweep (168 lines, RDAP and og:title handle truth). Neither carries lineage sourcing, the X = the Y role gloss, layer routing, or the sacred and litigated hard stops. Named in griot-ontology 7a838c0 under # our nomenclature.",
         "result": "Both prior skills predate this ontology and are brackets around Dub rather than replacements for it: strategies stress-tests a word, Dub sources and routes it, the sweep proves it is claimable. Not yet built - must be built through griot-agent-architect device-side, never hand-written."
       }
+    },
+    {
+      "id": "wg:djeli-branch:N120",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N120",
+      "kind": "finding",
+      "title": "The Meridian briefing card is ten days behind its own data and nothing on it says so",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "group": "new-findings",
+      "verification": {
+        "evidence": "Measured 2026-09-23. The SURFACES registry row for key briefing reads u:'2026-09-12'. The repo file live/griot-morning-briefing.html was written 2026-09-22 16:14. Channel entry counts held in the repo file against counts rendered on the live card: day-surface 38 held / 30 shown, going-dark 34 held / 28 shown, workgraph 6 held / 2 shown. The channel-morning-briefing script block is absent from the repo file entirely while the card renders a count of 43 for it.",
+        "result": "The calendar dots stopping at 09-12 are not a collection gap. Every channel holds more than the card renders, and the newest day-surface and going-dark entries are 09-22. The briefing carries no freshness chip, so a ten-day-old card is indistinguishable from a current one. This is the freshness predicate gap (drift 90) on a surface that is not in the nine-key SURFACES registry at all."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N121",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N121",
+      "kind": "finding",
+      "title": "The briefing calendar renders 32, 33, 34 because the trailing pad pushes the array length",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "group": "new-findings",
+      "verification": {
+        "evidence": "griot-morning-briefing.html:24555 reads: while(cells.length%7!==0)cells.push({d:cells.length,pad:true}); September 2026 begins on a Tuesday, so line 24553 pushes 2 leading pad cells and line 24554 pushes 30 day cells, giving 32. The loop then pushes d:32, d:33, d:34 to reach 35.",
+        "result": "The trailing pad uses the array length as the day number instead of counting the next month from 1. The leading pad two lines above is correct - it counts back from the previous month with pd-i. Only the tail is wrong. Gavin caught it by eye in the rendered calendar; no check in the pipeline compares rendered day numbers against the month."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N122",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N122",
+      "kind": "finding",
+      "title": "The Meridian workgraph channel is structurally too narrow to carry Riddim",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "group": "new-findings",
+      "verification": {
+        "evidence": "Measured 2026-09-23 in live/griot-morning-briefing.html: channel-workgraph holds 6 entries, newest 2026-09-16, against channel-day-surface 38 and channel-going-dark 34, both newest 2026-09-22. The channel carries only the global index roll-up; the four branch graphs, the branch codexes, the live cards and the Selectah rulings never enter it. Separately, the estimate-vs-actual tile on the day surface renders blank with the label unlocks at Meridian M2.",
+        "result": "The channel is not under-collected because work stopped. It is named after one layer of a four-layer structure, so it can only ever collect that layer. Riddim names the bed all four ride over, which is exactly the width this channel needs. The blank estimate-vs-actual is downstream of the same narrowness - its inputs sit in four places and no channel joins them, so the metric is not waiting on a milestone, it is waiting on a channel wide enough to hold its own inputs."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N123",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N123",
+      "kind": "finding",
+      "title": "The SURFACES registry knows about published pages and not about channels",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "group": "new-findings",
+      "verification": {
+        "evidence": "verify-surfaces.mjs:26 parses nine SURFACES keys out of the DGS plan: workgraph, ontology, drift, gold, equation, dashboard, surface, briefing, ecomap. Each names a repoFile and a tab. The four Meridian channels - morning-briefing, workgraph, day-surface, going-dark - are inside the briefing page and have no registry rows of their own.",
+        "result": "Earlier this session the registry was read as answering OA23, the canonical surface list. It answers it for PAGES only. A channel can go stale, lose entries or stop collecting without any registry row existing to carry a freshness predicate for it. Second occurrence this session of a registry that looks complete while missing a whole class - the first was the card gate measuring size and mtime instead of content."
+      }
     }
   ],
   "edges": [
@@ -6611,6 +6676,18 @@
       "to": "wg:djeli-branch:N118",
       "kind": "ontology",
       "label": "the canvas render enforces what the chip template only states"
+    },
+    {
+      "from": "wg:djeli-branch:N120",
+      "to": "wg:djeli-branch:N123",
+      "kind": "ontology",
+      "label": "the card has no predicate because the surface has no registry row"
+    },
+    {
+      "from": "wg:djeli-branch:N122",
+      "to": "wg:djeli-branch:N123",
+      "kind": "ontology",
+      "label": "channels are the class the registry does not model"
     }
   ],
   "stats": {
@@ -6619,7 +6696,7 @@
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 266,
+    "edgeCount": 268,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -7418,6 +7495,17 @@
         "N118",
         "N119",
         "B54"
+      ],
+      "newEdges": 2,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass60_2026_09_23": {
+      "newNodes": [
+        "N120",
+        "N121",
+        "N122",
+        "N123"
       ],
       "newEdges": 2,
       "corrections": [],
