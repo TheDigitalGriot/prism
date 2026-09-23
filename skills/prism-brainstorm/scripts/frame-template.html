@@ -1303,6 +1303,55 @@
     .ps-hub .bnode,.ps-hub .wire{transition:none}
   }
 
+  /* ===== GAVEL CEREMONY · additive (gavel-close-CONTEXT.md, 2026-09-23) =====
+     Renderer lives in helper.js (ps.renderers['gavel-ceremony']); this is its chrome only.
+     Same state palette the hub already uses (bio=done, solar=open/parked, footstep=superseded)
+     so a node's color means the same thing here as it does on the canvas. */
+  .gv-wrap{display:grid;gap:.875rem}
+  .gv-list{list-style:none;display:grid;gap:.25rem;max-block-size:14rem;overflow:auto;padding-right:.25rem}
+  .gv-row{
+    display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.5rem;
+    padding:.5rem .625rem;border-radius:var(--ps-inner-r,8px);cursor:pointer;
+    border:1px solid var(--rim-10);background:var(--haze-04);text-align:left;width:100%;
+    font-family:var(--font-voice);color:var(--voice);
+    transition:background var(--ps-dur-tale,.18s) var(--ps-ease,ease),border-color var(--ps-dur-tale,.18s) var(--ps-ease,ease);
+  }
+  .gv-row:hover{background:var(--haze-06);border-color:var(--solar)}
+  .gv-row[aria-pressed=true]{border-color:var(--iris);background:rgba(var(--iris-rgb),.10)}
+  .gv-dot{inline-size:.5rem;block-size:.5rem;border-radius:50%;background:var(--solar)}
+  .gv-row-title{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gv-row-id{font-family:var(--font-code);font-size:9.5px;color:var(--footstep);white-space:nowrap}
+  .gv-form{display:grid;gap:.625rem;padding:.75rem;border:1px solid var(--rim-10);border-radius:var(--fidelity-radius,10px);background:var(--haze-04)}
+  .gv-field{display:grid;gap:.25rem}
+  .gv-field label{font-family:var(--font-code);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--footstep)}
+  .gv-field select,.gv-field input,.gv-field textarea{
+    font-family:var(--font-voice);font-size:12.5px;color:var(--voice);background:var(--void,#000);
+    border:1px solid var(--rim-10);border-radius:6px;padding:.4375rem .5625rem;outline:none;
+  }
+  .gv-field select:focus,.gv-field input:focus,.gv-field textarea:focus{border-color:var(--iris)}
+  .gv-field textarea{resize:vertical;min-block-size:3.5rem}
+  .gv-states{display:flex;gap:.375rem;flex-wrap:wrap}
+  .gv-state-btn{
+    font-family:var(--font-code);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+    padding:.3125rem .625rem;border-radius:var(--r-pill,999px);border:1px solid var(--rim-10);
+    background:var(--haze-04);color:var(--whisper);cursor:pointer;
+  }
+  .gv-state-btn[aria-pressed=true][data-state=done]{color:var(--voice);border-color:var(--bio);background:var(--bio-wash)}
+  .gv-state-btn[aria-pressed=true][data-state=parked]{color:var(--voice);border-color:var(--solar);background:var(--solar-wash)}
+  .gv-state-btn[aria-pressed=true][data-state=superseded]{color:var(--voice);border-color:var(--footstep);background:var(--haze-06)}
+  .gv-actions{display:flex;gap:.5rem;align-items:center;justify-content:flex-end}
+  .gv-btn{
+    font-family:var(--font-code);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+    padding:.4375rem .875rem;border-radius:var(--r-pill,999px);border:1px solid var(--iris);
+    background:rgba(var(--iris-rgb),.14);color:var(--voice);cursor:pointer;
+  }
+  .gv-btn:hover{background:rgba(var(--iris-rgb),.24)}
+  .gv-btn:disabled{opacity:.4;cursor:default}
+  .gv-btn-ghost{border-color:var(--rim-10);background:transparent;color:var(--whisper)}
+  .gv-msg{font-family:var(--font-code);font-size:10.5px;line-height:1.5;padding:.5rem .625rem;border-radius:6px}
+  .gv-msg-err{color:#ffb4b4;background:rgba(255,80,80,.10);border:1px solid rgba(255,80,80,.28)}
+  .gv-msg-ok{color:var(--bio);background:var(--bio-wash);border:1px solid var(--bio)}
+
 </style>
 </head>
 <body>
@@ -1490,9 +1539,9 @@ requestAnimationFrame(function(){requestAnimationFrame(function(){
       "zones": ["ceremony", "slide-over", "stage"],
       "defaultZone": "ceremony",
       "minWidth": 560,
-      "channel": "/state/gavel-cards.json",
-      "vocabulary": { "collection": "cards", "lanes": ["decided", "parked"], "verbs": ["open", "scan", "verify", "commit"] },
-      "summary": "Card-stack ceremony - skills/prism-gavel (gavel_state writes gavel-cards.json)"
+      "channel": "/state/workgraph.json",
+      "vocabulary": { "collection": "nodes", "field": "state", "lanes": ["done", "superseded", "parked", "open"] },
+      "summary": "Close a workgraph node - sets state/resolvedAt/resolution, POST /api/close, additive gavel-close-CONTEXT.md 2026-09-23 (was a gavel-cards.json stub - no renderer, no route, no working ceremony)"
     },
     {
       "id": "branch-hub",

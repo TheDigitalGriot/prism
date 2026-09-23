@@ -220,12 +220,154 @@ function handleChat(req, res) {
   });
 }
 
+// POST /api/close — the gavel ceremony (additive, gavel-close-CONTEXT.md 2026-09-23).
+// Sets a workgraph node's terminal state, stamps resolvedAt, and writes the closure
+// outward to closed-outbox.ndjson so a later, separate promote step can lift it into a
+// branch-capture workgraph as a COPY, not a translation. Locked decisions (see contract):
+//  1. state is one of done|superseded|parked — the four-value enum is not extended.
+//  2. resolvedAt is stamped server-side (ISO-8601); resolution is never invented.
+//  3. a superseded close without supersededBy is REJECTED with a named error.
+//  6. this route writes only inside STATE_DIR (== SESSION_DIR/state) — never outside
+//     SESSION_DIR, never into another repo.
+function closeError(res, code, status, message) {
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+  res.end(JSON.stringify({ error: code, message: message }));
+}
+
+// Mirrors helper.js:216-222's dirOf() exactly (client-side JS is not reachable from this
+// Node process, so the same rule is reimplemented rather than shared) — same fields,
+// same priority: destination > source > maps>1 > local.
+function manyVal(v) { return Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []); }
+function dirOfNode(o) {
+  if (!o) return 'local';
+  return manyVal(o.destination).length ? 'outbound'
+       : manyVal(o.source).length      ? 'inbound'
+       : (o.maps > 1)                  ? 'adjacent'
+       : 'local';
+}
+
+function writeJsonAtomic(filePath, obj) {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  const tmp = filePath + '.tmp-' + process.pid + '-' + Date.now();
+  fs.writeFileSync(tmp, JSON.stringify(obj, null, 1));
+  fs.renameSync(tmp, filePath);
+}
+
+const TERMINAL_STATES = ['done', 'superseded', 'parked'];
+
+function handleClose(req, res) {
+  let body = '';
+  req.on('data', (c) => { body += c; if (body.length > 1e6) req.destroy(); });
+  req.on('end', () => {
+    let payload;
+    try { payload = JSON.parse(body || '{}'); } catch (e) {
+      return closeError(res, 'BAD_JSON', 400, 'Request body is not valid JSON.');
+    }
+    const id = typeof payload.id === 'string' ? payload.id.trim() : '';
+    const state = typeof payload.state === 'string' ? payload.state.trim() : '';
+    const resolution = typeof payload.resolution === 'string' ? payload.resolution.trim() : '';
+    const kind = typeof payload.kind === 'string' ? payload.kind.trim() : '';
+    const lane = typeof payload.lane === 'string' ? payload.lane.trim() : '';
+    const supersededBy = typeof payload.supersededBy === 'string' ? payload.supersededBy.trim() : '';
+
+    if (!id) return closeError(res, 'MISSING_ID', 400, 'id is required.');
+    if (TERMINAL_STATES.indexOf(state) === -1) {
+      return closeError(res, 'INVALID_STATE', 400, 'state must be one of ' + TERMINAL_STATES.join(', ') + '.');
+    }
+    if (!resolution) return closeError(res, 'MISSING_RESOLUTION', 400, 'resolution is required — never invented.');
+    if (!kind) return closeError(res, 'MISSING_KIND', 400, 'kind is required — the close dialog must collect it.');
+    if (!lane) return closeError(res, 'MISSING_LANE', 400, 'lane is required — the close dialog must collect it.');
+    if (state === 'superseded' && !supersededBy) {
+      return closeError(res, 'MISSING_SUPERSEDED_BY', 400, 'a superseded close requires supersededBy (a node id).');
+    }
+    // Guards hubStateOf()'s own normalizer (helper.js:2015-2019): `if (n.supersededBy) return
+    // 'superseded'` runs regardless of the node's `state` field, so a supersededBy stamped on a
+    // done/parked close would silently repaint as superseded in the UI. Reject rather than allow
+    // a node whose two lifecycle fields disagree about whether it was superseded.
+    if (state !== 'superseded' && supersededBy) {
+      return closeError(res, 'SUPERSEDED_BY_NOT_ALLOWED', 400, 'supersededBy is only valid when state is superseded.');
+    }
+
+    let wg;
+    try {
+      const raw = fs.existsSync(WORKGRAPH_FILE) ? fs.readFileSync(WORKGRAPH_FILE, 'utf-8') : JSON.stringify(DEFAULT_WORKGRAPH);
+      wg = JSON.parse(raw);
+    } catch (e) {
+      return closeError(res, 'WORKGRAPH_UNREADABLE', 500, 'workgraph.json could not be read/parsed: ' + e.message);
+    }
+    if (!Array.isArray(wg.nodes)) wg.nodes = [];
+    if (!Array.isArray(wg.edges)) wg.edges = [];
+    const node = wg.nodes.find((n) => n && n.id === id);
+    if (!node) return closeError(res, 'NODE_NOT_FOUND', 404, 'No workgraph node with id ' + id + '.');
+
+    const resolvedAt = new Date().toISOString();
+    node.state = state;
+    node.resolvedAt = resolvedAt;
+    node.resolution = resolution;
+    node.kind = kind;
+    node.lane = lane;
+    if (state === 'superseded') node.supersededBy = supersededBy;
+    else delete node.supersededBy;
+
+    try {
+      writeJsonAtomic(WORKGRAPH_FILE, wg);
+    } catch (e) {
+      return closeError(res, 'WRITE_FAILED', 500, 'Could not write workgraph.json: ' + e.message);
+    }
+
+    const edges = wg.edges
+      .filter((e) => e && (e.fromNode === id || e.toNode === id))
+      .map((e) => ({ fromNode: e.fromNode, toNode: e.toNode }));
+    // stateDetail is not defined by the contract beyond its name in the outbox field list
+    // (gavel-close-CONTEXT.md decision 5) — composed here as a short human-readable summary
+    // of the closure (state + resolution + the supersedes target when present), since no
+    // upstream branch-capture-workgraph schema was in scope to read for this run.
+    const stateDetail = state + ': ' + resolution + (state === 'superseded' ? ' -> ' + supersededBy : '');
+    const outboxRecord = {
+      id: node.id,
+      title: node.label || node.q || node.id,
+      kind: kind,
+      lane: lane,
+      state: state,
+      stateDetail: stateDetail,
+      direction: dirOfNode(node),
+      resolvedAt: resolvedAt,
+      resolution: resolution,
+      supersededBy: state === 'superseded' ? supersededBy : null,
+      sourceSession: SESSION_ID,
+      layer: node.layer != null ? node.layer : null,
+      edges: edges,
+    };
+
+    try {
+      const outboxFile = path.join(STATE_DIR, 'closed-outbox.ndjson');
+      if (!fs.existsSync(STATE_DIR)) fs.mkdirSync(STATE_DIR, { recursive: true });
+      fs.appendFileSync(outboxFile, JSON.stringify(outboxRecord) + '\n');
+    } catch (e) {
+      // The workgraph write already succeeded and is the source of truth; the outbox is the
+      // seam to the rest of the ecosystem, not the record of closure itself. Report the failure
+      // rather than hide it, but do not roll back a close that already landed.
+      broadcast({ type: 'workgraph-update', payload: wg });
+      return closeError(res, 'OUTBOX_WRITE_FAILED', 500, 'Node closed and workgraph.json written, but the outbox append failed: ' + e.message);
+    }
+
+    touchActivity();
+    broadcast({ type: 'workgraph-update', payload: wg });
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({ ok: true, node: node, outboxRecord: outboxRecord }));
+  });
+}
+
 // ========== HTTP Request Handler ==========
 
 function handleRequest(req, res) {
   touchActivity();
   if (req.method === 'POST' && req.url === '/api/chat') {
     return handleChat(req, res);
+  }
+  if (req.method === 'POST' && req.url === '/api/close') {
+    return handleClose(req, res);
   }
   if (req.method === 'GET' && req.url === '/') {
     const screenFile = getNewestScreen();

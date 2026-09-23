@@ -890,6 +890,7 @@
     lastWorkgraphState = wgState || lastWorkgraphState;
     renderGraph(lastDecisionsState, lastWorkgraphState);
     if (typeof hubRefresh === 'function') hubRefresh();
+    if (typeof gavCeremonyRefresh === 'function') gavCeremonyRefresh();
   }
 
   function fetchInitialDrawer() {
@@ -2188,6 +2189,192 @@
     hubDraw(root, (data && data.nodes) ? data : lastWorkgraphState);
     hubWire(root);
   };
+
+  /* ===== GAVEL CEREMONY · additive (gavel-close-CONTEXT.md, 2026-09-23) =====
+     Makes the [data-hub-gavel] button real: lists closable nodes (hubStateOf === 'open',
+     same normalizer the hub itself uses at helper.js:2015), takes a terminal state +
+     resolution + kind/lane, and POSTs /api/close. The button and psPlace('gavel-ceremony', ...)
+     at helper.js:2164-2166 are UNCHANGED - this only fills the renderer seam psProbe already
+     names ("this stage deliberately ships none") and the registry entry's channel/vocabulary
+     (frame-template.html #ps-registry), which pointed at a gavel-cards.json route server.cjs
+     has never served (checked: no such route exists) - i.e. a stub, not a working path. */
+  var gavCeremony = { host: null, data: { nodes: [], edges: [] }, sel: null, msg: null,
+    formState: 'done', formKind: null, formLane: null, formSupersededBy: '', formResolution: '' };
+
+  var GAV_STATES = ['done', 'superseded', 'parked'];
+  var GAV_KINDS = ['branch', 'finding', 'open-ask', 'suggestion'];
+  var GAV_LANES = ['tracked', 'untracked', 'this-stage', 'open-ask', 'new-findings', 'suggested'];
+
+  function gavClosableNodes(data) {
+    var nodes = (data && Array.isArray(data.nodes)) ? data.nodes : [];
+    return nodes.filter(function (n) { return n && n.id != null && hubStateOf(n) === 'open'; });
+  }
+
+  // "defaulting kind from the node's own shape where that is unambiguous" (Decision 7) - the
+  // only unambiguous read is an exact match against the canonical vocab; anything else is left
+  // blank so the ceremony asks rather than guesses.
+  function gavGuess(n, vocab) { return n && vocab.indexOf(n.group) !== -1 ? n.group : ''; }
+
+  ps.renderers['gavel-ceremony'] = function (host, data) {
+    gavCeremony.host = host;
+    gavCeremony.data = (data && Array.isArray(data.nodes)) ? data : { nodes: [], edges: [] };
+    if (gavCeremony.sel != null && !gavClosableNodes(gavCeremony.data).some(function (n) { return n.id === gavCeremony.sel; })) {
+      gavCeremony.sel = null; // the node this panel had open just closed elsewhere (another tab, the agent) - drop back to the list
+    }
+    gavRenderCeremony();
+  };
+
+  // Fed by renderWorkgraphState below so a close from another tab, or the agent editing
+  // workgraph.json directly, repaints this panel too - not just the hub canvas.
+  function gavCeremonyRefresh() {
+    if (!gavCeremony.host || !gavCeremony.host.parentNode) return;
+    ps.renderers['gavel-ceremony'](gavCeremony.host, lastWorkgraphState);
+  }
+
+  function gavRenderCeremony() {
+    var host = gavCeremony.host;
+    if (!host || !host.parentNode) return;
+    var closable = gavClosableNodes(gavCeremony.data);
+    var html = '<div class="gv-wrap">';
+    if (!closable.length) {
+      html += '<div class="ps-empty"><b>Nothing to close</b>' +
+        '<span>Every node in this workgraph is already done, superseded or parked.</span></div>';
+    } else {
+      html += '<ul class="gv-list" role="listbox" aria-label="Closable nodes">' + closable.map(function (n) {
+        var on = n.id === gavCeremony.sel;
+        return '<li><button type="button" class="gv-row" data-gv-node="' + escapeHtml(n.id) + '" aria-pressed="' + on + '">' +
+          '<span class="gv-dot"></span>' +
+          '<span class="gv-row-title">' + escapeHtml(n.label || n.q || n.id) + '</span>' +
+          '<span class="gv-row-id">' + escapeHtml(n.id) + '</span></button></li>';
+      }).join('') + '</ul>';
+      var sel = closable.filter(function (n) { return n.id === gavCeremony.sel; })[0];
+      if (sel) html += gavFormHtml(sel, gavCeremony.data);
+    }
+    if (gavCeremony.msg) {
+      html += '<div class="gv-msg ' + (gavCeremony.msg.ok ? 'gv-msg-ok' : 'gv-msg-err') + '">' + escapeHtml(gavCeremony.msg.text) + '</div>';
+    }
+    html += '</div>';
+    host.innerHTML = html;
+    gavWireCeremony(host);
+  }
+
+  function gavFormHtml(n, data) {
+    var state = gavCeremony.formState || 'done';
+    var kind = gavCeremony.formKind != null ? gavCeremony.formKind : gavGuess(n, GAV_KINDS);
+    var lane = gavCeremony.formLane != null ? gavCeremony.formLane : gavGuess(n, GAV_LANES);
+    var others = (data.nodes || []).filter(function (o) { return o && o.id !== n.id; });
+    return '<form class="gv-form" data-gv-form>' +
+      '<div class="gv-field"><label>Terminal state</label><div class="gv-states">' +
+      GAV_STATES.map(function (s) {
+        return '<button type="button" class="gv-state-btn" data-gv-state="' + s + '" data-state="' + s + '" aria-pressed="' + (s === state) + '">' + s + '</button>';
+      }).join('') + '</div></div>' +
+      (state === 'superseded' ?
+        ('<div class="gv-field"><label for="gv-supersededBy">Superseded by (node id)</label>' +
+         '<input list="gv-node-ids" id="gv-supersededBy" name="supersededBy" value="' + escapeHtml(gavCeremony.formSupersededBy || '') + '" required>' +
+         '<datalist id="gv-node-ids">' + others.map(function (o) { return '<option value="' + escapeHtml(o.id) + '">'; }).join('') + '</datalist></div>')
+        : '') +
+      '<div class="gv-field"><label for="gv-resolution">Resolution</label>' +
+      '<textarea id="gv-resolution" name="resolution" required placeholder="Why is this closing, in one line">' + escapeHtml(gavCeremony.formResolution || '') + '</textarea></div>' +
+      '<div class="gv-field"><label for="gv-kind">Kind</label><select id="gv-kind" name="kind" required>' +
+      '<option value="" disabled' + (kind ? '' : ' selected') + '>choose one</option>' +
+      GAV_KINDS.map(function (k) { return '<option value="' + k + '"' + (k === kind ? ' selected' : '') + '>' + k + '</option>'; }).join('') +
+      '</select></div>' +
+      '<div class="gv-field"><label for="gv-lane">Lane</label><select id="gv-lane" name="lane" required>' +
+      '<option value="" disabled' + (lane ? '' : ' selected') + '>choose one</option>' +
+      GAV_LANES.map(function (l) { return '<option value="' + l + '"' + (l === lane ? ' selected' : '') + '>' + l + '</option>'; }).join('') +
+      '</select></div>' +
+      '<div class="gv-actions">' +
+      '<button type="button" class="gv-btn gv-btn-ghost" data-gv-cancel>Cancel</button>' +
+      '<button type="submit" class="gv-btn" data-gv-confirm>Confirm close</button>' +
+      '</div></form>';
+  }
+
+  function gavWireCeremony(host) {
+    Array.prototype.forEach.call(host.querySelectorAll('[data-gv-node]'), function (btn) {
+      btn.addEventListener('click', function () {
+        gavCeremony.sel = btn.getAttribute('data-gv-node');
+        gavCeremony.formState = 'done';
+        gavCeremony.formKind = null;
+        gavCeremony.formLane = null;
+        gavCeremony.formSupersededBy = '';
+        gavCeremony.formResolution = '';
+        gavCeremony.msg = null;
+        gavRenderCeremony();
+      });
+    });
+    Array.prototype.forEach.call(host.querySelectorAll('[data-gv-state]'), function (btn) {
+      btn.addEventListener('click', function () {
+        gavCeremony.formState = btn.getAttribute('data-gv-state');
+        gavRenderCeremony();
+      });
+    });
+    var cancelBtn = host.querySelector('[data-gv-cancel]');
+    if (cancelBtn) cancelBtn.addEventListener('click', function () {
+      gavCeremony.sel = null;
+      gavCeremony.msg = null;
+      gavRenderCeremony();
+    });
+    var resEl = host.querySelector('#gv-resolution');
+    if (resEl) resEl.addEventListener('input', function () { gavCeremony.formResolution = resEl.value; });
+    var kindEl = host.querySelector('#gv-kind');
+    if (kindEl) kindEl.addEventListener('change', function () { gavCeremony.formKind = kindEl.value; });
+    var laneEl = host.querySelector('#gv-lane');
+    if (laneEl) laneEl.addEventListener('change', function () { gavCeremony.formLane = laneEl.value; });
+    var supEl = host.querySelector('#gv-supersededBy');
+    if (supEl) supEl.addEventListener('input', function () { gavCeremony.formSupersededBy = supEl.value; });
+    var form = host.querySelector('[data-gv-form]');
+    if (form) form.addEventListener('submit', function (e) { e.preventDefault(); gavSubmitClose(form); });
+  }
+
+  function gavSubmitClose(form) {
+    var node = (gavCeremony.data.nodes || []).filter(function (n) { return n.id === gavCeremony.sel; })[0];
+    if (!node) return;
+    var fd = new FormData(form);
+    var body = {
+      id: node.id,
+      state: gavCeremony.formState || 'done',
+      resolution: String(fd.get('resolution') || '').trim(),
+      kind: String(fd.get('kind') || '').trim(),
+      lane: String(fd.get('lane') || '').trim(),
+    };
+    if (body.state === 'superseded') body.supersededBy = String(fd.get('supersededBy') || '').trim();
+    // Keep the typed values so a server-side rejection doesn't discard what the user entered.
+    gavCeremony.formResolution = body.resolution;
+    gavCeremony.formKind = body.kind;
+    gavCeremony.formLane = body.lane;
+    gavCeremony.formSupersededBy = body.supersededBy || '';
+
+    var btn = form.querySelector('[data-gv-confirm]');
+    if (btn) btn.disabled = true;
+
+    fetch('/api/close', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); })
+      .then(function (res) {
+        if (!res.ok) {
+          gavCeremony.msg = { ok: false, text: (res.body && res.body.message) || 'Close failed.' };
+          gavRenderCeremony();
+          return;
+        }
+        // Patch local state from the response directly - never assume the WS broadcast lands
+        // before this repaints; connect()'s onclose path retries 1s later, so the socket can be
+        // mid-reconnect right when a close happens.
+        var idx = -1;
+        (gavCeremony.data.nodes || []).forEach(function (n, i) { if (n.id === res.body.node.id) idx = i; });
+        if (idx !== -1) gavCeremony.data.nodes[idx] = res.body.node;
+        gavCeremony.sel = null;
+        gavCeremony.formResolution = ''; gavCeremony.formKind = null; gavCeremony.formLane = null; gavCeremony.formSupersededBy = '';
+        gavCeremony.msg = { ok: true, text: 'Closed ' + res.body.node.id + ' as ' + res.body.node.state + '.' };
+        psToast('Gavel: closed ' + res.body.node.id + ' as ' + res.body.node.state + '.');
+        gavRenderCeremony();
+      })
+      .catch(function (err) {
+        gavCeremony.msg = { ok: false, text: 'Network error: ' + err.message };
+        gavRenderCeremony();
+      })
+      .then(function () { if (btn) btn.disabled = false; });
+  }
 
   // Live channel -> live canvas. workgraph.json changing repaints every mounted hub in place,
   // keeping the chapter the reader is on.
