@@ -237,6 +237,8 @@ claude --dangerously-load-development-channels plugin:name@marketplace
 
 **MANDATORY: Always run `claude plugin validate .` after generating or modifying a plugin.** This catches schema errors in plugin.json, marketplace.json, frontmatter, and hooks.json that will silently prevent the plugin from loading. Do not consider a plugin complete until validation passes clean. Validation is authoritative for both Claude Code and Cowork since the schema is shared.
 
+**MANDATORY, standalone skills: `claude plugin validate .` does not apply — run `scripts/validate-skill.sh <skill-dir>` instead.** `claude plugin validate .` requires `.claude-plugin/plugin.json`, and a standalone skill (anything shipped through `digital-griot-skills`, not bundled inside a plugin — see the standalone-vs-plugin file-resolution rule above) correctly has none by design. Measured 2026-09-23: 104 skills in `digital-griot-skills`, 0 with a `plugin.json`, therefore 0 validatable by the plugin CLI. `scripts/validate-skill.sh` is the standalone-skill equivalent of the same gate — every rule it enforces was derived from a survey of that 104-skill corpus (see `.prism/shared/plans/architect-skill-validator-REPORT.md`), not invented, and a rule under ~95% corpus compliance is a WARN rather than a FAIL. Do not consider a standalone skill complete until it runs clean (0 errors). Route by target: a **plugin** gets `claude plugin validate .`; a **standalone skill** gets `scripts/validate-skill.sh <skill-dir>`.
+
 CLI: `claude plugin install|uninstall|enable|disable|update <plugin> [--scope user|project|local]`
 
 ### Cowork
