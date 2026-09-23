@@ -1352,6 +1352,101 @@
   .gv-msg-err{color:#ffb4b4;background:rgba(255,80,80,.10);border:1px solid rgba(255,80,80,.28)}
   .gv-msg-ok{color:var(--bio);background:var(--bio-wash);border:1px solid var(--bio)}
 
+  /* ---- motion: each carries a meaning (gavel-motion-CONTEXT.md, 2026-09-23) --------------
+     Reuses the two griotwave durations declared at :root (line ~1007) unchanged: --ps-dur-tale
+     220ms = UI-level feedback, --ps-dur-song 320ms = scene-level shift, --ps-ease = the
+     resampled spring. No new duration token is introduced anywhere below. gavSubmitClose (in
+     helper.js) reads --ps-dur-song back out via the existing psMs() helper so the JS-held
+     repaint in motion 4 can never drift from the CSS duration it is standing in for. */
+
+  /* 2 - FORM REVEAL, causality. The form is a consequence of the row click: it unfurls
+     downward from where the list sits, never simply appears. Song, because a new workflow
+     surface is entering, not just acknowledging a tap. Plays automatically - gv-form is a
+     freshly created node every time gavRenderCeremony() runs. */
+  @keyframes gvFormIn{
+    from{opacity:0;transform:translateY(-.5rem) scaleY(.92)}
+    to{opacity:1;transform:none}
+  }
+  .gv-form{transform-origin:top;animation:gvFormIn var(--ps-dur-song) var(--ps-ease) both}
+
+  /* the row that caused it gets a brief confirming pulse - tale, because it is UI feedback,
+     not a scene change - so the eye has somewhere to start before it travels down to the form. */
+  @keyframes gvRowPick{
+    0%{box-shadow:0 0 0 0 rgba(var(--iris-rgb),.5)}
+    100%{box-shadow:0 0 0 .5rem rgba(var(--iris-rgb),0)}
+  }
+  .gv-row[aria-pressed=true]{animation:gvRowPick var(--ps-dur-tale) var(--ps-ease)}
+
+  /* 3 - THE CLOSE: strike and settle. A gavel has weight and is irreversible - the confirm
+     button strikes DOWN and STAYS down (the keyframe ends off zero, not back at rest) for as
+     long as the close is in flight, instead of springing back like an ordinary button press.
+     Song duration: this is the motion the whole panel is named after, not a UI tick. */
+  @keyframes gvStrike{
+    0%{transform:translateY(0) scale(1)}
+    45%{transform:translateY(.3rem) scale(.96)}
+    100%{transform:translateY(.16rem) scale(.98)}
+  }
+  .gv-btn.gv-struck{animation:gvStrike var(--ps-dur-song) var(--ps-ease) both}
+
+  /* the confirmation stamp landing - the second half of the strike. Travels PAST rest and
+     settles there (the overshoot is baked into the keyframe waypoints, since --ps-ease itself
+     is the overdamped spring and never overshoots on its own) so it reads as a mark landing,
+     not a fade. Plays automatically - gv-msg-ok is a freshly created node every time it shows. */
+  @keyframes gvSettle{
+    0%{opacity:0;transform:translateY(-.6rem) scale(1.04)}
+    55%{opacity:1;transform:translateY(.06rem) scale(1)}
+    100%{transform:translateY(0) scale(1)}
+  }
+  .gv-msg-ok{animation:gvSettle var(--ps-dur-song) var(--ps-ease) both}
+
+  /* 4 - STATE TRANSITION on the node row: open (solar) -> done (bio) / superseded (footstep) /
+     parked (solar, unchanged - same colour as open, matching the hub canvas's own palette).
+     Tracked IN PLACE on the row before it leaves the list - gavSubmitClose holds the repaint
+     open for exactly one --ps-dur-song (read via psMs(), never a bare number) so the eye can
+     follow which row changed instead of it just vanishing on the next paint. */
+  .gv-row.gv-closing{pointer-events:none}
+  .gv-row.gv-closing .gv-dot{transition:background var(--ps-dur-song) var(--ps-ease)}
+  .gv-row.gv-closing .gv-row-title{transition:opacity var(--ps-dur-song) var(--ps-ease);opacity:.55}
+  .gv-row.gv-closing[data-gv-to=done] .gv-dot{background:var(--bio)}
+  .gv-row.gv-closing[data-gv-to=superseded] .gv-dot{background:var(--footstep)}
+  .gv-row.gv-closing[data-gv-to=parked] .gv-dot{background:var(--solar)}
+
+  /* 5 - REFUSAL: the system pushed back. Brief, non-punitive resistance - a short damped
+     shake, tale duration (UI-level, not a scene shift), settling to zero rather than looping.
+     Plays automatically: a gv-msg-err node exists only when a close was actually rejected, so
+     this never fires on anything but a genuine refusal. */
+  @keyframes gvRefuse{
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-.3rem)}
+    40%{transform:translateX(.22rem)}
+    60%{transform:translateX(-.14rem)}
+    80%{transform:translateX(.06rem)}
+  }
+  .gv-msg-err{animation:gvRefuse var(--ps-dur-tale) var(--ps-ease)}
+
+  /* Motions 1 (panel entrance) and 6 (toast) already exist in the shared panel system above
+     (.ps-ceremony inherits .ps-transient's transform:translateY(-2.5rem)->none on --ps-dur-song;
+     .ps-toast eases opacity+transform on --ps-dur-tale) - verified against this contract, not
+     reimplemented here. */
+
+  @media (prefers-reduced-motion:reduce){
+    /* Re-encode, never delete - every motion above already has a static channel once its
+       animation is off:
+       - gv-form / the row pulse: the form's presence and the row's own aria-pressed=true
+         border+background (already unconditional, not motion-gated) ARE the causal link;
+         the keyframes only added emphasis on top of a state that was already visible.
+       - the strike: gv-btn stays disabled for the same window regardless (unchanged JS), so
+         the action still reads as taken without needing to watch it land.
+       - the settle: gv-msg-ok's own text ("Closed <id> as <state>.") already names the outcome.
+       - the state transition: gavSubmitClose (helper.js) skips the artificial hold outright
+         under reduced motion, so the repaint - carrying that same text - lands immediately
+         instead of being delayed for a transition nobody asked to watch.
+       - the refusal: gv-msg-err's colour and border (unchanged, already distinct from -ok) and
+         its own message text carry the rejection; only the shake is removed. */
+    .gv-form,.gv-row[aria-pressed=true],.gv-btn.gv-struck,.gv-msg-ok,.gv-msg-err{animation:none}
+    .gv-row.gv-closing .gv-dot,.gv-row.gv-closing .gv-row-title{transition:none}
+  }
+
 </style>
 </head>
 <body>

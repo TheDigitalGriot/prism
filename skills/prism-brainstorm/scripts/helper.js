@@ -2355,25 +2355,44 @@
         if (!res.ok) {
           gavCeremony.msg = { ok: false, text: (res.body && res.body.message) || 'Close failed.' };
           gavRenderCeremony();
+          if (btn) btn.disabled = false;
           return;
         }
-        // Patch local state from the response directly - never assume the WS broadcast lands
-        // before this repaints; connect()'s onclose path retries 1s later, so the socket can be
-        // mid-reconnect right when a close happens.
-        var idx = -1;
-        (gavCeremony.data.nodes || []).forEach(function (n, i) { if (n.id === res.body.node.id) idx = i; });
-        if (idx !== -1) gavCeremony.data.nodes[idx] = res.body.node;
-        gavCeremony.sel = null;
-        gavCeremony.formResolution = ''; gavCeremony.formKind = null; gavCeremony.formLane = null; gavCeremony.formSupersededBy = '';
-        gavCeremony.msg = { ok: true, text: 'Closed ' + res.body.node.id + ' as ' + res.body.node.state + '.' };
         psToast('Gavel: closed ' + res.body.node.id + ' as ' + res.body.node.state + '.');
-        gavRenderCeremony();
+        // The strike lands, then the row carries its new colour in place before the list
+        // repaints - long enough for the eye to track which row changed (gavel-motion-CONTEXT.md,
+        // motions 3+4). Reduced motion skips the hold entirely: the repaint (and its identical
+        // text) lands at once, so nothing is delayed for a transition nobody asked to watch.
+        if (gavPrefersReducedMotion()) { gavFinishClose(res.body.node); if (btn) btn.disabled = false; return; }
+        if (btn) btn.classList.add('gv-struck'); // stays disabled + struck until the hold below repaints
+        var rowEl = gavCeremony.host && gavCeremony.host.querySelector('[data-gv-node="' + res.body.node.id + '"]');
+        if (rowEl) { rowEl.classList.add('gv-closing'); rowEl.setAttribute('data-gv-to', res.body.node.state); }
+        setTimeout(function () { gavFinishClose(res.body.node); }, psMs('--ps-dur-song', 320));
       })
       .catch(function (err) {
         gavCeremony.msg = { ok: false, text: 'Network error: ' + err.message };
         gavRenderCeremony();
-      })
-      .then(function () { if (btn) btn.disabled = false; });
+        if (btn) btn.disabled = false;
+      });
+  }
+
+  function gavPrefersReducedMotion() {
+    try { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+    catch (err) { return false; }
+  }
+
+  // Patch local state from the response directly - never assume the WS broadcast lands before
+  // this repaints; connect()'s onclose path retries 1s later, so the socket can be mid-reconnect
+  // right when a close happens. Shared by both the reduced-motion (immediate) and full-motion
+  // (held for one --ps-dur-song, see gavSubmitClose) paths so they land on identical state.
+  function gavFinishClose(node) {
+    var idx = -1;
+    (gavCeremony.data.nodes || []).forEach(function (n, i) { if (n.id === node.id) idx = i; });
+    if (idx !== -1) gavCeremony.data.nodes[idx] = node;
+    gavCeremony.sel = null;
+    gavCeremony.formResolution = ''; gavCeremony.formKind = null; gavCeremony.formLane = null; gavCeremony.formSupersededBy = '';
+    gavCeremony.msg = { ok: true, text: 'Closed ' + node.id + ' as ' + node.state + '.' };
+    gavRenderCeremony();
   }
 
   // Live channel -> live canvas. workgraph.json changing repaints every mounted hub in place,
