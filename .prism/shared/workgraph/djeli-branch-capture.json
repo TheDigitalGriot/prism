@@ -60,7 +60,8 @@
     "amendPass52_2026_09_22": "gortex is multi-repo: it targets layer 4; ontology codex render has no owner",
     "amendPass53_2026_09_22": "gortex harvest landed: consolidation finding, nine ranked lifts, port open-ask",
     "amendPass55_2026_09_22": "codex-plan-sync forward pass, story-layer findings, concurrent-write hazard",
-    "amendPass56_2026_09_23": "New branch B52: programmatic surface sync. The parallel workstreams drift apart and reconcile only on a prompt. Six findings from the 2026-09-23 repo sweep, two open asks (the canonical surface set, and the branch name), three suggestions. Foundational to the Griot Frequency with any agent."
+    "amendPass56_2026_09_23": "New branch B52: programmatic surface sync. The parallel workstreams drift apart and reconcile only on a prompt. Six findings from the 2026-09-23 repo sweep, two open asks (the canonical surface set, and the branch name), three suggestions. Foundational to the Griot Frequency with any agent.",
+    "amendPass57_2026_09_23": "B53 the unified workgraph surface entity - nine tracking systems read as one, drawn and templated but not yet named (OA25). N113 the drift card a day behind its repo. N114 the ontology cited the workgraph 47 times and described it never. N115 a wrong conclusion desynced the canonical copy. N116 Select-Object halts a piped script, so propagates repo-root stage never ran. N117 four documented node kinds against seven live. S19 interop-map as the standing drawing. S20 griot-ontology-seed."
   },
   "groups": [
     {
@@ -4788,6 +4789,173 @@
         "evidence": "Gavin, 2026-09-23: 'this is something that I hope to solve with the djeli UI ... i constantly have to prompt to keep these threads in sync and ive tried to encode it in the tools but it needs to be programmatic.'",
         "result": "PROPOSED - direction stated by Gavin, shape not yet designed."
       }
+    },
+    {
+      "id": "wg:djeli-branch:B53",
+      "originLane": "untracked",
+      "outputs": [
+        "viz-template 09-interop-map",
+        "a fresh app codex, requested 2026-09-23, not yet built"
+      ],
+      "contractPath": null,
+      "localId": "B53",
+      "group": "untracked",
+      "kind": "branch",
+      "direction": "adjacent",
+      "state": "named-unfiled",
+      "title": "The unified workgraph surface entity - nine tracking systems read as one",
+      "description": "Gavin named it on 2026-09-23: the Griot workgraph methodology is THE system, the one that keeps every surface in sync and feeds up to Prism and Spectrum. It is one entity made of separate surfaces, not one surface. The ontology's tracking-systems section already enumerates all nine and their citation direction; what did not exist was a name, a drawing, or a codex. This branch carries all three.",
+      "verification": {
+        "checked": true,
+        "evidence": "griot-ontology claude/CLAUDE.md section 'the tracking systems - each has its own shape, owner and gate' enumerates 9 systems plus HOW THEY MEET and the REGISTRATION RULE. Drawn 2026-09-23 as the interop-map widget and templated as viz-templates/09-interop-map.html, commit 0014cb2, four surfaces 7CA027790796.",
+        "result": "Branch named and drawn. Entity itself still unnamed - see OA25."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N113",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N113",
+      "group": "new-findings",
+      "kind": "finding",
+      "direction": "local",
+      "state": "corrected-verified",
+      "title": "The drift card served 88 entries while its repo held 89, for a day",
+      "description": "Entry 89 was committed on 2026-09-22 and never republished, so the live card was a day stale and nothing said so. Caught only because a subagent reported an entry count that disagreed with the brief - not by any gate.",
+      "verification": {
+        "checked": true,
+        "evidence": "git log on live/_drift/drift-entries.json: aa06e5e 88 entries, fc691cd 89 entries (2026-09-22, 'log the CRLF flip from the GBFolio family pass'), 054ead4 90. The live card read 88 before the 2026-09-23 republish.",
+        "result": "CONFIRMED - the two halves of the codex mandate failing exactly as B52 describes."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N114",
+      "originLane": "new-findings",
+      "outputs": [
+        "the lane, direction, closure, originLane and localId-prefix vocabulary, in the canonical section"
+      ],
+      "contractPath": null,
+      "localId": "N114",
+      "group": "new-findings",
+      "kind": "finding",
+      "direction": "local",
+      "state": "defect-fixed",
+      "title": "The ontology referenced the workgraph 47 times and never described it",
+      "description": "The doctrine every surface loads cited the workgraph constantly while never carrying its vocabulary. originLane and closureModel appeared ZERO times. An agent could be told to drive the workgraph and have nowhere to learn what a lane, a direction or a closed state was.",
+      "verification": {
+        "checked": true,
+        "evidence": "String counts in claude/CLAUDE.md before the fix: workgraph 47, wg-data 2, in-epic 2, open-ask 1, originLane 0, closureModel 0. Vocabulary folded into tracking-systems item 1 at commit 852209a; four surfaces AF6C9D14F88E.",
+        "result": "FIXED in place. A second, duplicate section written first was removed - see N115."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N115",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N115",
+      "group": "new-findings",
+      "kind": "finding",
+      "direction": "local",
+      "state": "defect-fixed",
+      "title": "A wrong conclusion desynced the canonical workgraph copy",
+      "description": "The amendPass56 sync omitted --canonical because the run concluded Djeli had no canonical copy, having searched GriotApps/djeli - the wrong repo. It lives in Prism/.prism/shared/workgraph. The canonical copy sat at 232/244 while the other three were at 244/255. The same wrong conclusion was written into a duplicate ontology section before being caught and removed.",
+      "verification": {
+        "checked": true,
+        "evidence": "Prism/.prism/shared/workgraph/djeli-branch-capture.json read at 232 nodes / 244 edges on 2026-09-23 while live was 244/255. Resynced with --canonical, then VERIFY_WORKGRAPH_OK across all four copies. Prism commit 95d878b.",
+        "result": "FIXED. Root was answering a where-is-it question with a bounded search instead of reading the doctrine that already names the path."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N116",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N116",
+      "group": "new-findings",
+      "kind": "finding",
+      "direction": "local",
+      "state": "defect-fixed",
+      "title": "Piping a script into Select-Object halts the script",
+      "description": "propagate.ps1 was piped into Select-Object -First N to keep the transcript tidy. That closes the pipeline and stops the upstream script, so the repo-root stage never ran on any propagate this session. Parity across the four surfaces still passed every time, because those four are written BEFORE the truncation point - so the check that would have caught it was structurally blind to it.",
+      "verification": {
+        "checked": true,
+        "evidence": "With -First 1 the mirror and codex surfaces stayed at 9F45409BBCC6 while the SOT moved to AF6C9D14F88E - the parity check failed and exposed it. Re-run without truncation: all four at AF6C9D14F88E and TOTALS: seeded=0 migrated=0 prepended=0 skipped=15 appeared for the first time.",
+        "result": "FIXED by dropping the pipe. No damage - all 15 repo roots were already canonical, which was luck rather than design."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N117",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N117",
+      "group": "new-findings",
+      "kind": "finding",
+      "direction": "local",
+      "state": "flagged-not-fixed",
+      "title": "The SKILL documents four node kinds; the live graph carries seven",
+      "description": "griot-workgraph-update's SKILL.md names branch, finding, open-ask and suggestion. The Djeli graph also carries defect (37 nodes) and decision (11), both in wide use and documented nowhere, plus 2 nodes with kind open sitting in the new-findings lane. Either the SKILL is incomplete or 48 nodes are mis-kinded, and nothing in the engine distinguishes the two.",
+      "verification": {
+        "checked": true,
+        "evidence": "Kind census over 244 nodes on 2026-09-23: finding 75, defect 37, branch 55, open-ask 22, suggestion 18, decision 11, open 2. SKILL.md 'Node and edge shape' lists four.",
+        "result": "OPEN - recorded in the ontology as a flagged gap, awaiting Gavin's ruling."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA25",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA25",
+      "group": "open-ask",
+      "kind": "open-ask",
+      "direction": "local",
+      "state": "open",
+      "title": "The name for the unified workgraph surface entity",
+      "description": "Gavin asked for suggestions from the Griot universe. Offered: Nyansapo (Adinkra wisdom knot - the junction where threads meet), Nkonsonkonson (Adinkra chain link, we are linked in both life and death - literally a graph, but a mouthful), Fihankra (the compound house with one entrance - maps onto the registration rule), and Lattice as the optical-line option beside Prism and Spectrum. Noted that Kente would be the perfect metaphor and is already taken by the Creative workstream.",
+      "verification": {
+        "checked": true,
+        "evidence": "Gavin 2026-09-23: 'as for the name do you have any sugestions int he griot universe?' and 'this unified workgraphs surface entity yet to be named'.",
+        "result": "OPEN - naming is Gavin's, per the nomenclature rule."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S19",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S19",
+      "group": "suggested",
+      "kind": "suggestion",
+      "direction": "local",
+      "state": "open",
+      "title": "interop-map as the standing way to draw the ecosystem",
+      "description": "Template 09. Every system row names its owner and its gate and its state read that turn; flags are live node ids rather than adjectives; the citation band states one record, one home. Proposed as the shape any future ecosystem or surface map takes, so this drawing is never re-invented.",
+      "verification": {
+        "checked": true,
+        "evidence": "viz-templates/09-interop-map.html, manifest v1.4.0, ontology roster 8 to 9, commit 0014cb2, four surfaces 7CA027790796.",
+        "result": "BUILT and registered - the suggestion is that it becomes the default, which is Gavin's call."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S20",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S20",
+      "group": "suggested",
+      "kind": "suggestion",
+      "direction": "local",
+      "state": "open",
+      "title": "griot-ontology-seed - wrap the whole ceremony programmatically",
+      "description": "One skill wrapping both entry paths (ontology edit, ledger entry) and their shared tail: five gates, scoped commit, push, republish, verify. Named by Gavin 2026-09-23. The correction path is the sharp edge - appending is already wrapped, correcting an entry is not, and that is where the silent no-op lived.",
+      "verification": {
+        "checked": true,
+        "evidence": "The ceremony was run by hand six times on 2026-09-23 - ontology x5, drift x3, gold x3 - and every one of the five gates caught something at least once. Gavin: 'i think we should also make a skill with /prism:griot-agent-architect that wraps the griot-ontology/propagate/gold-log or drift-log workflow compltely programtically'.",
+        "result": "PROPOSED - contract not yet written."
+      }
     }
   ],
   "edges": [
@@ -6320,15 +6488,69 @@
       "to": "wg:djeli-branch:S18",
       "kind": "outbound",
       "label": "S18 outbound<- B52 (the surfaced view lands in the Djeli UI)"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:N113",
+      "kind": "in-epic",
+      "label": "N113 in-epic B52 - a live card a day behind its repo"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:N115",
+      "kind": "in-epic",
+      "label": "N115 in-epic B52 - a surface desynced by a wrong conclusion"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:N116",
+      "kind": "in-epic",
+      "label": "N116 in-epic B52 - a propagation stage silently skipped"
+    },
+    {
+      "from": "wg:djeli-branch:B53",
+      "to": "wg:djeli-branch:N114",
+      "kind": "in-epic",
+      "label": "N114 in-epic B53 - cited 47 times, described never"
+    },
+    {
+      "from": "wg:djeli-branch:B53",
+      "to": "wg:djeli-branch:N117",
+      "kind": "in-epic",
+      "label": "N117 in-epic B53 - four documented kinds, seven live"
+    },
+    {
+      "from": "wg:djeli-branch:B53",
+      "to": "wg:djeli-branch:OA25",
+      "kind": "awaits",
+      "label": "B53 awaits<- OA25 (working title only, naming is Gavin's)"
+    },
+    {
+      "from": "wg:djeli-branch:N114",
+      "to": "wg:djeli-branch:S19",
+      "kind": "splinter",
+      "label": "S19 splinter<- N114 (the undescribed system splinters into a way to draw it)"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:S20",
+      "kind": "outbound",
+      "label": "S20 outbound<- B52 (the programmatic answer to prompted reconciliation)"
+    },
+    {
+      "from": "wg:djeli-branch:B53",
+      "to": "wg:djeli-branch:B52",
+      "kind": "ontology",
+      "label": "B52 ontology<- B53 (the unified entity is WHAT B52 is trying to keep in sync)"
     }
   ],
   "stats": {
-    "totalBranches": 79,
+    "totalBranches": 80,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 255,
+    "edgeCount": 264,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -7095,6 +7317,22 @@
         "S18"
       ],
       "newEdges": 11,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass57_2026_09_23_2026_09_23": {
+      "newNodes": [
+        "B53",
+        "N113",
+        "N114",
+        "N115",
+        "N116",
+        "N117",
+        "OA25",
+        "S19",
+        "S20"
+      ],
+      "newEdges": 9,
       "corrections": [],
       "refused": []
     }
