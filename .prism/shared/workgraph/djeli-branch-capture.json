@@ -59,7 +59,8 @@
     "amendPass51_2026_09_22": "nine tracking systems locked in the ontology; card-gate and registry findings",
     "amendPass52_2026_09_22": "gortex is multi-repo: it targets layer 4; ontology codex render has no owner",
     "amendPass53_2026_09_22": "gortex harvest landed: consolidation finding, nine ranked lifts, port open-ask",
-    "amendPass55_2026_09_22": "codex-plan-sync forward pass, story-layer findings, concurrent-write hazard"
+    "amendPass55_2026_09_22": "codex-plan-sync forward pass, story-layer findings, concurrent-write hazard",
+    "amendPass56_2026_09_23": "New branch B52: programmatic surface sync. The parallel workstreams drift apart and reconcile only on a prompt. Six findings from the 2026-09-23 repo sweep, two open asks (the canonical surface set, and the branch name), three suggestions. Foundational to the Griot Frequency with any agent."
   },
   "groups": [
     {
@@ -4562,6 +4563,231 @@
         "evidence": "griot-live-artifacts bd6a1e03, 4f02c43 (untrack), 9c60069 (dgs-sync-all re-add), aa06e5e (ledger correction); concurrent session_018hCiA5EBRenRw2aeEnsaXV HEAD 360018b.",
         "result": "flagged-not-fixed - dgs-sync-all commits with git add -A, which is unsafe while a second session is writing."
       }
+    },
+    {
+      "id": "wg:djeli-branch:B52",
+      "originLane": "untracked",
+      "outputs": [
+        "drift entry: Repo state only syncs when Gavin prompts for it (recurring, ledger #90)",
+        "a fresh codex of the surfaces - requested 2026-09-23, not yet built"
+      ],
+      "contractPath": null,
+      "localId": "B52",
+      "group": "untracked",
+      "kind": "branch",
+      "direction": "adjacent",
+      "state": "named-unfiled",
+      "title": "Programmatic surface sync - every Griot surface reconciled without a prompt",
+      "description": "Gavin's parallel workstreams - repos, codexes, the workgraph, the DGS plan, live artifact cards, ledgers and open sessions - drift apart from one another, and reconciliation happens only when he prompts for it in chat. The doctrine is already encoded across the tools; what is missing is anything that RUNS it. Named 2026-09-23 as foundational to the Griot Frequency with any agent. Intended home for the surfaced view is the Djeli UI.",
+      "verification": {
+        "checked": true,
+        "evidence": "Session sweep 2026-09-23 via PowerShell git across the 9 connected roots: 42 repos scanned, 21 dirty simultaneously. Reconciliation happened only because Gavin typed 'commit everything'. Ontology commits 2819323 and 920e2d5 landed the two governing rules in the same session; suite drift ledger stands at 90 entries after DONE_APPEND_DRIFT.",
+        "result": "Branch named and grounded. No contract on disk yet - this node is the durable record until the codex exists."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N107",
+      "originLane": "new-findings",
+      "outputs": [
+        "the triage classification: pushed / real work / mixed / exhaust"
+      ],
+      "contractPath": null,
+      "localId": "N107",
+      "group": "new-findings",
+      "kind": "finding",
+      "direction": "local",
+      "state": "corrected-verified",
+      "title": "21 of 42 repos were dirty at the same moment",
+      "description": "A single sweep across the nine connected roots found half the tracked repositories carrying uncommitted work simultaneously. Not one neglected repo - a systemic condition of the surface.",
+      "verification": {
+        "checked": true,
+        "evidence": "git status --porcelain over 42 discovered repos, 2026-09-23. DIRTY rows returned for 21, spanning GriotMeta, GBFolio, GriotApps, GriotProducts and GriotSandbox.",
+        "result": "CONFIRMED - 21/42 dirty, 20 subsequently committed, 1 held for review."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N108",
+      "originLane": "new-findings",
+      "outputs": [
+        "origin and lineage of blender-claude-sdk, previously unrecognised by Gavin"
+      ],
+      "contractPath": null,
+      "localId": "N108",
+      "group": "new-findings",
+      "kind": "finding",
+      "direction": "local",
+      "state": "corrected-verified",
+      "title": "blender-claude-sdk carried an unrecorded migration for nine months",
+      "description": "The repo holds exactly one commit, 'init'. Against it sat 64 deleted files and 4 untracked directories - a coherent vendored-source to built-wheel migration of the Puree UI framework that was never recorded. Nine months of drift on a single surface, invisible until a sweep looked.",
+      "verification": {
+        "checked": true,
+        "evidence": "git log: c3ec6ec 'init', TheDigitalGriot, 2025-12-17 20:45:12 -0500, 233 files, no remote. git status: 64 D entries under blender_claude_agent_puree/puree/ and puree-master/dist/, plus untracked wheels/, static/, puree_release/, puree_test/. blender_manifest.toml declares ./wheels/puree_ui-0.1.3-py3-none-any.whl.",
+        "result": "CONFIRMED and explained - the manifest proves the source was replaced by the wheel, not lost."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N109",
+      "originLane": "new-findings",
+      "outputs": [
+        "the exhaust pattern list: .prism/local/, *.pid, *.log, *.marker, *.bak-*, *.tsbuildinfo, .vite/build/"
+      ],
+      "contractPath": null,
+      "localId": "N109",
+      "group": "new-findings",
+      "kind": "finding",
+      "direction": "local",
+      "state": "corrected-verified",
+      "title": "An ungated sweep is not the fix - it commits exhaust with the work",
+      "description": "Committing everything indiscriminately swept build and process artefacts into history alongside real work. The gate has to classify, not just detect.",
+      "verification": {
+        "checked": true,
+        "evidence": "Committed in the same sweep: _dev.pid / _py.pid / _npm.pid and build logs in 3DGenStudio; cinopsis-icm-run.log and two .bak- script copies in Cinopsis; apps/electron/.vite/build output in lucid; graph-ui/tsconfig.tsbuildinfo in codebase-memory-mcp; .prism/local/ agent-log, observations.log and compact-snapshot in idea_init and gb-portfolio-r3f.",
+        "result": "CONFIRMED - detection without classification produces a dirty ledger."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N110",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N110",
+      "group": "new-findings",
+      "kind": "finding",
+      "direction": "local",
+      "state": "corrected-verified",
+      "title": "Eleven of twenty repos have no remote at all",
+      "description": "For more than half the swept repos, push is not an available sync mechanism - there is nowhere to push to. Any surface-sync design that assumes a remote is wrong for the majority of the estate.",
+      "verification": {
+        "checked": true,
+        "evidence": "git rev-parse --abbrev-ref @{u} returned nothing for codebase-memory-mcp, griot-hub, idea_init, lucid, lucid-ai-gen, prism-design-engine, r3f-studio-dev, r3f-web-prep-addon, Synaptiq, valence-context-platform, kora.",
+        "result": "CONFIRMED - 11 NO-UPSTREAM, 8 committed-not-pushed, 1 pushed."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N111",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N111",
+      "group": "new-findings",
+      "kind": "finding",
+      "direction": "local",
+      "state": "flagged-not-fixed",
+      "title": "Card state is gated, repo state is not - the asymmetry IS the defect",
+      "description": "verify-cards.ps1 already asserts that every live/*.html matches its artifact card and exits 1 when it does not. Nothing performs the equivalent assertion for repository or workstream state, so that half of the surface reconciles only on a human prompt.",
+      "verification": {
+        "checked": true,
+        "evidence": "verify-cards.ps1 exists in griot-live-artifacts and is recorded in the gold ledger entry 'The gate caught its own author' with CARDS_OUT_OF_SYNC / VERIFY_CARDS_OK tokens. No sibling script asserts repo state; the 2026-09-23 sweep was initiated by a chat prompt.",
+        "result": "CONFIRMED asymmetry - one half gated, the other half prompted."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N112",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N112",
+      "group": "new-findings",
+      "kind": "finding",
+      "direction": "local",
+      "state": "flagged-not-fixed",
+      "title": "Dirty is not one truth - CRLF perception differs by shell",
+      "description": "The Linux bridge shell and PowerShell git disagreed about which files were modified in griot-ontology. A surface-sync gate that reports 'dirty' must declare which shell's view is canonical, or it will raise phantom drift.",
+      "verification": {
+        "checked": true,
+        "evidence": "git status from device_bash listed README.md, propagate.ps1 and viz-templates/manifest.json as modified; the same repo from PowerShell immediately afterwards showed them clean, with only .block.tmp untracked. Related CRLF flip already logged in the drift codex.",
+        "result": "CONFIRMED divergence - unresolved, needs a canonical reader."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA23",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA23",
+      "group": "open-ask",
+      "kind": "open-ask",
+      "direction": "local",
+      "state": "open",
+      "title": "What is the canonical list of surfaces?",
+      "description": "The gate cannot be written until the set is closed. Candidates observed in this session: git repos, codex HTML pages, the workgraph JSON and its four copies, the DGS Definitive Plan, live artifact cards, the drift and gold ledgers, account skills, ~/.claude and ~/.codex propagation targets, Claude Design exports, and open agent sessions. Gavin's call, never inferred.",
+      "verification": {
+        "checked": true,
+        "evidence": "Each candidate was touched or verified in the 2026-09-23 session: 42 repos swept, 4 propagation surfaces hash-checked at BAE4A3757362, drift ledger appended to 90, gold ledger to 9, artifact list returned 50 cards.",
+        "result": "OPEN - enumerated as observed, not closed."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA24",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA24",
+      "group": "open-ask",
+      "kind": "open-ask",
+      "direction": "local",
+      "state": "open",
+      "title": "The name for this branch",
+      "description": "Per the nomenclature rule, our things get our names. B52 carries a descriptive working title only. Naming is Gavin's call.",
+      "verification": {
+        "checked": true,
+        "evidence": "Ontology section 'our nomenclature - our things get OUR names (standing rule)' at claude/CLAUDE.md line 477 after the 2026-09-23 insert.",
+        "result": "OPEN - working title in use, awaiting a real name."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S16",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S16",
+      "group": "suggested",
+      "kind": "suggestion",
+      "direction": "local",
+      "state": "open",
+      "title": "A repo-state gate, sibling to verify-cards.ps1",
+      "description": "Walk the connected roots, classify each dirty repo as work or exhaust against the pattern list, print REPOS_DIRTY=n and exit 1 on work-class dirt only. Run it from whatever already runs verify-cards, so repo state is asserted on the same cadence as card state.",
+      "verification": {
+        "checked": true,
+        "evidence": "Proposed in drift ledger entry #90 fix-direction, 2026-09-23. Modelled on the existing verify-cards.ps1 predicate design recorded in gold entry 'The gate caught its own author'.",
+        "result": "PROPOSED - awaiting a yes or no."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S17",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S17",
+      "group": "suggested",
+      "kind": "suggestion",
+      "direction": "local",
+      "state": "open",
+      "title": "Land the exhaust patterns in per-repo .gitignore",
+      "description": "In the same pass as the gate, add the exhaust patterns to each repo's .gitignore so the gate stays quiet about noise instead of being tuned to ignore it.",
+      "verification": {
+        "checked": true,
+        "evidence": "Patterns derived from what the 2026-09-23 sweep actually committed across 3DGenStudio, Cinopsis, lucid, codebase-memory-mcp, idea_init and gb-portfolio-r3f.",
+        "result": "PROPOSED - awaiting a yes or no."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S18",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S18",
+      "group": "suggested",
+      "kind": "suggestion",
+      "direction": "outbound",
+      "state": "open",
+      "title": "Surface every drifting surface in the Djeli UI",
+      "description": "Gavin's stated intent: the IDE is where this gets solved. One view in which every surface's drift state is visible at a glance, so reconciliation is something you SEE rather than something you remember to ask for.",
+      "verification": {
+        "checked": true,
+        "evidence": "Gavin, 2026-09-23: 'this is something that I hope to solve with the djeli UI ... i constantly have to prompt to keep these threads in sync and ive tried to encode it in the tools but it needs to be programmatic.'",
+        "result": "PROPOSED - direction stated by Gavin, shape not yet designed."
+      }
     }
   ],
   "edges": [
@@ -6028,15 +6254,81 @@
       "to": "wg:djeli-branch:N96",
       "kind": "outbound",
       "label": "index regeneration now has a story"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:N107",
+      "kind": "in-epic",
+      "label": "N107 in-epic B52 - the sweep that surfaced the condition"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:N108",
+      "kind": "in-epic",
+      "label": "N108 in-epic B52 - nine months of unrecorded drift on one surface"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:N109",
+      "kind": "in-epic",
+      "label": "N109 in-epic B52 - why an ungated sweep is not the fix"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:N110",
+      "kind": "in-epic",
+      "label": "N110 in-epic B52 - no remote for most of the estate"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:N111",
+      "kind": "in-epic",
+      "label": "N111 in-epic B52 - the gated/prompted asymmetry"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:N112",
+      "kind": "in-epic",
+      "label": "N112 in-epic B52 - dirty is not one truth"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:OA23",
+      "kind": "awaits",
+      "label": "B52 awaits<- OA23 (the gate cannot be written until the surface set is closed)"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:OA24",
+      "kind": "awaits",
+      "label": "B52 awaits<- OA24 (working title only, naming is Gavin's)"
+    },
+    {
+      "from": "wg:djeli-branch:N111",
+      "to": "wg:djeli-branch:S16",
+      "kind": "splinter",
+      "label": "S16 splinter<- N111 (the asymmetry splinters into the repo-state gate)"
+    },
+    {
+      "from": "wg:djeli-branch:N109",
+      "to": "wg:djeli-branch:S17",
+      "kind": "splinter",
+      "label": "S17 splinter<- N109 (the exhaust list splinters into gitignore hygiene)"
+    },
+    {
+      "from": "wg:djeli-branch:B52",
+      "to": "wg:djeli-branch:S18",
+      "kind": "outbound",
+      "label": "S18 outbound<- B52 (the surfaced view lands in the Djeli UI)"
     }
   ],
   "stats": {
-    "totalBranches": 78,
+    "totalBranches": 79,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 244,
+    "edgeCount": 255,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -6784,6 +7076,25 @@
         "N106"
       ],
       "newEdges": 6,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass56_2026_09_23_2026_09_23": {
+      "newNodes": [
+        "B52",
+        "N107",
+        "N108",
+        "N109",
+        "N110",
+        "N111",
+        "N112",
+        "OA23",
+        "OA24",
+        "S16",
+        "S17",
+        "S18"
+      ],
+      "newEdges": 11,
       "corrections": [],
       "refused": []
     }
