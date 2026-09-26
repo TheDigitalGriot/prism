@@ -349,6 +349,45 @@ const GAVEL_TOOLS = [
       additionalProperties: false,
     },
   },
+  {
+    // THE GATE HAS TO BE CALLABLE FROM WHERE THE WORK HAPPENS. griot-propagate's `check`
+    // verb answers "which copies of anything are behind" across seven declared channels,
+    // and until now it was reachable only from a shell. This server is already BOTH an MCP
+    // tool surface and a channel, so exposing check here makes the freshness question
+    // askable from any surface that can call a tool. READ-ONLY: check never writes, and
+    // this handler never invokes a transport.
+    name: "griot_propagate_check",
+    description:
+      "griot-propagate check — report propagation drift across every declared channel: the branch-capture " +
+      "workgraph copies, both marketplace plugin mirrors, the ontology fan-out, the skills repo to the " +
+      "device, the account-synced snapshot, and this MCP server's own mirror. Read-only; it never deploys " +
+      "and never writes. Call it BEFORE claiming any change is done, and whenever a copy might be stale — a " +
+      "skill edited but not deployed, a mirror behind its source, a cloud session reading a thin skill body, " +
+      "or a running tool set that matches neither file on disk. Returns a per-channel verdict plus the " +
+      "PROPAGATE_CHECK_OK / PROPAGATE_DRIFT=n token.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        channel: {
+          type: "string",
+          description: "Optional single channel id to check (1-7). Omit to check all seven.",
+        },
+        skill_dir: {
+          type: "string",
+          description:
+            "Explicit griot-propagate skill directory. If omitted, resolved from GRIOT_PROPAGATE_DIR " +
+            "or the canonical digital-griot-skills path.",
+        },
+        detail: {
+          type: "boolean",
+          description: "Include each channel's measured detail lines. Default: true.",
+          default: true,
+        },
+      },
+      required: [],
+      additionalProperties: false,
+    },
+  },
 ] as const
 
 // ===========================================================================
@@ -1252,6 +1291,109 @@ function handleGriotVizEngine(args: Record<string, unknown>) {
  *
  * An alias RESOLVES; it is not what we say. Write `griot_viz_engine`.
  */
+// ===========================================================================
+// griot_propagate_check — the propagation freshness gate, callable as a tool.
+//
+// The skill owns the registry and the strategies; this is a thin facade over its `check`
+// verb, exactly as griot_assert is a facade over the assertion rungs. Nothing about which
+// channels exist, or where anything lives, is duplicated here — that all lives in the
+// skill's channels.json, which is the whole point of that design.
+//
+// READ-ONLY. `check` never writes, and this handler never invokes a transport.
+// ===========================================================================
+
+// The skill's home. Overridable for tests; default is the canonical local path, same shape
+// as GRIOT_ARTIFACTS_REPO above.
+const GRIOT_PROPAGATE_DIR =
+  process.env.GRIOT_PROPAGATE_DIR ?? "c:/Users/digit/GriotMeta/digital-griot-skills/griot-propagate"
+const PROPAGATE_CHECK_REL = "scripts/check.mjs"
+
+function handleGriotPropagateCheck(args: Record<string, unknown>) {
+  const skillDir = (typeof args.skill_dir === "string" && args.skill_dir) || GRIOT_PROPAGATE_DIR
+  const script = path.join(skillDir, PROPAGATE_CHECK_REL)
+  const wantDetail = args.detail === undefined ? true : Boolean(args.detail)
+
+  if (!fs.existsSync(script)) {
+    return okJson({
+      ok: false,
+      tool: "griot_propagate_check",
+      error: `griot-propagate check script not found at ${script}`,
+      hint:
+        "The skill lives in digital-griot-skills. Set GRIOT_PROPAGATE_DIR, or pass skill_dir, " +
+        "if this machine keeps it elsewhere.",
+    })
+  }
+
+  const argv = [script, "--json"]
+  if (typeof args.channel === "string" && args.channel) argv.push("--channel", args.channel)
+
+  // check.mjs EXITS 1 WHEN A CHANNEL IS BEHIND. That is a verdict, not a crash, so the
+  // non-zero path still carries the full JSON payload on stdout and must be parsed rather
+  // than thrown away. Getting this wrong would turn every real finding into an error.
+  let stdout = ""
+  try {
+    stdout = execFileSync("node", argv, { encoding: "utf-8", maxBuffer: 32 * 1024 * 1024 })
+  } catch (err) {
+    const e = err as { stdout?: string; stderr?: string }
+    stdout = e.stdout ?? ""
+    if (!stdout.trim()) {
+      return okJson({
+        ok: false,
+        tool: "griot_propagate_check",
+        error: `check did not produce a payload: ${String(e.stderr ?? err)}`,
+      })
+    }
+  }
+
+  let payload: {
+    channels?: { id: number; slug: string; status: string; headline: string; owner: string | null; hasTransport: boolean; detail?: string[] }[]
+    drifted?: number[]
+    unknown?: number[]
+    verdict?: string
+    checkedAt?: string
+  }
+  try {
+    payload = JSON.parse(stdout)
+  } catch (err) {
+    return okJson({
+      ok: false,
+      tool: "griot_propagate_check",
+      error: `check payload was not JSON: ${String(err)}`,
+      raw: stdout.slice(0, 2000),
+    })
+  }
+
+  const channels = (payload.channels ?? []).map((c) => ({
+    id: c.id,
+    slug: c.slug,
+    status: c.status,
+    headline: c.headline,
+    owner: c.owner,
+    hasTransport: c.hasTransport,
+    ...(wantDetail ? { detail: c.detail ?? [] } : {}),
+  }))
+
+  return okJson({
+    ok: true,
+    tool: "griot_propagate_check",
+    action: "report",
+    skill: "griot-propagate",
+    readOnly: true,
+    checkedAt: payload.checkedAt,
+    verdict: payload.verdict,
+    drifted: payload.drifted ?? [],
+    unmeasurable: payload.unknown ?? [],
+    channels,
+    instruction:
+      (payload.drifted ?? []).length > 0
+        ? "One or more channels are behind. Do NOT report the change done. Deploy each drifted channel " +
+          "through its OWN declared transport (see the skill's channels.json), then re-run this tool. " +
+          "A channel whose transport is null cannot be deployed from here - state that condition instead."
+        : "Every declared channel is in parity. This is the enumerate-every-target check, so a completion " +
+          "claim may now cite it.",
+  })
+}
+
 const VIZ_ALIASES: ReadonlyArray<{ canonical: string; alias: string }> = [
   { canonical: "griot_viz_engine", alias: "prism_viz_engine" },
 ]
@@ -1300,6 +1442,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "griot_viz_engine":
       case "prism_viz_engine":
         return handleGriotVizEngine(args)
+      case "griot_propagate_check":
+        return handleGriotPropagateCheck(args)
       default:
         return errJson(`Unknown tool: ${name}`)
     }
