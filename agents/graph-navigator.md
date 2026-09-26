@@ -1,7 +1,7 @@
 ---
 name: graph-navigator
 description: Queries the codebase knowledge graph for structural information. Fast, cheap structural lookups — functions, call chains, dependencies, dead code. Use Task tool with subagent_type="graph-navigator" for structural analysis via knowledge graph. <example>Context — assessing blast radius before an edit. user — "What calls parseHostPort?" assistant — "Querying via the graph-navigator agent — cheap structural lookup on the knowledge graph." <commentary>Structural call-chain and dependency queries route here, not to Grep.</commentary></example>
-tools: codebase-memory-mcp (all 11 tools)
+tools: mcp__codebase-memory-mcp__*
 model: haiku
 effort: low
 maxTurns: 5
