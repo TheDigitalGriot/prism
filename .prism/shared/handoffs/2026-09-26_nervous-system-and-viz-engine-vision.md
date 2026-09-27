@@ -65,9 +65,34 @@ Gavin's instruction at the close of the session, and it governs the next one:
 
 1. **Build Prism Brainstorm FIRST, live in the template.** Not a plan for it, not a diagram of it.
    The template is `skills/prism-brainstorm/scripts/frame-template.html` with `helper.js`. Work IN it.
-2. Then close the things that have been hard to close — the asks in §5b, the recurring drift, the
-   items the synthesis §5.2 lists with file:line.
-3. Then the Cinopsis and Prism tooling workflows, then the 21 CC5 videos, then the GB Avatar locs.
+2. **Then GBFolio locs.** Gavin moved this up at the close of 2026-09-27: *"after brainstorm i need
+   to do gbfolio locs."* It sits ahead of the Cinopsis and CC5 work now, not behind it.
+
+   The three asks are already on the board and are the whole task:
+
+   | id | ask |
+   |---|---|
+   | `OA1` | Chain data source for Fix Tail Directions |
+   | `OA2` | Trunk aim rule at branch points |
+   | `OA3` | Loc motion engine: CC5 spring bones or Blender softbody |
+
+   **One dependency worth knowing, not worth gating on:** the 21-video CC5 corpus was originally
+   queued to inform `OA3` specifically — the spring-bones-versus-softbody call. The corpus is not
+   ingested. `OA3`'s own recorded evidence already says option B is real and present on disk
+   (`dreadlock_extender_v21-1.py`, 72,997 B, references softbody) while option A's mechanism is
+   `N4`, which is **URL-only and unverified** because that run had no route to fetch the two
+   soupday pages. So `OA3` can be ruled on what is measured today, or the two URLs can be fetched
+   in one pass to close the unverified half. Gavin's call, not a blocker.
+
+   Relevant repo state: GBFolio is its own top-level home at `C:\Users\digit\GBFolio` with two
+   git repos, `gb-portfolio-r3f` (has `.prism`) and `gb-portfolio-strapi`. **It is NOT in
+   `workgraph-index.mjs`'s `ROOTS`**, which walks GriotApps, GriotProducts, GriotMeta, GriotClients
+   and Developer — so the live portfolio home is invisible to the generator while the archive tree
+   under `Developer\` is indexed. One line, asked and unanswered.
+
+3. Then close the remaining hard things — the asks in §5b, the recurring drift, the items the
+   synthesis §5.2 lists with file:line.
+4. Then the Cinopsis and Prism tooling workflows and the 21 CC5 videos.
 
 **Operating rules for that session:**
 
