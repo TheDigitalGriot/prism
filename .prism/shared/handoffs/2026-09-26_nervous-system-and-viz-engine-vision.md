@@ -109,9 +109,18 @@ Gavin's instruction at the close of the session, and it governs the next one:
 
 **Operating rules for that session:**
 
-- **NO HANDROLLING.** Two surfaces only: the **Selectah in chat**, generated via
-  `tools/fill-selectah-template.mjs` or rendered from `live/_selectah/board-data.json` — and the
-  **brainstorm** itself. Anything else that has a generator gets driven, never retyped.
+- **NO HANDROLLING.** Two surfaces only: the **Selectah in chat** and the **brainstorm** itself.
+  Anything else that has a generator gets driven, never retyped.
+
+  **The chat render goes through a per-lane FRAGMENT from `tools/fill-selectah-template.mjs`,
+  never straight from `board-data.json`.** The Selectah is a two-stage pipeline and the digest is
+  stage-1 output: `render-selectah.mjs` is DATA (writes `board-data.json`, `board-rows.json`,
+  `selectah-board.html`) and contains the word `spine` **zero** times; `fill-selectah-template.mjs`
+  is PRESENTATION (reads those two, fills viz-template 11, emits the page and the asks/landed/owed
+  fragments) and contains it **ten** times. The board's own diagram — `svg class="spine"`, a
+  three-part problem / terminal-state / answer figure whose first box reads *"hand-composed
+  boards"* — exists only downstream of stage 1. Render the digest and you drop it every time.
+  See `C28` and drift 155.
 - **Do not hand-start `server.cjs` and call it the brainstorm.** That was done this session and it
   was wrong. Run the skill device-side. Serving a session `content/` directory is not the companion.
 - **Diagrams answer PROSE, they do not replace shipping.** Visual-first still holds when he is
@@ -200,7 +209,9 @@ gates the whole fragment path on `if (!COMPANION)`. Three flags, one array.
 **Board:** `RENDER_SELECTAH_OK 309 nodes — 23 asks, 162 landed, 124 owed.`
 Ledgers: drift 153 (75 flagged, 36 recurring, 30 resolved), gold 16.
 Regenerate with `node tools/render-selectah.mjs` in `griot-live-artifacts`; the chat-renderable
-digest is `live/_selectah/board-data.json` at ~12.8 KB. **Never hand-compose a board** — one was
+digest is `live/_selectah/board-data.json` at ~12.8 KB, but **the digest is stage-1 output and
+carries no spine — render a per-lane fragment, not the digest** (see the rule in §0b).
+**Never hand-compose a board** — one was
 hand-composed this session and showed 16 rows against a true 309.
 
 His locs sit in the asks lane as `gbfolio OA1` (chain data source), `OA2` (trunk aim rule),
