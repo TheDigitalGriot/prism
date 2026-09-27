@@ -70,7 +70,8 @@
     "amendPass63": "Selectah surface filing: register the board render (tools/render-selectah.mjs) as a this-stage branch node, per Gavin's ruling to file it as a tracking surface. Live-card publish is a separate half owed to a session with the Artifact tool.",
     "amendPass64": "C27 verification.result amended: live card published (Djudai8iCE9EkGvq88S4b1), both halves now propagated - backfill of the plan url",
     "amendPass65_2026_09_23": "Filed B55: requirement that the Selectah board, the gavel ceremony, the brainstorm decision rail and GavelSurface must converge to one decision state instead of four separate stores. Filing only, per Gavin's instruction - no design or build.",
-    "amendPass66_2026_09_27": "B57 - Gavin moved the Djeli shell design canvas to the top of the handoff himself and is building it live. Splinters from B17, lands in B12, works through OA12. Not a new idea, the live build of what this branch already specifies."
+    "amendPass66_2026_09_27": "B57 - Gavin moved the Djeli shell design canvas to the top of the handoff himself and is building it live. Splinters from B17, lands in B12, works through OA12. Not a new idea, the live build of what this branch already specifies.",
+    "amendPass67_2026_09_27": "C28 - the Selectah is a two-stage pipeline and the chat path reads stage 1, which has no spine. The diagram exists and has never been rendered in chat."
   },
   "groups": [
     {
@@ -5542,6 +5543,24 @@
         "evidence": "Measured on device 2026-09-27: repo present at C:/Users/digit/GriotApps/djeli; package.json name is orca (the fork has not been renamed) at version 1.4.160-rc.0; git HEAD bf727a9 dated 2026-09-25, message 'prism: commit stage contracts, ignore runtime'; working tree clean at 0 dirty entries; launch scripts present include start, dev, dev:web, build:desktop, build:release. Prior specification confirmed present in this graph as B17, B12 and OA12, all state open. Recorded in the session handoff at Prism commit ce0ece0 section 0.",
         "result": "pass"
       }
+    },
+    {
+      "id": "wg:djeli-branch:C28",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C28",
+      "kind": "finding",
+      "title": "The Selectah has two generators in a pipeline, and the chat path skips the diagram stage",
+      "state": "open",
+      "direction": "local",
+      "group": "new-findings",
+      "description": "Gavin 2026-09-27: render-selectah.mjs is a different generator from fill-selectah-template.mjs, and the Selectah has a diagram section we never use. Both true, and measured. THEY ARE A PIPELINE, NOT RIVALS. STAGE 1 tools/render-selectah.mjs (17 KB) is the DATA stage: reads the three branch-capture workgraphs plus the drift and gold ledgers, writes live/selectah-board.html, live/_selectah/board-data.json (the ~12.8 KB chat digest) and live/_selectah/board-rows.json (88 KB, complete landed and owed rows). Occurrences of spine in its source: ZERO. STAGE 2 tools/fill-selectah-template.mjs (43 KB) is the PRESENTATION stage: reads board-data.json and board-rows.json plus viz-template 11, writes the full page, a combined fragment, per-lane asks/landed/owed fragments and _selectah/template-pin.json. Occurrences of spine in its source: TEN. THE DIAGRAM IS REAL AND IT IS IN STAGE 2 ONLY: svg class=spine, viewBox 0 0 980 210, aria-label Full-width three-part spine: the problem step, its terminal state, and the answer, closing on the claim. Its own first box reads hand-composed boards. Measured in the rendered outputs: selectah-board.html from stage 1 has svg=0; selectah-board-2026-09-26.html from stage 2 has svg=1 and four path d= entries. THE MECHANISM OF NEVER USING IT: a chat session renders from board-data.json, which is stage 1 output, so the spine is structurally absent from the chat path every time. The session handoff itself said render from board-data.json OR a per-lane fragment, offering the spine-less option first. Separately, the 3D spatial panel is a different surface again - it lives in griot-branch-codex/templates/branch-codex.html.tmpl (THREE.js x188, token WORKGRAPH_JSON), not in any Selectah template.",
+      "verification": {
+        "checked": true,
+        "evidence": "Measured on device 2026-09-27. Source greps: render-selectah.mjs svg=0 spine=0, references template11=false; fill-selectah-template.mjs svg=0 spine=10, references template11=true. Read/write surfaces extracted from each file: stage 1 writes OUT_HTML, OUT_JSON, OUT_ROWS_JSON; stage 2 reads BOARD_DATA_PATH and BOARD_ROWS_PATH and TEMPLATE_PATH, writes OUT_PATH, FRAGMENT_PATH, ASKS_FRAGMENT_PATH, LANDED_FRAGMENT_PATH, OWED_FRAGMENT_PATH, TEMPLATE_PIN_PATH. Rendered output comparison: selectah-board.html 126 KB svg=0; selectah-board-2026-09-26.html 185 KB svg=1 path-d=4. Template token audit: viz-template 11 carries 102 tokens and fill-selectah-template.mjs fills all 102, zero unfilled - the spine is literal SVG in the template, not a token, which is why a token-name search for VIZ or DIAGRAM returned nothing.",
+        "result": "pass"
+      }
     }
   ],
   "edges": [
@@ -8081,6 +8100,14 @@
         "B57"
       ],
       "newEdges": 3,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass67_2026_09_27_2026_09_27": {
+      "newNodes": [
+        "C28"
+      ],
+      "newEdges": 0,
       "corrections": [],
       "refused": []
     }
