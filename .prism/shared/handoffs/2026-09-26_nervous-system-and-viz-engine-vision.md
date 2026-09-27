@@ -5,6 +5,40 @@ Where a number appears, it came from a command run in this session.
 
 ---
 
+## 0 · EXECUTION ORDER AND OPERATING RULES — read this before anything else
+
+Gavin's instruction at the close of the session, and it governs the next one:
+
+> "i want the next session to build the prism brainstorm first live in template no handrolling
+> only giving me selectah in chat and the brainstorm and closing things we have a hard time
+> closing. if i give prose responses then it can respond with diagrams but i want to just work
+> today and close things with great robust code and my tooling which i know i trust the frequency of."
+
+**The order, non-negotiable:**
+
+1. **Build Prism Brainstorm FIRST, live in the template.** Not a plan for it, not a diagram of it.
+   The template is `skills/prism-brainstorm/scripts/frame-template.html` with `helper.js`. Work IN it.
+2. Then close the things that have been hard to close — the asks in §5b, the recurring drift, the
+   items the synthesis §5.2 lists with file:line.
+3. Then the Cinopsis and Prism tooling workflows, then the 21 CC5 videos, then the GB Avatar locs.
+
+**Operating rules for that session:**
+
+- **NO HANDROLLING.** Two surfaces only: the **Selectah in chat**, generated via
+  `tools/fill-selectah-template.mjs` or rendered from `live/_selectah/board-data.json` — and the
+  **brainstorm** itself. Anything else that has a generator gets driven, never retyped.
+- **Do not hand-start `server.cjs` and call it the brainstorm.** That was done this session and it
+  was wrong. Run the skill device-side. Serving a session `content/` directory is not the companion.
+- **Diagrams answer PROSE, they do not replace shipping.** Visual-first still holds when he is
+  thinking out loud in prose. When he says work, the output is robust code and closed items, not a
+  picture of what the code would be. A diagram delivered instead of a landed change is the failure
+  mode, not the contract.
+- **Drive his tooling.** Before producing any artifact, list what already produces it. `tools/` is
+  the index for outputs the way `griot-suite-context` is the index for paths.
+- Pride in the work: robust code, measured claims, evidence on every status change.
+
+---
+
 ## 1 · Repo state at handoff — all five pushed, all ref-equal
 
 | repo | HEAD | what landed |
@@ -90,6 +124,51 @@ His locs sit in the asks lane as `gbfolio OA1` (chain data source), `OA2` (trunk
 `OA22` is **answered and can be closed**: `server.cjs:76` is
 `process.env.BRAINSTORM_PORT || (49152 + Math.floor(Math.random()*16383))`. The port is random by
 design. 51900 and 52341 were both just draws someone wrote down. Only 52342 is fixed.
+
+### 5b · All 23 open asks, verbatim from `board-data.json`
+
+These are the threads. None is closed. `OA22` is answered below and can be retired on sight.
+
+**gbfolio — the locs, and the reason bucket 3 exists**
+
+| id | ask | direction |
+|---|---|---|
+| `OA1` | Chain data source for Fix Tail Directions | inbound |
+| `OA2` | Trunk aim rule at branch points | inbound |
+| `OA3` | Loc motion engine: CC5 spring bones or Blender softbody | inbound |
+
+**griot-branch-codex**
+
+| id | ask | direction |
+|---|---|---|
+| `OA3` | The architect validator never ran — accept, or re-run device-side before blessing the skill | inbound |
+| `OA4` | Should skill-guard gain a narrow exemption for a skill's own templates | inbound |
+
+**djeli**
+
+| id | ask | direction |
+|---|---|---|
+| `OA4` | Which idea_init surface is THE Lucid UI | local |
+| `OA5` | Does Kente have a repo at all — two of Gavin's own artifacts disagree | local |
+| `OA6` | Griot Potluck / SkillForge seed repo — location pending, his find, not yet recorded anywhere | local |
+| `OA7` | Should the briefing run resolve TLDR items to primary URLs, or keep linking the section index | local |
+| `OA9` | Do the Cowork mirror tabs need fixing at all, or is claude.ai the surface that matters | local |
+| `OA12` | Djeli design backlog Gavin still owns | local |
+| `OA13` | Is the drafted Cinopsis mark (B36) the identity, or a placeholder to iterate on | local |
+| `OA14` | Damus and Synaptiq are both locked to periwinkle `#7c7cf0` and read identically in the rail | local |
+| `OA15` | Mixar has no codex, no data node and no ember — runs on the Djeli purple fallback | local |
+| `OA16` | Djeli's own ember is both gold `#E0A458` and purple `#8b5cf6`, both in use | local |
+| `OA17` | Dirty working trees on half-year-old HEADs — commit the work or let the branch go | local |
+| `OA19` | griot-seed release gates: 7 null rulings, a real Mac rehearsal, Afrik font redistribution | **outbound** |
+| `OA20` | channel-adoption epic is 0 of 25 stories at 49 days — still live, re-scope, or park | local |
+| `OA21` | Two story stores sit loose at `.prism/stories` root with no epic back-link, one mixing id conventions | local |
+| `OA22` | Port 51900 for the brainstorm hub vs the documented 52341 — **ANSWERED, see below** | local |
+| `OA23` | What is the canonical list of surfaces | local |
+| `OA24` | The name for this branch | local |
+| `OA26` | `.code-review-graph` is empty while code-review-summary and graphify both ship | local |
+
+`OA19` is the only **outbound** ask in the set — it is owed to someone else's timeline
+(the Hotwater Creative rollout with Kayla), which makes it the one with a clock on it.
 
 The synthesis' §5.2 carries 25 further open items with file:line. Read it there rather than here.
 
