@@ -5,7 +5,54 @@ Where a number appears, it came from a command run in this session.
 
 ---
 
-## 0 · EXECUTION ORDER AND OPERATING RULES — read this before anything else
+## 0 · THE FIRST TASK — Gavin chose it at the close of the session
+
+> "im choosing my destiny by moving a task to the top of the handoff list it might not be on there,
+> but I want to start the session by launching djeli orca fork, and opening the djeli shell design
+> canvas. i want to add the orca UI as screens as artboard as we go along and we will be
+> transforming that live as the desktop app is live and I will build my magnum opus today."
+
+**This runs before everything in section 0b, including the brainstorm.**
+
+Measured at handoff:
+
+| | |
+|---|---|
+| repo | `C:\Users\digit\GriotApps\djeli` |
+| package name | `orca` — the fork has not been renamed in `package.json` |
+| version | `1.4.160-rc.0` |
+| HEAD | `bf727a9` (2026-09-25, "prism: commit stage contracts, ignore runtime") |
+| tree | **clean, 0 dirty** |
+| launch | `npm run dev` for Electron desktop · `npm run dev:web` for web · also `start`, `build:desktop` |
+| surfaces | Djeli runs on Electron desktop, Metro (8081) and web (5173) — node `B33` |
+
+**The shape of the session he is asking for:** the desktop app stays LIVE while the Orca UI is
+added as screens/artboards on the Djeli shell design canvas, and transformed in place as it runs.
+Live transformation against a running app, not a rebuild cycle.
+
+**Do not guess the shell design canvas path.** Locate it with the discovery agents device-side
+(`codebase-locator` for WHERE, then `codebase-analyzer` for HOW it mounts an artboard). The
+`djeli-codex` in `griot-live-artifacts/live/` carries the harvest rows for Djeli's surfaces and is
+the documented starting point. Relevant workgraph nodes already in the record:
+
+- `B33` — Djeli runs on all three surfaces
+- `OA12` — the Djeli design backlog Gavin still owns; five mounted variants (Prism, Audion, R3F,
+  Meridian, Lucid) plus Spectrum, Gavel, Meridian workday and Morning briefing as **honest empty
+  slots, not drawings**
+- `OA16` — Djeli's ember is gold `#E0A458` in its codex and purple `#8b5cf6` in shell chrome, both
+  in use; this will surface the moment artboards get styled
+- `C2` / `C3` / `C4` — the brainstorm hub's registry, `window.ps` public surface, and the working
+  hub screen. **C4 is the proof the pieces compose**, and the artboard pattern to study first.
+
+**The known structural blocker, recorded not inferred** (from `griot-viz-engine/src/core/mount.ts:12-19`):
+Djeli's shell tab registry is CLOSED — a `TabKind` union, hand-written openers, a hardcoded
+`routeDocumentPath`, no IPC channel taking a module id, and a default-deny navigation guard. So
+mounting a Griot panel in Djeli today is *"a compile-time fork edit at ~6 sites, not a plugin
+install."* That fork edit is Djeli's work and it is on this task's path, not the engine's.
+
+---
+
+## 0b · EXECUTION ORDER AND OPERATING RULES
 
 Gavin's instruction at the close of the session, and it governs the next one:
 
@@ -14,7 +61,7 @@ Gavin's instruction at the close of the session, and it governs the next one:
 > closing. if i give prose responses then it can respond with diagrams but i want to just work
 > today and close things with great robust code and my tooling which i know i trust the frequency of."
 
-**The order, non-negotiable:**
+**The order, non-negotiable — after section 0's Djeli task:**
 
 1. **Build Prism Brainstorm FIRST, live in the template.** Not a plan for it, not a diagram of it.
    The template is `skills/prism-brainstorm/scripts/frame-template.html` with `helper.js`. Work IN it.
@@ -283,9 +330,24 @@ Evidence is required and "done", "fixed", "complete" and "as discussed" are reje
 2. **Cloud subagents cannot see his disk.** `prism-locator` and the other discovery agents only
    exist inside `claude.exe` on the device. Dispatching them from Cowork returns a blocked report.
    Route research device-side and have it write a synthesis file; read that.
-3. **`device_commit_files` silently wrote stale content once** — reported written, mtime moved, and
-   the file on disk was the pre-edit version. Verify by size or content marker after every commit
-   of an edited file.
+3. **`device_commit_files` serves a stale cache — SOLVED, mechanism and workaround below.**
+   This is **drift #11, `recurring`**, and it fired three times while writing this handoff.
+
+   **The mechanism, measured:** the cache is keyed on the **cloud source path**
+   (`stagedPath`), not on the device destination. Editing a file in place at
+   `/mnt/user-data/outputs/handoff.md` and re-committing serves the version from the FIRST commit
+   of that path, forever. `force: true` does not defeat it. Writing to a brand-new *device* path
+   does not defeat it either — the second attempt wrote 13,592 bytes to a fresh device filename
+   when the cloud file was 20,120.
+
+   **The workaround:** give the file a **new cloud source filename** for every revision.
+   `cp handoff.md handoff-final-20120.md` then commit `handoff-final-20120.md`. That lands
+   immediately and correctly.
+
+   **Always verify after:** read the byte length back and check for a content marker unique to the
+   revision. Expect a small delta from line-ending normalization on write — this file went
+   20,120 → 19,940, about one byte per line, which is CRLF and not missing content. Check a
+   marker string, not only the size.
 4. **A cloud PowerShell call times out on broad recursive scans** and on multi-repo `git push`.
    Narrow the scan; after a push timeout, check `rev-parse HEAD` against `@{u}` rather than re-running.
 5. **`show_widget` takes an HTML fragment, not JSX**, and `mcp__visualize__read_me` module
