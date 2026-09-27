@@ -65,34 +65,47 @@ Gavin's instruction at the close of the session, and it governs the next one:
 
 1. **Build Prism Brainstorm FIRST, live in the template.** Not a plan for it, not a diagram of it.
    The template is `skills/prism-brainstorm/scripts/frame-template.html` with `helper.js`. Work IN it.
-2. **Then GBFolio locs.** Gavin moved this up at the close of 2026-09-27: *"after brainstorm i need
-   to do gbfolio locs."* It sits ahead of the Cinopsis and CC5 work now, not behind it.
 
-   The three asks are already on the board and are the whole task:
+2. **Then the Cinopsis chain, in this order.** Gavin stated it in conversation on 2026-09-26 and
+   confirmed it again on 09-27 when an earlier draft of this handoff put locs too early:
 
-   | id | ask |
-   |---|---|
-   | `OA1` | Chain data source for Fix Tail Directions |
-   | `OA2` | Trunk aim rule at branch points |
-   | `OA3` | Loc motion engine: CC5 spring bones or Blender softbody |
+   > "i wont be doing the batching og cc5 corpus until the cinopsis fix is done, tested, then we do
+   > the head yt playlists have titles associated, then we push then do a closing cermony for
+   > whatever requires it, then /dgs-plan-update for everything. Only after that will be ready to
+   > do the ingestion"
 
-   **One dependency worth knowing, not worth gating on:** the 21-video CC5 corpus was originally
-   queued to inform `OA3` specifically — the spring-bones-versus-softbody call. The corpus is not
-   ingested. `OA3`'s own recorded evidence already says option B is real and present on disk
-   (`dreadlock_extender_v21-1.py`, 72,997 B, references softbody) while option A's mechanism is
-   `N4`, which is **URL-only and unverified** because that run had no route to fetch the two
-   soupday pages. So `OA3` can be ruled on what is measured today, or the two URLs can be fetched
-   in one pass to close the unverified half. Gavin's call, not a blocker.
+   | gate | state | token |
+   |---|---|---|
+   | Cinopsis playlist census fixed | **landed** | `f28e75b` — settled band and contiguous frontier |
+   | Tested | **landed** | gate-2 verifier: id, title and url survive projection |
+   | Head pull with titles | **landed** | live run across three playlists, every entry named |
+   | Push | **landed** | five repos ref-equal |
+   | Cinopsis closing ceremony | **held** | skills exist at `d4b68e9`, the ceremony has never been run |
+   | `/dgs-plan-update` for everything | **held** | register ledger-recall, cinopsis-census, template 13 |
+   | CC5 corpus ingestion, 21 videos | **held** | the knowledge that informs the loc motion ruling |
 
-   Relevant repo state: GBFolio is its own top-level home at `C:\Users\digit\GBFolio` with two
-   git repos, `gb-portfolio-r3f` (has `.prism`) and `gb-portfolio-strapi`. **It is NOT in
-   `workgraph-index.mjs`'s `ROOTS`**, which walks GriotApps, GriotProducts, GriotMeta, GriotClients
-   and Developer — so the live portfolio home is invisible to the generator while the archive tree
-   under `Developer\` is indexed. One line, asked and unanswered.
+3. **Then GBFolio locs — LAST, and only after the corpus is ingested.** `OA1` chain data source
+   for Fix Tail Directions · `OA2` trunk aim rule at branch points · `OA3` loc motion engine,
+   CC5 spring bones or Blender softbody.
 
-3. Then close the remaining hard things — the asks in §5b, the recurring drift, the items the
-   synthesis §5.2 lists with file:line.
-4. Then the Cinopsis and Prism tooling workflows and the 21 CC5 videos.
+   **The dependency is real and directional:** the 21-video corpus is the knowledge that informs
+   `OA3`. Do not invert this. An earlier draft of this handoff put locs immediately after the
+   brainstorm and Gavin corrected it: *"we have to do the Cinopsis, Prism workflows, the 21 CC5
+   videos before locs."*
+
+   **This dependency is recorded NOWHERE in the estate.** Measured 2026-09-27 across nine surfaces:
+   djeli capture 268 nodes — 0 mentions · cinodex 74 — 0 · gbfolio 15 — 3 mention CC5 but none
+   expresses a dependency · gbfolio's 6 `awaits` edges are all internal · the global
+   `index.json` 804 nodes — 2 loose matches, neither relevant · `workgraph-lattice` is a
+   cross-capture VIEW over 304 nodes and is marked *"CLAY prototype, not fired"* ·
+   `griot3d-pipeline-codex` and `gb-avatar-golden-run-codex` carry the pipeline knowledge but no
+   ordering · the DGS plan and the morning briefing carry the subject, not the gate.
+   **A gbfolio node needs to await a cinodex node and no cross-capture edge exists anywhere.**
+   That is the same zero as the `Inbound (awaits)` measurement, and it is why a chain Gavin has
+   stated twice still lives only in conversation.
+
+4. Alongside and after: close the remaining hard things — the asks in §5b, the recurring drift,
+   the items the synthesis §5.2 lists with file:line.
 
 **Operating rules for that session:**
 
