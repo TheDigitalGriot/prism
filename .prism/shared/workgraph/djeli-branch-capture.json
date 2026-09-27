@@ -69,7 +69,8 @@
     "amendPass62": "File the cadence-doctrine work as a node before the run fires (Gavin's ruling): C26, THE RIDDIM CADENCE and NO DEAD-END TURNS.",
     "amendPass63": "Selectah surface filing: register the board render (tools/render-selectah.mjs) as a this-stage branch node, per Gavin's ruling to file it as a tracking surface. Live-card publish is a separate half owed to a session with the Artifact tool.",
     "amendPass64": "C27 verification.result amended: live card published (Djudai8iCE9EkGvq88S4b1), both halves now propagated - backfill of the plan url",
-    "amendPass65_2026_09_23": "Filed B55: requirement that the Selectah board, the gavel ceremony, the brainstorm decision rail and GavelSurface must converge to one decision state instead of four separate stores. Filing only, per Gavin's instruction - no design or build."
+    "amendPass65_2026_09_23": "Filed B55: requirement that the Selectah board, the gavel ceremony, the brainstorm decision rail and GavelSurface must converge to one decision state instead of four separate stores. Filing only, per Gavin's instruction - no design or build.",
+    "amendPass66_2026_09_27": "B57 - Gavin moved the Djeli shell design canvas to the top of the handoff himself and is building it live. Splinters from B17, lands in B12, works through OA12. Not a new idea, the live build of what this branch already specifies."
   },
   "groups": [
     {
@@ -5523,6 +5524,24 @@
         "evidence": "Observed live in this session: a chat reply rendered the ids N2, N3, N4, OA3, N1, A2 inline as code spans while the same nodes were drawn in an SVG dependency diagram beside it - the two layers referenced identical ids with no binding between them. The gbfolio branch codex (live/gbfolio-branch-capture-codex.html, block id workgraph-data) carries all six as real nodes with 13 edges. Relates to A49 (spatial is a co-equal rendering), A53 (dim, never drop) and A54 (lineage drawn wherever time is an axis) in viz-template-11-CONTEXT.md.",
         "result": "open - captured as inspiration at Gavins request, no design or implementation yet."
       }
+    },
+    {
+      "id": "wg:djeli-branch:B57",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B57",
+      "kind": "branch",
+      "title": "Djeli shell design canvas - building the cohesive UI live, Orca screens as artboards",
+      "state": "open",
+      "direction": "outbound",
+      "group": "this-stage",
+      "description": "NOT a new idea - the LIVE BUILD of what this branch already specifies. Gavin, 2026-09-27: i know if you [look at] the current djeli branch code and workgraph this work has been spoken about in it but I am going to build it live. He moved it to the top of the handoff himself, above every other bucket including the brainstorm: launch the Djeli Orca fork, open the shell design canvas, add the Orca UI as screens and artboards as the work goes, and transform it live while the desktop app is running. His words: i am choosing my destiny by moving a task to the top of the handoff list, and I will build my magnum opus today. The shape is live transformation against a running app, not a rebuild cycle. WHAT IT BUILDS, already in this graph: B17 (ONE cohesive UI - the synthesis every piece has been circling) is the parent this splinters from; B12 (the Djeli workflow-tab roster - Prism, Lucid, R3F Studio, Cinopsis, Kente, Synaptiq, Mixar, office surfaces, GenTeam, the fused viz/brainstorm surface and this workgraph) is where the artboards land; OA12 (the design backlog Gavin still owns - five mounted variants plus Spectrum, Gavel, Meridian workday and Morning briefing as honest empty slots, not drawings) is the decision set it works through. Also on the path: B33 (Djeli runs on Electron, Metro 8081 and web 5173), OA16 (Djeli ember is gold E0A458 in its codex and purple 8b5cf6 in shell chrome, both in use, which surfaces the moment artboards get styled), C2/C3/C4 (the hub registry, the window.ps public surface, and C4 as the proof the pieces compose - the artboard pattern to study first), B20 (the shared griotwave rail, three sources one missing home) and S13 (the Griot Operations / Ceremonies tab, parked). THE KNOWN STRUCTURAL BLOCKER, recorded not inferred, at griot-viz-engine/src/core/mount.ts:12-19: Djeli shell tab registry is CLOSED - a TabKind union, hand-written openers, a hardcoded routeDocumentPath, no IPC channel taking a module id, and a default-deny navigation guard - so mounting a Griot panel is a compile-time fork edit at about 6 sites, not a plugin install. That fork edit is on THIS branch path, not the engine.",
+      "verification": {
+        "checked": true,
+        "evidence": "Measured on device 2026-09-27: repo present at C:/Users/digit/GriotApps/djeli; package.json name is orca (the fork has not been renamed) at version 1.4.160-rc.0; git HEAD bf727a9 dated 2026-09-25, message 'prism: commit stage contracts, ignore runtime'; working tree clean at 0 dirty entries; launch scripts present include start, dev, dev:web, build:desktop, build:release. Prior specification confirmed present in this graph as B17, B12 and OA12, all state open. Recorded in the session handoff at Prism commit ce0ece0 section 0.",
+        "result": "pass"
+      }
     }
   ],
   "edges": [
@@ -7133,15 +7152,33 @@
       "to": "wg:djeli-branch:N123",
       "kind": "ontology",
       "label": "channels are the class the registry does not model"
+    },
+    {
+      "from": "wg:djeli-branch:B17",
+      "to": "wg:djeli-branch:B57",
+      "kind": "splinter",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:B57",
+      "to": "wg:djeli-branch:B12",
+      "kind": "outbound",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:B57",
+      "to": "wg:djeli-branch:OA12",
+      "kind": "outbound",
+      "label": ""
     }
   ],
   "stats": {
-    "totalBranches": 85,
+    "totalBranches": 86,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 268,
+    "edgeCount": 271,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -8036,6 +8073,14 @@
         "B56"
       ],
       "newEdges": 0,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass66_2026_09_27_2026_09_27": {
+      "newNodes": [
+        "B57"
+      ],
+      "newEdges": 3,
       "corrections": [],
       "refused": []
     }
