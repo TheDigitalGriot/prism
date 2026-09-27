@@ -172,6 +172,106 @@ These are the threads. None is closed. `OA22` is answered below and can be retir
 
 The synthesis' §5.2 carries 25 further open items with file:line. Read it there rather than here.
 
+### 5c · The contract index — every stage contract with a record, last 9 days
+
+Contracts are the resume points. Each is a Spectrum stage contract carrying measured paths,
+numbers and locked decisions, so resuming any of these is one headless launch with no rediscovery.
+
+**Prism** — `.prism/shared/plans/`
+
+`developer-path-repoint` · `2026-09-21-codex-plan-sync` · `2026-09-22-gortex-harvest` ·
+`2026-09-22-codex-plan-sync-eve` · `brainstorm-design` · `closing-ceremony` · `final-push` ·
+`2026-09-25-crg-native-run` · **`2026-09-26-nervous-system` (11,776 B — held, needs rewrite)**
+
+**Cinopsis** — `.prism/shared/plans/`
+
+`2026-09-24-3dpixelart-batch1` · `2026-09-25-playlist-name-and-sort` · `2026-09-25-idea-systems-head` ·
+`2026-09-26-workflow-steps-schema` · `2026-09-26-census-skill` · **`PARKED-entry-projection-fallback`** ·
+`2026-09-26-title-fallback` · `2026-09-26-cinopsis-ceremonies` (produced `d4b68e9`)
+
+**griot-live-artifacts** — `.prism/shared/plans/` — the surface and doctrine cluster
+
+`batch8` · `architect-skill-validator` · `2026-09-22-gbfolio-loc-roundtrip-codex` · `cadence-doctrine` ·
+`close-and-file` · `companion-spatial` · `decision-log` · `dgs-fleetsync` · `dgs-ingest` · `gavel-close` ·
+`frequency-line` · `gavel-motion` · `griot-media-optimization` · `output-style-wireup` · `riddim-channel` ·
+`selectah-render` · **`viz-template-11` (47,930 B — the largest contract in the estate)** ·
+`vizrename` · `surface-gate`
+
+**digital-griot-skills** — `.prism/shared/plans/`
+
+`2026-09-21-griot-branch-codex` · `griot-seed` · `griot-seed-xplat` · `griot-seed-companion` ·
+`griot-seed-companion-fix` · `2026-09-21-griot-closeout` · five `chat-viz-extractor-*` ·
+`griot-seed-rename` · `codex-publish-contract` · `2026-09-26-ledger-recall` ·
+`2026-09-26-drift-resolve` · **`2026-09-26-griot-propagate` (12,874 B — produced `61c8f67`)**
+
+Two contracts directly relevant to bucket 1: **`companion-spatial`** and **`selectah-render`** in
+griot-live-artifacts, and **`brainstorm-design`** in Prism. Read those before touching the companion.
+
+---
+
+### 5d · The hard-to-close set — 46 entries with IDs
+
+Gavin's ask is to close the things that have been hard to close. This is that set, by drift id.
+Counts at handoff: **parked 2 · flagged 75 · recurring 36 · in-flight 4 · resolved 30**.
+
+**`open` — 6, each a decision or a gate with no owner yet**
+
+| id | home | the thing |
+|---|---|---|
+| 121 | marketplace mirror | Prism is 4.17.3, the channel Cowork reads is 4.16.2, and the gate that exists did not stop it |
+| 122 | griot-agent-architect | the standing rule routes every tool change through it, and it ships no SKILL.md validator |
+| 123 | `tools/verify-rename.mjs` | the retired-vocabulary gate is single-repo; the fourth workgraph copy lives elsewhere and is invisible to it |
+| 124 | djeli branch codex header | the stat row fetches the raw workgraph JSON it already embeds inline |
+| 126 | `griot-ontology/propagate.ps1` | the nucleus is a one-way destructive sync; the global-vs-source decision was never ruled and propagate answered it by default |
+| 127 | this session | two defect names carried all session with no referent |
+
+**`in-flight` — 4**
+
+`9` Fragment Go TUI wonky · `32` prism-installer still installs from the retired NSIS paths ·
+`33` thin-mirror sync stalls silently · `73` a drift candidate parked in a recap instead of recorded
+
+**`recurring` — 36, the ones that actually keep coming back**
+
+The chat-surface cluster is the largest and the most expensive: **`61`** visual-first answered with
+ASCII, **`70`** a parameter that does not exist reported success, **`95`** an earlier widget treated
+as covering a later prose block, **`96`** every widget in a session passed `html`, **`114`** fourth
+instance, **`120`** fifth instance five sessions after the ontology logged it, **`125`** two required
+params omitted all session. **The diagram contract added to the ontology at `db458b2` is the
+countermeasure for this cluster — verify it actually holds before closing any of them.**
+
+The bridge and launcher cluster: **`11` `device_commit_files` stale write — hit twice this session,
+which is the sixth-plus instance** · `6` CRLF phantom churn · `7` stale `.git/index.lock` ·
+`13` Start-Process truncates a spaced `-p` prompt · `115` drift 13 recurred exactly as written
+because the ledger holding the fix was never opened · `14` run processes not reaped on close.
+
+The conduct cluster, and these are the ones that cost trust: `66` guessing and acting on Gavin's
+machine instead of asking one line · `117` telling him a window was his browser after he said it
+was not · `128` claiming not to invent a taxonomy while inventing one in the same sentence ·
+`136` reporting a cost when the mechanism was printed in the error being read · `35` fake land on
+the progress list · `36` research depth off an index page · `37` multi-step chains lose their tail ·
+`60` long subagent runs go dark without notice.
+
+The estate cluster: `90` every parallel surface reconciles only when Gavin prompts for it ·
+`8` source-to-packaged skill drift · `24` deploy workflows re-derived and lost each release ·
+`68` a WSL-hosted repo invisible to any C: search · `5` `.prism` gitignore inconsistency ·
+`88` `git add -A` swept another process's in-flight work.
+
+Browser: `119` blank windows traced to the extension API path · `138` `switch_browser` is
+session-scoped and never reaches `list_connected_browsers` · `139` **corrects** the 112/117/119
+family — standalone `navigate()` front-loads `createIfEmpty`, so the documented workaround *is*
+the window-opening call. `65` a normal Chrome restart silently disarms the YT transcript lane.
+
+Others: `23` Open-in-Cursor button intermittently does not render · `30` `bump-version.py` cannot
+catch a file two or more versions stale · `34` PowerShell file edits · `45` the muse corpus has
+never been reconciled with Potluck · `74` skill-guard blocked an exempted Write in a fourth shape.
+
+**Query any of these** with `node ~/.claude/skills/griot-ledger-recall/scripts/recall.mjs "<terms>"`
+— it searches both ledgers and prints the fix line. It ANDs its terms, so use two or three, not seven.
+**Change a status** with `resolve-drift.mjs --title "<t>" --home "<h>" --status resolved --evidence "<e>"`.
+Evidence is required and "done", "fixed", "complete" and "as discussed" are rejected.
+
+---
+
 ---
 
 ## 6 · Traps this session actually hit — do not re-discover them
