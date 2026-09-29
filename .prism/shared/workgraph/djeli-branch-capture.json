@@ -62,7 +62,7 @@
     "amendPass55_2026_09_22": "codex-plan-sync forward pass, story-layer findings, concurrent-write hazard",
     "amendPass56_2026_09_23": "New branch B52: programmatic surface sync. The parallel workstreams drift apart and reconcile only on a prompt. Six findings from the 2026-09-23 repo sweep, two open asks (the canonical surface set, and the branch name), three suggestions. Foundational to the Griot Frequency with any agent.",
     "amendPass57_2026_09_23": "B53 the unified workgraph surface entity - nine tracking systems read as one, drawn and templated but not yet named (OA25). N113 the drift card a day behind its repo. N114 the ontology cited the workgraph 47 times and described it never. N115 a wrong conclusion desynced the canonical copy. N116 Select-Object halts a piped script, so propagates repo-root stage never ran. N117 four documented node kinds against seven live. S19 interop-map as the standing drawing. S20 griot-ontology-seed.",
-    "amendPass58": "OA25 ruled: Riddim = the through-line. The four workgraph layers are versions over one riddim, not four systems. Named 2026-09-23 from a prism:web-search-researcher field report; landed in griot-ontology 7a838c0 with four-surface parity 3EF7A2D9CDCC.",
+    "amendPass58": "Orca artboards routed through griot-harvest-ux-ui; the first-walk finding, the two-canvas-format seam, and the node-to-artboard converter Gavin approved 2026-09-28.",
     "amendPass59": "Field report shape proven and filed as viz template 10; the canvas render found to enforce its rule structurally; Dub named as the naming pipeline's missing middle step, not yet built.",
     "amendPass60": "Meridian surface findings, measured from the rendered card against the repo file: a ten-day card lag with no freshness chip, a calendar trailing pad that pushes the array length, a workgraph channel too narrow to carry Riddim, and the SURFACES registry modelling pages but not channels.",
     "amendPass61": "B13 built. Named 2026-09-13 as one state machine, two vocabularies; built 2026-09-23 as the Riddim channel with the direction mesh. Ten days named-unfiled.",
@@ -5561,6 +5561,78 @@
         "evidence": "Measured on device 2026-09-27. Source greps: render-selectah.mjs svg=0 spine=0, references template11=false; fill-selectah-template.mjs svg=0 spine=10, references template11=true. Read/write surfaces extracted from each file: stage 1 writes OUT_HTML, OUT_JSON, OUT_ROWS_JSON; stage 2 reads BOARD_DATA_PATH and BOARD_ROWS_PATH and TEMPLATE_PATH, writes OUT_PATH, FRAGMENT_PATH, ASKS_FRAGMENT_PATH, LANDED_FRAGMENT_PATH, OWED_FRAGMENT_PATH, TEMPLATE_PIN_PATH. Rendered output comparison: selectah-board.html 126 KB svg=0; selectah-board-2026-09-26.html 185 KB svg=1 path-d=4. Template token audit: viz-template 11 carries 102 tokens and fill-selectah-template.mjs fills all 102, zero unfilled - the spine is literal SVG in the template, not a token, which is why a token-name search for VIZ or DIAGRAM returned nothing.",
         "result": "pass"
       }
+    },
+    {
+      "id": "wg:djeli-branch:C29",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C29",
+      "kind": "branch",
+      "group": "this-stage",
+      "title": "Orca artboards route through griot-harvest-ux-ui, not bare code agents - and the converter that format gap needs",
+      "state": "open",
+      "direction": "local",
+      "description": "Gavin asked the routing question directly on 2026-09-28: is codebase-locator plus codebase-analyzer the right tool for building the new desktop and mobile artboards, or are the harvest / harvest-ux-ui tools better. The skills' own composition tables answer it and the answer is that these are not alternatives. griot-harvest-ux-ui SKILL.md step 2 is literally 'Dispatch one codebase-analyzer agent per screen cluster, not per repo', so the bare-agent route is that skill's own inner loop performed by hand, minus everything the skill adds around it: routing to the eleven Griot Stack layer roles verbatim with no twelfth, the origin file and line, the mountPoint, the licence-as-fact field, and emit-canvas-nodes.mjs which rejects a hand-authored node list, an invented layer role, a dropped file:line and a typo'd field name. Gavin ruled yes on the harvest route. THE CHAIN: (1) target already surveyed - GriotSandbox/orca is cloned with 34 top-level entries and a .git, which satisfies the skill's own refusal to clone ('If the target isn't already surveyed in GriotSandbox/, stop and say so'); (2) walk and route via the skill, emitter-gated; (3) the validated node array; (4) build-canvas.mjs composes the xyflow layer canvas. Step 4 is where this branch leaves the paved road, which is what N127 records and S21 proposes. The artboards land on the Djeli - IDE Shell canvas, the live artifact Gavin pinned, in the free band below y=13260 so none of the 15 existing boards reflow.",
+      "verification": {
+        "checked": true,
+        "evidence": "Measured device-side 2026-09-28. C:/Users/digit/GriotApps/Prism/skills/ contains griot-harvest, griot-harvest-ux-ui, prism-design, prism-viz-generate. griot-harvest-ux-ui/SKILL.md description: 'emitting xyflow-ready canvas nodes with file:line origins'; its Composition table gives clone+survey to griot-harvest and plan writes to dgs-plan-update; its walk step 2 heading reads 'Dispatch one codebase-analyzer agent per screen cluster, not per repo'; scripts/ holds build-canvas.mjs (456 lines), emit-canvas-nodes.mjs (174) and render-canvas-preview.mjs (208). C:/Users/digit/GriotSandbox/orca exists with 34 entries including .git, mobile and native. The target canvas is C:/Users/digit/GriotMeta/griot-live-artifacts/live/djeli-ide-shell/project/canvas.json, v3, title 'Djeli - IDE Shell', one page 'Djeli Desktop', 15 boards all is_interactive, extents 3830 x 13260, lowest occupied band y=11760 h=1500 (CinopsisCompanion). Published as the pinned artifact https://claude.ai/artifact/KCbs8Kv72TQMG8bR6t9EW7.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N126",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N126",
+      "kind": "finding",
+      "group": "new-findings",
+      "title": "The uxui canvas node array holds 27 nodes and every one is genoffice - Orca's UI has never been walked",
+      "state": "open",
+      "direction": "local",
+      "description": "Before spending a harvest run it was worth checking whether Orca's screens were already harvested. They are not. The node array that griot-harvest-ux-ui writes carries 27 nodes and a census by provenance.repo returns genoffice for all 27, harvestedAt 2026-09-11. So the Orca walk is a FIRST walk, not a re-render, and nothing existing can be converted into artboards today. This also means the eleven-role routing for Orca's screens does not exist yet in any durable form - the layer assignments for the shell chrome, the lane dashboard, the terminal and the agent panels are all still unmade.",
+      "verification": {
+        "checked": true,
+        "evidence": "node census over C:/Users/digit/GriotApps/Prism/.prism/shared/workgraph/uxui-canvas-nodes.json (21,388 bytes) on 2026-09-28: nodes=27, keys id,type,label,layer,position,data; grouping by data.provenance.repo gives {genoffice: 27}; sample node id 'genoffice-shell-appframe', layer 'Djeli - container', data.origin {file: 'apps/shell/src/renderer/src/AppFrame.tsx', line: 12}, data.provenance.harvestedBy 'griot-harvest-ux-ui', harvestedAt '2026-09-11'. Zero nodes carry repo orca or djeli.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N127",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N127",
+      "kind": "finding",
+      "group": "new-findings",
+      "title": "Two canvas formats and nothing converts between them - harvest-ux-ui emits xyflow nodes, the IDE Shell canvas is canvas.json v3 plus one .dc.html per board",
+      "state": "open",
+      "direction": "local",
+      "description": "The harvest route is right and still does not reach the destination, because the two canvases are different artifacts in different formats. build-canvas.mjs composes ONE xyflow page that lays the validated nodes into layer lanes, where dragging a node across a lane reassigns data.layer and Export writes the same schema back - that is live/djeli-uxui-harvest-canvas.html and its layer-routing sibling. The Djeli - IDE Shell canvas is not that: it is canvas.json v3 with a boards map keyed by filename carrying x, y, w, h, title and is_interactive, an order array, a pages array, and one .dc.html document per board on disk. Searched for anything that emits .dc.html from a node array and found none. So the converter is the only genuinely new code on this path, and it is small.",
+      "verification": {
+        "checked": true,
+        "evidence": "Read device-side 2026-09-28. build-canvas.mjs header: 'Stage 3. The real canvas, generated from the harvested node array' and 'nodes.json -> canvas -> you drag -> Export -> nodes.json', single writeFileSync at line 454 emitting one html page. canvas.json at live/djeli-ide-shell/project/ has keys v,attachments,boards,createdOnFiles,designSystems,launch,notes,order,pages; boards entries look like AudionOverlay.dc.html => {h:620,is_interactive:true,title:...,w:460,x:3280,y:8140}; 15 .dc.html files sit beside it from GriotTriad.dc.html at 6,202 bytes to PrismSurfaceSystem.dc.html at 384,481 bytes; designSystems is [] while _ds/griotwave/ carries colors_and_type.css and styles.css, so the design system is wired by CSS link and not by the manifest. Neither griot-harvest-ux-ui/scripts nor prism-design-engine surfaced any producer of .dc.html from a node array.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:S21",
+      "originLane": "suggested",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "S21",
+      "kind": "suggestion",
+      "group": "suggested",
+      "title": "A node-to-artboard converter that emits the desktop board and its 390x844 twin as one pair, by construction",
+      "state": "open",
+      "direction": "local",
+      "description": "Proposed, and Gavin said yes to the idea on 2026-09-28. Read a validated screen node from the harvest array and emit a .dc.html artboard plus its mobile twin, then append both to canvas.json's boards map and order array in the free band at y=13500. Two reasons it is a script and not hand placement, both drawn from tools that already exist here. First, Gavin's standing rule is that a UI deliverable ships its desktop and mobile boards together in the same pass, and a converter makes the pair structural instead of remembered - the same argument emit-canvas-nodes.mjs makes for itself, that a deterministic check should cost zero LLM tokens and reject what a hand-authored list gets wrong. Second, each board can then carry its node's origin file and line and its mountPoint onto the artboard, which is the difference between a harvested screen and a drawing. Open sub-decisions: whether the twin width comes from the node or is fixed at 390x844 like Main-mobile; whether the board body embeds the real component markup or a griotwave-skinned frame of it; and whether designSystems finally gets populated rather than leaving _ds wired by CSS link alone.",
+      "verification": {
+        "checked": true,
+        "evidence": "Grounded in the two findings it answers, N126 and N127, both measured the same day. Existing pairing precedent read from canvas.json: Main.dc.html 2620x1560 with Main-mobile.dc.html 390x844 at x=3440 y=9200, and GriotTriad.dc.html 1720x760 with TriadMobile.dc.html 1560x560 at x=1800 y=9200. Free band confirmed: the lowest occupied board is CinopsisCompanion at y=11760 h=1500, so y=13500 needs no reflow of the 15 existing boards. The zero-token-deterministic-check argument is emit-canvas-nodes.mjs's own stated rationale in its file header.",
+        "result": "pass"
+      }
     }
   ],
   "edges": [
@@ -7189,15 +7261,39 @@
       "to": "wg:djeli-branch:OA12",
       "kind": "outbound",
       "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:B57",
+      "to": "wg:djeli-branch:C29",
+      "kind": "splinter",
+      "label": "the routing call inside the live build"
+    },
+    {
+      "from": "wg:djeli-branch:N126",
+      "to": "wg:djeli-branch:C29",
+      "kind": "inbound",
+      "label": "first walk, not a re-render"
+    },
+    {
+      "from": "wg:djeli-branch:N127",
+      "to": "wg:djeli-branch:C29",
+      "kind": "inbound",
+      "label": "the format seam"
+    },
+    {
+      "from": "wg:djeli-branch:S21",
+      "to": "wg:djeli-branch:C29",
+      "kind": "awaits",
+      "label": "converter needs the walk's node shape fixed"
     }
   ],
   "stats": {
-    "totalBranches": 86,
+    "totalBranches": 87,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 271,
+    "edgeCount": 275,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -8108,6 +8204,17 @@
         "C28"
       ],
       "newEdges": 0,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass58_2026_09_29": {
+      "newNodes": [
+        "C29",
+        "N126",
+        "N127",
+        "S21"
+      ],
+      "newEdges": 4,
       "corrections": [],
       "refused": []
     }
