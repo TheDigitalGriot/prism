@@ -78,7 +78,8 @@
     "amendPass72": "D11 - Gavin ruled Orca's design surface is the FRAME for Lucid, not a thing Lucid replaces. Overturns djeli-HARVEST-MAP.md line 33; the original row is left standing and amended in place.",
     "amendPass73": "Batch two of the Orca screen port landed (12 pairs, canvas 47 to 71, IDE Shell v37). The harvest artifacts moved to the Prism global on Gavin's ruling, and the parse check that closed that move found a BOM in emit-canvas-nodes.mjs that would have broken the skill silently.",
     "amendPass74": "Batch three landed (13 pairs, canvas 71 to 97, IDE Shell v39). The port-spec bridge closed the harvest-to-screen gap. A38 restored every CTA's evidence drawer after A36 had stripped all 66. The discovery stack ruled as layers and written into the ontology, with STORAGE-is-not-SYSTEM as its error class.",
-    "amendPass75": "The Orca design surface landed as two bands (13 pairs, canvas 97 to 123, IDE Shell v40). A composition walk first overturned the shape: three independent capabilities, not one flow, and the proposed flagship component was dead code."
+    "amendPass75": "The Orca design surface landed as two bands (13 pairs, canvas 97 to 123, IDE Shell v40). A composition walk first overturned the shape: three independent capabilities, not one flow, and the proposed flagship component was dead code.",
+    "amendPass76": "The reactive-DAG lesson ruled and written into the ontology, plus three propagation defects found by running Gavin's own channel check - a stale source that would have overwritten live skills, a byte-vs-content proxy inside the check itself, and the account copy of griot-suite-context cut to 46 percent with the app lineage past the cut."
   },
   "groups": [
     {
@@ -5938,6 +5939,74 @@
         "evidence": ".prism/shared/research/2026-09-29-orca-design-surface-composition.md, 22,036B, 38 components, sections 0 (three capabilities table), 2 (GrabConfirmationSheet dead code) and 5 (artboard candidates with measured frames); the walk's own artboard table lists exactly ONE 1440x900 candidate against nine small frames",
         "result": "size is never importance - a filter on looks-like-a-screen would have shipped 1 board and missed 37; also confirms the harvest map's line 33 is stale, since no designMode or inspectMode exists anywhere in browser-pane or native-chat"
       }
+    },
+    {
+      "id": "wg:djeli-branch:D14",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "description": "Gavin asked to borrow the reactive-DAG lesson for the ecosystem. The workgraph and a marimo notebook are the SAME SHAPE with OPPOSITE causality: marimo builds its DAG by static analysis of the artifacts and the graph drives execution; the workgraph is hand-authored by amend calls and records execution after the fact. Three rules ruled: (1) DERIVE DO NOT SYNC - a sync step is the receipt for a missing projection, and marimo needs no verify gate because four views over one graph cannot diverge; (2) STALENESS IS COMPUTED NOT NOTICED - nodes declare inputs as anchors (path + commit/hash) and go stale by themselves, because a human noticing is not a mechanism; (3) THE GRAPH SHOULD SCHEDULE - the set of nodes whose dependencies are satisfied IS the parallel work, computable from the graph, and hand-authoring a session split is the same error class as hand-simulating a skill. Kente is the first intended host, the workgraph the first beneficiary.",
+      "kind": "decision",
+      "group": "this-stage",
+      "direction": "outbound",
+      "state": "ruled-and-applied",
+      "verification": {
+        "evidence": "written into griot-ontology claude/CLAUDE.md as the locked section THE GRAPH THAT RECORDS vs THE GRAPH THAT DRIVES (+3,055B additive, headings 60 -> 61, every pre-existing heading verified intact), commit ed96be5 pushed; propagated via propagate.ps1 to the CLI global, .codex/AGENTS.md and the agent-ontology compat surface; channel 4 re-checked OK",
+        "result": "applied as doctrine; the test is stated operationally - land a change and if nothing downstream turns yellow on its own, the graph recorded and did not drive"
+      },
+      "localId": "D14",
+      "title": "RULED - borrow marimo's reactive direction; the graph must drive, not only record"
+    },
+    {
+      "id": "wg:djeli-branch:N135",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "description": "griot-propagate channel 5 (skills-to-device) declares source = GriotMeta/digital-griot-skills and target = ~/.claude/skills. Measured: the source sat at 61c8f67 while the target was at 1407a40, equal to origin/main - so the declared source was the STALE side and the target was canonical. deploy-skills --dry-run reported 34 CONFLICT lines (device copy newer and different); running the transport would have written 34 stale files over the live skills Claude Code and Claude Desktop actually load. Both sides are git clones of ONE remote, so a file-copy transport between them is doctrine rule 1 exactly - the projection already exists and it is called git pull.",
+      "kind": "defect",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "defect-fixed",
+      "verification": {
+        "evidence": "git -C source rev-parse = 61c8f67, git -C target rev-parse = 1407a40 = origin/main; deploy-skills.mjs --dry-run printed 34 conflicts and 2 would-change; after git pull --ff-only on the source plus a direct fetch/ff-merge of the ideation_team_skill embedded repo (no .gitmodules, so submodule update cannot work), both sides read 1407a40 and channel 5 fell from 14 skills behind to 12",
+        "result": "regression prevented by the dry-run CONFLICT guard, which is the only thing standing between this channel and a silent overwrite of live skills"
+      },
+      "localId": "N135",
+      "title": "Channel 5's source was 2 commits BEHIND its own target"
+    },
+    {
+      "id": "wg:djeli-branch:N136",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "description": "After both clones were brought to the same commit, channel 5 still reports 12 skills BEHIND. Cause: the strategy hashes raw working-tree bytes, so a CRLF/LF difference reads as changed content. Measured on griot-drift-log/scripts/append-drift.mjs at commit 1407a40 with both clones clean and both core.autocrlf=true: the live copy holds 44 CRLF pairs and the backup holds 0, raw sha differs, and normalized content is IDENTICAL. The channel's own drift.why field argues for sha over mtime and is right about that, then lands on the WRONG sha - it measures byte parity and asserts content parity. Same error class as the PROXY VERDICT section locked into the ontology earlier this session, this time inside Gavin's own instrument.",
+      "kind": "defect",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "open",
+      "verification": {
+        "evidence": "both clones at 1407a40, both 0 dirty, both core.autocrlf=true; ReadAllText comparison raw-equal False (2377 vs 2333 chars), normalized-equal True, CRLF counts 44 vs 0; check.mjs --channel 5 reports 12 behind",
+        "result": "MISMATCH recorded, not edited away - the fix is a change to Gavin's skill (compare git HEAD plus eol-normalized content instead of raw working-tree sha256) and is his call"
+      },
+      "localId": "N136",
+      "title": "Channel 5's drift strategy is a PROXY VERDICT on its own terms"
+    },
+    {
+      "id": "wg:djeli-branch:N137",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "description": "The account snapshot holds griot-suite-context at 17,916 B / 172 lines against 39,111 B / 310 lines on disk. It is NOT staleness: no revision in git history is 172 lines, and every revision back to 2026-09-11 (f17b4c8, 34,866 B) contains the string 'Djeli is a fork of Orca'. The account copy does not, while it does contain 'prism-design-engine' - so the file is cut mid-roster, stopping inside the thin-layer-mechanism paragraph, with 138 lines missing including the whole app-lineage section. 43 of the account's skills are under 90 percent of source (griot-plugin-update 47, griot-meridian-reflect 50, griot-workgraph-update 65, sankofa 69) with no common byte ceiling, and 25 repo skills never reached the account at all. Channel 6 is DETECT AND REPORT ONLY by declaration (D5) - it has NO TRANSPORT and NO OWNER. Operational consequence: a cloud session that loads this skill from the account reads a roster that ends mid-sentence, which is why the prism-design-engine seed could be absent from the context a session sees while present in the file on disk.",
+      "kind": "defect",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "open",
+      "verification": {
+        "evidence": "synced snapshot 17,916 B / 172 lines vs source 39,111 B / 310 lines; git show at 8 revisions (6c6191f 309, 0f60271 309, 34dd601 308, 338a1b9 306, 7a86e9f 292, 3ea7ea5 292, 2d6a767 277, f17b4c8 276) - none is 172 and all 8 match 'Djeli is a fork of Orca'; check.mjs channel 6 reports snapshot frozen 8.2d, 25 absent, 43 truncated",
+        "result": "cause of the cut is UNKNOWN and deliberately not theorised; what is established is that it is truncation rather than staleness, and that the missing span is load-bearing context"
+      },
+      "localId": "N137",
+      "title": "The account copy of griot-suite-context is truncated to 46 percent, and the app lineage is past the cut"
     }
   ],
   "edges": [
@@ -9071,6 +9140,17 @@
         "N134"
       ],
       "newEdges": 3,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass76_2026_09_29": {
+      "newNodes": [
+        "D14",
+        "N135",
+        "N136",
+        "N137"
+      ],
+      "newEdges": 0,
       "corrections": [],
       "refused": []
     }
