@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 /**
  * emit-canvas-nodes.mjs â€” the mechanical half of a griot-harvest-ux-ui walk.
  *

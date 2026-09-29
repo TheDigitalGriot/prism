@@ -442,7 +442,7 @@ document.getElementById("exp").onclick=function(){
     setTimeout(function(){URL.revokeObjectURL(u);},1500);
   }catch(e){}
   sel=null;
-  insp.innerHTML='<h2>Export</h2><p class="hint">Download started. If the browser blocked it, copy from here and overwrite <span class="kbd">.prism/shared/workgraph/uxui-canvas-nodes.json</span>, then re-run <span class="kbd">emit-canvas-nodes.mjs</span> to gate it.</p>';
+  insp.innerHTML='<h2>Export</h2><p class="hint">Download started. If the browser blocked it, copy from here and overwrite <span class="kbd">~/.prism/shared/harvests/uxui-canvas-nodes.json</span>, then re-run <span class="kbd">emit-canvas-nodes.mjs</span> to gate it.</p>';
   var ta=document.createElement("textarea"); ta.value=txt; insp.appendChild(ta); ta.select();
 };
 

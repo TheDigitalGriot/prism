@@ -73,7 +73,9 @@
     "amendPass66_2026_09_27": "B57 - Gavin moved the Djeli shell design canvas to the top of the handoff himself and is building it live. Splinters from B17, lands in B12, works through OA12. Not a new idea, the live build of what this branch already specifies.",
     "amendPass67_2026_09_27": "C28 - the Selectah is a two-stage pipeline and the chat path reads stage 1, which has no spine. The diagram exists and has never been rendered in chat.",
     "amendPass68": "Orca artboards routed through griot-harvest-ux-ui; the first-walk finding, the two-canvas-format seam, and the node-to-artboard converter Gavin approved 2026-09-28.",
-    "amendPass69": "OA16 ruled purple #8b5cf6 and applied (D10); the contract's two false facts caught by its own first run (N128); the acceptEdits headless run has no Task tool and no node (N129); correction on N126, my census read data.repo instead of data.provenance.repo."
+    "amendPass69": "OA16 ruled purple #8b5cf6 and applied (D10); the contract's two false facts caught by its own first run (N128); the acceptEdits headless run has no Task tool and no node (N129); correction on N126, my census read data.repo instead of data.provenance.repo.",
+    "amendPass71": "C30 - eleven Orca screens ported to the canvas, 22 boards, IDE Shell v36. N130 - the process boundary is the agent boundary when units are independent, which is why eleven ports fanned out where two harvest runs could not.",
+    "amendPass72": "D11 - Gavin ruled Orca's design surface is the FRAME for Lucid, not a thing Lucid replaces. Overturns djeli-HARVEST-MAP.md line 33; the original row is left standing and amended in place."
   },
   "groups": [
     {
@@ -5640,13 +5642,20 @@
       "kind": "suggestion",
       "group": "suggested",
       "title": "A node-to-artboard converter that emits the desktop board and its 390x844 twin as one pair, by construction",
-      "state": "open",
+      "state": "built-and-live",
       "direction": "local",
       "description": "Proposed, and Gavin said yes to the idea on 2026-09-28. Read a validated screen node from the harvest array and emit a .dc.html artboard plus its mobile twin, then append both to canvas.json's boards map and order array in the free band at y=13500. Two reasons it is a script and not hand placement, both drawn from tools that already exist here. First, Gavin's standing rule is that a UI deliverable ships its desktop and mobile boards together in the same pass, and a converter makes the pair structural instead of remembered - the same argument emit-canvas-nodes.mjs makes for itself, that a deterministic check should cost zero LLM tokens and reject what a hand-authored list gets wrong. Second, each board can then carry its node's origin file and line and its mountPoint onto the artboard, which is the difference between a harvested screen and a drawing. Open sub-decisions: whether the twin width comes from the node or is fixed at 390x844 like Main-mobile; whether the board body embeds the real component markup or a griotwave-skinned frame of it; and whether designSystems finally gets populated rather than leaving _ds wired by CSS link alone.",
       "verification": {
         "checked": true,
         "evidence": "Grounded in the two findings it answers, N126 and N127, both measured the same day. Existing pairing precedent read from canvas.json: Main.dc.html 2620x1560 with Main-mobile.dc.html 390x844 at x=3440 y=9200, and GriotTriad.dc.html 1720x760 with TriadMobile.dc.html 1560x560 at x=1800 y=9200. Free band confirmed: the lowest occupied board is CinopsisCompanion at y=11760 h=1500, so y=13500 needs no reflow of the 15 existing boards. The zero-token-deterministic-check argument is emit-canvas-nodes.mjs's own stated rationale in its file header.",
         "result": "pass"
+      },
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-09-29 amendPass70",
+        "from": "open",
+        "to": "built-and-live",
+        "evidence": "tools/nodes-to-artboards.mjs written and run, committed griot-live-artifacts 01fad29, published as Djeli - IDE Shell artifact version 34. Five fatal gates green on the landing run: G1 every desktop board has its 390x844 twin (4 pairs), G2 canvas.json boards keys and order entries agree exactly (23 each), G3 not one pre-existing board moved resized or lost its title (23 checked), G4 every emitted board carries its node file:line verbatim (8 boards), G5 no collision with a board the converter did not write. Canvas 15 -> 23 boards; 4 desktop at 1180x860 and 4 mobile twins at 390x844 in the y=13500 band, plus title1 note t9. The pair is structural: no code path emits a desktop board without its twin."
       }
     },
     {
@@ -5700,6 +5709,60 @@
       "verification": {
         "checked": true,
         "evidence": "First launch: cmd via Win32_Process.Create, claude.exe --permission-mode acceptEdits -p @.prism/local/orca-artboards-ROUTER.txt, PID 106236, terminal marker written to .prism/local/orca-artboards-DONE carrying the blocking reason verbatim, log preserved as orca-artboards-run-attempt1.log. Nothing was written to uxui-canvas-nodes.json, canvas.json or any .dc.html board and no commit was made, which the run stated and the clean tree confirms. Relaunch: same launcher with --dangerously-skip-permissions plus --add-dir C:/Users/digit/GriotApps, PID 125292, 11 claude processes alive 30s in.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C30",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C30",
+      "kind": "branch",
+      "group": "this-stage",
+      "title": "Eleven Orca screens ported to the Djeli canvas, desktop and mobile - 22 boards, and the dispatch shape that finally worked",
+      "state": "built-and-live",
+      "direction": "local",
+      "description": "The live build B57 asked for, landed. Eleven headless claude.exe runs fired detached, one per screen, each owning it end to end: read the component, read the .dark tokens, read the two reference boards already on the canvas, write the desktop board and its 390x844 twin. 11 of 11 markers, 22 of 22 boards, zero failures. THE DISPATCH LESSON, because it cost two blocked runs to learn: the Task tool is needed when ONE run must spawn subagents, which is what griot-harvest-ux-ui step 2 requires and what claude.exe -p cannot provide at any permission level. A run that owns a single unit end to end needs no sub-dispatch, so the process boundary becomes the agent boundary and the wall disappears. That is the shape for any fan-out where the unit is independent. A SECOND LESSON, Gavin's correction and the more important one: the harvest node array carries file:line and mountPoint, not markup, so it can describe a screen and can never produce one. The first eight boards rendered node metadata and were provenance cards, not screens. What makes a board you can look at and transform is the renderer source, ported. The converter is correct as a converter; it was the wrong artifact for the ask. Screens ported this pass: sidebar, right-sidebar, new-workspace composer, terminal, dashboard, source-control, tab-bar, status-bar, settings, automations, mobile. Deliberately not in the batch: TaskPage at 13,529 lines, GitHubItemDialog at 6,279, PullRequestPage at 5,793 and WorktreeJumpPalette at 2,991 - whole applications inside the app, each a port in its own right rather than a row in a batch.",
+      "verification": {
+        "checked": true,
+        "evidence": "All eleven runs read one contract at .prism/shared/plans/2026-09-29-orca-screen-port-CONTRACT.md. Registered by tools/register-ported-boards.mjs with six fatal gates green: G0 both files present for all 11 pairs; G0b every board carries data-dc-script and a $preview matching its frame; G1 every desktop board has its 390x844 twin; G2 boards keys and order entries agree exactly at 47 each; G3 no pre-existing board moved or resized, 25 checked; G4 no two frames overlap, 47 boards compared pairwise. Canvas 25 -> 47 boards at y=14520 under title1 'Orca, ported screens'. Committed griot-live-artifacts f5b8598, published as Djeli - IDE Shell artifact version 36. Board sizes range 3,420B (OrcaStatusBarMobile, a genuinely thin strip) to 51,765B (OrcaSettings), none stub-sized.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N130",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N130",
+      "kind": "finding",
+      "group": "new-findings",
+      "title": "A headless run can fan out after all - the process boundary is the agent boundary when each unit is independent",
+      "state": "open",
+      "direction": "local",
+      "description": "N129 recorded that claude.exe -p has no Task tool and concluded a discovery-architecture skill cannot execute headless. That is true and incomplete. The Task tool is needed when ONE run must spawn subagents mid-walk, which griot-harvest-ux-ui step 2 requires. It is NOT needed when the work divides into units that are independent of each other - then each unit gets its own headless process, and the process boundary does the job the Task boundary would have done: separate context, separate failure, real parallelism. Eleven ports proved it in one pass, 11 of 11 markers with no sub-dispatch anywhere. THE RULE THIS DRAWS: before concluding a headless run cannot fan out, ask whether the fan-out is INSIDE one unit of work or BETWEEN units. Between units, launch N processes. Inside a unit, you need an interactive session or an explicit Workflow opt-in. The harvest walk is the inside case because its clusters write into one shared node array through one emitter; the screen ports are the between case because each pair is self-contained. Same machine, same binary, same permission flags - only the decomposition differed.",
+      "verification": {
+        "checked": true,
+        "evidence": "Measured 2026-09-29. Two headless harvest runs blocked at griot-harvest-ux-ui step 2 (markers at .prism/local/orca-artboards-DONE and orca-artboards-run-attempt1.log), the second under --dangerously-skip-permissions, both reporting no Task tool via three ToolSearch probes and ListAgents showing no peer session. Eleven headless port runs launched the same way the same day, same binary and flags, all eleven completing: markers port-{sidebar,rightsidebar,composer,terminal,dashboard,sourcecontrol,tabbar,statusbar,settings,automations,mobilehero}-DONE, 22 board files on disk, every one carrying data-dc-script and a matching $preview.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D11",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D11",
+      "kind": "branch",
+      "group": "this-stage",
+      "title": "RULED - Orca's design surface is the FRAME for Lucid, not a thing Lucid replaces",
+      "state": "ruled-and-applied",
+      "direction": "local",
+      "description": "Gavin ruled this on 2026-09-29, correcting me mid-run: 'absolutely NOT replace with lucid just examine how design works thats it... it becomes the frame for lucid but lucid has so much more than orcas design.' THE RULING: nothing in Orca's design surface is being replaced, deprecated or superseded. The work is to examine how design WORKS there. Orca's design surface becomes the FRAME for Lucid - a frame being the container and the working pattern: how the surface is laid out, how a canvas sits inside it, how the inspector relates to what it inspects, how state moves between them. Lucid then fills that frame and carries far more than Orca's design surface does, so the frame is a starting shape and never a ceiling. WHERE THE WRONG WORD CAME FROM, because it was not invented: djeli-HARVEST-MAP.md line 33, the RECONCILE table's Design surface row, reads 'Replace the inspector with your real canvas (this is the creative in creative-dev)'. That document is a recon pass dated 2026-07-27, written while sizing a fork, not a ruling on Lucid's scope. I quoted it as current doctrine and carried it into the port prompts for the five design-cluster screens. WHY IT MATTERED IN PRACTICE, not just in tone: 'replace' licenses discarding a structure before it has been read, which is the exact opposite of harvesting it - and harvesting it is the entire reason those five screens are being ported. CAUGHT BEFORE ANY DAMAGE: the five runs were killed at 22 processes with zero boards written and zero markers, their prompts rewritten with the ruling stated in full, and relaunched. The other seven runs of that batch never carried the framing and were left running.",
+      "verification": {
+        "checked": true,
+        "evidence": "Gavin's correction verbatim in conversation 2026-09-29. State when caught, measured before killing: batch-2 markers 0 of 12, batch-2 boards written 0, and a scan of every written board for the string 'replac' returned no hits - no artefact carried the framing. Killed 10 processes (5 cmd.exe + 5 claude.exe) matched by command line to port-{browserpane,editor,nativechat,artifacts,emulator}; the seven non-design runs verified alive=1 each afterwards. Prompts rewritten and relaunched, 27 claude processes after. djeli-HARVEST-MAP.md amended in place at GriotApps root: the original 'Replace' row at line 33 is LEFT STANDING and a dated 'AMENDED 2026-09-29' section added above the ADD table, so the overturn is legible rather than silent - grep confirms 1 amendment block and the original line still present.",
         "result": "pass"
       }
     }
@@ -7372,15 +7435,39 @@
       "to": "wg:djeli-branch:C29",
       "kind": "inbound",
       "label": "the routing fix on the walk"
+    },
+    {
+      "from": "wg:djeli-branch:B57",
+      "to": "wg:djeli-branch:C30",
+      "kind": "splinter",
+      "label": "the live build, landed"
+    },
+    {
+      "from": "wg:djeli-branch:N130",
+      "to": "wg:djeli-branch:C30",
+      "kind": "inbound",
+      "label": "the dispatch shape it proved"
+    },
+    {
+      "from": "wg:djeli-branch:C30",
+      "to": "wg:djeli-branch:OA12",
+      "kind": "outbound",
+      "label": "eleven of the design backlog's slots now carry real screens"
+    },
+    {
+      "from": "wg:djeli-branch:D11",
+      "to": "wg:djeli-branch:C30",
+      "kind": "outbound",
+      "label": "framing for the design-cluster ports"
     }
   ],
   "stats": {
-    "totalBranches": 88,
+    "totalBranches": 90,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 278,
+    "edgeCount": 282,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -8296,22 +8383,22 @@
     },
     "generated": {
       "generatedBy": "griot-branch-codex/scripts/compute-generated.mjs",
-      "generatedAt": "2026-09-29T01:43:35.285Z",
-      "nodeCount": 276,
-      "edgeCount": 278,
+      "generatedAt": "2026-09-29T02:58:22.119Z",
+      "nodeCount": 279,
+      "edgeCount": 282,
       "laneCount": 6,
       "byLane": {
-        "new-findings": 130,
+        "new-findings": 131,
         "untracked": 49,
-        "this-stage": 39,
+        "this-stage": 41,
         "open-ask": 23,
         "suggested": 21,
         "tracked": 10,
         "undefined": 4
       },
       "byKind": {
-        "finding": 91,
-        "branch": 88,
+        "finding": 92,
+        "branch": 90,
         "defect": 39,
         "open-ask": 24,
         "suggestion": 21,
@@ -8322,27 +8409,28 @@
         "done": 146,
         "open": 113,
         "parked": 14,
-        "ruled-and-applied": 2,
+        "ruled-and-applied": 3,
+        "built-and-live": 2,
         "superseded": 1
       },
       "byDirection": {
-        "local": 176,
+        "local": 179,
         "outbound": 84,
         "inbound": 12,
         "adjacent": 4
       },
       "byEdgeKind": {
-        "outbound": 64,
+        "outbound": 66,
         "awaits": 53,
         "ontology": 51,
-        "splinter": 42,
+        "splinter": 43,
         "in-epic": 37,
-        "inbound": 31
+        "inbound": 32
       },
       "byOriginLane": {
-        "new-findings": 132,
+        "new-findings": 133,
         "untracked": 51,
-        "this-stage": 40,
+        "this-stage": 42,
         "open-ask": 24,
         "suggested": 21,
         "tracked": 8
@@ -8400,11 +8488,12 @@
         "N93",
         "B49",
         "OA25",
-        "N121"
+        "N121",
+        "S21"
       ],
       "verification": {
         "verified": 15,
-        "pass": 9,
+        "pass": 12,
         "RULED and applied to the live design canvas.": 4,
         "flagged-not-fixed.": 2,
         "PROPOSED - awaiting a yes or no.": 2,
@@ -8683,6 +8772,31 @@
       "stateChanges": [
         "OA16 open -> ruled-and-applied"
       ]
+    },
+    "amendPass70_2026_09_29": {
+      "advanced": [
+        "S21"
+      ],
+      "stateChanges": [
+        "S21 open -> built-and-live"
+      ]
+    },
+    "amendPass71_2026_09_29": {
+      "newNodes": [
+        "C30",
+        "N130"
+      ],
+      "newEdges": 3,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass72_2026_09_29": {
+      "newNodes": [
+        "D11"
+      ],
+      "newEdges": 1,
+      "corrections": [],
+      "refused": []
     }
   },
   "foreignLayer": {
@@ -12828,9 +12942,9 @@
         "pct": 47
       },
       "this-stage": {
-        "closed": 31,
+        "closed": 33,
         "open": 5,
-        "pct": 86,
+        "pct": 87,
         "unclassified": 3
       },
       "open-ask": {
@@ -12840,14 +12954,14 @@
       },
       "new-findings": {
         "closed": 75,
-        "open": 53,
-        "pct": 59,
+        "open": 54,
+        "pct": 58,
         "unclassified": 2
       },
       "suggested": {
-        "closed": 4,
-        "open": 7,
-        "pct": 36,
+        "closed": 5,
+        "open": 6,
+        "pct": 45,
         "unclassified": 10
       },
       "unlaned": {
@@ -12858,7 +12972,7 @@
       }
     },
     "total": {
-      "closed": 148,
+      "closed": 151,
       "open": 113,
       "pct": 57,
       "unclassified": 15

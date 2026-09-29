@@ -7,7 +7,8 @@ not the bare code agents.
 ## Inputs — exact paths, working vs reference
 
 WORKING (this stage writes here):
-- `C:\Users\digit\GriotApps\Prism\.prism\shared\workgraph\uxui-canvas-nodes.json` — the validated
+- `C:\Users\digit\.prism\shared\harvests\uxui-canvas-nodes.json` **(MOVED 2026-09-29 to the
+  Prism global, by Gavin's call — it spans four repos and had been living inside one)** — the validated
   node array. **CORRECTED 2026-09-29 by the first run of this contract.** 27 nodes, and NOT all
   genoffice: 13 genoffice, 4 orca, 4 djeli, 6 block-buzz, all landed in one commit (`315d9b1`,
   2026-09-11, previously untracked). The 4 existing orca nodes —
@@ -26,9 +27,9 @@ REFERENCE (read, never write):
   The skill refuses to clone; this is why it does not have to.
 - `C:\Users\digit\GriotApps\Prism\skills\griot-harvest-ux-ui\` — SKILL.md and the three scripts:
   `emit-canvas-nodes.mjs` (validator), `build-canvas.mjs` (xyflow canvas), `render-canvas-preview.mjs`.
-- `C:\Users\digit\GriotApps\djeli-HARVEST-MAP.md` — **path corrected 2026-09-29**; it sits at the
-  `GriotApps` root, NOT inside the `djeli` repo, so a run scoped to the repo cannot see it and must
-  be given `--add-dir C:\Users\digit\GriotApps` or the file's real path. The 2026-07-27 recon pass over the fresh
+- `C:\Users\digit\.prism\shared\harvests\djeli-HARVEST-MAP.md` — **MOVED 2026-09-29 to the Prism
+  global.** It was loose at the `GriotApps` root (and before that miscited as being inside the
+  `djeli` repo). A run needs `--add-dir C:\Users\digit\.prism` to read it. The 2026-07-27 recon pass over the fresh
   Orca clone. Its LIFT table already names the renderer component dirs by path:
   `src/renderer/src/components/{agent,dashboard,new-workspace,diff-comments,right-sidebar,repo}`
   is "the lane/dashboard UI", `src/renderer/src/components/floating-terminal` is the WebGL terminal.
