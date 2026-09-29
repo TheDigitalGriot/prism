@@ -75,7 +75,8 @@
     "amendPass68": "Orca artboards routed through griot-harvest-ux-ui; the first-walk finding, the two-canvas-format seam, and the node-to-artboard converter Gavin approved 2026-09-28.",
     "amendPass69": "OA16 ruled purple #8b5cf6 and applied (D10); the contract's two false facts caught by its own first run (N128); the acceptEdits headless run has no Task tool and no node (N129); correction on N126, my census read data.repo instead of data.provenance.repo.",
     "amendPass71": "C30 - eleven Orca screens ported to the canvas, 22 boards, IDE Shell v36. N130 - the process boundary is the agent boundary when units are independent, which is why eleven ports fanned out where two harvest runs could not.",
-    "amendPass72": "D11 - Gavin ruled Orca's design surface is the FRAME for Lucid, not a thing Lucid replaces. Overturns djeli-HARVEST-MAP.md line 33; the original row is left standing and amended in place."
+    "amendPass72": "D11 - Gavin ruled Orca's design surface is the FRAME for Lucid, not a thing Lucid replaces. Overturns djeli-HARVEST-MAP.md line 33; the original row is left standing and amended in place.",
+    "amendPass73": "Batch two of the Orca screen port landed (12 pairs, canvas 47 to 71, IDE Shell v37). The harvest artifacts moved to the Prism global on Gavin's ruling, and the parse check that closed that move found a BOM in emit-canvas-nodes.mjs that would have broken the skill silently."
   },
   "groups": [
     {
@@ -5765,6 +5766,57 @@
         "evidence": "Gavin's correction verbatim in conversation 2026-09-29. State when caught, measured before killing: batch-2 markers 0 of 12, batch-2 boards written 0, and a scan of every written board for the string 'replac' returned no hits - no artefact carried the framing. Killed 10 processes (5 cmd.exe + 5 claude.exe) matched by command line to port-{browserpane,editor,nativechat,artifacts,emulator}; the seven non-design runs verified alive=1 each afterwards. Prompts rewritten and relaunched, 27 claude processes after. djeli-HARVEST-MAP.md amended in place at GriotApps root: the original 'Replace' row at line 33 is LEFT STANDING and a dated 'AMENDED 2026-09-29' section added above the ADD table, so the overturn is legible rather than silent - grep confirms 1 amendment block and the original line still present.",
         "result": "pass"
       }
+    },
+    {
+      "id": "wg:djeli-branch:C31",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C31",
+      "kind": "branch",
+      "title": "Orca screen port batch two landed - 12 pairs, canvas 47 to 71 boards, IDE Shell v37 live",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "group": "this-stage",
+      "description": "Twelve independent claude.exe -p runs ported browserpane, editor, nativechat, artifacts, emulator, taskpage, pullrequest, githubitem, jumppalette, onboarding, stats and cmdj from the Orca renderer source into desktop and mobile artboards, against the shared contract at .prism/shared/plans/2026-09-29-orca-screen-port-CONTRACT.md. Nine of the twelve wrote terminal markers; all twelve wrote both boards, which is why the disk census and not the marker count is the instrument that closed this. register-ported-boards.mjs placed them in a new band at y=23000 and all six of its gates passed, G4 pairwise overlap included. This proves N130 twice over: work that divides into independent units needs no Task tool, because the process boundary is the agent boundary.",
+      "verification": {
+        "evidence": "live/djeli-ide-shell/project/canvas.json 71 boards / 71 order / 19 notes, up from 47/47/18; 24 new .dc.html files on disk sized 3589B (OrcaArtifactsMobile) to 41255B (OrcaStats), 0 ghosts, 0 unregistered; register-ported-boards.mjs printed DONE_REGISTER_PORTED pairs=12 boards=24; Artifact publish returned Version 37, version id 1790655761-7b10 at claude.ai/artifact/KCbs8Kv72TQMG8bR6t9EW7",
+        "result": "twelve pairs ported, registered and published; the published canvas.json read back before the publish matched the pre-register base byte for byte, so nothing live was overwritten"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D12",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D12",
+      "kind": "decision",
+      "title": "Harvest artifacts live in the Prism global, which takes them out of repo version control",
+      "state": "ruled-and-applied",
+      "direction": "outbound",
+      "group": "this-stage",
+      "description": "Gavin, 2026-09-29: put the harvests in the prism global. djeli-HARVEST-MAP.md, uxui-canvas-nodes.json and uxui-canvas-views.json moved from the Prism repo into C:/Users/digit/.prism/shared/harvests/. The blast radius was measured before the move, not after: all three code references to uxui-canvas-nodes.json are cosmetic strings, never read paths - build-canvas.mjs line 441 a download filename, line 445 an export-panel hint, render-canvas-preview.mjs line 181 a caption. nodes-to-artboards.mjs and register-ported-boards.mjs take the path as an argument with zero hardcoded references. The tradeoff carried with the ruling: C:/Users/digit/.prism is not a git repo, so the node array is now outside version control.",
+      "verification": {
+        "evidence": "C:/Users/digit/.prism/shared/harvests/ holds djeli-HARVEST-MAP.md 6126B, uxui-canvas-nodes.json 21388B, uxui-canvas-views.json 3478B; the node array reparsed at its new home as nodes=27 byRepo={genoffice:13,orca:4,djeli:4,block-buzz:6}; both source paths vacated; 2026-09-29-orca-artboards-CONTEXT.md carries 2 refs to the global path and 0 to the old",
+        "result": "moved and repointed; the version-control tradeoff is surfaced to Gavin rather than absorbed silently"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N131",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N131",
+      "kind": "defect",
+      "title": "emit-canvas-nodes.mjs carried a UTF-8 BOM, so node refused to parse the skill script at all",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "group": "new-findings",
+      "description": "A PowerShell Set-Content -Encoding UTF8 write during the harvest move left a byte-order mark ahead of the shebang in skills/griot-harvest-ux-ui/scripts/emit-canvas-nodes.mjs. node --check reported SyntaxError: Invalid or unexpected token pointing at line 1 column 1. This is the same BOM mechanism already known to break JSON.parse, but here it broke an executable script in a skill, which is worse: the script would have failed on its next invocation with an error that names no cause. Found only because the parse check that was supposed to close the harvest move was run on both scripts rather than the one that had been edited. Fixed by reading the bytes, confirming the EF BB BF prefix, and rewriting with UTF8Encoding(false).",
+      "verification": {
+        "evidence": "before: FIRST3=239,187,191 LEN=8198, node --check exit 1 SyntaxError at line 1; after: AFTER_FIRST3=35,33,47 LEN=8195, node --check exit 0; sibling build-canvas.mjs checked clean at exit 0 in the same pass",
+        "result": "BOM stripped, both harvest scripts parse; the lesson is that a check run only on the file you remember editing is not a check"
+      }
     }
   ],
   "edges": [
@@ -7459,15 +7511,33 @@
       "to": "wg:djeli-branch:C30",
       "kind": "outbound",
       "label": "framing for the design-cluster ports"
+    },
+    {
+      "from": "wg:djeli-branch:C31",
+      "to": "wg:djeli-branch:B57",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:D12",
+      "to": "wg:djeli-branch:B57",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N131",
+      "to": "wg:djeli-branch:D12",
+      "kind": "splinter",
+      "label": ""
     }
   ],
   "stats": {
-    "totalBranches": 90,
+    "totalBranches": 91,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 282,
+    "edgeCount": 285,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -8795,6 +8865,16 @@
         "D11"
       ],
       "newEdges": 1,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass73_2026_09_29": {
+      "newNodes": [
+        "C31",
+        "D12",
+        "N131"
+      ],
+      "newEdges": 3,
       "corrections": [],
       "refused": []
     }
