@@ -76,7 +76,9 @@
     "amendPass69": "OA16 ruled purple #8b5cf6 and applied (D10); the contract's two false facts caught by its own first run (N128); the acceptEdits headless run has no Task tool and no node (N129); correction on N126, my census read data.repo instead of data.provenance.repo.",
     "amendPass71": "C30 - eleven Orca screens ported to the canvas, 22 boards, IDE Shell v36. N130 - the process boundary is the agent boundary when units are independent, which is why eleven ports fanned out where two harvest runs could not.",
     "amendPass72": "D11 - Gavin ruled Orca's design surface is the FRAME for Lucid, not a thing Lucid replaces. Overturns djeli-HARVEST-MAP.md line 33; the original row is left standing and amended in place.",
-    "amendPass73": "Batch two of the Orca screen port landed (12 pairs, canvas 47 to 71, IDE Shell v37). The harvest artifacts moved to the Prism global on Gavin's ruling, and the parse check that closed that move found a BOM in emit-canvas-nodes.mjs that would have broken the skill silently."
+    "amendPass73": "Batch two of the Orca screen port landed (12 pairs, canvas 47 to 71, IDE Shell v37). The harvest artifacts moved to the Prism global on Gavin's ruling, and the parse check that closed that move found a BOM in emit-canvas-nodes.mjs that would have broken the skill silently.",
+    "amendPass74": "Batch three landed (13 pairs, canvas 71 to 97, IDE Shell v39). The port-spec bridge closed the harvest-to-screen gap. A38 restored every CTA's evidence drawer after A36 had stripped all 66. The discovery stack ruled as layers and written into the ontology, with STORAGE-is-not-SYSTEM as its error class.",
+    "amendPass75": "The Orca design surface landed as two bands (13 pairs, canvas 97 to 123, IDE Shell v40). A composition walk first overturned the shape: three independent capabilities, not one flow, and the proposed flagship component was dead code."
   },
   "groups": [
     {
@@ -5817,6 +5819,125 @@
         "evidence": "before: FIRST3=239,187,191 LEN=8198, node --check exit 1 SyntaxError at line 1; after: AFTER_FIRST3=35,33,47 LEN=8195, node --check exit 0; sibling build-canvas.mjs checked clean at exit 0 in the same pass",
         "result": "BOM stripped, both harvest scripts parse; the lesson is that a check run only on the file you remember editing is not a check"
       }
+    },
+    {
+      "id": "wg:djeli-branch:C32",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C32",
+      "kind": "branch",
+      "title": "Orca screen port batch three landed - 13 pairs, canvas 71 to 97 boards, IDE Shell v39 live",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "group": "this-stage",
+      "description": "The 3 remaining top-level views (activity, space, skills), the 6 right-sidebar panel tabs (explorer, vault, workspaces, pr-checks, checks, ports) and 4 settings panes ported as the pattern (General, Accounts, Shortcuts, Integrations) so the remaining 33 become a ruling made from evidence rather than a queue that would nearly double the canvas. Thirteen independent claude.exe -p runs, 13 of 13 markers, no failures. The scope came from Orca's own exhaustive registries, not a heuristic.",
+      "verification": {
+        "evidence": "register-ported-boards.mjs printed DONE_REGISTER_PORTED pairs=13 boards=26 canvas now 97 boards / 97 order / 20 notes, all six gates passing including G4 pairwise overlap across 97 frames; Artifact publish returned Version 39, version id 1790687254-e3ec; 26 files on disk sized 4,468B to 62,568B, none stub-sized",
+        "result": "the Orca surface is now covered at the view and panel-tab level; what remains is 33 settings panes, held as a decision rather than a backlog"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C33",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C33",
+      "kind": "branch",
+      "title": "nodes-to-port-specs.mjs - the bridge that closes the harvest-to-screen gap",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "group": "this-stage",
+      "description": "A harvest node carries origin.file, origin.line, mountPoint and sourceCommit and never markup, which is why nodes-to-artboards.mjs could only ever draw a provenance card (C29, N127). The wrong fix was fattening nodes with copied source - it breaks the ICM rule and puts a stale renderer copy in a JSON array. The right fix: the harvest output DRIVES a port rather than BEING the artboard. Each node becomes a port spec with verified working paths, the token source, both board names, the shared contract and a thin router prompt. Chain closed: locator/analyzer to harvest nodes to port specs to one headless run per spec to register-ported-boards to canvas.",
+      "verification": {
+        "evidence": "tools/nodes-to-port-specs.mjs, 11,660B, node --check clean; six fatal gates; G5 is the photocopy gate (a spec points, never carries source); G3 earned itself on the first dry run by catching that 2 of the 4 orca nodes already had boards; commit 37a6643",
+        "result": "the discovery layer can now reach a screen without being asked to draw one"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N132",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N132",
+      "kind": "defect",
+      "title": "A36 stripped every Selectah CTA of its evidence drawer - 66 buttons, 0 panels",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "group": "new-findings",
+      "description": "A36 removed each option's evidence drawer and know-more toggle so the asks lane would fit a chat render. Measured 2026-09-29: 66 option CTAs reached chat carrying 0 of their 66 drawers and 0 of their 66 toggles. That inverted the board's purpose - the CTA exists to fire a decision and the drawer is where the decision is actually made, so stripping it left a row of buttons that cannot responsibly be clicked. Gavin: this is exactly why i want every single selectah generated button to have the more info its usually where i find the details i need to make the decision before clicking. Fixed by A38, which also gates the regression.",
+      "verification": {
+        "evidence": "before A38: FULL panels=66 careBtns=66 optSegs=66 / CHAT panels=0 careBtns=0 optSegs=66. After: CHAT 66/66/66. Asks lane 40,329B to 101,655B. A38 parity gate counts each chat emit's drawers and toggles against its own CTA count measured against the full board. Commit 13182d7",
+        "result": "size is never a reason to remove evidence - scope is the size lever (A31/A32/A37): fewer rows, never thinner rows"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D13",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D13",
+      "kind": "decision",
+      "title": "RULED - locator, analyzer and harvest are LAYERS of one pipeline, not alternatives",
+      "state": "ruled-and-applied",
+      "direction": "outbound",
+      "group": "this-stage",
+      "description": "Gavin asked whether codebase-locator and codebase-analyzer were the better route for building artboards versus griot-harvest / griot-harvest-ux-ui. Ruling: not alternatives. codebase-locator answers WHERE (the super Grep/Glob layer, and why the discovery rule forbids raw Glob), codebase-analyzer answers HOW (traces flow, returns file:line), and griot-harvest-ux-ui sits ABOVE both, consuming that structural answer to produce the canvas artifacts - the node array, the views, the harvest map. Reaching for the wrong layer is what produces a confident wrong artifact.",
+      "verification": {
+        "evidence": "written into griot-ontology claude/CLAUDE.md as the locked section THE DISCOVERY STACK (+4,962B, additive, every pre-existing heading verified intact), propagated via propagate.ps1 to the CLI global and 15 repo roots, commit 34a053f",
+        "result": "applied as doctrine, so every future session loads the layering rather than re-deriving it"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N133",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N133",
+      "kind": "finding",
+      "title": "STORAGE is not SYSTEM - three correct measurements, one wrong verdict, twice in one session",
+      "state": "corrected-verified",
+      "direction": "outbound",
+      "group": "new-findings",
+      "description": "Asked whether Kente exists, three instruments each returned a correct measurement - no kente directory under any of eight Griot roots, ModelMaker is not a codebase, the codex says no repo yet - and together produced the wrong verdict that there was nothing to build from. Kente has 12 routed skills, owns The Griot Model, and carries typed edges to Arkestra, Valence, Kaleidoscope and Math Formalism. Every instrument was asking about STORAGE while the question was about SYSTEM. The error then recurred one level down: is it in the skills folder was answered as does it exist, missing that the PLUGINS are the methodology. Gavin, twice: they all exist somewhere, and why are you ignoring the plugins, the plugins include some of the skills and ARE THE METHODOLOGY.",
+      "verification": {
+        "evidence": "prism-model-onboard (writes models into Arkestra, the Governor) and prism-viz-generate (layer 01 of prism-viz-engine) are two of 38 skills inside .claude/plugins/cache/prism-marketplace/prism/4.17.2/skills, invisible to every directory search run that session; Arkestra appears edged to Kente in the ontology codex skill-routing graph",
+        "result": "the two instruments that answer a system question are the ontology graph and the plugin manifests - both authored registries, both first. Recorded in griot-ontology as part of THE DISCOVERY STACK, and it is why visual-first is an instrument here rather than a presentation preference"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C34",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C34",
+      "kind": "branch",
+      "title": "Orca design surface landed as two bands - 13 pairs, canvas 97 to 123 boards, IDE Shell v40",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "group": "this-stage",
+      "description": "BAND ONE, the three capabilities composed at 1440x900 with mobile twins: grab-copy, grab-annotate, markup. BAND TWO, ten components each at its OWN measured frame rather than a uniform screen size - toolbar row 960x120, status banner 960x120, markup toolbar 520x160, annotation tray 320x420, pending annotation card 360x340, send menu 280x380, draw button 300x180, context menu 240x200, toast 280x120, and MarkupOverlay at 1440x900 as the single genuinely full-surface component. Built against a workflow contract whose POPULATED-STATE clause inverts the base contract: a mid-flow state is required, but every visible value must trace to a code default, fixture or literal with its file:line, and anything without a source becomes a bracketed placeholder rather than a plausible invention.",
+      "verification": {
+        "evidence": "13 of 13 complete desktop+mobile pairs on disk, every $preview matching its registered frame exactly (verified by reading the emitted files, not the spec); ten register-ported-boards runs, all six gates green including G4 pairwise overlap across 123 boards; Artifact publish returned Version 40, version id 1790710863-045a; canvas 123 boards / 123 order / 22 notes",
+        "result": "the design surface is on the canvas as flows AND components; four register calls failed G4 first on band spacing tighter than the 844-tall mobile twins and were respaced rather than forced"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N134",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N134",
+      "kind": "finding",
+      "title": "There is no single Orca design surface - three independent capabilities, and the obvious centerpiece was dead code",
+      "state": "corrected-verified",
+      "direction": "outbound",
+      "group": "new-findings",
+      "description": "A composition walk over 38 components overturned two assumptions at once. FIRST: what reads as one design surface is THREE capabilities sharing only a toolbar row and the BrowserPane host - grab with copy intent (clipboard), grab with annotate intent (agent chat via a shared send-menu), and markup (freehand draw on screenshot). They share no payload type, no hook and no delivery path, and markup is the only one that also works on a remote screencast img. SECOND: GrabConfirmationSheet, the component that looked like the review UI and was proposed as the flagship board, is DEAD CODE - its Cancel/Copy/Copy-Screenshot/Attach-to-AI callbacks exist nowhere in the running app. The live pipeline is src/main/browser/grab-guest-script.ts (buildGuestOverlayScript, 955 lines) plus browser-grab-session-controller.ts. Had the boards been built from the eyeball survey, the flagship would have depicted UI that never runs. Gavin's correction is what forced the walk: building ui is comprised of components, so stop being so literal.",
+      "verification": {
+        "evidence": ".prism/shared/research/2026-09-29-orca-design-surface-composition.md, 22,036B, 38 components, sections 0 (three capabilities table), 2 (GrabConfirmationSheet dead code) and 5 (artboard candidates with measured frames); the walk's own artboard table lists exactly ONE 1440x900 candidate against nine small frames",
+        "result": "size is never importance - a filter on looks-like-a-screen would have shipped 1 board and missed 37; also confirms the harvest map's line 33 is stale, since no designMode or inspectMode exists anywhere in browser-pane or native-chat"
+      }
     }
   ],
   "edges": [
@@ -7529,15 +7650,69 @@
       "to": "wg:djeli-branch:D12",
       "kind": "splinter",
       "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:C32",
+      "to": "wg:djeli-branch:B57",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:C33",
+      "to": "wg:djeli-branch:B57",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:C33",
+      "to": "wg:djeli-branch:C32",
+      "kind": "awaits",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:D13",
+      "to": "wg:djeli-branch:C33",
+      "kind": "ontology",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N133",
+      "to": "wg:djeli-branch:D13",
+      "kind": "splinter",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N132",
+      "to": "wg:djeli-branch:C32",
+      "kind": "splinter",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:C34",
+      "to": "wg:djeli-branch:B57",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N134",
+      "to": "wg:djeli-branch:C34",
+      "kind": "splinter",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N134",
+      "to": "wg:djeli-branch:D11",
+      "kind": "ontology",
+      "label": ""
     }
   ],
   "stats": {
-    "totalBranches": 91,
+    "totalBranches": 94,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 285,
+    "edgeCount": 294,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -8873,6 +9048,27 @@
         "C31",
         "D12",
         "N131"
+      ],
+      "newEdges": 3,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass74_2026_09_29": {
+      "newNodes": [
+        "C32",
+        "C33",
+        "N132",
+        "D13",
+        "N133"
+      ],
+      "newEdges": 6,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass75_2026_09_29": {
+      "newNodes": [
+        "C34",
+        "N134"
       ],
       "newEdges": 3,
       "corrections": [],

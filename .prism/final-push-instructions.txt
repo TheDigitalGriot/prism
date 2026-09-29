@@ -1,0 +1,9 @@
+Read the stage contract at .prism\shared\plans\final-push-CONTEXT.md and execute it, step 1 through 5, in order.
+
+Reconcile digital-griot-skills with git pull --rebase. NEVER force-push. If the rebase conflicts, STOP and report the conflicting hunks - do not resolve shared-history conflicts on your own.
+
+Use the dgs-plan-update skill for the plan pass; do not hand-edit the plan. Do not run propagate.ps1 or dgs-sync-all.ps1. Do not try to clear the closing ceremony findings.
+
+Push order: digital-griot-skills, Prism, griot-ontology, griot-live-artifacts - verifying HEAD == origin after each.
+
+Finish by writing .prism\shared\plans\final-push-REPORT.md and appending DONE_FINAL_PUSH to .prism\final-push-progress.txt.

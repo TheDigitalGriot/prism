@@ -1,0 +1,1 @@
+﻿Run the sankofa skill for session tap-in, then griot-beacon. Focus the recall on: code-intel pipeline, code-review-graph, gortex, workgraph, djeli branch codex. Write a compact digest (<=60 lines) to .prism/sankofa-tapin-digest.md. Append one line per step to .prism/sankofa-tapin-progress.txt and write DONE as the final line.

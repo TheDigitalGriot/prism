@@ -1,0 +1,12 @@
+Commit one repo. Use the /prism:commit skill conventions: no Claude attribution, no Co-Authored-By, concise conventional message explaining WHY.
+
+REPO: C:\Users\digit\GriotMeta\griot-live-artifacts
+Stage and commit: tools/fill-selectah-template.mjs and live/_selectah/ (the regenerated board, the new chat-close.inner.html emit, and live/_selectah/loop-overlay-20260929.json). Also live/selectah-fragment-*.html if they changed.
+
+What the change is - amendment A37 (CHAT_CLOSE) to fill-selectah-template.mjs:
+The landed lane is monotonic, so the standing rule "render the board in chat at every close" got more expensive every loop - about 30k tokens at 169 rows, growing O(n). That collides with the token-burn hard line. A37 emits live/_selectah/chat-close.inner.html: the spine, provenance, full lane-totals strip, way-back links, and ONLY this pass's landed rows, declared explicitly via a new overlay key closedThisPass (a list of localIds). Measured this run: 50,764B down to 16,006B, 32 percent, and the remainder is fixed cost (style + provenance + spine) so the win grows as the lane grows.
+It is scope, not hide, on the same reading as A31/A32/A36: the totals strip still carries every lane's true count and the way-back still links to all three complete lanes.
+Four gates, all proven this run: G2 every declared close resolves to exactly one row in the rendered landed lane (negative control with a bogus id C999 exits 1); G3 declared count equals scoped count; G4 spine, totals, way-back and provenance all survive the scope; G5 the emit must be under 75 percent of the full landed emit or the scope bought nothing. With no closedThisPass in the overlay the emit skips cleanly and the full lane emits stand - also proven.
+
+Do NOT push. Commit only.
+When the commit is made, write the short SHA and subject line to C:\Users\digit\GriotApps\Prism\.prism\local\a37-DONE and stop.

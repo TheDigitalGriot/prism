@@ -1,0 +1,20 @@
+Commit two repos. Use the /prism:commit skill conventions: no Claude attribution lines, no Co-Authored-By, concise conventional message body explaining WHY.
+
+REPO 1: C:\Users\digit\GriotApps\Prism
+Stage ONLY these paths, nothing else. Do not stage .gortex/badge.svg, and do not stage any .prism/*-instructions.txt or .prism/*-launch.cmd file (session scratch):
+  .prism/shared/plans/2026-09-29-orca-artboards-CONTEXT.md
+  .prism/shared/plans/2026-09-29-orca-screen-port-CONTRACT.md
+  .prism/shared/workgraph/djeli-branch-capture.json
+  .prism/shared/workgraph/uxui-canvas-nodes.json
+  .prism/shared/workgraph/uxui-canvas-views.json
+  skills/griot-harvest-ux-ui/scripts/build-canvas.mjs
+  skills/griot-harvest-ux-ui/scripts/emit-canvas-nodes.mjs
+  skills/griot-harvest-ux-ui/SKILL.md
+The two uxui-canvas-*.json are DELETIONS - they moved to the Prism global at C:\Users\digit\.prism\shared\harvests\. Mention in the message that the harvest artifacts now live in the Prism global and that this takes them out of repo version control.
+Also note: emit-canvas-nodes.mjs had a UTF-8 BOM that made node refuse to parse it; the BOM is stripped.
+
+REPO 2: C:\Users\digit\GriotMeta\griot-live-artifacts
+Stage and commit all current changes. They are: tools/register-ported-boards.mjs and tools/nodes-to-artboards.mjs (new tools), tools/fill-selectah-template.mjs and tools/render-selectah.mjs amendments, and live/djeli-ide-shell/project/ with 24 new ported Orca artboards plus the updated canvas.json (47 to 71 boards). Explain that batch two of the Orca screen port landed.
+
+Do NOT push either repo. Commit only.
+When both commits are made, write the two short SHAs and the two subject lines to C:\Users\digit\GriotApps\Prism\.prism\local\commit-batch-DONE and stop.

@@ -1,0 +1,9 @@
+Read the stage contract at .prism\shared\plans\brainstorm-design-CONTEXT.md and execute it, step 1 through 5, in order.
+
+Drive the prism-brainstorm skill and render through ITS OWN companion system - the frame-template component vocabulary plus data-fidelity on every fragment root, pushed with render-screen.sh. Never write ad-hoc inline-styled HTML; that is the documented drift this contract exists to stop.
+
+The companion is ALREADY RUNNING on port 51900 in session 7354-1790199040 and Gavin is watching it in his browser. Reuse it. Do not start a second server and do not run the exit ceremony.
+
+The measured ground truth in the contract is verified - use it, do not re-derive it.
+
+Finish by writing .prism\shared\plans\brainstorm-design-REPORT.md and appending DONE_BRAINSTORM_DESIGN to .prism\brainstorm-design-progress.txt.

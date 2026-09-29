@@ -1,0 +1,11 @@
+Read the stage contract at .prism\shared\plans\closing-ceremony-CONTEXT.md and execute it, step 1 through 5, in order.
+
+Use Gavins own skills: /prism:prism-closing-ceremony for the ceremony, and dgs-plan-update for the plan. Never hand-roll a version bump, changelog, release or plan edit as a substitute. A skill that will not run is a routing problem to report, not license to improvise.
+
+Respect every gate the ceremony runs. If a gate goes red, STOP at that stage and report which one and why. Do not force past it and do not force-push anything.
+
+Push order is digital-griot-skills, then Prism, then griot-ontology, then griot-live-artifacts - verifying each landed before the next.
+
+Do not start a companion server or open a browser.
+
+Finish by writing .prism\shared\plans\closing-ceremony-REPORT.md and appending DONE_CLOSING_CEREMONY to .prism\closing-ceremony-progress.txt.
