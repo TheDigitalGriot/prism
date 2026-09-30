@@ -82,7 +82,8 @@
     "amendPass76": "The reactive-DAG lesson ruled and written into the ontology, plus three propagation defects found by running Gavin's own channel check - a stale source that would have overwritten live skills, a byte-vs-content proxy inside the check itself, and the account copy of griot-suite-context cut to 46 percent with the app lineage past the cut.",
     "amendPass77": "N103's central claim was false and the graph carried it for four days after the artifact disproved it. Corrected with the seven-verb evidence; N138 records the class - a correction that landed in an artifact and never reached the node.",
     "amendPass78": "Stages 1-3 of the 2026-09-29 device re-baseline handoff recorded: plugin/CLI sync, griot-propagate channel de-collision (channel-5 fixed, channel-6 flagged open), and the full Arkestra Opus 5.5/Sonnet 5.5 model-line refresh with two real mobile-mirror bugs found and fixed. Gavin's mid-run instruction: workgraph updates now happen after every stage, not batched to the Stage 6 close-out.",
-    "amendPass79": "Stage 4 of the 2026-09-29 device re-baseline handoff recorded: griot-plugin-update proven end to end against cinopsis@cinopsis on Claude Code CLI 2.1.285, real version bump, all three DOWNLOADED/INSTALLED/RUNNING tiers proven."
+    "amendPass79": "Stage 4 of the 2026-09-29 device re-baseline handoff recorded: griot-plugin-update proven end to end against cinopsis@cinopsis on Claude Code CLI 2.1.285, real version bump, all three DOWNLOADED/INSTALLED/RUNNING tiers proven.",
+    "amendPass80": "Stage 5 of the 2026-09-29 device re-baseline handoff recorded: all 3 Griot plugins validated + CHANNELS gate green, plus 3 real incidental findings (Cinopsis INV3 fixed, gitnexus silent-fail resolved, Prism decisions-execution-trail flagged)."
   },
   "groups": [
     {
@@ -6221,6 +6222,74 @@
         "evidence": "Cinopsis commit babc361 (version bump 2.8.0->2.8.1, pushed). CLI output: 'Successfully updated marketplace: cinopsis' and 'Plugin \"cinopsis\" updated from 2.8.0 to 2.8.1 for scope user.' installed_plugins.json cinopsis@cinopsis entry: version 2.8.1, installPath .../2.8.1, gitCommitSha babc361f88d79d15205fa62aca7eba835c1ed1bb. Fresh headless claude.exe -p run (granted --add-dir onto the cache path) independently confirmed version 2.8.1, the corrected model line, and the absent effort field, reading from its own loaded plugin path. Full record: Prism .prism/shared/plans/rebaseline/00-inventory.json stage4Complete block, commit 657b646.",
         "result": "Heartbeat HB-S4-UPDATE-ROUNDTRIP-OK. Round trip proven on Claude Code CLI only - Codex CLI and Cowork were not separately tested this pass, named as a scope limit rather than silently claimed."
       }
+    },
+    {
+      "id": "wg:djeli-branch:C41",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C41",
+      "kind": "branch",
+      "title": "Stage 5 - validate every Griot plugin via griot-agent-architect",
+      "group": "this-stage",
+      "direction": "outbound",
+      "state": "done",
+      "description": "claude plugin validate . run clean for all three plugins (Prism, Cinopsis, Fragment). The table-driven CHANNELS marketplace-freshness gate (built in Prism's own Stage 1 commit 99740bb) run for Prism and Cinopsis, both fully green after syncing two stale thin mirrors this pass (Prism's own single-tool mirror + digital-griot-marketplace, and Cinopsis's digital-griot-marketplace entry, both stale from this session's own earlier commits never having triggered a sync step). Fragment validates clean and its mirror version matches, though it still lacks a content-hash CHANNELS-style gate (a pre-existing, already-flagged gap from Stage 1, not new). Beyond the named scope, running each plugin's own full audit script surfaced and closed real findings: Cinopsis's INV3 data-integrity gap (14 real sessions promoted to canonical), a Prism gitnexus reindex resolved via full re-run, and Prism's I9 decisions-execution-trail gap flagged for cross-repo follow-up. Cowork-visible component spot-check (Stage 5 process step 3) not run this pass - it requires a UI this CLI session cannot drive; named honestly rather than silently skipped or claimed done.",
+      "verification": {
+        "evidence": "Prism: claude plugin validate . passed; node scripts/pre-release-audit.mjs -> AUDIT CLEAN on the two named channels (1 remaining failure is I9, a separate pre-existing finding, see N149). Cinopsis: claude plugin validate . passed; node scripts/pre-release-audit.mjs -> AUDIT CLEAN, all 7 checks including INV3 after the fix. Fragment: claude plugin validate . passed; version parity confirmed prism-plugin/.claude-plugin/plugin.json local vs raw.githubusercontent.com both 4.4.0. Commits: Prism 3c9c042 (gitnexus stats refresh), Cinopsis babc361 already-pushed version carrying the sync, digital-griot-marketplace commits for both cinopsis-plugin and prism-plugin thin-mirror syncs, TheDigitalGriot/prism-plugin commit from sync-prism-plugin.sh.",
+        "result": "Stage 5 heartbeat HB-S5-VALIDATE-CLEAN. Named scope (validate + CHANNELS gate) fully green for all 3 plugins. Cowork-component spot-check flagged as not run, not silently skipped."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N147",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N147",
+      "kind": "defect",
+      "title": "Cinopsis: 14 real sessions served but never persisted to the canonical store",
+      "group": "new-findings",
+      "direction": "outbound",
+      "state": "defect-fixed",
+      "description": "Surfaced by Stage 5's audit run (INV3 comparison-served-iff). The canonical data dir the viewer reads held 0 sessions while the repo's own working data/ held 14 real video-comparison sessions dating to 2026-08-09, served but never promoted. persist_session.py --all exists exactly for this and had simply never been run.",
+      "verification": {
+        "evidence": "python scripts/verify_invariants.py before: INV3 FAIL, 14 violations. python scripts/persist_session.py --all: 14 sessions persisted. Re-run: INV3 PASS. Full pre-release-audit.mjs re-run: AUDIT CLEAN.",
+        "result": "Resolved same pass. Drift ledger entry logged and republished, griot-live-artifacts commit 5b7c52f, Suite Drift Codex v55."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N148",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N148",
+      "kind": "defect",
+      "title": "Prism: incremental gitnexus reindex threw an unattributed error and still exited 0",
+      "group": "new-findings",
+      "direction": "outbound",
+      "state": "corrected-verified",
+      "description": "verify-code-intel.mjs's I12 caught the index 65 commits / 9 days stale. The INCREMENTAL reindex path then threw 'Runtime exception: Failed calling LOWER: Invalid UTF-8' with zero file attribution, yet exited 0 - a gate reading exit code alone would have reported success on a run that indexed nothing. A full reindex immediately after succeeded cleanly.",
+      "verification": {
+        "evidence": "First run: node .gitnexus/run.cjs analyze -> Incremental: changed=60 added=38 deleted=37, then 'Analysis failed: Runtime exception: Failed calling LOWER: Invalid UTF-8', exit code 0. Second run (GITNEXUS_VERBOSE=1): full reindex, 'Repository indexed successfully (85.5s), 43,763 nodes | 96,352 edges | 1816 clusters | 300 flows', exit 0 genuinely. verify-code-intel.mjs re-run: I12 PASS, all 5 checks PASS.",
+        "result": "This instance resolved via full reindex; the underlying gitnexus defect (no file attribution, misleading exit code on internal failure) remains and is not something this repo can fix. Drift ledger entry logged, griot-live-artifacts commit 5b7c52f, Suite Drift Codex v55."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N149",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N149",
+      "kind": "finding",
+      "title": "Prism: three 2026-09-23 brainstorm decisions carry no execution commit or deferral",
+      "group": "new-findings",
+      "direction": "outbound",
+      "state": "flagged-not-fixed",
+      "description": "verify-invariants.mjs I9 found D1 (One gavel, adopt the kit), D2 (Motion is a primary channel) and D3 (originLane is pivotal to the Riddim) in .prism/local/brainstorm/7354-1790199040/state/decisions.json locked with a choice but no resolving git sha and no deferral marker. A quick cross-repo check found no matching commit in Prism's own history for any of the three, nor in digital-griot-skills around the decision date - but the ontology's own CLAUDE.md quotes Gavin's verbatim ruling for D3 and describes it as implemented, so this instrument's repo-scoped search is plausibly just blind to work that landed in a sibling repo, not proof the decisions were never acted on.",
+      "verification": {
+        "evidence": "node scripts/verify-invariants.mjs: I9 FAIL, 3 decided but silent: D1, D2, D3. git log --all --since/--until around 2026-09-23 for motion.ts / griot-workgraph-update / griot-widget paths in both Prism and digital-griot-skills: zero matches. CLAUDE.md's own 'our nomenclature' section quotes Gavin's D3 ruling verbatim and names its implementation site (griot-workgraph-update's node-shape section, RESERVED set in amend-workgraph.mjs) - outside Prism's own repo, so I9's repo-scoped check cannot see it.",
+        "result": "Genuinely open, needs real cross-repo git archaeology across griot-viz-engine (D2), digital-griot-skills (D3), and wherever GavelSurface/prism-gavel's extraction landed (D1) to backfill decisions.json, or an explicit deferral if truly not done. Drift ledger entry logged, griot-live-artifacts commit 5b7c52f, Suite Drift Codex v55."
+      }
     }
   ],
   "edges": [
@@ -8071,15 +8140,39 @@
       "to": "wg:djeli-branch:C35",
       "kind": "in-epic",
       "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:C41",
+      "to": "wg:djeli-branch:C35",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N147",
+      "to": "wg:djeli-branch:C41",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N148",
+      "to": "wg:djeli-branch:C41",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N149",
+      "to": "wg:djeli-branch:C41",
+      "kind": "in-epic",
+      "label": ""
     }
   ],
   "stats": {
-    "totalBranches": 99,
+    "totalBranches": 100,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 308,
+    "edgeCount": 312,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -9484,6 +9577,17 @@
         "C39"
       ],
       "newEdges": 1,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass80_2026_09_30": {
+      "newNodes": [
+        "C41",
+        "N147",
+        "N148",
+        "N149"
+      ],
+      "newEdges": 4,
       "corrections": [],
       "refused": []
     }
