@@ -56,6 +56,12 @@ const slugOf = (abs) => abs.replace(/^([A-Za-z]):/, '$1').replace(/[\\/:]+/g, '-
 
 const CACHE = join(homedir(), '.cache', 'codebase-memory-mcp')
 
+/** I16: tool names known to have gone stale in docs/agents after a rename or
+ * removal. Extend this list the moment a new instance of the class is found —
+ * it exists so I16 flags a KNOWN drift precisely rather than pattern-matching
+ * every backticked `word(...)` in a doc, which would false-positive constantly. */
+const KNOWN_STALE_TOOL_NAMES = new Set(['trace_call_path'])
+
 // ── I11 · the code graph is indexed at THIS repo, not a previous address ────
 // The failure this catches is silent by construction: a graph indexed at an old
 // path answers every query with nothing, and the agent falls back to grep
@@ -307,6 +313,65 @@ const CACHE = join(homedir(), '.cache', 'codebase-memory-mcp')
         }
       }
     } catch { rec('I15', 'declared capabilities are available', 'unverified', 'gitnexus.json unparseable') }
+  }
+}
+
+// ── I16 · documented tool names/counts match what the binary actually reports ──
+// story s-10c2e47d. Observed 2026-09-22: docs and an agent claimed
+// codebase-memory-mcp exposes "11 tools" and called its trace tool
+// `trace_call_path`, while the live server reports 14 tools and the trace tool
+// is `trace_path`. Both are the same defect: a number or a name that was true
+// once, typed into prose, and never re-checked. The binary itself is the
+// authored source of truth here — `codebase-memory-mcp --help` prints its own
+// live tool list on every invocation — so this check reads THAT instead of
+// trusting any doc, then flags any doc/agent file whose own claimed count or
+// tool name has drifted from it. A doc that stops naming a hardcoded number
+// (the fix applied 2026-09-30) passes by construction — it has nothing left to
+// drift from.
+{
+  let liveTools = null
+  try {
+    const help = execFileSync('codebase-memory-mcp', ['--help'], { encoding: 'utf-8', timeout: 10_000 })
+    const m = help.match(/Tools:\s*([\s\S]+?)(?:\n\n|$)/)
+    if (m) liveTools = m[1].split(',').map((s) => s.trim().replace(/\s+/g, ' ')).filter(Boolean)
+  } catch { /* binary not on PATH here — handled below as unverified */ }
+
+  if (!liveTools || !liveTools.length) {
+    rec('I16', 'codebase-memory-mcp docs match the live binary', 'unverified',
+        'codebase-memory-mcp --help did not run or its output did not parse — cannot compare')
+  } else {
+    const liveCount = liveTools.length
+    const liveNames = new Set(liveTools)
+    const problems = []
+
+    // Any file that states a hardcoded "N tools" claim must state the CURRENT
+    // live count, wherever it appears (docs or agent frontmatter/body).
+    const countClaimFiles = [
+      join(ROOT, '.prism', 'shared', 'docs', 'code-intel', 'prism-code-intelligence-integration.md'),
+      join(ROOT, 'agents', 'graph-navigator.md'),
+      join(ROOT, 'apps', 'prism-setup', 'resources', 'plugin', 'agents', 'graph-navigator.md'),
+    ]
+    for (const f of countClaimFiles) {
+      const body = read(f)
+      if (!body) continue
+      const rel = f.slice(ROOT.length + 1)
+      for (const claimed of body.matchAll(/\b(\d+)\s+(?:MCP\s+)?tools\b/gi)) {
+        const n = Number(claimed[1])
+        if (n !== liveCount) problems.push(`${rel}: claims "${n} tools" but the binary reports ${liveCount}`)
+      }
+      // A tool name that isn't in the live list is either renamed or removed —
+      // trace_call_path (renamed to trace_path 2026-09-XX) is the known instance.
+      for (const name of body.matchAll(/`(\w+)\(/g)) {
+        const fn = name[1]
+        const looksLikeATool = /^[a-z][a-z_]{3,}$/.test(fn) && !['function', 'console'].includes(fn)
+        if (looksLikeATool && !liveNames.has(fn) && KNOWN_STALE_TOOL_NAMES.has(fn)) {
+          problems.push(`${rel}: calls \`${fn}(...)\` — not a live codebase-memory-mcp tool name (binary reports: ${[...liveNames].join(', ')})`)
+        }
+      }
+    }
+
+    rec('I16', 'codebase-memory-mcp docs match the live binary', problems.length ? 'fail' : 'pass',
+        problems.length ? problems.join(' · ') : `${liveCount} live tools, no stale count/name claims found`)
   }
 }
 

@@ -6,7 +6,7 @@
       "title": "Split I15 capability verdicts so one degraded capability cannot mask another",
       "description": "verify-code-intel.mjs I15 must emit one verdict per declared capability instead of a single combined verdict, so an uncovered capability cannot suppress another capability fallback. Observed 2026-09-22: .gitnexus/gitnexus.json declares fts=unavailable (provider ladybugdb-fts, NO reason recorded) and vectorSearch=unavailable (provider exact-scan, reason \"LadybugDB VECTOR is disabled on this platform; semantic search uses exact scan when embeddings exist\"). The fallback branch is gated on bad.every(b => b.startsWith(\"vectorSearch\")), so fts being down makes that test false and the vectorSearch fallback is never considered - even though .code-review-graph/graph.db (455MB) is present and is exactly the provider the fallback looks for. Accepted outcome: vectorSearch resolves via the code-review-graph witness; fts reports its own verdict and, having no provider, still fails. Do NOT force the run green - the file honesty rule is that a check it cannot stand behind reports unverified, never pass.",
       "priority": 1,
-      "status": "pending",
+      "status": "complete",
       "blockedBy": [],
       "files": [
         "scripts/verify-code-intel.mjs"
@@ -19,8 +19,9 @@
         "Preserve the exit-code contract: any capability with no provider still yields exit 1.",
         "Run node scripts/verify-code-intel.mjs and confirm separate per-capability lines and an honest exit code."
       ],
-      "completedAt": null,
-      "commitHash": null
+      "completedAt": "2026-09-30T10:47:23-04:00",
+      "commitHash": "ee916cfa009f3ea350f8c3813100b54e3ecc4038",
+      "note": "A second, deeper defect rode along with the one this story named: the vectorSearch fallback was also a PROXY VERDICT (graph.db existing != embeddings queryable). Fixed both in the same pass; live-falsified both ways (reverting .mcp.json's [embeddings] extra flips I15.vectorSearch to FAIL with the real reason, restoring it flips back). Landed under an unrelated automated commit message (ee916cf, 'plan: freshness stamp 2026-09-30') because a concurrent device-side sync process committed+pushed while this session's own pre-commit hook (full code-review-graph rebuild) was still running — flagged to Gavin as a real coordination gap, not silently absorbed. Diff verified present: git show ee916cf -- scripts/verify-code-intel.mjs."
     },
     {
       "id": "s-10c2e47d",

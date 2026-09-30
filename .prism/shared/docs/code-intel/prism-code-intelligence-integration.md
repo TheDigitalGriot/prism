@@ -73,9 +73,9 @@ The MCP server runs as a **stdio process** alongside the Claude CLI. Every Claud
 
 ## 4. Tool-to-Lifecycle Mapping
 
-### 4.1 The 11 MCP Tools
+### 4.1 The MCP Tools
 
-codebase-memory-mcp exposes 11 tools organized in three groups. Each maps to specific moments in Prism's 4-phase workflow.
+codebase-memory-mcp exposes its tools organized in three groups. Each maps to specific moments in Prism's 4-phase workflow. **Do not hardcode a count here — it has drifted before (11 claimed vs 14 live, caught 2026-09-22/30).** For the current number and names, run `codebase-memory-mcp --help` (the binary prints its own live tool list) — `scripts/verify-code-intel.mjs`'s I16 check does exactly this and fails the release gate if a hardcoded "N tools" claim ever reappears here or in `agents/graph-navigator.md` and drifts from what the binary actually reports.
 
 #### Indexing Tools
 
@@ -90,7 +90,7 @@ codebase-memory-mcp exposes 11 tools organized in three groups. Each maps to spe
 | Tool | Description | Prism Lifecycle Touchpoint |
 |------|-------------|---------------------------|
 | `search_graph` | Structured search with filters (label, name pattern, file glob, relationship type, degree, entry point exclusion) | **Research agents**, **planning**, **dead code analysis**, **validation** |
-| `trace_call_path` | BFS traversal from/to a function — returns call chains with signatures | **Impact analysis before implementation**, **blast radius for stories**, **debugging** |
+| `trace_path` | BFS traversal from/to a function — returns call chains with signatures | **Impact analysis before implementation**, **blast radius for stories**, **debugging** |
 | `query_graph` | Execute Cypher-like graph queries (read-only) | **Complex architectural queries**, **cross-service analysis**, **custom reporting** |
 | `get_graph_schema` | Node/edge counts, relationship patterns, sample names | **Research phase orientation**, **onboarding**, **project health monitoring** |
 | `get_code_snippet` | Read source code for a function by qualified name | **Implementation reference**, **pattern finding**, **code review** |
@@ -127,7 +127,7 @@ WITH GRAPH:
                          ~200 tokens instead of ~40,000
 
   codebase-analyzer   → get_graph_schema() for orientation
-                         trace_call_path(direction="both") for understanding
+                         trace_path(direction="both") for understanding
                          query_graph() for cross-service flows
                          ~3,400 tokens instead of ~412,000
 
@@ -146,7 +146,7 @@ graph tools over Glob/Grep for structural questions:
 
 1. Run get_graph_schema() FIRST to understand what's indexed
 2. Use search_graph() for symbol discovery (functions, classes, routes)
-3. Use trace_call_path() for understanding relationships
+3. Use trace_path() for understanding relationships
 4. Fall back to Grep/Glob ONLY for text content (string literals, comments, config)
 ```
 
@@ -168,7 +168,7 @@ Planning benefits from impact analysis — knowing the blast radius before desig
 1. `index_repository` (ensure graph is current)
 2. `get_graph_schema()` — quick orientation
 3. `search_graph(label="Function", name_pattern="...target...")` — identify change targets
-4. `trace_call_path(function_name="TargetFunc", direction="inbound", depth=3)` — **blast radius**
+4. `trace_path(function_name="TargetFunc", direction="inbound", depth=3)` — **blast radius**
 5. `search_graph(relationship="CALLS", direction="inbound", max_degree=0, exclude_entry_points=true)` — dead code that can be safely removed
 6. Present structural understanding with concrete impact numbers to user
 7. Plan phases become **risk-ordered** based on graph analysis
@@ -200,7 +200,7 @@ This is where the graph becomes critical for both manual implementation and Spec
 **Pre-implementation gate** (new step):
 ```
 Before modifying any file, the implementing agent SHOULD:
-1. trace_call_path(function_name="target", direction="inbound") 
+1. trace_path(function_name="target", direction="inbound") 
 2. Verify the blast radius matches what the plan predicted
 3. If blast radius has changed (new callers since planning), PAUSE and report
 ```
@@ -213,7 +213,7 @@ Before modifying any file, the implementing agent SHOULD:
 │                                                          │
 │  1. index_repository (incremental — only changed files)  │
 │  2. Read stories.json, select next story                 │
-│  3. trace_call_path for story targets                    │
+│  3. trace_path for story targets                    │
 │     → Verify blast radius matches plan                   │
 │  4. Implement changes                                    │
 │  5. index_repository (capture new state)                 │
@@ -236,7 +236,7 @@ Before modifying any file, the implementing agent SHOULD:
 
 Before implementing each story:
 1. Run `index_repository` to ensure the graph reflects the latest code state
-2. Run `trace_call_path` for each function the story modifies
+2. Run `trace_path` for each function the story modifies
 3. If any function has MORE callers than the plan expected → emit 
    <spectrum-blocked reason="Blast radius changed: X now has Y callers (plan expected Z)">
 
@@ -257,7 +257,7 @@ Validation gains structural verification capabilities beyond just running tests.
 | Check | Graph Tool | What It Catches |
 |-------|-----------|-----------------|
 | No new dead code | `search_graph(max_degree=0, exclude_entry_points=true)` | Functions orphaned by refactoring |
-| Dependency integrity | `trace_call_path` for all modified functions | Broken call chains |
+| Dependency integrity | `trace_path` for all modified functions | Broken call chains |
 | Cross-service contracts | `query_graph` for HTTP_CALLS edges | Broken API contracts between services |
 | Architectural boundaries | `search_graph(file_pattern="...", relationship="CALLS")` | Violations of module boundaries |
 | Complexity check | `search_graph(min_degree=10)` | Functions with too many callers (refactoring candidates) |
@@ -296,7 +296,7 @@ A new lightweight agent specialized in graph queries, assigned to Haiku for cost
 name: graph-navigator
 description: Queries the codebase knowledge graph for structural information. 
   Fast, cheap structural lookups — functions, call chains, dependencies, dead code.
-tools: codebase-memory-mcp (all 11 tools)
+tools: mcp__codebase-memory-mcp__*
 model: haiku
 ---
 
@@ -323,7 +323,7 @@ Always return structured findings as markdown with:
 
 ## When to use Cypher:
 Use query_graph with Cypher for multi-hop patterns that can't be expressed
-with search_graph or trace_call_path alone. Examples:
+with search_graph or trace_path alone. Examples:
 - "Functions that call X which also call Y"
 - "All paths from module A to module B"
 - "HTTP routes with no handler functions"
@@ -386,7 +386,7 @@ The graph can inform story dependency ordering:
 ## Enhanced Decomposition
 
 When decomposing a plan into stories:
-1. Run trace_call_path for each change target in the plan
+1. Run trace_path for each change target in the plan
 2. Order stories so that CALLEE changes come BEFORE CALLER changes
    (modify the function before modifying its callers)
 3. Group stories by module community (Louvain clustering) when possible
@@ -404,7 +404,7 @@ This project uses codebase-memory-mcp for structural code analysis. When availab
 
 - **ALWAYS prefer graph tools over Glob/Grep for structural questions**
 - Run `index_repository` at the start of research and after implementation phases
-- Use `trace_call_path` before modifying any function to verify blast radius
+- Use `trace_path` before modifying any function to verify blast radius
 - Use `search_graph(max_degree=0, exclude_entry_points=true)` to check for dead code
 - Use `get_graph_schema` for quick project orientation
 - Fall back to Grep/Glob only for text content (strings, comments, config values)
@@ -622,7 +622,7 @@ prism skill activates → routes to /prism-research
     │     get_graph_schema()                    → "2,348 nodes, Go/TS/React"
     │     search_graph(name_pattern=".*auth.*") → 12 functions found
     │     search_graph(label="Route")           → 8 REST routes found
-    │     trace_call_path("LoginHandler", "both", 3) → call chain map
+    │     trace_path("LoginHandler", "both", 3) → call chain map
     │     OUTPUT: structural map with caller counts
     │
     ├── codebase-locator (haiku):
@@ -639,8 +639,8 @@ prism skill activates → routes to /prism-research
     ▼
 /prism-plan (with graph-informed context)
     │
-    ├── trace_call_path("LoginHandler", "inbound") → 4 callers
-    ├── trace_call_path("ValidateToken", "inbound") → 7 callers  
+    ├── trace_path("LoginHandler", "inbound") → 4 callers
+    ├── trace_path("ValidateToken", "inbound") → 7 callers  
     ├── search_graph(max_degree=0, exclude_entry_points=true) → 1 dead func
     ├── Plan includes "Structural Impact" section
     ├── Stories ordered by dependency graph (callees before callers)
@@ -654,7 +654,7 @@ spectrum.sh + /prism-spectrum (per story):
     │  ┌─ Story Iteration ──────────────────────────────────┐
     │  │                                                      │
     │  │  1. index_repository (incremental)                   │
-    │  │  2. trace_call_path for story targets                │
+    │  │  2. trace_path for story targets                │
     │  │  3. Verify blast radius matches plan                 │
     │  │  4. Implement changes                                │
     │  │  5. index_repository (capture new state)             │
