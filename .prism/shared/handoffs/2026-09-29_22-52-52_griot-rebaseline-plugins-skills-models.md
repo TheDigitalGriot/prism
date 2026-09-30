@@ -211,6 +211,16 @@ None yet — forward plan. First device-side action is Stage D.
 
 ---
 
+### INSERTED — Code-Intel Three-Way exploration (gortex / code-review-graph / codebase-memory-mcp)
+
+Gavin added this mid-run 2026-09-30, to land BEFORE Stage 6 closes/publishes (its own drift-18
+status change and branch-workgraph amendments need to exist before Stage 6's commit + propagate +
+Cinopsis ceremony). Full spec, phases A/B/C, guardrails and the two decisions reserved for Gavin's
+own ruling: `.prism/shared/handoffs/2026-09-30T00-23-48Z_code-intel-three-way-exploration.md`.
+Run it here, between Stage 5 and Stage 6.
+
+---
+
 ### Stage 6 — TASK 6: Close out + clear Cinopsis gate-5
 
 **Inputs**

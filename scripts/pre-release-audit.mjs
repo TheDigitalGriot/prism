@@ -224,31 +224,78 @@ if (existsSync('.claude-plugin/plugin.json') && existsSync('VERSION')) {
   // CDN host.
   const fetchRawFile = (url) => fetchWith(url, 'application/vnd.github.raw+json', (res) => res.text());
   const fetchDirListing = (url) => fetchWith(url, 'application/vnd.github+json', (res) => res.json());
+  const fetchTreeRecursive = (repo, treeSha) => fetchWith(
+    `https://api.github.com/repos/TheDigitalGriot/${repo}/git/trees/${treeSha}?recursive=1`,
+    'application/vnd.github+json',
+    (res) => res.json()
+  );
   const contentsUrl = (repo, path) => `https://api.github.com/repos/TheDigitalGriot/${repo}/contents/${path}?ref=main`;
 
   // The set of top-level dirs a thin mirror can carry — mirrors sync-to-marketplace.sh's own
   // MIRROR_DIRS allow-list. Only dirs that actually exist locally are checked, so a plugin with no
   // agents/ is never penalised for lacking one.
-  const MIRROR_DIR_CANDIDATES = ['.claude-plugin', 'skills', 'agents', 'commands', 'hooks', 'scripts', 'viewer'];
+  // .claude-plugin is deliberately EXCLUDED: sync-prism-plugin.sh rewrites plugins[].source inside
+  // marketplace.json to a github object pointing at the mirror itself (so Cowork's backend can
+  // crawl a small repo instead of the multi-GB monorepo) — a real, permanent, by-design divergence,
+  // not drift. plugin.json's version is already covered by the version check above.
+  const MIRROR_DIR_CANDIDATES = ['skills', 'agents', 'commands', 'hooks', 'scripts', 'viewer'];
   const localTreeSha = (dir) => {
     const r = run('git', ['rev-parse', `HEAD:${dir}`]);
     return r.status === 0 ? r.stdout.trim() : null;
   };
   const localDirs = MIRROR_DIR_CANDIDATES.filter((d) => localTreeSha(d) !== null);
 
+  // BLOB shas, not tree shas — measured live 2026-09-29: a whole-directory tree sha mismatched
+  // between local and both mirrors even though every file's CONTENT was byte-identical, because
+  // `scripts/sync-prism-plugin.sh` carries mode 100755 locally and 100644 in the mirrors (a known
+  // git-archive-then-tar-extract quirk on this Windows/git-bash toolchain — NTFS has no native
+  // POSIX executable bit for tar to restore). A tree sha folds MODE into its hash alongside
+  // content, so a benign platform quirk in the sync tooling reads as content drift. Comparing
+  // per-file blob shas (path -> content hash, mode ignored) is the correct instrument: it still
+  // catches every real content change and stops flagging a permissions artifact of the sync step
+  // itself as if the mirror were stale.
+  // Paths come back relative to <dir> on BOTH sides: `git ls-tree` reports `dir/sub/file`, so the
+  // `dir/` prefix is stripped to match the remote recursive-tree listing, which is rooted at that
+  // dir's own tree sha and therefore already reports paths as `sub/file`.
+  const localBlobsFor = (dir) => {
+    const map = new Map();
+    const r = run('git', ['ls-tree', '-r', 'HEAD', '--', dir]);
+    if (r.status !== 0) return map;
+    const strip = new RegExp(`^${dir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/`);
+    for (const l of r.stdout.split('\n')) {
+      const m = l.match(/^\d+\s+blob\s+([0-9a-f]{40})\t(.+)$/);
+      if (m) map.set(m[2].replace(strip, ''), m[1]);
+    }
+    return map;
+  };
+
   const checkContent = async (ch, f) => {
     const listPath = ch.contentPrefix ? ch.contentPrefix.replace(/\/$/, '') : '';
     const r = await fetchDirListing(contentsUrl(ch.contentRepo, listPath));
     if (r.error) { f.n++; line('FAIL', `${ch.label} content — could not list remote tree (${r.error}) — fail-closed`); return; }
     if (r.notFound) { f.n++; line('FAIL', `${ch.label} content — remote path not found — fail-closed`); return; }
-    const remoteShaByName = new Map((Array.isArray(r.body) ? r.body : []).filter((e) => e.type === 'dir').map((e) => [e.name, e.sha]));
-    const mismatches = localDirs.filter((dir) => remoteShaByName.get(dir) !== localTreeSha(dir))
-      .map((dir) => (remoteShaByName.has(dir) ? dir : `${dir} (missing on remote)`));
+    const remoteTreeShaByName = new Map((Array.isArray(r.body) ? r.body : []).filter((e) => e.type === 'dir').map((e) => [e.name, e.sha]));
+    let filesChecked = 0;
+    const mismatches = [];
+    for (const dir of localDirs) {
+      const treeSha = remoteTreeShaByName.get(dir);
+      if (!treeSha) { mismatches.push(`${dir}/ (missing on remote)`); continue; }
+      const rt = await fetchTreeRecursive(ch.contentRepo, treeSha);
+      if (rt.error) { mismatches.push(`${dir}/ (could not read remote tree: ${rt.error})`); continue; }
+      const remoteBlobs = new Map((rt.body?.tree || []).filter((e) => e.type === 'blob').map((e) => [e.path, e.sha]));
+      const localBlobs = localBlobsFor(dir);
+      filesChecked += localBlobs.size;
+      const bad = [];
+      const prefixed = (p) => `${dir}/${p}`;
+      for (const [path, sha] of localBlobs) { if (remoteBlobs.get(path) !== sha) bad.push(prefixed(path)); }
+      for (const path of remoteBlobs.keys()) { if (!localBlobs.has(path)) bad.push(`${prefixed(path)} (extra on remote)`); }
+      if (bad.length) mismatches.push(bad.length <= 4 ? bad.join(', ') : `${bad.slice(0, 4).join(', ')} +${bad.length - 4} more`);
+    }
     if (mismatches.length) {
       f.n++;
-      line('FAIL', `${ch.label} content — diverges from local HEAD in: ${mismatches.join(', ')} — run its sync (version string alone did not catch this)`);
+      line('FAIL', `${ch.label} content — diverges from local HEAD: ${mismatches.join('; ')} — run its sync (version string alone did not catch this)`);
     } else {
-      line('PASS', `${ch.label} content matches local HEAD (${localDirs.length} dir${localDirs.length === 1 ? '' : 's'}, tree-sha compared)`);
+      line('PASS', `${ch.label} content matches local HEAD (${filesChecked} file${filesChecked === 1 ? '' : 's'} across ${localDirs.length} dir${localDirs.length === 1 ? '' : 's'}, per-file content compared)`);
     }
   };
 
