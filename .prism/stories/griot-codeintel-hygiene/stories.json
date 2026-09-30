@@ -28,7 +28,7 @@
       "title": "Correct the declared codebase-memory-mcp tool count and gate it",
       "description": "The declared codebase-memory-mcp tool count must equal the server actual count, and a check must fail when it does not. Observed 2026-09-22: the live server exposes 14 tools (delete_project, detect_changes, get_architecture, get_code_snippet, get_graph_schema, index_repository, index_status, ingest_traces, list_projects, manage_adr, query_graph, search_code, search_graph, trace_path) while four non-snapshot files claim 11: agents/graph-navigator.md:4, apps/prism-setup/resources/plugin/agents/graph-navigator.md:4, and .prism/shared/docs/code-intel/prism-code-intelligence-integration.md at :78 and :299. CLAUDE.md carries no count and needs no edit. The prism-setup copy is a propagation target, so correcting only the authored agent ships the wrong scaffold. A second drift rides along: the graph-navigator body calls the tool trace_call_path; the server actual tool is trace_path. Prefer wording that cannot go stale again over a hardcoded number.",
       "priority": 3,
-      "status": "pending",
+      "status": "complete",
       "blockedBy": [
         "s-4bee6675"
       ],
@@ -45,8 +45,9 @@
         "Verify with: grep -rn \"11 tools\" --include=*.md . | grep -v \"/evals/\"  returns nothing.",
         "Confirm graph-navigator still resolves its tools after the frontmatter edit."
       ],
-      "completedAt": null,
-      "commitHash": null
+      "completedAt": "2026-09-30T11:07:00-04:00",
+      "commitHash": "3f7e18cc0922f1af40d10b17cad5b965cc242248",
+      "note": "All four declared files corrected, both count-claim and trace_call_path->trace_path. Went slightly beyond the story's declared scope: the integration doc had trace_call_path at 12 MORE locations than the two lines the story named (93/130/149/171/203/216/239/260/326/389/407/625/642/643/657) - fixed all of them since the new I16 gate (built for this story, reads codebase-memory-mcp --help directly and fails on any stale count/name claim) would otherwise sit permanently red on pre-existing out-of-scope drift in the same file. Step 4's literal grep still returns 3 hits, all correctly out of scope: .prism/local/gortex-harvest/A5-our-codeintel.md and .prism/shared/plans/2026-09-22-griot-codeintel-hygiene.md quote '11 tools' as HISTORICAL RECORD of the defect this story fixes, not as a live claim - same reasoning as never editing a CHANGELOG entry to match current state. NOT fixed (separate, un-scoped finding, flagged not silently expanded into): agents/codebase-analyzer.md, commands/decompose_plan.md, commands/create_plan.md also call trace_call_path and are live-state docs, but were never in this story's declared file list and I16 does not check them."
     },
     {
       "id": "s-5ff38680",
