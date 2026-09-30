@@ -83,7 +83,8 @@
     "amendPass77": "N103's central claim was false and the graph carried it for four days after the artifact disproved it. Corrected with the seven-verb evidence; N138 records the class - a correction that landed in an artifact and never reached the node.",
     "amendPass78": "Stages 1-3 of the 2026-09-29 device re-baseline handoff recorded: plugin/CLI sync, griot-propagate channel de-collision (channel-5 fixed, channel-6 flagged open), and the full Arkestra Opus 5.5/Sonnet 5.5 model-line refresh with two real mobile-mirror bugs found and fixed. Gavin's mid-run instruction: workgraph updates now happen after every stage, not batched to the Stage 6 close-out.",
     "amendPass79": "Stage 4 of the 2026-09-29 device re-baseline handoff recorded: griot-plugin-update proven end to end against cinopsis@cinopsis on Claude Code CLI 2.1.285, real version bump, all three DOWNLOADED/INSTALLED/RUNNING tiers proven.",
-    "amendPass80": "Stage 5 of the 2026-09-29 device re-baseline handoff recorded: all 3 Griot plugins validated + CHANNELS gate green, plus 3 real incidental findings (Cinopsis INV3 fixed, gitnexus silent-fail resolved, Prism decisions-execution-trail flagged)."
+    "amendPass80": "Stage 5 of the 2026-09-29 device re-baseline handoff recorded: all 3 Griot plugins validated + CHANNELS gate green, plus 3 real incidental findings (Cinopsis INV3 fixed, gitnexus silent-fail resolved, Prism decisions-execution-trail flagged).",
+    "amendPass81": "Retroactive: griot.md's Selectah-board section (commit 4521b39, 2026-09-23) confirmed live on device but had never been recorded as a node. No correction - work landed clean, just unfiled."
   },
   "groups": [
     {
@@ -6290,6 +6291,24 @@
         "evidence": "node scripts/verify-invariants.mjs: I9 FAIL, 3 decided but silent: D1, D2, D3. git log --all --since/--until around 2026-09-23 for motion.ts / griot-workgraph-update / griot-widget paths in both Prism and digital-griot-skills: zero matches. CLAUDE.md's own 'our nomenclature' section quotes Gavin's D3 ruling verbatim and names its implementation site (griot-workgraph-update's node-shape section, RESERVED set in amend-workgraph.mjs) - outside Prism's own repo, so I9's repo-scoped check cannot see it.",
         "result": "Genuinely open, needs real cross-repo git archaeology across griot-viz-engine (D2), digital-griot-skills (D3), and wherever GavelSurface/prism-gavel's extraction landed (D1) to backfill decisions.json, or an explicit deferral if truly not done. Drift ledger entry logged, griot-live-artifacts commit 5b7c52f, Suite Drift Codex v55."
       }
+    },
+    {
+      "id": "wg:djeli-branch:B58",
+      "originLane": "untracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "B58",
+      "kind": "branch",
+      "group": "untracked",
+      "state": "done",
+      "stateDetail": "built-and-live",
+      "direction": "local",
+      "title": "griot.md rule 1's widget named - the Selectah board section, template 11 by path",
+      "description": "griot.md rule 1 said 'a widget' without naming one, so every session improvised its own layout. New section 'The Selectah board' points at viz-templates/templates/11-selectah-ruling-board.html by path, states its 4 bands (Asks, full-width viz, Landed, Owed), its 3 rules (RULE ZERO no-buttons-no-board, the ask rule, the blast-radius rule), and its 3 option-click weights (recommend/alternative/action - action is the only one that runs anything). Keeps 07 and 11 as siblings fit to different rulings, no ranking language either way.",
+      "verification": {
+        "evidence": "digital-griot-skills commit 4521b39 (2026-09-23), griot-output-style/output-styles/griot.md +4 lines; confirmed live and matching on device at ~/.claude/output-styles/griot.md, section 'The Selectah board', read directly 2026-09-30.",
+        "result": "built-and-live - confirmed on device this session, 7 days after landing, previously unrecorded"
+      }
     }
   ],
   "edges": [
@@ -8164,15 +8183,21 @@
       "to": "wg:djeli-branch:C41",
       "kind": "in-epic",
       "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:B58",
+      "to": "wg:djeli-branch:B44",
+      "kind": "in-epic",
+      "label": "the widget B44 shipped without naming"
     }
   ],
   "stats": {
-    "totalBranches": 100,
+    "totalBranches": 101,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 312,
+    "edgeCount": 313,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -9588,6 +9613,14 @@
         "N149"
       ],
       "newEdges": 4,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass81_2026_09_30": {
+      "newNodes": [
+        "B58"
+      ],
+      "newEdges": 1,
       "corrections": [],
       "refused": []
     }
