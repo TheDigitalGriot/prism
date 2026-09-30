@@ -81,7 +81,8 @@
     "amendPass75": "The Orca design surface landed as two bands (13 pairs, canvas 97 to 123, IDE Shell v40). A composition walk first overturned the shape: three independent capabilities, not one flow, and the proposed flagship component was dead code.",
     "amendPass76": "The reactive-DAG lesson ruled and written into the ontology, plus three propagation defects found by running Gavin's own channel check - a stale source that would have overwritten live skills, a byte-vs-content proxy inside the check itself, and the account copy of griot-suite-context cut to 46 percent with the app lineage past the cut.",
     "amendPass77": "N103's central claim was false and the graph carried it for four days after the artifact disproved it. Corrected with the seven-verb evidence; N138 records the class - a correction that landed in an artifact and never reached the node.",
-    "amendPass78": "Stages 1-3 of the 2026-09-29 device re-baseline handoff recorded: plugin/CLI sync, griot-propagate channel de-collision (channel-5 fixed, channel-6 flagged open), and the full Arkestra Opus 5.5/Sonnet 5.5 model-line refresh with two real mobile-mirror bugs found and fixed. Gavin's mid-run instruction: workgraph updates now happen after every stage, not batched to the Stage 6 close-out."
+    "amendPass78": "Stages 1-3 of the 2026-09-29 device re-baseline handoff recorded: plugin/CLI sync, griot-propagate channel de-collision (channel-5 fixed, channel-6 flagged open), and the full Arkestra Opus 5.5/Sonnet 5.5 model-line refresh with two real mobile-mirror bugs found and fixed. Gavin's mid-run instruction: workgraph updates now happen after every stage, not batched to the Stage 6 close-out.",
+    "amendPass79": "Stage 4 of the 2026-09-29 device re-baseline handoff recorded: griot-plugin-update proven end to end against cinopsis@cinopsis on Claude Code CLI 2.1.285, real version bump, all three DOWNLOADED/INSTALLED/RUNNING tiers proven."
   },
   "groups": [
     {
@@ -6203,6 +6204,23 @@
         "evidence": "code-review-graph detect_changes_tool run against Prism HEAD, base=HEAD (uncommitted diff at the time): risk 0.63, test_gaps flagged defaultPolicy/policyKeyForModel/ClaudeAgentSession/buildOptions with coverage:none. Drift ledger entry #176 logged and republished: griot-live-artifacts live/_drift/drift-entries.json, status flagged, fixlabel 'deferred, contract above'; Suite Drift Codex republished at Version 54 (commit d0083d3, griot-live-artifacts).",
         "result": "Genuinely open, with a concrete fix direction on file: add a focused test constructing a ClaudeAgentSession against a policy store that denies opus55, assert base.model substitutes to claude-opus-5-5."
       }
+    },
+    {
+      "id": "wg:djeli-branch:C39",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C39",
+      "kind": "branch",
+      "title": "Stage 4 - fix the update path, prove a real GitHub-to-running-code round trip",
+      "group": "this-stage",
+      "direction": "outbound",
+      "state": "done",
+      "description": "Ran griot-plugin-update end to end against cinopsis@cinopsis (self-hosted marketplace, source: \"./\") on Claude Code CLI 2.1.285, per Gavin's instruction to use /prism:griot-agent-architect for the pass. Preflighted both manifests for a BOM (clean), confirmed the authoring clone was HEAD==origin before touching anything, bumped Cinopsis 2.8.0 -> 2.8.1 (a real version change, not a same-version edge case, carrying the Stage 3 stale-pin and haiku-effort fixes as its payload) and pushed it, then ran claude plugin marketplace update cinopsis followed by claude plugin update cinopsis@cinopsis using the fully-qualified plugin@marketplace form. Proved all three tiers per the skill's own bar: DOWNLOADED (new cache dir, matching gitCommitSha), INSTALLED (installed_plugins.json repointed atomically), RUNNING (a genuinely fresh headless process, not the same session, independently read the new content from its own loaded plugin path and confirmed the fix, with an honest caveat that the MCP daemon process itself was not separately exercised in that check). No exit-1, no cache-miss, clean repoint - griot-plugin-update's own SKILL.md needed zero edits; every documented step worked exactly as written.",
+      "verification": {
+        "evidence": "Cinopsis commit babc361 (version bump 2.8.0->2.8.1, pushed). CLI output: 'Successfully updated marketplace: cinopsis' and 'Plugin \"cinopsis\" updated from 2.8.0 to 2.8.1 for scope user.' installed_plugins.json cinopsis@cinopsis entry: version 2.8.1, installPath .../2.8.1, gitCommitSha babc361f88d79d15205fa62aca7eba835c1ed1bb. Fresh headless claude.exe -p run (granted --add-dir onto the cache path) independently confirmed version 2.8.1, the corrected model line, and the absent effort field, reading from its own loaded plugin path. Full record: Prism .prism/shared/plans/rebaseline/00-inventory.json stage4Complete block, commit 657b646.",
+        "result": "Heartbeat HB-S4-UPDATE-ROUNDTRIP-OK. Round trip proven on Claude Code CLI only - Codex CLI and Cowork were not separately tested this pass, named as a scope limit rather than silently claimed."
+      }
     }
   ],
   "edges": [
@@ -8047,15 +8065,21 @@
       "to": "wg:djeli-branch:D15",
       "kind": "ontology",
       "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:C39",
+      "to": "wg:djeli-branch:C35",
+      "kind": "in-epic",
+      "label": ""
     }
   ],
   "stats": {
-    "totalBranches": 98,
+    "totalBranches": 99,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 307,
+    "edgeCount": 308,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -9452,6 +9476,14 @@
         "N143"
       ],
       "newEdges": 13,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass79_2026_09_30": {
+      "newNodes": [
+        "C39"
+      ],
+      "newEdges": 1,
       "corrections": [],
       "refused": []
     }
