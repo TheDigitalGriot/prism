@@ -221,6 +221,34 @@ const CACHE = join(homedir(), '.cache', 'codebase-memory-mcp')
 // still answers, just worse, and nobody is told. gitnexus.json records status and
 // a reason per capability, so this is a read, not a guess. Separate from I12 —
 // "stale" and "degraded" are different failures and must not mask each other.
+// RESTRUCTURED 2026-09-30 — story s-4bee6675 ("Split I15 capability verdicts so
+// one degraded capability cannot mask another") + Door 3 of the code-intel
+// three-way exploration. Two distinct defects lived in the old single-verdict
+// body, found the same session:
+//
+//   (a) COMBINED VERDICT. One `bad` array held every degraded capability, and
+//       the code-review-graph fallback only fired when
+//       `bad.every(b => b.startsWith('vectorSearch'))` — true only while
+//       vectorSearch was the SOLE failure. The moment a second capability
+//       (fts, graph) also went down, the guard went false and the fallback
+//       was never even considered — one bad capability silently swallowed the
+//       verdict on an unrelated one. Fixed by giving each capability key its
+//       own `rec()` row (id `I15.<capability>`), so a fts failure and a
+//       vectorSearch pass-via-fallback report independently, exactly as the
+//       comment above always claimed I12 vs I15 must.
+//
+//   (b) PROXY VERDICT. The vectorSearch fallback treated
+//       `.code-review-graph/graph.db` merely EXISTING as proof semantic search
+//       works. graph.db proves the graph was BUILT, not that its embeddings
+//       are QUERYABLE. Measured 2026-09-30: 25,534 nodes embedded in that
+//       store, and a live semantic_search_nodes_tool call still returned
+//       search_mode:"fts" — because the MCP server that actually answers
+//       queries (.mcp.json's `code-review-graph` entry) was launched via
+//       plain `uvx code-review-graph serve`, no `[embeddings]` extra, so
+//       sentence-transformers was never importable in THAT process regardless
+//       of what sat on disk. The real property is what .mcp.json launches,
+//       not what the store contains — the AUTHORED registry that decides it
+//       (THE PROXY VERDICT law: a file query measures storage, not capability).
 {
   const gx = read(join(ROOT, '.gitnexus', 'gitnexus.json'))
   if (!gx) {
@@ -228,35 +256,55 @@ const CACHE = join(homedir(), '.cache', 'codebase-memory-mcp')
   } else {
     try {
       const caps = JSON.parse(gx)?.capabilities ?? {}
-      const bad = Object.entries(caps)
-        .filter(([, c]) => c?.status && c.status !== 'available')
-        .map(([k, c]) => `${k}=${c.status}${c.reason ? ` (${String(c.reason).slice(0, 70)})` : ''}`)
-
-      // A capability is only MISSING if no provider supplies it. gitnexus's own
-      // vectorSearch is disabled on this platform (LadybugDB VECTOR), but
-      // code-review-graph carries a local embedding index over the same repo, so
-      // concept-level search IS available — just not from that provider.
-      // Checking one provider and declaring the capability dead is how a check
-      // goes permanently red and stops being read.
-      const crgDb = join(ROOT, '.code-review-graph')
-      let semanticElsewhere = null
-      if (existsSync(crgDb)) {
-        try {
-          const hit = readdirSync(crgDb).find((f) => /embed/i.test(f)) ||
-            (existsSync(join(crgDb, 'graph.db')) ? 'graph.db' : null)
-          if (hit) semanticElsewhere = `code-review-graph (${hit})`
-        } catch { /* fall through */ }
+      const capKeys = Object.keys(caps)
+      if (!capKeys.length) {
+        rec('I15', 'declared capabilities are available', 'unverified', 'gitnexus.json has no capabilities block')
       }
 
-      const onlySemanticDown = bad.length > 0 && bad.every((b) => b.startsWith('vectorSearch'))
-      if (bad.length && onlySemanticDown && semanticElsewhere) {
-        rec('I15', 'declared capabilities are available', 'pass',
-            `${bad.join(' · ')} — BUT semantic search is covered by ${semanticElsewhere}, so concept-level queries work`)
-      } else {
-        rec('I15', 'declared capabilities are available', bad.length ? 'fail' : 'pass',
-            bad.length
-              ? `${bad.join(' · ')} — and no other provider supplies it`
-              : `${Object.keys(caps).length} capabilities available`)
+      // The code-review-graph witness is computed once, shared by whichever
+      // capability's fallback needs it (today only vectorSearch, but this is
+      // no longer hardwired to a combined guard — any capability can check it).
+      const crgDb = join(ROOT, '.code-review-graph')
+      const dbBuilt = existsSync(crgDb) && existsSync(join(crgDb, 'graph.db'))
+      let crgWitness = null // null = no usable fallback; else a detail string
+      let crgDegraded = null // non-null = built but NOT queryable — report it, don't hide it
+      if (dbBuilt) {
+        const mcpConfig = read(join(ROOT, '.mcp.json'))
+        try {
+          const servers = JSON.parse(mcpConfig ?? '{}')?.mcpServers ?? {}
+          const args = Array.isArray(servers['code-review-graph']?.args) ? servers['code-review-graph'].args : []
+          const wired = args.some((a) => /code-review-graph\[embeddings\]/i.test(String(a)))
+          if (wired) crgWitness = 'code-review-graph (graph.db built + .mcp.json launches it with the [embeddings] extra)'
+          else if (mcpConfig) {
+            crgDegraded = 'code-review-graph: graph.db built (25k+ embeddings) but .mcp.json launches `uvx code-review-graph serve` ' +
+              'with no `[embeddings]` extra — sentence-transformers unimportable in that process, so semantic_search_nodes_tool ' +
+              'silently falls back to search_mode:"fts". Fix: add "--from","code-review-graph[embeddings]" before ' +
+              '"code-review-graph","serve" in .mcp.json\'s args, then restart the MCP connection.'
+          } else {
+            crgDegraded = 'code-review-graph: graph.db built but no .mcp.json in this repo to launch it with embeddings'
+          }
+        } catch { crgDegraded = 'code-review-graph: graph.db built but .mcp.json is unparseable — cannot verify the [embeddings] extra is wired' }
+      }
+
+      for (const [key, c] of Object.entries(caps)) {
+        const id = `I15.${key}`
+        const name = `capability: ${key}`
+        if (!c?.status || c.status === 'available') {
+          rec(id, name, 'pass', `provider=${c?.provider ?? 'unknown'}`)
+          continue
+        }
+        const base = `${key}=${c.status}${c.reason ? ` (${c.reason})` : ' (gitnexus.json supplies no reason)'}`
+        // Only the capability the fallback actually covers gets to use it.
+        // Today that is vectorSearch; a future capability with its own witness
+        // gets its own branch here rather than being folded into this one.
+        if (key === 'vectorSearch' && crgWitness) {
+          rec(id, name, 'pass', `${base} — BUT covered by ${crgWitness}, so concept-level queries work`)
+        } else if (key === 'vectorSearch' && crgDegraded) {
+          // Exactly the silently-degraded case I15 exists to catch — not a pass.
+          rec(id, name, 'fail', `${base} — ${crgDegraded}`)
+        } else {
+          rec(id, name, 'fail', `${base} — no other provider supplies it`)
+        }
       }
     } catch { rec('I15', 'declared capabilities are available', 'unverified', 'gitnexus.json unparseable') }
   }
