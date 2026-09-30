@@ -5,8 +5,19 @@ git_commit: "8482e884c761430dfce19ccbcfeb786c2003cd67"
 branch: "main"
 topic: "Griot re-baseline — mirror sync, plugin/skill CI, update path, dual-provider model roster, suite-context, Cinopsis gate-5"
 tags: [handoff, prism, griot-agent-architect, griot-propagate, prism-model-onboard, arkestra, model-policy, griot-plugin-update, marketplace, namespace, cinopsis-closing-ceremony, rebaseline]
-status: planned
+status: complete
+completed: 2026-09-30T12:21:00-04:00
 ---
+
+> **CLOSED 2026-09-30.** Stages 0-5 complete (prior session work), the inserted Code-Intel
+> Three-Way exploration complete through Phase C (L1/L2 surfaced for Gavin's ruling, L4/L7
+> shipped, L3/L5/L6 parked with a contract), Stage 6 complete: suite-context refreshed
+> (disk-only, channel-6 still open), all repos committed and pushed, Cinopsis closing
+> ceremony run for real (not dry-run) - v2.9.0 released, tagged, mirror synced and
+> re-verified, GitHub release live at
+> https://github.com/TheDigitalGriot/cinopsis/releases/tag/v2.9.0 - and gate 5 in
+> wg:cinodex-branch:B11 flipped LANDED with real evidence. CC5 ingestion and the loc
+> ruling remain explicitly out of scope, per this handoff's own locked decision.
 
 # Handoff: Griot Suite re-baseline — kill the plugin/skill brittleness for good
 
