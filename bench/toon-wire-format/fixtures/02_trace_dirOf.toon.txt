@@ -1,0 +1,13 @@
+function: C-Users-digit-GriotApps-Prism.skills.prism-brainstorm.scripts.helper.dirOf
+direction: both
+callees[1]{qn,hop}:
+  C-Users-digit-GriotApps-Prism.skills.prism-brainstorm.scripts.helper.many,1
+callers[8]{qn,hop}:
+  C-Users-digit-GriotApps-Prism.prism.shared.evals.v4.17.0-snapshot.scripts.workgraph-index.push,1
+  C-Users-digit-GriotApps-Prism.prism.shared.evals.v4.17.0-snapshot.skills.prism-brainstorm.scripts.helper.fileIt,1
+  C-Users-digit-GriotApps-Prism.skills.prism-brainstorm.scripts.helper.fileIt,1
+  C-Users-digit-GriotApps-Prism.prism.shared.evals.v4.17.0-snapshot.skills.prism-brainstorm.scripts.helper.renderGraph,2
+  C-Users-digit-GriotApps-Prism.skills.prism-brainstorm.scripts.helper.renderGraph,2
+  C-Users-digit-GriotApps-Prism.prism.shared.evals.v4.17.0-snapshot.skills.prism-brainstorm.scripts.helper.renderState,3
+  C-Users-digit-GriotApps-Prism.skills.prism-brainstorm.scripts.helper.renderState,3
+  C-Users-digit-GriotApps-Prism.skills.prism-brainstorm.scripts.helper.renderWorkgraphState,3

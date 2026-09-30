@@ -1,0 +1,19 @@
+total: 408
+search_mode: bm25
+results[15]{qn,label,file,lines,rank}:
+  C-Users-digit-GriotApps-Prism.scripts.verify-model-policy-conformance.parseChain,Function,scripts/verify-model-policy-conformance.mjs,86-86,-25.7
+  C-Users-digit-GriotApps-Prism.packages.prism-core.src.core.api.model-roster.chainFor,Function,packages/prism-core/src/core/api/model-roster.ts,236-250,-24.69
+  C-Users-digit-GriotApps-Prism.apps.prism-setup.resources.plugin.scripts.verify-model-policy-conformance.parseChain,Function,apps/prism-setup/resources/plugin/scripts/verify-model-policy-conformance.mjs,86-86,-24.09
+  C-Users-digit-GriotApps-Prism.apps.prism-mobile.packages.app.e2e.codex-plan-approval.spec.getServerId,Function,apps/prism-mobile/packages/app/e2e/codex-plan-approval.spec.ts,7-13,-18.97
+  C-Users-digit-GriotApps-Prism.packages.prism-core.src.core.api.model-policy.ApprovalMode,Type,packages/prism-core/src/core/api/model-policy.ts,54-54,-18.36
+  C-Users-digit-GriotApps-Prism.apps.prism-mobile.packages.server.src.server.agent.model-policy.ApprovalMode,Type,apps/prism-mobile/packages/server/src/server/agent/model-policy.ts,23-23,-17.82
+  C-Users-digit-GriotApps-Prism.scripts.extract-tasks.model_ladder_for,Function,scripts/extract-tasks.py,198-203,-17.29
+  C-Users-digit-GriotApps-Prism.apps.prism-vscode.src.core.task.PrismTask.resolveApproval,Method,apps/prism-vscode/src/core/task/index.ts,93-99,-17.23
+  C-Users-digit-GriotApps-Prism.apps.prism-vscode.src.core.task.PrismTask._waitForApproval,Method,apps/prism-vscode/src/core/task/index.ts,297-301,-17.14
+  C-Users-digit-GriotApps-Prism.apps.prism-vscode.src.providers.model-status.readModelDecisions,Function,apps/prism-vscode/src/providers/model-status.ts,33-51,-17.11
+  C-Users-digit-GriotApps-Prism.apps.prism-vscode.src.core.task.tools.types.requiresApproval,Function,apps/prism-vscode/src/core/task/tools/types.ts,31-39,-17.05
+  C-Users-digit-GriotApps-Prism.packages.prism-core.src.core.api.model-policy.readModelPolicy,Function,packages/prism-core/src/core/api/model-policy.ts,386-413,-17.02
+  C-Users-digit-GriotApps-Prism.packages.prism-core.src.core.api.model-policy.resolveModelDecision,Function,packages/prism-core/src/core/api/model-policy.ts,472-539,-17.02
+  C-Users-digit-GriotApps-Prism.packages.prism-core.src.core.api.model-policy.emitModelEvent,Function,packages/prism-core/src/core/api/model-policy.ts,619-643,-17.02
+  C-Users-digit-GriotApps-Prism.packages.prism-core.src.core.api.model-policy.writeModelPolicy,Function,packages/prism-core/src/core/api/model-policy.ts,657-662,-17.02
+has_more: true
