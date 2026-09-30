@@ -80,7 +80,8 @@
     "amendPass74": "Batch three landed (13 pairs, canvas 71 to 97, IDE Shell v39). The port-spec bridge closed the harvest-to-screen gap. A38 restored every CTA's evidence drawer after A36 had stripped all 66. The discovery stack ruled as layers and written into the ontology, with STORAGE-is-not-SYSTEM as its error class.",
     "amendPass75": "The Orca design surface landed as two bands (13 pairs, canvas 97 to 123, IDE Shell v40). A composition walk first overturned the shape: three independent capabilities, not one flow, and the proposed flagship component was dead code.",
     "amendPass76": "The reactive-DAG lesson ruled and written into the ontology, plus three propagation defects found by running Gavin's own channel check - a stale source that would have overwritten live skills, a byte-vs-content proxy inside the check itself, and the account copy of griot-suite-context cut to 46 percent with the app lineage past the cut.",
-    "amendPass77": "N103's central claim was false and the graph carried it for four days after the artifact disproved it. Corrected with the seven-verb evidence; N138 records the class - a correction that landed in an artifact and never reached the node."
+    "amendPass77": "N103's central claim was false and the graph carried it for four days after the artifact disproved it. Corrected with the seven-verb evidence; N138 records the class - a correction that landed in an artifact and never reached the node.",
+    "amendPass78": "Stages 1-3 of the 2026-09-29 device re-baseline handoff recorded: plugin/CLI sync, griot-propagate channel de-collision (channel-5 fixed, channel-6 flagged open), and the full Arkestra Opus 5.5/Sonnet 5.5 model-line refresh with two real mobile-mirror bugs found and fixed. Gavin's mid-run instruction: workgraph updates now happen after every stage, not batched to the Stage 6 close-out."
   },
   "groups": [
     {
@@ -6032,6 +6033,176 @@
       },
       "localId": "N138",
       "title": "A correction landed in an artifact and never reached the node it disproved"
+    },
+    {
+      "id": "wg:djeli-branch:C35",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C35",
+      "kind": "branch",
+      "title": "2026-09-29 device re-baseline handoff - 7-stage walk (Stage D through Stage 6)",
+      "group": "this-stage",
+      "direction": "inbound",
+      "state": "in-progress",
+      "description": "Gavin's device-side re-baseline handoff covering plugin/skill/model re-baseline across Prism, Cinopsis and the marketplace mirrors. Locked ordering edges: 0-to-1 (sync-before-reinstall), 2-to-3.5 (channel-6-before-suite-context), 3-to-6 (pin-fix-before-Cinopsis-ceremony). Kept plan-nod interactive with Gavin at stage boundaries; research/implement/validate run headless per his instruction. Stage D (findings), Stage 0 (plugin/skill mirror gaps), Stage 1, Stage 2 and Stage 3 are complete as of this pass; Stage 4 (update path), Stage 5 (validate all plugins), the inserted Code-Intel Three-Way exploration, and Stage 6 (close-out) remain.",
+      "verification": {
+        "evidence": "Handoff file read in full: .prism/shared/handoffs/2026-09-29_22-52-52_griot-rebaseline-plugins-skills-models.md. Stage 1/2/3 sub-nodes below each carry their own commit evidence.",
+        "result": "3 of 7 stages complete and pushed; workgraph recording now made a standing per-stage habit at Gavin's explicit instruction, rather than batched to the Stage 6 close-out."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C36",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C36",
+      "kind": "branch",
+      "title": "Stage 1 - device plugin/CLI sync confirmed against the git repo",
+      "group": "this-stage",
+      "direction": "outbound",
+      "state": "done",
+      "description": "Gavin's ask: 'make sure the newest version is in sync with the git repo... i was working on the task in claude desktop and it seems to not want to do anything unless prompted.' Investigated why his Claude Desktop work looked like conflicts: proved via git log the Desktop work was already fully committed and pushed to origin (b02f912) before the investigation started - nothing was ever at risk. Of 34 apparent conflicts, 33 were CRLF-noise false positives (root-caused and fixed as part of Stage 2's channel-5 work, see N141) and 1 was genuine but already resolved by a prior pull. Also ran claude update (2.1.270 -> 2.1.285) after verifying via web search that it only replaces the standalone binary and never touches ~/.claude/plugins or settings.json; backed up settings.json/installed_plugins.json first as a zero-cost extra safety net; post-update diff of both confirmed identical, no data loss. Synced prism@prism-marketplace (4.17.3), cinopsis@cinopsis (2.8.0, forced fresh reinstall to bypass a version-match-but-stale-content bug, drift 173), fragment@fragment-plugin (4.4.0, verified current via git ls-remote, not just the CLI's own message).",
+      "verification": {
+        "evidence": "Prism .prism/shared/plans/rebaseline/00-inventory.json stage1Complete block, commit 62fbea9 (Prism). CLI version confirmed 2.1.270 -> 2.1.285 via claude --version. Plugin versions confirmed live: prism 4.17.3, cinopsis 2.8.0, fragment 4.4.0.",
+        "result": "Stage 1 heartbeat HB-S1-REBASELINE-OK recorded. No data loss; all three named plugin channels confirmed current."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C37",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C37",
+      "kind": "branch",
+      "title": "Stage 2 - de-collide griot-propagate's channels",
+      "group": "this-stage",
+      "direction": "outbound",
+      "state": "done",
+      "description": "Extended griot-propagate's 7-channel OWNER registry per its own five laws (generic engine/data channels; never replace existing transports; check never writes; sha not mtime; unmeasurable channels say so). Channel-5 (skills-to-device git-parity) and channel-6 (griot-suite-context account-sync truncation) were the two named targets. Channel-5's false-conflict problem was root-caused and fixed (see N141). Channel-6's truncation was measured and logged per the handoff's own Stage 2 success bar ('cause measured and logged', not necessarily fixed this stage) - it remains genuinely open (see N142), which is the expected, pre-authorized state per the handoff's own coupling note for Stage 3.5.",
+      "verification": {
+        "evidence": "griot-propagate lib/fsx.mjs and lib/registry.mjs changes; drift ledger entries 174/175 (channel-5, resolved) and 169/172 (channel-6, still flagged) in griot-live-artifacts live/_drift/drift-entries.json.",
+        "result": "Stage 2 heartbeat HB-S2 recorded. Channel-5 conflict-free and content-normalized; channel-6 truncation cause measured and logged, not yet fixed - correctly reflected as open, not silently marked done."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N141",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N141",
+      "kind": "defect",
+      "title": "Channel-5 (skills-to-device) was CRLF-blind, comparing raw bytes not content",
+      "group": "new-findings",
+      "direction": "outbound",
+      "state": "defect-fixed",
+      "description": "griot-propagate's channel-5 comparison logic (deploy-skills.mjs classify, check.mjs driftTreeShaSweep) hashed raw fs.readFileSync bytes across two independently-checked-out git clones with different core.autocrlf settings, producing false-positive 'conflict'/'drift' signals whenever line endings differed with identical content. This was the actual root cause behind the '34 conflicts' Gavin saw in Claude Desktop (Stage 1): 33 of the 34 were this exact false-positive class. Fixed in both functions by switching to a content-normalized hash (git hash-object-equivalent) instead of raw-byte comparison - the fix addresses the root cause, not just this one symptom.",
+      "verification": {
+        "evidence": "Fix commits 09da0a1 and d6b1ef4 (griot-propagate lib/fsx.mjs, lib/registry.mjs). Drift ledger entry logged and resolved: griot-live-artifacts live/_drift/drift-entries.json, title 'channel 5 (skills-to-device) was CRLF-blind, reported 33 false conflicts', status resolved, logged 2026-09-30.",
+        "result": "Both functions now content-normalize before hashing. Re-run against the same two clones reported 0 false conflicts."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N142",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N142",
+      "kind": "finding",
+      "title": "Channel-6 truncation - griot-suite-context reaches the account-synced cloud snapshot at only ~46 percent",
+      "group": "new-findings",
+      "direction": "outbound",
+      "state": "flagged-not-fixed",
+      "description": "griot-suite-context's propagation to the ACCOUNT-synced skill snapshot (what cloud Cowork/claude.ai actually loads, per invariant I11's propagation-target register) truncates at roughly 46% of the file, cutting off content past that point. This means any edit to the skill's later sections - including the Stage 3.5 model-line/version/channel-discipline refresh made this session - lands correctly in the device repo and ~/.claude/skills but is not guaranteed to reach a fresh cloud Cowork session past the cut. Per the handoff's own locked coupling note (2-to-3.5: channel-6-before-suite-context), the Stage 3.5 refresh proceeded anyway with this caveat stated explicitly in both the commit message and the skill's own content, rather than either blocking on the fix or silently claiming full propagation.",
+      "verification": {
+        "evidence": "Drift ledger entry, griot-live-artifacts live/_drift/drift-entries.json, title 'griot-suite-context reaches the account at 46 percent, lineage past the cut', status flagged, logged 2026-09-29 - re-confirmed still flagged as of this pass (not re-measured this session, read from the ledger).",
+        "result": "Genuinely open. Cause is named (46% truncation point on the account-sync propagation target); the fix is not yet built. Suite-context refresh (commit c147f7f, digital-griot-skills) explicitly states 'correct on disk only' pending this entry's resolution."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C38",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C38",
+      "kind": "branch",
+      "title": "Stage 3 - Arkestra dual-provider model-line refresh (Opus 5.5 / Sonnet 5.5 + Codex net-new)",
+      "group": "this-stage",
+      "direction": "outbound",
+      "state": "done",
+      "description": "Full model-roster refresh via prism-model-onboard, run under /prism:griot-agent-architect per Gavin's explicit instruction and the standing rule for any Griot-suite tool change. Claude side: Opus 5.5 (claude-opus-5-5, released 2026-09-22) onboarded as the new routine ceiling; Sonnet 5.5 (claude-sonnet-5-5, released 2026-09-28) onboarded as the new default Sonnet tier. Every fact verified live against primary sources with URL and retrieval date, per the Iron Law. Codex side (net-new to the roster): gpt-6.1-sol (default), gpt-6-astra (flagship), gpt-6-luna (fast/cheap, only current-tier model with reasoning.effort:none); gpt-5.3-codex-spark marked retired. Extended Gavin's own generation-pin convention (see D15) consistently across model-roster.ts, model-policy.ts (core + mobile mirror), claude-sdk.ts, fable-gate.ts/.sh, statusline-model.sh. Two real pre-existing bugs found and fixed while extending, not just ported (see N139, N140). Full test suite updated (82 assertions across 5 files, all analyzed individually against the new chain shape rather than blanket-patched). Docs refreshed: griot-agent-architect SKILL.md + model-config.md + statusline-model.md, spectrum model-selection.md cost-ratio re-baseline, fragment-sync conformance-checklist.md. Statusline flip-a-mode verified live (6 scenarios executed against the real script). Haiku-effort audit swept and fixed 8 of 8 violations across Prism and Cinopsis agents. Also swept and fixed 2 stale Sonnet-4-6 pins in Cinopsis (2 versions stale). Drift ledger entry logged for the one deferred gap (N143). suite-context refreshed (Stage 3.5, see N142 for its coupling caveat).",
+      "verification": {
+        "evidence": "6 commits pushed: Prism 9dc70b3 (core governance code + mobile mirror + research doc), 5de8f01 (test suite), f8ab33b (doc refresh), 4050b93 (haiku-effort fixes), 62fbea9 (Stage 1 inventory, filed alongside); Cinopsis ba3b3b2 (stale-pin + haiku-effort fixes); digital-griot-skills c147f7f (suite-context refresh, both clones reconciled). Research doc: Prism .prism/shared/research/2026-09-30-claude-codex-model-roster.md. Test results: model-policy.test.ts 38/38, fable-gate.test.ts 7/7 (jest), claude-agent.test.ts 27/27, claude-models.test.ts 10/10 (all vitest); 15-provider.test.ts updated but not executed per this repo's own heavy-suite caution, verified by hand instead. GitNexus detect_changes run before each commit: risk scores 0.30-0.63, blast radius confined to the model-governance surface as expected.",
+        "result": "Full round-trip proven: roster researched live, code changed in 2 repos + mobile mirror, 2 real bugs caught and fixed, tests updated and passing, docs refreshed, statusline live-verified, drift logged, all committed and pushed. One gap deferred with a contract (N143), not rushed."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D15",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D15",
+      "kind": "decision",
+      "title": "RULED - a numbered policy key or SDK alias is a permanent generation pin; only the bare routing name tracks current",
+      "group": "tracked",
+      "direction": "outbound",
+      "state": "ruled-and-applied",
+      "description": "Architectural decision made this session, extending Gavin's own already-established convention (the opus48 precedent) rather than inventing a new pattern: opus48, opus5, opus55 (and now sonnet5) are PERMANENT pins to their exact generation and are never reassigned when a newer one ships. Only the BARE routing name (opus, sonnet) tracks 'whichever is current'. This resolved the architectural question of which policy key the new Opus 5.5 ceiling should get - opus55, not a reused or bare key - and was applied consistently across 8 files: core model-policy.ts, the mobile mirror's model-policy.ts and claude-agent.ts, claude-sdk.ts, fable-gate.ts, fable-gate.sh, statusline-model.sh, and model-policy.example.json, plus documented explicitly in griot-agent-architect's model-config.md and SKILL.md so the convention is discoverable, not just followed.",
+      "verification": {
+        "evidence": "Applied in Prism commit 9dc70b3 (DOWNGRADE_CHAIN = [fable5, opus55, opus5, opus48] across both model-policy.ts copies; MODEL_IDS in claude-sdk.ts; opus55 case added ahead of opus5 in fable-gate.ts/.sh and statusline-model.sh, all with load-bearing match-order comments explaining why). Documented in commit f8ab33b (griot-agent-architect/SKILL.md and model-config.md both carry a named 'generation-pin convention' section).",
+        "result": "Consistent across every mirror checked this session; the convention is now written down as doctrine, not just tribal knowledge in one file."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N139",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N139",
+      "kind": "defect",
+      "title": "Mobile mirror's policyKeyForModel() would have silently mis-keyed every claude-opus-5-5 request",
+      "group": "new-findings",
+      "direction": "outbound",
+      "state": "defect-fixed",
+      "description": "Found while extending the mobile server's model-policy.ts to the new opus55 rung: policyKeyForModel() had no branch for 'opus55' or 'claude-opus-5-5' at all, so any request for the new ceiling would have fallen through to the wrong policy key (or none), silently defeating the governance the downgrade chain exists to provide. A real pre-existing-shape bug surfaced by the extension work, not introduced by it - fixed in the same motion rather than just ported around.",
+      "verification": {
+        "evidence": "apps/prism-mobile/packages/server/src/server/agent/model-policy.ts, policyKeyForModel(): added 'if (model === \"opus55\" || model === \"claude-opus-5-5\") return \"opus55\";' ahead of the existing opus5 check. Commit 9dc70b3 (Prism).",
+        "result": "Verified via claude-agent.test.ts (27/27 pass) and claude-models.test.ts (10/10 pass, including a new regression test for the 5-5 major.minor split)."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N140",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N140",
+      "kind": "defect",
+      "title": "Mobile mirror's fable-downgrade substitution silently ignored a denial of the new opus55 ceiling",
+      "group": "new-findings",
+      "direction": "outbound",
+      "state": "defect-fixed",
+      "description": "In claude-agent.ts's ClaudeAgentSession (~line 2365), the condition gating the fable-downgrade model substitution checked only decision.downgradedFrom === 'opus5' || 'fable5', omitting 'opus55'. A denial of the new top rung would log telemetry recording the deny, but silently fail to substitute base.model - the governance decision would be recorded and then ignored. Found and fixed in the same pass as N139; flagged separately in drift ledger entry #176 that this governance path still has zero test coverage even after the fix (see N143), rather than treating 'fixed' as the same thing as 'fully verified'.",
+      "verification": {
+        "evidence": "apps/prism-mobile/packages/server/src/server/agent/providers/claude-agent.ts: condition extended to include 'opus55', and 'opus55: \"claude-opus-5-5\"' added to the sdkIdForPolicyKey map. Commit 9dc70b3 (Prism).",
+        "result": "Fix applied and code-review-graph's detect_changes_tool confirms the fixed function (buildOptions) as changed; test coverage for this specific path remains a named gap, tracked as N143, not silently assumed closed by the code fix alone."
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N143",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N143",
+      "kind": "finding",
+      "title": "The opus55 governance substitution fix has zero test coverage, before or after the fix",
+      "group": "new-findings",
+      "direction": "outbound",
+      "state": "flagged-not-fixed",
+      "description": "Running code-review-graph's detect_changes_tool after fixing N140 confirmed claude-agent.test.ts (1172 lines) never references opus5, opus55, downgradedFrom or sdkIdForPolicyKey - this governance path was never exercised by any test, before or after the fix. Deferred rather than rushed: the existing describe blocks in this file need real SDK/session mocking to integrate correctly, and forcing a test under time pressure risked shipping a wrong test rather than closing the actual gap. Logged with a full deferred-fix contract, not just a bare note.",
+      "verification": {
+        "evidence": "code-review-graph detect_changes_tool run against Prism HEAD, base=HEAD (uncommitted diff at the time): risk 0.63, test_gaps flagged defaultPolicy/policyKeyForModel/ClaudeAgentSession/buildOptions with coverage:none. Drift ledger entry #176 logged and republished: griot-live-artifacts live/_drift/drift-entries.json, status flagged, fixlabel 'deferred, contract above'; Suite Drift Codex republished at Version 54 (commit d0083d3, griot-live-artifacts).",
+        "result": "Genuinely open, with a concrete fix direction on file: add a focused test constructing a ClaudeAgentSession against a policy store that denies opus55, assert base.model substitutes to claude-opus-5-5."
+      }
     }
   ],
   "edges": [
@@ -7798,15 +7969,93 @@
       "to": "wg:djeli-branch:D11",
       "kind": "ontology",
       "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:C36",
+      "to": "wg:djeli-branch:C35",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:C37",
+      "to": "wg:djeli-branch:C35",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:C38",
+      "to": "wg:djeli-branch:C35",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N141",
+      "to": "wg:djeli-branch:C37",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N142",
+      "to": "wg:djeli-branch:C37",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:D15",
+      "to": "wg:djeli-branch:C38",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N139",
+      "to": "wg:djeli-branch:C38",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N140",
+      "to": "wg:djeli-branch:C38",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N143",
+      "to": "wg:djeli-branch:C38",
+      "kind": "in-epic",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N143",
+      "to": "wg:djeli-branch:N140",
+      "kind": "splinter",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:C36",
+      "to": "wg:djeli-branch:N141",
+      "kind": "ontology",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N139",
+      "to": "wg:djeli-branch:D15",
+      "kind": "ontology",
+      "label": ""
+    },
+    {
+      "from": "wg:djeli-branch:N140",
+      "to": "wg:djeli-branch:D15",
+      "kind": "ontology",
+      "label": ""
     }
   ],
   "stats": {
-    "totalBranches": 94,
+    "totalBranches": 98,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 294,
+    "edgeCount": 307,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -9187,6 +9436,23 @@
       "corrections": [
         "N103"
       ],
+      "refused": []
+    },
+    "amendPass78_2026_09_30": {
+      "newNodes": [
+        "C35",
+        "C36",
+        "C37",
+        "N141",
+        "N142",
+        "C38",
+        "D15",
+        "N139",
+        "N140",
+        "N143"
+      ],
+      "newEdges": 13,
+      "corrections": [],
       "refused": []
     }
   },
