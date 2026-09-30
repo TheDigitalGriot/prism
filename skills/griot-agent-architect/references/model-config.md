@@ -1,6 +1,6 @@
 # Model Configuration (Claude Code, Current Model Line)
 
-> Last updated September 2026. This is the Claude-Code-specific guidance that drifts fastest as new models ship. When in doubt, cross-check [platform.claude.com/docs/en/models/overview](https://platform.claude.com/docs/en/models/overview) and [code.claude.com/docs/en/model-config](https://code.claude.com/docs/en/model-config) — the model line moves quarterly.
+> Last updated 2026-09-30 (Opus 5.5 / Sonnet 5.5 delta pass; see `.prism/shared/research/2026-09-30-claude-codex-model-roster.md` for full sourcing). This is the Claude-Code-specific guidance that drifts fastest as new models ship. When in doubt, cross-check [platform.claude.com/docs/en/models/overview](https://platform.claude.com/docs/en/models/overview) and [code.claude.com/docs/en/model-config](https://code.claude.com/docs/en/model-config) — the model line moves quarterly.
 
 ---
 
@@ -20,25 +20,33 @@
 
 ## 1. Current Model Line
 
-As of **September 2026**:
+As of **2026-09-30**:
 
 | Model | Full Model ID | Alias | Pricing (in / out per MTok) | Context | Max output | Effort levels |
 |---|---|---|---|---|---|---|
 | **Fable 5.1** | `claude-fable-5-1` | none — use pinned ID | $10 / $50 | 1M | 128K | low, medium, high (default), xhigh, max (see §5) |
-| **Opus 5** | `claude-opus-5` | `opus`, `best` | $5 / $25 | 1M | 128K | low, medium, high (default), xhigh, max |
-| **Opus 4.8** | `claude-opus-4-8` | `opus48` (explicit; legacy) | $5 / $25 | 1M | 128K | low, medium, high (default), xhigh, max |
-| **Sonnet 5** | `claude-sonnet-5` | `sonnet` | **$2 / $10** | 1M | 128K | low, medium, high (default), xhigh, max |
+| **Opus 5.5** | `claude-opus-5-5` | `opus`, `best` | $4 / $20 | 1M | 128K (300K on Batch API) | low, **medium (default)**, high, xhigh, max |
+| **Opus 5** | `claude-opus-5` | `opus5` (explicit; legacy pin) | $5 / $25 | 1M | 128K | low, medium, high (default), xhigh, max |
+| **Opus 4.8** | `claude-opus-4-8` | `opus48` (explicit; legacy pin) | $5 / $25 | 1M | 128K | low, medium, high (default), xhigh, max |
+| **Sonnet 5.5** | `claude-sonnet-5-5` | `sonnet` | $2 / $10 | 1M | 128K (300K on Batch API) | low, medium, high (default), xhigh, max |
+| **Sonnet 5** | `claude-sonnet-5` | `sonnet5` (explicit; legacy pin) | $2 / $10 | 1M | 128K | low, medium, high (default), xhigh, max |
 | **Haiku 4.5** | `claude-haiku-4-5-20251001` | `haiku` (also `claude-haiku-4-5`) | $1 / $5 | 200K | 64K | none (effort not supported) |
 
-> ⚠️ **Fable 5.1 — ENABLED, HITL-GATED.** It is reachable under the Max/Team Premium subscription, but never as a resting default: every use passes the human-in-the-loop gate (`.prism/local/fable.flag` + a confirm/deny modal, and the `fable-gate.sh` PreToolUse hook on Task dispatches), and nothing in routing auto-escalates to it. Opus 5 is the routine ceiling for standard Prism work. The SDK handles the `refusal` stop reason (§5, shipped). Read §5 before using — Fable's API surface differs from the Opus family, and it draws on a *capped weekly Max allowance* (≈2.6× Opus 5 if metered on the API).
+Cache-read pricing diverges between the two 5.5 models: Opus 5.5 reads cache at **$0.20/MTok, 5% of input** — a special lower rate vs. the standard 10%; Sonnet 5.5 reads cache at $0.20/MTok too, but that's the *standard* 10% of its lower $2 input price. Cache-write pricing: Opus 5.5 $5/MTok (5m) / $8/MTok (1h); Sonnet 5.5 $2.50/MTok (5m) / $4/MTok (1h).
+
+> ⚠️ **Fable 5.1 — ENABLED, HITL-GATED.** It is reachable under the Max/Team Premium subscription, but never as a resting default: every use passes the human-in-the-loop gate (`.prism/local/fable.flag` + a confirm/deny modal, and the `fable-gate.sh` PreToolUse hook on Task dispatches), and nothing in routing auto-escalates to it. Opus 5.5 is the routine ceiling for standard Prism work. The SDK handles the `refusal` stop reason (§5, shipped). Read §5 before using — Fable's API surface differs from the Opus family, and it draws on a *capped weekly Max allowance* (~2.5× Opus 5.5 on list price if metered on the API — $10/$50 vs $4/$20; the effective/thinking-token multiplier behind the prior "≈2.6× Opus 5" figure was not re-derived for the 5.5 line).
 
 **Fable 5.1** (`claude-fable-5-1`) is Anthropic's most capable widely released model, for the most demanding reasoning and long-horizon agentic work. It supersedes Fable 5 (`claude-fable-5`, now legacy). It has a different API surface from the Opus family — see [§5](#5-fable-51-api-differences--before-you-adopt) before adopting.
 
-**Opus 5** (`claude-opus-5`) is the **routine ceiling** for standard Prism work. It became generally available **2026-07-24** and is the default model on Claude Max; Anthropic's own guidance is "start with Claude Opus 5 for most workloads." It matches Opus 4.8's $5 / $25 price with a 128K max-output ceiling on a 1M context window. Its API surface is Opus-family — **no Fable-style HITL gate** and no `opus5.flag`; the only add-on is a light effort guard: `effort: xhigh|max` triggers a **one-shot confirm** (§4), a per-call effort control, not a model-level gate.
+**Opus 5.5** (`claude-opus-5-5`) is the **routine ceiling** for standard Prism work as of Claude Code v2.1.280+. Released 2026-09-22. Its default effort is **`medium`**, not `high` — a genuine, verified asymmetry (every other current-tier model defaults to `high`); Anthropic's docs confirm this on the model's own page, not the general catalog. Thinking on Opus 5.5 **cannot be disabled at all** (a step past Opus 5, which could still disable it outside `xhigh`/`max`) — every request now runs with adaptive thinking, so `max_tokens` budgets tuned for a no-thinking baseline can truncate. Breaking changes vs. Opus 5: forced tool use now returns an error instead of being silently allowed; thinking blocks are tied to the model+conversation that produced them; the `computer_20251124` computer-use tool version is no longer accepted.
 
-**Sonnet 5** (`claude-sonnet-5`) replaces Sonnet 4.6 and is the only tier in this line that got **cheaper** — $2 / $10 vs 4.6's $3 / $15 (a 33% cut, now permanent; the scheduled Sept 1 2026 increase back to $3/$15 was cancelled). It also gains a native 1M context window and full effort support, neither of which 4.6 had.
+**Opus 5** (`claude-opus-5`) is now **legacy** — superseded by Opus 5.5 as the routine ceiling on 2026-09-22, kept explicitly reachable under the `opus5` key for reproducible runs and eval comparisons. It became generally available 2026-07-24 and was the routine ceiling until the 5.5 flip. It matches Opus 4.8's $5 / $25 price with a 128K max-output ceiling on a 1M context window. Its API surface is Opus-family — **no Fable-style HITL gate** and no `opus5.flag`; the only add-on was a light effort guard: `effort: xhigh|max` triggers a **one-shot confirm** (§4), a per-call effort control, not a model-level gate.
 
-**Opus 4.8** (`claude-opus-4-8`) is now **legacy**, kept explicitly reachable under the `opus48` key for A/B eval and reproducible pins. It is not a routing target.
+**Sonnet 5.5** (`claude-sonnet-5-5`) is the **default Sonnet tier** as of Claude Code v2.1.284+, replacing Sonnet 5 on 2026-09-28. Same $2 / $10 price as Sonnet 5 — the cost improvement Anthropic reports for 5.5 comes from fewer tool calls and faster completions per task, not a lower sticker price. It runs adaptive thinking by default like Opus 5.5, but exposes a new `between_tools` setting that can turn off up-front thinking (at `high` effort or below) for a streaming consumer that wants quiet gaps between tool calls. Breaking change vs. Sonnet 5: the advisor tool now rejects Opus 4.8, Opus 4.7, and Sonnet 5 as advisor pairings.
+
+**Sonnet 5** (`claude-sonnet-5`) is now **legacy** — kept explicitly reachable under the `sonnet5` key. It replaced Sonnet 4.6 and was the only tier in that generation that got **cheaper** — $2 / $10 vs 4.6's $3 / $15 (a 33% cut, now permanent). It also gained a native 1M context window and full effort support, neither of which 4.6 had.
+
+**Opus 4.8** (`claude-opus-4-8`) is **legacy**, kept explicitly reachable under the `opus48` key for A/B eval and reproducible pins. It is not a routing target.
 
 > **Mythos 5.1** (`claude-mythos-5-1`) — API ID confirmed in Anthropic's [effort](https://platform.claude.com/docs/en/build-with-claude/effort) and [pricing](https://platform.claude.com/docs/en/about-claude/pricing) docs; identical to Fable 5.1 in capability, price, and API surface, with more permissive safeguards. **Available by invitation only under [Project Glasswing](https://anthropic.com/glasswing)** (vetted US cybersecurity / life-sciences organizations) — which is why it is absent from the public models-overview table. **NOT routable from Prism**: do not put it in agent/skill frontmatter, `MODEL_IDS`, or the model policy. Everything in §5 applies to it if access is ever granted. Legacy `claude-mythos-5` and `claude-mythos-preview` exist under the same program.
 
@@ -61,16 +69,18 @@ Anthropic states it directly: *"A common misconception is that dateless model ID
 
 This change matters most for plugin authors. A plugin shipping `model: claude-opus-4-6` in 2025 used to drift forward automatically; today the same string is pinned to the 4.6 release. Update intentionally.
 
-**The Opus 5 alias flip has LANDED.** `opus`/`best` now resolve to `claude-opus-5`. The parallel-key rollout period (during which `opus` stayed pinned to Opus 4.8 while Opus 5 rode a separate key for A/B eval) is over. Opus 4.8 remains reachable under the explicit `opus48` key so the A/B comparison is not lost.
+**The generation-pin convention.** This is the pattern the Opus line established and the one every later tier follows: a **numbered** policy key / SDK alias (`opus48`, `opus5`, `opus55`) is a **permanent pin** to that exact generation — it is never reassigned when a newer one ships. Only the **bare** routing name (`opus`, `sonnet`) tracks "whichever is current." So `opus5` will keep meaning Opus 5 forever, the same way `opus48` still means Opus 4.8 today; it is `opus` (bare) that moved.
 
-**Namespace discipline — two different `opus`es.** Keep these straight; conflating them is how config drift starts:
+**The Opus 5 alias flip landed 2026-07-24; the Opus 5.5 alias flip landed 2026-09-22 (Claude Code v2.1.280+).** `opus`/`best` now resolve to `claude-opus-5-5`. Opus 5 remains reachable under the explicit `opus5` key (never reassigned — see the pin convention above), and Opus 4.8 remains reachable under `opus48`, so neither A/B comparison is lost. The same shape happened on the Sonnet side: **the Sonnet 5.5 alias flip landed 2026-09-28 (Claude Code v2.1.284+).** `sonnet` now resolves to `claude-sonnet-5-5`; Sonnet 5 remains reachable under the explicit `sonnet5` key.
+
+**Namespace discipline — two different `opus`es (and now two `sonnet`s).** Keep these straight; conflating them is how config drift starts:
 
 | Namespace | Where | Keys |
 |---|---|---|
-| **Policy keys** — govern approval mode + the downgrade chain | `model-policy.ts`, `fable-gate.sh`, `statusline-model.sh`, mobile `model-policy.ts` | `fable5`, `opus5`, `opus48` — **no bare `opus`** |
-| **SDK aliases** — map a friendly name to an API ID | `claude-sdk.ts` `MODEL_IDS` | `opus` (→ Opus 5), `opus5`, `opus48`, `sonnet`, `haiku`, `fable` |
+| **Policy keys** — govern approval mode + the downgrade chain | `model-policy.ts`, `fable-gate.sh`, `statusline-model.sh`, mobile `model-policy.ts` | `fable5`, `opus55`, `opus5`, `opus48` — **no bare `opus`** (the downgrade chain, in order: `fable5 → opus55 → opus5 → opus48`) |
+| **SDK aliases** — map a friendly name to an API ID | `claude-sdk.ts` `MODEL_IDS` | `opus` (→ Opus 5.5), `opus55` (→ Opus 5.5, explicit pin), `opus5`, `opus48`, `sonnet` (→ Sonnet 5.5), `sonnet5`, `haiku`, `fable` |
 
-The bare `opus` survives only as a *user-facing SDK alias* (agent frontmatter depends on it). In the policy namespace it was renamed to `opus48` so a policy key never silently means "whichever Opus is current."
+The bare `opus` and bare `sonnet` survive only as *user-facing SDK aliases* (agent frontmatter depends on them tracking "current"). In the policy namespace, the current ceiling is always addressed by its numbered pin (`opus55`) so a policy key never silently means "whichever Opus is current" — that ambiguity is exactly what the `opus` → `opus48` rename solved the first time this pattern appeared, and `opus55` now carries it forward. Sonnet has no separate policy/downgrade-chain namespace today (only the Opus line is HITL-gated and chain-governed), so `sonnet`/`sonnet5` exist only as SDK aliases.
 
 ---
 
@@ -80,22 +90,24 @@ Aliases resolve differently per provider — the same `model: opus` may run a di
 
 | Provider | `opus` resolves to | `sonnet` resolves to | Fable |
 |---|---|---|---|
-| Anthropic API (direct) | Opus 5 | Sonnet 5 | none — use `claude-fable-5-1` |
-| Claude Platform on AWS | *(Opus 5 not listed on this platform — pin explicitly)* | Sonnet 5 | `claude-fable-5-1` |
-| Amazon Bedrock | `anthropic.claude-opus-5` | `anthropic.claude-sonnet-5` | `anthropic.claude-fable-5-1` |
-| Google Cloud / Microsoft Foundry | `claude-opus-5` | `claude-sonnet-5` | `claude-fable-5-1` |
+| Anthropic API (direct) | Opus 5.5 (`claude-opus-5-5`) | Sonnet 5.5 (`claude-sonnet-5-5`) | none — use `claude-fable-5-1` |
+| Claude Platform on AWS | *(pin explicitly — confirm listing before relying on the alias)* | Sonnet 5.5 | `claude-fable-5-1` |
+| Amazon Bedrock | `anthropic.claude-opus-5-5` | `anthropic.claude-sonnet-5-5` | `anthropic.claude-fable-5-1` |
+| Google Cloud / Microsoft Foundry | `claude-opus-5-5` | `claude-sonnet-5-5` | `claude-fable-5-1` |
+
+Every provider surfaces the same bare, dateless ids for the 5.5 line (`claude-opus-5-5` / `claude-sonnet-5-5`) — Anthropic's own docs for both models list only that one id on every platform, with no alternate dated variant shown anywhere (checked 2026-09-30). This differs from Haiku's alias→dated-snapshot indirection; see §2.
 
 **Fable 5.1 has no alias** — always use the full pinned ID `claude-fable-5-1` in agent/skill frontmatter.
 
 **If you ship plugins to third-party providers**, set the env vars rather than rely on alias resolution:
 
 ```bash
-export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-5'
-export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-5'
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-5-5'
+export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-5-5'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5-20251001'
 ```
 
-For Bedrock specifically, use the provider-prefixed form: `us.anthropic.claude-opus-5`. Note that Bedrock dropped the `-v1` suffix starting with Sonnet 4.6 — Opus 4.6 (`anthropic.claude-opus-4-6-v1`) was the last ID to carry it.
+For Bedrock specifically, use the provider-prefixed form: `us.anthropic.claude-opus-5-5`. Note that Bedrock dropped the `-v1` suffix starting with Sonnet 4.6 — Opus 4.6 (`anthropic.claude-opus-4-6-v1`) was the last ID to carry it.
 
 ---
 
@@ -106,27 +118,29 @@ The `effort` field in agent or skill frontmatter controls adaptive reasoning. Hi
 | Model | Supported effort levels |
 |---|---|
 | **Fable 5.1**, Mythos 5.1 | `low`, `medium`, `high`, `xhigh`, `max` — via `output_config.effort` API param (see §5) |
+| **Opus 5.5** | `low`, `medium` (**default — the exception**), `high`, `xhigh`, `max` — via frontmatter `effort` (`xhigh`/`max` trigger a one-shot confirm — see below); thinking cannot be disabled at any level |
 | **Opus 5** | `low`, `medium`, `high`, `xhigh`, `max` — via frontmatter `effort` (`xhigh`/`max` trigger a one-shot confirm — see below) |
+| **Sonnet 5.5** | `low`, `medium`, `high`, `xhigh`, `max` — adaptive thinking by default, with a `between_tools` opt-out at `high` or below |
 | **Sonnet 5** | `low`, `medium`, `high`, `xhigh`, `max` — **`xhigh` is new in Sonnet 5**; 4.6 lacked it |
 | Opus 4.8, Opus 4.7 | `low`, `medium`, `high`, `xhigh`, `max` |
 | Opus 4.6, Sonnet 4.6 | `low`, `medium`, `high`, `max` — **no `xhigh`** |
 | **Haiku 4.5** / earlier | **none** — effort is not supported |
 
-**Defaults:** every effort-supporting model in the current line defaults to `high`. (`high` is exactly equivalent to omitting the parameter.)
+**Defaults:** every effort-supporting model in the current line defaults to `high` **except Opus 5.5, which defaults to `medium`.** This is verified against Opus 5.5's own model page (2026-09-30), not inferred — it is a real, documented asymmetry and not an oversight to normalize away. (`high` is exactly equivalent to omitting the parameter on every other tier; on Opus 5.5, omitting it gets you `medium`.)
 
-> ⚠️ **`high` is NOT comparable across models.** Anthropic states the token allocation behind each effort level changed between generations: *"Run a fresh effort sweep on your own evals rather than reusing them."* Do not assume Opus 5 `high` costs what Opus 4.8 `high` cost. Re-measure; never port an effort setting between tiers on faith.
+> ⚠️ **`high` is NOT comparable across models.** Anthropic states the token allocation behind each effort level changed between generations: *"Run a fresh effort sweep on your own evals rather than reusing them."* Do not assume Opus 5.5 `high` costs what Opus 5 `high` cost, or that either costs what Opus 4.8 `high` cost. Re-measure; never port an effort setting between tiers on faith.
 
 If you set a level the active model doesn't support, Claude Code falls through to the highest supported level at or below it. Example: `xhigh` runs as `high` on Opus 4.6 and Sonnet 4.6.
 
-**Opus 5 effort posture (cost discipline).** Anthropic's recommended starting point dropped from `xhigh` (the Opus 4.7/4.8 guidance) to **`high`, with `low` and `medium` used "liberally as your primary control for token cost and response time."** Opus 5's `low`/`medium` reach what took `high`/`xhigh` on prior Opus tiers, so the cheaper way to save spend is to **lower the effort dial, not disable thinking or route to a weaker tier**.
+**Opus-line effort posture (cost discipline).** Anthropic's recommended starting point dropped from `xhigh` (the Opus 4.7/4.8 guidance) to **`high` on Opus 5, and to `medium` as the shipped default on Opus 5.5**, with `low`/`medium` used "liberally as your primary control for token cost and response time." The Opus 5.5 default already sits where Opus 5 needed an explicit dial-down, so the cheaper way to save further spend is still to **lower the effort dial, not disable thinking (impossible on 5.5 regardless) or route to a weaker tier**.
 
-> ⚠️ **Effort no longer controls response length on Opus 5.** *"Effort controls thinking volume, not visible response length: on Claude Opus 5, changing effort does not reliably shorten responses, so prompt for length instead."* On Opus 4.8 the effort dial did more of this work. On Opus 5 you need **two levers**: `effort` for thinking tokens, and an explicit concision/length instruction for visible output. Budgeting with effort alone will under-predict cost.
+> ⚠️ **Effort no longer controls response length on the Opus line.** *"Effort controls thinking volume, not visible response length: on Claude Opus 5, changing effort does not reliably shorten responses, so prompt for length instead."* This carries forward to Opus 5.5. On Opus 4.8 the effort dial did more of this work. On Opus 5.5 you need **two levers**: `effort` for thinking tokens, and an explicit concision/length instruction for visible output. Budgeting with effort alone will under-predict cost.
 
-**Thinking is on by default on Opus 5 — a real cost change.** On Opus 4.8, a request that omitted the `thinking` parameter ran *without* thinking. On Opus 5 the same request runs with adaptive thinking **on**. Thinking tokens bill as output tokens *and* count against `max_tokens`. Any workload that previously ran thinking-off will produce more output tokens per request at the same per-token rate — and can **truncate** if `max_tokens` was tuned for a no-thinking baseline. Re-baseline `max_tokens` before flipping a workload to Opus 5. (Opus 4.8 and Opus 5 share the same tokenizer, so there is **no** tokenizer differential between them — any delta is behavioral.)
+**Thinking defaults and disable rules, by generation.** On Opus 4.8, a request that omitted the `thinking` parameter ran *without* thinking. On Opus 5, the same request ran with adaptive thinking **on**, but thinking could still be explicitly disabled outside `xhigh`/`max`. **On Opus 5.5, thinking cannot be disabled at all, at any effort level** — a request setting `thinking: {"type": "disabled"}` now returns an error unconditionally, not just at `xhigh`/`max`. Sonnet 5.5 also defaults to adaptive thinking on, but is less strict: it exposes a `between_tools` setting that turns off up-front thinking at `high` effort or below. In every case, thinking tokens bill as output tokens *and* count against `max_tokens` — a workload tuned for a no-thinking baseline can **truncate**, not merely cost more, on any current-tier Opus or Sonnet model. Re-baseline `max_tokens` before flipping a workload onto the 5.5 line. Opus 4.8 and Opus 5 are confirmed to share the same tokenizer (§5's Fable comparison); whether Opus 5.5 / Sonnet 5.5 also share it was **not independently re-verified** in the 2026-09-30 delta pass — don't assume parity without checking, per the Iron Law.
 
-**`effort: xhigh|max` one-shot confirm (Opus 5 visibility add-on).** On Opus 5, requesting `xhigh` or `max` triggers a **one-shot confirm** — a per-call effort guard, categorically different from Fable's model-level HITL gate (there is **no** Fable-style gate on Opus 5, and no `opus5.flag`). The confirm is an **app-surface control**: it is **headless-aware** — in non-interactive runs it auto-resolves via the `resolve-answer.mjs` pattern rather than blocking — and it **always emits a visibility event** to the file bus so the escalation is legible on the Cowork/headless surface (never silent).
+**`effort: xhigh|max` one-shot confirm (Opus visibility add-on).** On the current Opus ceiling, requesting `xhigh` or `max` triggers a **one-shot confirm** — a per-call effort guard, categorically different from Fable's model-level HITL gate (there is **no** Fable-style gate on Opus 5.5 or Opus 5, and no `opus55.flag`/`opus5.flag`). The confirm is an **app-surface control**: it is **headless-aware** — in non-interactive runs it auto-resolves via the `resolve-answer.mjs` pattern rather than blocking — and it **always emits a visibility event** to the file bus so the escalation is legible on the Cowork/headless surface (never silent).
 
-On Opus 5, thinking cannot be disabled at `xhigh` or `max`: a request setting `thinking: {"type": "disabled"}` at those levels returns a 400.
+On Opus 5, thinking could not be disabled at `xhigh` or `max` specifically (a request setting `thinking: {"type": "disabled"}` at those levels returned a 400); on Opus 5.5 that restriction now applies unconditionally, at every effort level (see above).
 
 **Usage in plugin agent/skill frontmatter (Opus-tier):**
 
@@ -162,14 +176,14 @@ Fable 5.1 and Mythos 5.1 share a different API surface from the Opus family. The
 
 ### Thinking is always on — omit the `thinking` parameter
 
-| What you send | Opus 5 | Fable 5.1 |
-|---|---|---|
-| Omit `thinking` | Works (adaptive thinking ON) | Works (adaptive thinking on) |
-| `{type: "adaptive"}` | Works | Works |
-| `{type: "disabled"}` | Works — **except** at `xhigh`/`max` (400) | **400 error** |
-| `{type: "enabled", budget_tokens: N}` | 400 (deprecated after 4.6) | **400 error** |
+| What you send | Opus 5.5 | Opus 5 | Fable 5.1 |
+|---|---|---|---|
+| Omit `thinking` | Works (adaptive thinking ON, unconditionally) | Works (adaptive thinking ON) | Works (adaptive thinking on) |
+| `{type: "adaptive"}` | Works | Works | Works |
+| `{type: "disabled"}` | **400 error, at every effort level** | Works — **except** at `xhigh`/`max` (400) | **400 error** |
+| `{type: "enabled", budget_tokens: N}` | 400 (deprecated after 4.6) | 400 (deprecated after 4.6) | **400 error** |
 
-Don't pass `thinking` at all when targeting Fable 5.1. Control depth with `effort` (frontmatter) or `output_config.effort` (API) — not with `thinking`.
+Don't pass `thinking` at all when targeting Opus 5.5 or Fable 5.1 — both now reject an explicit disable unconditionally. Control depth with `effort` (frontmatter) or `output_config.effort` (API) — not with `thinking`.
 
 ### `refusal` stop reason — check before reading content
 
@@ -178,7 +192,7 @@ Safety classifiers may decline a request: **HTTP 200**, `stop_reason: "refusal"`
 ```
 if stop_reason === "refusal":
     # content is empty or partial — do not use it
-    # retry with rephrased prompt or fall back to Opus 5
+    # retry with rephrased prompt or fall back to Opus 5.5
 ```
 
 Any SDK wrapper that reads `content` without checking `stop_reason` first will silently receive an empty or partial response with no error. **Always check `stop_reason` before reading `content`.**
@@ -187,7 +201,7 @@ Any SDK wrapper that reads `content` without checking `stop_reason` first will s
 
 ### Tokenizer — already the current one
 
-Fable 5.1 uses the same newer tokenizer as all Claude 4.7+ models (~30% more tokens for the same text than the pre-4.7 tokenizer). Since Opus 5 and Sonnet 5 are also on it, there is **no tokenizer differential between Fable 5.1 and the rest of the current line** — the cost delta is price ($10/$50 vs $5/$25) and thinking volume, not encoding. Historical cost estimates calibrated against Sonnet 4.6 or earlier are still ~30% low on token count.
+Fable 5.1 uses the same newer tokenizer as all Claude 4.7+ models (~30% more tokens for the same text than the pre-4.7 tokenizer). Opus 5 and Sonnet 5 are confirmed on it too, so there is **no tokenizer differential between Fable 5.1 and those tiers** — the cost delta is price ($10/$50 vs $5/$25) and thinking volume, not encoding. Historical cost estimates calibrated against Sonnet 4.6 or earlier are still ~30% low on token count. (Opus 5.5 / Sonnet 5.5 tokenizer parity with this family was not independently re-verified in the 2026-09-30 delta pass — see the note in §4.)
 
 ### Cheap cache reads — a real optimization
 
@@ -195,7 +209,7 @@ Cache hits on Fable 5.1 and Mythos 5.1 cost **0.025×** base input ($0.25/MTok),
 
 ### Per-message effort changes (beta)
 
-Fable 5.1, Mythos 5.1, and Opus 5 support changing effort mid-conversation via a `role: "system"` message carrying `output_config.effort`, **preserving the prompt cache**. Requires the beta header `mid-conversation-output-config-2026-07-01`. Fable 5 (non-.1) does *not* support this and returns a 400.
+Fable 5.1, Mythos 5.1, and Opus 5 support changing effort mid-conversation via a `role: "system"` message carrying `output_config.effort`, **preserving the prompt cache**. Requires the beta header `mid-conversation-output-config-2026-07-01`. Fable 5 (non-.1) does *not* support this and returns a 400. Whether Opus 5.5 / Sonnet 5.5 carry this feature forward was not checked in the 2026-09-30 delta pass — verify before relying on it for either.
 
 ### 30-day data retention (factual note)
 
@@ -229,12 +243,12 @@ Other phrases (`think`, `think hard`, `think more`) are passed through as ordina
 
 ## 7. 1M-Token Context
 
-**Every model in the current line except Haiku 4.5 has a native 1M-token context window** — Fable 5.1, Opus 5, Opus 4.8, and Sonnet 5 all ship 1M by default. Haiku 4.5 remains 200K.
+**Every model in the current line except Haiku 4.5 has a native 1M-token context window** — Fable 5.1, Opus 5.5, Opus 5, Opus 4.8, Sonnet 5.5, and Sonnet 5 all ship 1M by default. Haiku 4.5 remains 200K. Opus 5.5 and Sonnet 5.5 additionally support a **300K max output** on the Batch API (beta header `output-300k-2026-03-24`), up from the standard 128K sync ceiling.
 
 This makes the `[1m]` suffix a **no-op for the current line**. It remains meaningful only when pinning an older model that gated 1M behind it:
 
 ```yaml
-model: opus[1m]              # no-op on Opus 5 — already 1M
+model: opus[1m]              # no-op on Opus 5.5 — already 1M
 model: claude-sonnet-4-6[1m] # meaningful: 4.6 gated 1M behind the suffix
 ```
 
@@ -263,6 +277,8 @@ Note the practical unit change: on the current tokenizer, 1M tokens ≈ 555k wor
 | Feature | Minimum Claude Code |
 |---|---|
 | **Fable 5.1** (`claude-fable-5-1`) access | **v2.1.257** |
+| **Sonnet 5.5** (`claude-sonnet-5-5`) default | **v2.1.284** |
+| **Opus 5.5** (`claude-opus-5-5`) default | **v2.1.280** |
 | **Opus 5** (`claude-opus-5`) access | **v2.1.219** |
 | **Sonnet 5** (`claude-sonnet-5`) access | **v2.1.197** |
 | Fable 5 (legacy) access | v2.1.173 |
@@ -276,7 +292,7 @@ Note the practical unit change: on the current tokenizer, 1M tokens ≈ 555k wor
 
 **Deterministic subagent caps.** `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` and `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` bound how many subagents a run spawns at once and how deep the spawn tree goes, making fan-out reproducible run-to-run. Set them in the launcher env (Prism pins them in `scripts/spectrum.sh`, defaults `3` / `2`). They require **Claude Code ≥ 2.1.217**; older versions ignore the vars harmlessly. Pair the caps with the effort posture in §4 rather than leaving concurrency unbounded.
 
-Run `claude update` before relying on the newest model. If you're shipping a plugin that targets Fable 5.1, document **v2.1.257** as the minimum in your README.
+Run `claude update` before relying on the newest model. If you're shipping a plugin that targets Fable 5.1, document **v2.1.257** as the minimum in your README; for Opus 5.5, **v2.1.280**; for Sonnet 5.5, **v2.1.284**.
 
 ---
 
@@ -288,14 +304,14 @@ When auditing a plugin against the current model line:
    ```bash
    grep -rE 'claude-(opus|sonnet|haiku|fable|mythos)-[0-9a-z-]+' . --include='*.ts' --include='*.js' --include='*.json' --include='*.md'
    ```
-   Superseded IDs to flag: `claude-opus-4-8` (outside a deliberate `opus48` pin), `claude-sonnet-4-6`, `claude-fable-5` (without the `-1`), `claude-mythos-5`, `claude-mythos-preview`.
-2. **Check the alias defaults** by reading any provider-specific env-var pins (`ANTHROPIC_DEFAULT_*_MODEL`).
+   Superseded IDs to flag: `claude-opus-5` (outside a deliberate `opus5` pin), `claude-opus-4-8` (outside a deliberate `opus48` pin), `claude-sonnet-5` (outside a deliberate `sonnet5` pin), `claude-sonnet-4-6`, `claude-fable-5` (without the `-1`), `claude-mythos-5`, `claude-mythos-preview`.
+2. **Check the alias defaults** by reading any provider-specific env-var pins (`ANTHROPIC_DEFAULT_*_MODEL`) — confirm they point at the 5.5 line (`claude-opus-5-5` / `claude-sonnet-5-5`), not the superseded 5-generation ids.
 3. **Confirm current model line** against [platform.claude.com](https://platform.claude.com/docs/en/models/overview) — don't trust this file's table alone; it ages.
-4. **Verify Claude Code version** with `claude --version` against the §8 table if any agent uses `effort: xhigh`, `effort: max`, or `model: claude-fable-5-1` (requires v2.1.257+).
+4. **Verify Claude Code version** with `claude --version` against the §8 table if any agent uses `effort: xhigh`, `effort: max`, `model: claude-fable-5-1` (requires v2.1.257+), or relies on the bare `opus`/`sonnet` aliases resolving to the current 5.5 line (v2.1.280+ / v2.1.284+ — behavior on older versions is not verified here; don't assume a graceful fallback).
 5. **Skill/agent frontmatter using aliases** (`model: sonnet`) — usually fine, auto-updates. Skill/agent frontmatter using pinned IDs (`model: claude-opus-4-6`, `model: claude-fable-5-1`) — audit each one.
 6. **Any Fable 5.1 usage** — verify `stop_reason` is checked before reading `content`; confirm account retention policy allows Covered Models; re-baseline `max_tokens` and cost estimates with `count_tokens`.
 7. **Prefix-match check on the gate.** `fable-gate.sh` must match Fable IDs by **prefix**, not exact string. An exact `claude-fable-5` match silently fails to gate `claude-fable-5-1`, letting a premium model dispatch ungated. Re-verify this whenever a point release ships.
-8. **Policy-key vs SDK-alias namespaces** (§2) — confirm no bare `opus` key has crept back into the policy namespace.
+8. **Policy-key vs SDK-alias namespaces** (§2) — confirm no bare `opus` key has crept back into the policy namespace, and that the downgrade chain (`fable5 → opus55 → opus5 → opus48`) is complete wherever it is mirrored (core `model-policy.ts`, the mobile mirror, `fable-gate.sh`, `statusline-model.sh`) — a mirror missing `opus55` will mis-key or silently no-op on any request for the current ceiling.
 
 Historical pins in `.prism/shared/docs/`, `.prism/shared/research/`, or `.prism/shared/evals/` style notes are time capsules — leave them alone unless the user asks. Research docs date themselves intentionally.
 
@@ -312,3 +328,5 @@ Historical pins in `.prism/shared/docs/`, `.prism/shared/research/`, or `.prism/
 ---
 
 *Sources: [platform.claude.com — Models overview](https://platform.claude.com/docs/en/models/overview), [Pricing](https://platform.claude.com/docs/en/about-claude/pricing), [Effort](https://platform.claude.com/docs/en/build-with-claude/effort), [Model IDs and versioning](https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions), [Migrating to Claude Opus 5](https://platform.claude.com/docs/en/models/opus-5/migration-guide), and Claude Code release tags v2.1.197 / v2.1.219 / v2.1.257. Retrieved 2026-09-02.*
+
+*2026-09-30 delta pass — Opus 5.5 / Sonnet 5.5: [Opus 5.5 overview](https://platform.claude.com/docs/en/models/opus-5-5/overview), [Sonnet 5.5 overview](https://platform.claude.com/docs/en/models/sonnet-5-5/overview), [Sonnet 5 overview](https://platform.claude.com/docs/en/models/sonnet-5/overview) (comparison table), [Claude Code changelog](https://code.claude.com/docs/en/changelog) (v2.1.280, v2.1.284). Full sourcing and the corrections found along the way: `.prism/shared/research/2026-09-30-claude-codex-model-roster.md`. Retrieved 2026-09-30.*

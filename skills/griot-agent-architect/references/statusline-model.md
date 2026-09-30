@@ -2,8 +2,11 @@
 
 `scripts/statusline-model.sh` is a Claude Code **statusLine** command that renders the
 active model and its Model Control Plane approval mode as a compact segment, printed
-LOUD when a premium model (opus5 / fable5) is active so a costly model never runs
-silently in the corner.
+LOUD when a premium model (opus55 / opus5 / fable5) is active so a costly model never
+runs silently in the corner. `opus55` (the current Opus 5.5 ceiling) is checked before
+`opus5` in the script's own matching order — the `opus55` id pattern is a substring of
+the `opus5` one, so checking the more specific pattern first is load-bearing, not
+stylistic (see the comment block at the top of the script).
 
 - **ember (bold orange)** — premium model, mode `ask` / `allow` / `skip`
 - **red (bold)** — premium model, mode `deny` (it will be downgraded)
