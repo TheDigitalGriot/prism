@@ -2362,9 +2362,21 @@ class ClaudeAgentSession implements AgentSession {
         // always an Anthropic id). Only the deny→downgrade case substitutes:
         // allow/skip/ask-resolved decisions carry `decision.model === requested`
         // in policy-key space, which must NOT overwrite the real base.model.
-        if (decision.downgradedFrom === "opus5" || decision.downgradedFrom === "fable5") {
+        if (
+          decision.downgradedFrom === "opus55" ||
+          decision.downgradedFrom === "opus5" ||
+          decision.downgradedFrom === "fable5"
+        ) {
+          // 2026-09-30: added "opus55" above AND to the map below. Without the
+          // condition change, a denial of the new top rung (opus55, added for the
+          // Opus 5.5 refresh) would fall through this whole block silently — the
+          // deny would be recorded in telemetry but base.model would be left
+          // whatever the caller already requested, so the model would keep
+          // running. A governance decision that isn't applied is worse than no
+          // gate at all: it looks enforced and isn't.
           const sdkIdForPolicyKey: Record<string, string> = {
             fable5: "claude-fable-5-1",
+            opus55: "claude-opus-5-5",
             opus5: "claude-opus-5",
             // Floor of the downgrade chain: the policy key "opus48" must map to a
             // concrete Anthropic model id the SDK will accept — a bare alias is not a

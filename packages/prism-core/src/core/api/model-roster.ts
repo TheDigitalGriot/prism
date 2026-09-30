@@ -12,14 +12,21 @@
  * codebase deliberately keeps apart (policy keys vs SDK aliases — see
  * model-config.md §2).
  *
- * CURRENCY: every fact here was verified 2026-09-06 against primary sources; see
- * `.prism/shared/research/2026-09-06-codex-model-roster.md` for URLs and the five
- * corrections that pass made to the planning assumptions. The model line moves
- * quarterly at best and weekly at worst — re-verify before trusting it.
+ * CURRENCY: base roster verified 2026-09-06; see `.prism/shared/research/
+ * 2026-09-06-codex-model-roster.md`. Re-verified and updated 2026-09-30 for the
+ * GPT-6 generation (astra/6.1-sol/luna) — see `.prism/shared/research/
+ * 2026-09-30-claude-codex-model-roster.md` for URLs and corrections from THIS
+ * pass. The 5.6 family and earlier entries were NOT re-verified this pass
+ * ("resume, don't redo") — re-check before trusting anything not touched below.
+ * The model line moves quarterly at best and weekly at worst.
  */
 
-/** Effort values are the LOWERCASE API/config values, never the UI display labels. */
-export type EffortLevel = "minimal" | "low" | "medium" | "high" | "xhigh" | "max"
+/**
+ * Effort values are the LOWERCASE API/config values, never the UI display labels.
+ * `minimal` (5.6 generation) and `none` (gpt-6-luna only, verified 2026-09-30) are
+ * DIFFERENT values, not a rename across generations — both are real and coexist.
+ */
+export type EffortLevel = "none" | "minimal" | "low" | "medium" | "high" | "xhigh" | "max"
 
 export type ModelStatus = "default" | "current" | "preview" | "legacy" | "retired"
 
@@ -39,9 +46,10 @@ export interface RosterEntry {
 }
 
 /**
- * OpenAI / Codex roster — verified 2026-09-06.
+ * OpenAI / Codex roster — base verified 2026-09-06, GPT-6 generation re-verified
+ * and updated 2026-09-30 (see the file-header CURRENCY note).
  *
- * FIVE CORRECTIONS this roster encodes, each of which the planning session had wrong:
+ * FIVE CORRECTIONS the 2026-09-06 pass encoded (still accurate, left as history):
  *  1. `gpt-6-astra` is the default only since 2026-09-04 (CLI v0.153.4) — two days.
  *  2. `gpt-5.4` / `gpt-5.4-mini` are ALREADY RETIRED (2026-08-31 has passed), not
  *     "retiring". Routing must reject them.
@@ -53,23 +61,69 @@ export interface RosterEntry {
  *  5. `gpt-5.3-codex-spark` has NO per-token price — bundled into ChatGPT Pro.
  *     Its pricing is `null`, never an estimate.
  *
+ * THREE MORE CORRECTIONS from the 2026-09-30 pass (see
+ * .prism/shared/research/2026-09-30-claude-codex-model-roster.md):
+ *  6. `gpt-6-astra` is NO LONGER the default — `gpt-6.1-sol` became the Codex CLI
+ *     default with v0.159.0/0.159.1 ("near-Astra performance... at a lower cost").
+ *     Astra demoted to `current` (still the flagship, still reachable, just not
+ *     what a fresh install resolves to).
+ *  7. `gpt-6-luna` is a REAL, SEPARATE current-tier model (fast/cheap), not the
+ *     same thing as the older `gpt-5.6-luna` — both now coexist. It is the only
+ *     current-tier Codex model that accepts effort `none` (verified against its
+ *     own API docs page, not the general catalog page, which used ChatGPT UI
+ *     wording — "Light through Ultra" — for the same field).
+ *  8. `gpt-5.3-codex-spark` is now RETIRED (2026-09-14), not merely "preview" as
+ *     the 2026-09-06 entry had it — confirmed by direct primary-source check.
+ *
  * `ultra` is deliberately absent from every effort list: it is a Codex CLI/TUI
  * meta-selector, not an API value. It resolves via a documented model-aware
  * fallback (catalog override -> max -> highest supported -> medium, PR #41206).
  */
 export const OPENAI_ROSTER: readonly RosterEntry[] = [
   {
-    id: "gpt-6-astra",
+    id: "gpt-6.1-sol",
     provider: "openai",
     status: "default",
     effort: ["low", "medium", "high", "xhigh", "max"],
     contextWindow: 1_050_000,
     maxOutput: 128_000,
+    pricing: { input: 2, output: 10 },
+    notes:
+      "Codex CLI default since v0.159.0/0.159.1 (floor: 0.158.0 returns a 400 for " +
+      "this id). \"Near-Astra performance for complex work at a lower cost than " +
+      "Astra\" — the routine default; gpt-6-astra is the deliberate escalation. " +
+      "Cached input $0.10/MTok, cache write $2.50/MTok. Long-context surcharge " +
+      "above 272K input: 2x in/cache, 1.5x out, same rule as Astra and Luna.",
+  },
+  {
+    id: "gpt-6-astra",
+    provider: "openai",
+    status: "current",
+    effort: ["low", "medium", "high", "xhigh", "max"],
+    contextWindow: 1_050_000,
+    maxOutput: 128_000,
     pricing: { input: 10, output: 50 },
     notes:
-      "Codex CLI default since 2026-09-04 (v0.153.4). `max` on the Responses API; " +
+      "Flagship — \"most capable model for the most demanding work\", not the CLI " +
+      "default as of 2026-09-30 (gpt-6.1-sol is; see roster header correction #6). " +
+      "Cached input $1/MTok, cache write $12.50/MTok. `max` on the Responses API; " +
       "`none` is rejected. Long-context surcharge above 272K input: 2x in / 1.5x out " +
       "($20/$75) — cost is NOT a single per-token constant.",
+  },
+  {
+    id: "gpt-6-luna",
+    provider: "openai",
+    status: "current",
+    effort: ["none", "low", "medium", "high", "xhigh", "max"],
+    contextWindow: 1_050_000,
+    maxOutput: 128_000,
+    pricing: { input: 0.1, output: 0.5 },
+    notes:
+      "Fast/cheap current tier, verified 2026-09-30. The ONLY current-tier Codex " +
+      "model that accepts effort `none` — a genuine skip-reasoning fast path, not " +
+      "present on Astra or Sol. Cached input $0.01/MTok, cache write $0.125/MTok. " +
+      "Same >272K long-context surcharge rule as Astra/Sol. Not the same model as " +
+      "the older gpt-5.6-luna below — both currently coexist.",
   },
   {
     id: "gpt-5.6-sol",
@@ -104,13 +158,16 @@ export const OPENAI_ROSTER: readonly RosterEntry[] = [
   {
     id: "gpt-5.3-codex-spark",
     provider: "openai",
-    status: "preview",
+    status: "retired",
+    retiredOn: "2026-09-14",
     effort: [],
     contextWindow: 128_000,
     pricing: null,
     notes:
-      "ChatGPT Pro research preview. Not effort-tiered; tuned for speed (1000+ tok/s). " +
-      "NOT token-metered — bundled into Pro usage. Never estimate a price for it.",
+      "Retired 2026-09-14 (confirmed 2026-09-30, correction #8 above) — no longer in " +
+      "ChatGPT desktop, Codex CLI, or the IDE extension. Was a ChatGPT Pro research " +
+      "preview, not effort-tiered, tuned for speed (1000+ tok/s), NOT token-metered " +
+      "(bundled into Pro usage — never estimate a price for it).",
   },
   {
     id: "gpt-5.5",

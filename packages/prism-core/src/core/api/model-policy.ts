@@ -161,10 +161,16 @@ export interface ModelEvent {
  * NAMESPACE NOTE: these are POLICY keys, not SDK aliases. The bare key `opus`
  * was renamed to `opus48` so a policy key can never silently mean "whichever
  * Opus is current" — the SDK alias `opus` (claude-sdk.ts MODEL_IDS) resolves to
- * Opus 5 and is a separate namespace. See cl-plugin-structure/references/
+ * Opus 5.5 and is a separate namespace. See cl-plugin-structure/references/
  * model-config.md §2.
+ *
+ * `opus55` ADDED 2026-09-30 for the Opus 5.5 refresh, following the SAME pattern
+ * `opus48` already set: each generation gets its OWN permanent policy key, never
+ * an existing key silently reassigned to a newer model. `opus5` is NOT removed —
+ * it is now the legacy-but-reachable rung between `opus55` and `opus48`, exactly
+ * mirroring how `opus48` already sits below `opus5`.
  */
-export const DOWNGRADE_CHAIN = ["fable5", "opus5", "opus48"] as const
+export const DOWNGRADE_CHAIN = ["fable5", "opus55", "opus5", "opus48"] as const
 
 /** The always-runnable floor the chain terminates at. */
 export const FLOOR_MODEL = "opus48"
@@ -214,7 +220,8 @@ export const PROVIDER_CHAINS: Readonly<Record<string, readonly string[]>> = {
   anthropic: DOWNGRADE_CHAIN,
   // OpenAI/Codex, derived from the roster so a retired id can never appear in a
   // chain: `chainFor` filters by a DATE comparison, not a stale boolean.
-  // gpt-6-astra -> 5.6 sol -> terra -> luna. Terminates at luna; never crosses.
+  // As of 2026-09-30: gpt-6.1-sol (default) -> gpt-6-astra -> gpt-6-luna -> the
+  // 5.6 family (sol/terra/luna) -> gpt-5.5 (legacy). Never crosses providers.
   openai: OPENAI_CHAIN,
 }
 
@@ -264,14 +271,19 @@ export function providerOf(key: string, policy?: Policy): string {
 /**
  * Safe defaults when no store and no legacy flag exist.
  *
- * `opus5` defaults to "allow", NOT "ask": Opus 5 is the routine ceiling and is
+ * `opus55` defaults to "allow", NOT "ask": Opus 5.5 is the routine ceiling (as of
+ * the 2026-09-30 refresh; was Opus 5 under the same rule before it) and is
  * governed by the effort dial plus the xhigh|max one-shot confirm, never by a
  * model-level gate (locked in icm-fuse-CONTEXT.md, icm-fuse-opus5-PLAN.md, and
- * OPUS5-INCORPORATION-PLAN.md). A bus event is still emitted on every decision,
- * so un-gating does not reduce visibility. Only `fable5` carries the HITL gate.
+ * OPUS5-INCORPORATION-PLAN.md — the ruling was about the ROLE "routine ceiling",
+ * not the specific generation, so it carries forward unchanged). A bus event is
+ * still emitted on every decision, so un-gating does not reduce visibility. Only
+ * `fable5` carries the HITL gate. `opus5` (now legacy) carries no explicit entry
+ * here — like `opus48`, it falls through to the generic `?? "allow"` default in
+ * `effectiveMode`, which is the same behavior it always had.
  */
 const DEFAULT_MODE: ApprovalMode = "ask"
-const DEFAULT_OPUS5_MODE: ApprovalMode = "allow"
+const DEFAULT_OPUS_CEILING_MODE: ApprovalMode = "allow"
 const DEFAULT_HEADLESS: ApprovalMode = "allow"
 
 const VALID_MODES: ReadonlySet<string> = new Set(["ask", "allow", "deny", "skip"])
@@ -286,13 +298,13 @@ function normalizeMode(value: unknown): ApprovalMode | undefined {
     : undefined
 }
 
-/** Safe-default policy: opus5 = "allow", fable5 = "ask", allow headless, no overrides. */
+/** Safe-default policy: opus55 = "allow", fable5 = "ask", allow headless, no overrides. */
 function defaultPolicy(): Policy {
   return {
     version: 1,
     headlessDefault: DEFAULT_HEADLESS,
     models: {
-      opus5: { mode: DEFAULT_OPUS5_MODE },
+      opus55: { mode: DEFAULT_OPUS_CEILING_MODE },
       fable5: { mode: DEFAULT_MODE },
     },
     surfaces: {},

@@ -4,14 +4,15 @@
 # Called by the PreToolUse hook (matcher "Task") before each Task tool call.
 # Generalizes the original fable-only `fable.flag` gate into the Model Control
 # Plane policy (packages/prism-core/src/core/api/model-policy.ts): it now governs
-# BOTH premium models — opus5 and fable5 — applies each model's approval mode
-# (ask|allow|deny|skip) read from `.prism/local/model-policy.json`, and — in ALL
-# policy cases — EMITS a model-decision bus event so headless / Cowork runs are no
-# longer silent about which premium model ran.
+# the premium models — opus55, opus5, and fable5 — applies each model's approval
+# mode (ask|allow|deny|skip) read from `.prism/local/model-policy.json`, and — in
+# ALL policy cases — EMITS a model-decision bus event so headless / Cowork runs are
+# no longer silent about which premium model ran.
 #
 #   - The requested model comes from tool_input.model (an explicit Task override).
 #   - fable / claude-fable-5 / claude-fable-5-* -> policy model "fable5";
-#     opus5 / claude-opus-5 -> "opus5".
+#     opus55 / claude-opus-5-5 -> "opus55" (the current ceiling, since 2026-09-30);
+#     opus5 / claude-opus-5 -> "opus5" (previous ceiling, kept reachable).
 #     Every other model passes through untouched (no gate, no event).
 #     NOTE: Fable matching is by PREFIX, deliberately. An exact-string match on
 #     "claude-fable-5" silently FAILS to gate point releases like
@@ -20,7 +21,7 @@
 #   - mode allow|skip -> permissionDecision "allow" (runs; event emitted).
 #   - mode ask        -> permissionDecision "ask"   (human confirms; event emitted).
 #   - mode deny       -> permissionDecision "deny"  (blocked; event names the
-#     downgrade target from the fable5 -> opus5 -> opus48chain).
+#     downgrade target from the fable5 -> opus55 -> opus5 -> opus48 chain).
 #
 # Reads the PreToolUse payload ({tool_name, tool_input, ...}) as JSON on stdin.
 # JSON is parsed with node (no jq dependency; robust on Windows Git Bash), matching
@@ -59,6 +60,7 @@ fi
 POLICY_MODEL=""
 case "$MODEL" in
   fable|claude-fable-5|claude-fable-5-*) POLICY_MODEL="fable5" ;;
+  opus55|claude-opus-5-5)                POLICY_MODEL="opus55" ;;
   opus5|claude-opus-5)                   POLICY_MODEL="opus5" ;;
 esac
 
@@ -69,6 +71,8 @@ esac
 if [ -z "$POLICY_MODEL" ] && [ -n "$PAYLOAD" ]; then
   if printf '%s' "$PAYLOAD" | grep -Eq '"model"[[:space:]]*:[[:space:]]*"(fable|claude-fable-5(-[0-9]+)*)"'; then
     POLICY_MODEL="fable5"
+  elif printf '%s' "$PAYLOAD" | grep -Eq '"model"[[:space:]]*:[[:space:]]*"(opus55|claude-opus-5-5)"'; then
+    POLICY_MODEL="opus55"
   elif printf '%s' "$PAYLOAD" | grep -Eq '"model"[[:space:]]*:[[:space:]]*"(opus5|claude-opus-5)"'; then
     POLICY_MODEL="opus5"
   fi
@@ -91,8 +95,9 @@ fi
 # Resolve the decision + emit the event via node. This block MIRRORS
 # model-policy.ts minimally: readModelPolicy precedence (model-policy.json ->
 # legacy fable.flag -> safe defaults), effectiveMode (surface "cli" override wins),
-# the fable5 -> opus5 -> opus48downgrade chain, resolveStateDir precedence, and the
-# {type:"model-decision",...} event shape. It is wrapped in try/catch so ANY error
+# the fable5 -> opus55 -> opus5 -> opus48 downgrade chain, resolveStateDir
+# precedence, and the {type:"model-decision",...} event shape. It is wrapped in
+# try/catch so ANY error
 # degrades to an "allow" decision (fail-open) while still attempting the event.
 # It prints the full hookSpecificOutput JSON to stdout (the hook decision channel).
 POLICY_MODEL="$POLICY_MODEL" PROJECT_DIR="$PROJECT_DIR" node -e '
@@ -113,9 +118,9 @@ function readPolicy(){
     try{
       const f=JSON.parse(fs.readFileSync(path.join(root,".prism","local","fable.flag"),"utf8"));
       const on=f&&typeof f==="object"&&f.enabled===true;
-      return {headlessDefault:"allow",models:{opus5:{mode:"allow"},fable5:{mode:on?"ask":"deny"}},surfaces:{}};
+      return {headlessDefault:"allow",models:{opus55:{mode:"allow"},fable5:{mode:on?"ask":"deny"}},surfaces:{}};
     }catch(e2){
-      return {headlessDefault:"allow",models:{opus5:{mode:"allow"},fable5:{mode:"ask"}},surfaces:{}};
+      return {headlessDefault:"allow",models:{opus55:{mode:"allow"},fable5:{mode:"ask"}},surfaces:{}};
     }
   }
 }
@@ -143,7 +148,7 @@ function out(decision,reason){
 }
 try{
   const policy=readPolicy();
-  const CHAIN=["fable5","opus5","opus48"];
+  const CHAIN=["fable5","opus55","opus5","opus48"];
   const eff=m=>{
     const s=policy.surfaces[surface]&&policy.surfaces[surface][m]&&norm(policy.surfaces[surface][m].mode);
     if(s) return s;

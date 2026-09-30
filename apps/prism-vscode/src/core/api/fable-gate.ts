@@ -10,7 +10,7 @@
  * - Any non-policy model passes through unchanged (no modal, no event).
  * - Policy models are resolved per their mode (ask / allow / deny / skip). In
  *   VS Code an "ask" model prompts a native modal; a denial (or a dismissed
- *   modal) downgrades along the chain fable5 -> opus5 -> opus48.
+ *   modal) downgrades along the chain fable5 -> opus55 -> opus5 -> opus48.
  * - Fable 5 keeps its default rationale (capped weekly Max allowance) and, with
  *   no policy store present, back-compat derives its mode from the legacy
  *   `fable.flag` so nothing regresses.
@@ -28,23 +28,33 @@ const SURFACE = "vscode"
  * ModelName -> policy model id. Only these ModelNames are policy-gated.
  *
  * `opus` MUST be listed. Before the Sept 2026 alias flip it resolved to Opus 4.8
- * — the un-listed, always-runnable floor — so omitting it was correct. Post-flip
- * `opus` and `opus5` resolve to the SAME concrete id (claude-opus-5), so leaving
- * `opus` unmapped made every dispatch through the default alias skip the control
- * plane entirely: no mode applied and, worse, NO bus event. That silently broke
- * the invariant that every premium dispatch is observable.
+ * — the un-listed, always-runnable floor — so omitting it was correct. Since that
+ * flip `opus` has resolved to the CURRENT ceiling (now Opus 5.5, `opus55`), so
+ * leaving it unmapped would make every dispatch through the default alias skip
+ * the control plane entirely: no mode applied and, worse, NO bus event. That
+ * would silently break the invariant that every premium dispatch is observable.
+ *
+ * `opus55` ADDED 2026-09-30 for the Opus 5.5 refresh: `opus` now maps to it
+ * (matching the new SDK-alias target), not to `opus5`. `opus5` is KEPT
+ * policy-listed (not demoted to opus48's ungated-floor treatment) — a
+ * deliberately conservative choice: it already had governance and bus-event
+ * visibility, and removing that on a version bump is a behavior change nobody
+ * asked for. Flagged here for whoever next reviews this file to reconsider if
+ * `opus5` should eventually retire to the floor's treatment.
  *
  * `opus48` is deliberately absent — it is the chain floor and runs freely.
  */
 const MODELNAME_TO_POLICY: Partial<Record<ModelName, string>> = {
   fable: "fable5",
-  opus: "opus5",
+  opus: "opus55",
+  opus55: "opus55",
   opus5: "opus5",
 }
 
 /** Policy model id -> ModelName the caller understands. */
 const POLICY_TO_MODELNAME: Record<string, ModelName> = {
   fable5: "fable",
+  opus55: "opus55",
   opus5: "opus5",
   opus48: "opus48",
 }
@@ -53,10 +63,11 @@ const POLICY_TO_MODELNAME: Record<string, ModelName> = {
  * Per-model confirm rationale for the native modal. Fable's wording is
  * preserved verbatim (its default rationale is the capped weekly Max allowance).
  *
- * `opus5` has NO entry: Opus 5 is the routine ceiling and defaults to "allow",
- * governed by the effort dial plus the xhigh|max one-shot confirm rather than a
- * model-level gate. The entry is only reached if a user deliberately sets
- * opus5 -> "ask" in their own policy store, which the fallback wording covers.
+ * `opus55` and `opus5` have NO entry: the current ceiling (opus55) defaults to
+ * "allow", governed by the effort dial plus the xhigh|max one-shot confirm rather
+ * than a model-level gate; opus5 (legacy) likewise defaults to "allow" absent an
+ * explicit override. The entry is only reached if a user deliberately sets one of
+ * them to "ask" in their own policy store, which the fallback wording covers.
  */
 const RATIONALE: Record<string, string> = {
   fable5:

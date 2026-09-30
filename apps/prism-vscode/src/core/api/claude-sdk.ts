@@ -22,27 +22,48 @@ import {
 // ---------------------------------------------------------------------------
 
 /**
- * SDK alias -> pinned API model ID (Sept 2026 line).
+ * SDK alias -> pinned API model ID (Sept 2026 line, re-flipped 2026-09-30 for the
+ * Opus 5.5 / Sonnet 5.5 refresh — see .prism/shared/research/
+ * 2026-09-30-claude-codex-model-roster.md for the verified specs).
  *
  * NAMESPACE NOTE: these are SDK aliases, NOT policy keys. `opus` here is the
- * user-facing alias that agent frontmatter depends on, and the flip has landed —
- * it now resolves to Opus 5. The POLICY namespace (model-policy.ts) has no bare
- * `opus`; its keys are fable5 / opus5 / opus48. Keep the two straight; conflating
- * them is how config drift starts. See cl-plugin-structure/references/
- * model-config.md §2.
+ * user-facing alias that agent frontmatter depends on, and it now resolves to
+ * Opus 5.5. The POLICY namespace (model-policy.ts) has no bare `opus`; its keys
+ * are fable5 / opus55 / opus5 / opus48. Keep the two straight; conflating them is
+ * how config drift starts. See cl-plugin-structure/references/model-config.md §2.
+ *
+ * GENERATION-PIN CONVENTION (established by `opus48`, extended 2026-09-30):
+ * a NUMBERED alias (`opus48`, `opus5`, `opus55`) is a PERMANENT pin to that exact
+ * generation — its meaning never drifts when a newer one ships. Only the BARE
+ * routing name (`opus`, `sonnet`) tracks "whichever is current." When Opus moved
+ * 5 -> 5.5, `opus5` stayed pinned to the (now legacy) claude-opus-5 rather than
+ * silently starting to mean 5.5 — exactly how `opus48` stayed pinned to Opus 4.8
+ * when 5 arrived. `opus55` is new: the explicit, permanent pin to Opus 5.5.
  *
  * Every ID below is a PINNED SNAPSHOT — from the 4.6 generation on, a dateless ID
- * is not an evergreen pointer. Haiku is the only tier left with real
- * alias -> dated-snapshot indirection.
+ * is not an evergreen pointer... EXCEPT that Anthropic's own docs for Opus 5.5 and
+ * Sonnet 5.5 (checked 2026-09-30) show ONLY the bare dateless id on every platform
+ * with no alternate dated variant anywhere — unlike Haiku 4.5's real
+ * alias -> dated-snapshot indirection. Recorded as observed; not resolved into a
+ * rule here (flagged in the research doc for whoever owns model-config.md next).
  */
 export const MODEL_IDS = {
-  /** Routine ceiling. `opus`/`best` resolve here as of the Sept 2026 flip. */
-  opus: "claude-opus-5",
-  /** Explicit synonym for the ceiling — same model as `opus`. */
+  /** Routine ceiling. `opus`/`best` resolve here as of the 2026-09-30 flip to Opus 5.5. */
+  opus: "claude-opus-5-5",
+  /** Explicit, permanent pin to Opus 5.5 — same model as bare `opus` today. */
+  opus55: "claude-opus-5-5",
+  /**
+   * Permanent pin to the PREVIOUS ceiling (Opus 5), same role `opus48` plays for
+   * Opus 4.8. Kept reachable for A/B eval and reproducible pins — not a routing
+   * target, and its meaning does NOT track "opus" going forward.
+   */
   opus5: "claude-opus-5",
   /** Legacy, kept reachable for A/B eval and reproducible pins. Not a routing target. */
   opus48: "claude-opus-4-8",
-  sonnet: "claude-sonnet-5",
+  /** General work. `sonnet` resolves here as of the 2026-09-30 flip to Sonnet 5.5. */
+  sonnet: "claude-sonnet-5-5",
+  /** Permanent pin to the PREVIOUS Sonnet generation (Sonnet 5). */
+  sonnet5: "claude-sonnet-5",
   haiku: "claude-haiku-4-5-20251001",
   /** HITL-gated escalation only — never a resting default. */
   fable: "claude-fable-5-1",

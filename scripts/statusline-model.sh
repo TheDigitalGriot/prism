@@ -4,15 +4,19 @@
 # Configured as a `statusLine` command (see references/statusline-model.md), Claude
 # Code pipes a status JSON to this script on stdin on every prompt. The JSON carries
 # the ACTIVE model ({model:{id,display_name}}) and the workspace dir. This segment:
-#   - maps the active model to a policy model id (claude-opus-5 -> opus5,
-#     claude-fable-5 / claude-fable-5-1 -> fable5; the /fable-?5/ test matches
-#     point releases by prefix, so 5.1 is never missed);
+#   - maps the active model to a policy model id (claude-opus-5-5 -> opus55,
+#     claude-opus-5 -> opus5, claude-fable-5 / claude-fable-5-1 -> fable5; the
+#     /fable-?5/ test matches point releases by prefix, so 5.1 is never missed).
+#     The opus55 check MUST run before the opus5 check — /opus-?5/ alone matches
+#     "claude-opus-5-5" too (it is a substring match, not anchored to the end), so
+#     checking the more specific 5-5 pattern first is what keeps the two apart;
 #   - reads that model's approval mode from `.prism/local/model-policy.json`
 #     (mirroring model-policy.ts readModelPolicy / effectiveMode minimally — a
 #     statusLine script cannot import the TypeScript core);
 #   - prints a compact "<model> · <mode>" segment, LOUD (bold ANSI ember, escalating
 #     to red for a denied model) when the active model is a premium model
-#     (opus5 / fable5) so a costly model is never running silently in the corner.
+#     (opus55 / opus5 / fable5) so a costly model is never running silently in the
+#     corner.
 #
 # Non-premium models print a quiet, dimmed name. Fail-safe: no stdin, no node, or a
 # malformed policy degrades to a quiet segment (never a crash — a broken statusLine
@@ -40,6 +44,9 @@ let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{
   const root=ws.project_dir||ws.current_dir||j.cwd||process.cwd();
   let pm="";
   if(/fable-?5/i.test(id)||/fable/i.test(name)) pm="fable5";
+  // MUST be checked before the plain opus5 test below: /opus-?5/ alone matches
+  // inside "claude-opus-5-5" too (substring, not end-anchored).
+  else if(/opus-?5-5/i.test(id)||/opus\s*5\.5/i.test(name)) pm="opus55";
   else if(/opus-?5/i.test(id)||/opus\s*5/i.test(name)) pm="opus5";
   if(!pm){
     if(!name) process.exit(0);
@@ -56,11 +63,14 @@ let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{
     try{
       const f=JSON.parse(fs.readFileSync(path.join(root,".prism","local","fable.flag"),"utf8"));
       const on=f&&typeof f==="object"&&f.enabled===true;
-      models={opus5:{mode:"allow"},fable5:{mode:on?"ask":"deny"}};
-    }catch(e2){models={opus5:{mode:"allow"},fable5:{mode:"ask"}};}
+      models={opus55:{mode:"allow"},fable5:{mode:on?"ask":"deny"}};
+    }catch(e2){models={opus55:{mode:"allow"},fable5:{mode:"ask"}};}
   }
   const so=surfaces.cli&&surfaces.cli[pm]&&norm(surfaces.cli[pm].mode);
-  const mode=so||(models[pm]&&norm(models[pm].mode))||(pm==="opus5"?"allow":"ask");
+  // opus55 (current ceiling) and opus5 (legacy pin) both fall through to "allow"
+  // absent an explicit override — opus5 carries no explicit default entry, same
+  // as opus48 never has, only fable5 defaults to "ask".
+  const mode=so||(models[pm]&&norm(models[pm].mode))||((pm==="opus55"||pm==="opus5")?"allow":"ask");
   const color=mode==="deny"?"\x1b[1;38;5;196m":"\x1b[1;38;5;208m";
   process.stdout.write(color+"◆ "+pm+" · "+mode+"\x1b[0m");
 });

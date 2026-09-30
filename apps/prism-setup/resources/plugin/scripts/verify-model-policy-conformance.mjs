@@ -41,15 +41,20 @@ const FILES = {
   example: "model-policy.example.json",
 }
 
-/** The single source of truth this gate enforces. Update here when the line moves. */
+/**
+ * The single source of truth this gate enforces. Update here when the line moves.
+ * Updated 2026-09-30 for the Opus 5.5 / Sonnet 5.5 refresh: the chain gained a
+ * FOURTH rung (opus55, the new ceiling) rather than reassigning opus5's meaning —
+ * see the generation-pin convention comment in claude-sdk.ts.
+ */
 const EXPECTED = {
-  chain: ["fable5", "opus5", "opus48"],
+  chain: ["fable5", "opus55", "opus5", "opus48"],
   floor: "opus48",
-  modes: { opus5: "allow", fable5: "ask" },
+  modes: { opus55: "allow", fable5: "ask" },
   headlessDefault: "allow",
   currentIds: [
-    "claude-opus-5",
-    "claude-sonnet-5",
+    "claude-opus-5-5",
+    "claude-sonnet-5-5",
     "claude-fable-5-1",
     "claude-haiku-4-5-20251001",
   ],
@@ -74,19 +79,25 @@ function read(key) {
 const src = Object.fromEntries(Object.keys(FILES).map((k) => [k, read(k)]))
 
 // ── 1. Downgrade chain: same members, same order, in all three copies that have one
-const chainRe = /\[\s*"fable5"\s*,\s*"opus5"\s*,\s*"([a-z0-9]+)"\s*\]/
+//      Matches ANY length so a fifth rung is a data change here, not a regex
+//      rewrite — the shape itself (fable5 first, opus48 last) is asserted below,
+//      not baked into the pattern.
+const chainRe = /\[\s*((?:"[a-z0-9]+"\s*,\s*)+"[a-z0-9]+")\s*\]/
+const parseChain = (m) => m?.[1] ? m[1].split(",").map((s) => s.trim().replace(/"/g, "")) : null
 for (const key of ["core", "mobile"]) {
   if (!src[key]) continue
-  const m = src[key].match(chainRe)
-  if (!m) fail(key, "DOWNGRADE_CHAIN not found or not in the expected [fable5, opus5, X] shape")
-  else if (m[1] !== EXPECTED.chain[2])
-    fail(key, `chain terminates at "${m[1]}", expected "${EXPECTED.chain[2]}"`)
+  const m = src[key].match(new RegExp(`DOWNGRADE_CHAIN\\s*(?::[^=]+)?=\\s*${chainRe.source}`))
+  const chain = parseChain(m)
+  if (!chain) fail(key, "DOWNGRADE_CHAIN not found or not in the expected [\"a\", \"b\", ...] shape")
+  else if (JSON.stringify(chain) !== JSON.stringify(EXPECTED.chain))
+    fail(key, `chain is [${chain.join(", ")}], expected [${EXPECTED.chain.join(", ")}]`)
 }
 if (src.gate) {
-  const m = src.gate.match(/CHAIN\s*=\s*\[\s*"fable5"\s*,\s*"opus5"\s*,\s*"([a-z0-9]+)"\s*\]/)
-  if (!m) fail("gate", "CHAIN not found in the embedded node block")
-  else if (m[1] !== EXPECTED.chain[2])
-    fail("gate", `chain terminates at "${m[1]}", expected "${EXPECTED.chain[2]}"`)
+  const m = src.gate.match(new RegExp(`CHAIN\\s*=\\s*${chainRe.source}`))
+  const chain = parseChain(m)
+  if (!chain) fail("gate", "CHAIN not found in the embedded node block")
+  else if (JSON.stringify(chain) !== JSON.stringify(EXPECTED.chain))
+    fail("gate", `chain is [${chain.join(", ")}], expected [${EXPECTED.chain.join(", ")}]`)
 }
 
 // ── 2. Floor model
@@ -117,8 +128,8 @@ for (const key of ["gate", "statusline", "mobile"]) {
   }
 }
 if (src.core) {
-  if (!/DEFAULT_OPUS5_MODE\s*:\s*ApprovalMode\s*=\s*"allow"/.test(src.core))
-    fail("core", 'DEFAULT_OPUS5_MODE must be "allow" — Opus 5 carries no model-level gate')
+  if (!/DEFAULT_OPUS_CEILING_MODE\s*:\s*ApprovalMode\s*=\s*"allow"/.test(src.core))
+    fail("core", 'DEFAULT_OPUS_CEILING_MODE must be "allow" — the routine ceiling carries no model-level gate')
   if (!/DEFAULT_MODE\s*:\s*ApprovalMode\s*=\s*"ask"/.test(src.core))
     fail("core", 'DEFAULT_MODE must be "ask" — it is the Fable gate default')
 }
@@ -170,13 +181,15 @@ if (src.mobile && !/startsWith\("claude-fable-5-"\)/.test(src.mobile))
 if (src.statusline && !/fable-\?5/.test(src.statusline))
   fail("statusline", "model regex must match Fable point releases")
 
-// ── 5. The `opus` alias must be policy-governed on the vscode surface.
-//      Post-alias-flip `opus` resolves to claude-opus-5 — the same id as `opus5` —
-//      so omitting it means the default alias skips the plane and emits NO event.
+// ── 5. The `opus` alias must be policy-governed on the vscode surface, mapped to
+//      whichever policy key is the CURRENT ceiling. Post-alias-flip `opus`
+//      resolves to the current ceiling id — so omitting it, or pointing it at a
+//      demoted rung, means the default alias skips the plane and emits NO event.
 if (src.vscodeGate) {
   const map = src.vscodeGate.match(/MODELNAME_TO_POLICY[^=]*=\s*\{([^}]*)\}/s)?.[1] ?? ""
-  if (!/\bopus\s*:\s*"opus5"/.test(map))
-    fail("vscodeGate", 'MODELNAME_TO_POLICY must map `opus: "opus5"` — otherwise the default alias dispatches ungoverned and emits no bus event')
+  const ceilingKey = EXPECTED.chain[1] // chain[0] is fable5; the ceiling is the first non-Fable rung
+  if (!new RegExp(`\\bopus\\s*:\\s*"${ceilingKey}"`).test(map))
+    fail("vscodeGate", `MODELNAME_TO_POLICY must map opus: "${ceilingKey}" (the current ceiling) — otherwise the default alias dispatches ungoverned and emits no bus event`)
   if (!/\bfable\s*:\s*"fable5"/.test(map)) fail("vscodeGate", "MODELNAME_TO_POLICY must map fable")
 }
 
@@ -191,6 +204,53 @@ if (src.sdk) {
   // claude-fable-5 without the -1 suffix is the exact bug this gate exists for.
   if (/"claude-fable-5"/.test(src.sdk))
     fail("sdk", 'MODEL_IDS pins "claude-fable-5" — superseded by "claude-fable-5-1"')
+}
+
+// ── 7. ARKESTRA: the provider axis must not let a chain cross providers.
+//
+//      THE DEFECT THIS ENCODES, reproduced 2026-09-06 by executing the real logic:
+//        requested=gpt:gpt-6-astra   -> downgraded to: opus5
+//        requested=local:griotmodel  -> downgraded to: opus5
+//      `nextRunnable` did `DOWNGRADE_CHAIN.indexOf(requested)`, which returns -1
+//      for any `${provider}:${model}` key, so `start` became 0 and the walk began
+//      at the TOP of the Anthropic chain. A Codex request silently became an
+//      Anthropic one billed to the Max subscription; a LOCAL model escaped to the
+//      cloud, breaking local-first. It never even reached the floor.
+//
+//      That was an OBSERVATION. This makes it a CHECK — the hard form, per the
+//      ontology's SOFT FIXES ROT rule. It cannot ship silently again.
+for (const key of ["core", "mobile"]) {
+  if (!src[key]) continue
+  // (a) the provider axis exists at all
+  if (!/PROVIDER_CHAINS/.test(src[key])) {
+    fail(key, "PROVIDER_CHAINS missing — the provider axis is not present; a denied non-Anthropic model would walk the Anthropic chain")
+    continue
+  }
+  if (!/PROVIDER_FLOORS/.test(src[key]))
+    fail(key, "PROVIDER_FLOORS missing — a chain must terminate at its OWN provider's floor")
+  // (b) anthropic must still map to the canonical chain + floor
+  if (!/anthropic\s*:\s*DOWNGRADE_CHAIN/.test(src[key]))
+    fail(key, "PROVIDER_CHAINS.anthropic must be DOWNGRADE_CHAIN itself — Anthropic behaviour must stay byte-identical")
+  if (!/anthropic\s*:\s*FLOOR_MODEL/.test(src[key]))
+    fail(key, "PROVIDER_FLOORS.anthropic must be FLOOR_MODEL")
+  // (c) THE INVARIANT: nextRunnable must fail closed, never fall through to a
+  //     global chain. A `return FLOOR_MODEL` with no provider lookup is the
+  //     regression — it is precisely the old behaviour.
+  const nr = src[key].match(/function nextRunnable[\s\S]{0,1400}?\n\}/)?.[0] ?? ""
+  if (!nr) fail(key, "could not locate nextRunnable to verify the provider guard")
+  else {
+    if (!/providerOf\(/.test(nr))
+      fail(key, "nextRunnable does not resolve the requested key's provider — it can cross providers")
+    if (!/PROVIDER_CHAINS\[/.test(nr))
+      fail(key, "nextRunnable does not walk a PER-PROVIDER chain")
+    if (!/return null/.test(nr))
+      fail(key, "nextRunnable never returns null — it cannot fail closed, so an unmapped provider borrows another chain")
+    if (/return\s+FLOOR_MODEL\s*(;|\n|$)/.test(nr))
+      fail(key, "nextRunnable returns the global FLOOR_MODEL unconditionally — that is the pre-Arkestra defect (a Codex/local model lands on Anthropic)")
+  }
+  // (d) the fail-closed signal must be on the decision, or callers cannot honour it
+  if (!/blocked\??\s*:\s*boolean/.test(src[key]))
+    fail(key, "ModelDecision has no `blocked` field — callers cannot distinguish 'fail closed' from 'ran fine'")
 }
 
 // ── Report

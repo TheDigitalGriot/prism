@@ -65,8 +65,10 @@ interface ModelDecisionInput {
 
 // Mirrors packages/prism-core/src/core/api/model-policy.ts. The bare policy key
 // `opus` was renamed `opus48` so a policy key can never silently mean "whichever
-// Opus is current" — SDK aliases are a separate namespace.
-const DOWNGRADE_CHAIN = ["fable5", "opus5", "opus48"] as const;
+// Opus is current" — SDK aliases are a separate namespace. `opus55` added
+// 2026-09-30 for the Opus 5.5 refresh, same pattern: each generation gets its own
+// permanent key; `opus5` stays pinned to (now legacy) Opus 5, never reassigned.
+const DOWNGRADE_CHAIN = ["fable5", "opus55", "opus5", "opus48"] as const;
 const FLOOR_MODEL = "opus48";
 
 // ARKESTRA provider axis — mirrors packages/prism-core/src/core/api/model-policy.ts.
@@ -116,9 +118,11 @@ function normalizeMode(value: unknown): ApprovalMode | undefined {
 function defaultPolicy(): Policy {
   return {
     headlessDefault: "allow",
-    // opus5 = "allow": Opus 5 is the routine ceiling, governed by the effort dial
-    // plus the xhigh|max one-shot confirm, never by a model-level gate.
-    models: { opus5: { mode: "allow" }, fable5: { mode: "ask" } },
+    // opus55 = "allow": Opus 5.5 is the routine ceiling (2026-09-30 refresh; was
+    // Opus 5 under the same rule before), governed by the effort dial plus the
+    // xhigh|max one-shot confirm, never by a model-level gate. opus5 (legacy)
+    // carries no explicit entry, same as opus48 — falls through to "allow".
+    models: { opus55: { mode: "allow" }, fable5: { mode: "ask" } },
     surfaces: {},
   };
 }
@@ -311,6 +315,12 @@ export function policyKeyForModel(provider: string, model: string): string {
   // point releases like "claude-fable-5-1", letting a premium model run ungated.
   if (model === "fable" || model === "claude-fable-5" || model.startsWith("claude-fable-5-"))
     return "fable5";
+  // 2026-09-30: added opus55 for the Opus 5.5 refresh. Without this, a request
+  // carrying the literal id "claude-opus-5-5" (once claude-sdk.ts's `opus` alias
+  // flips to it) would fall through to the generic `${provider}:${model}` key
+  // instead of the correct chain rung — the exact "policy key doesn't recognize
+  // the new pinned id" gap this onboarding pass exists to close.
+  if (model === "opus55" || model === "claude-opus-5-5") return "opus55";
   if (model === "opus5" || model === "claude-opus-5") return "opus5";
   if (model === "opus48" || model === "claude-opus-4-8") return "opus48";
   return `${provider}:${model}`;
