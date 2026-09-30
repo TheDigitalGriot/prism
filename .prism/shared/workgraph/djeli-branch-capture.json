@@ -87,7 +87,8 @@
     "amendPass81": "Retroactive: griot.md's Selectah-board section (commit 4521b39, 2026-09-23) confirmed live on device but had never been recorded as a node. No correction - work landed clean, just unfiled.",
     "amendPass82": "Code-Intel Three-Way Phase A/B: drift-18 closed, Door 2 (.mcp.json embeddings extra) fixed+verified, Door 3/s-4bee6675 (I15 split + proxy-verdict) fixed, s-10c2e47d (trace_path/I16) fixed, a real commit-race defect found and flagged, CRLF cross-community trace done.",
     "amendPass83": "N71 re-verified live (commit 6f1abd5), does not currently reproduce; parked pending either a recurrence or an understood root cause.",
-    "amendPass84": "Correcting amendPass83's own premature N71 closure: reproduced live, minutes later, in the same session. list_projects' enumeration is unreliable even when index_status(by name) and the per-project index are both healthy. Reopened."
+    "amendPass84": "Correcting amendPass83's own premature N71 closure: reproduced live, minutes later, in the same session. list_projects' enumeration is unreliable even when index_status(by name) and the per-project index are both healthy. Reopened.",
+    "amendPass85": "Correcting N152's own 'went beyond scope, done' claim - it was not done. griot-agent-architect run for real (not hand-simulated) found 16 more live trace_call_path sites. All fixed now, commit e323ab4."
   },
   "groups": [
     {
@@ -6388,6 +6389,12 @@
       "verification": {
         "evidence": "Two defects in one check, landed together: (1) story s-4bee6675's own combined-verdict bug - bad.every(b=>b.startsWith('vectorSearch')) suppressed the code-review-graph fallback the moment a second capability also failed; restructured to one rec() row per capability (I15.graph/I15.fts/I15.vectorSearch). (2) A PROXY VERDICT found live-testing this session: the vectorSearch fallback treated .code-review-graph/graph.db merely EXISTING as proof semantic search works, when the real property is what .mcp.json actually launches (N151). Fixed to check the AUTHORED registry (.mcp.json's args) instead of file presence. Falsified both ways in a scratch test (reverting the [embeddings] extra flips I15.vectorSearch PASS->FAIL with the exact reason; restoring flips back). Committed ee916cf (landed under an unrelated automated commit message due to a concurrent device-side sync process racing this session's slow pre-commit hook - see N153). Story s-4bee6675 marked complete in .prism/stories/griot-codeintel-hygiene/stories.json with this sha.",
         "result": "done - node scripts/verify-code-intel.mjs: 8 pass / 0 fail, re-verified after landing"
+      },
+      "correction": {
+        "correctedAt": "2026-09-30 amendPass85",
+        "wasClaimed": "codebase-memory-mcp trace_call_path -> trace_path naming drift + 11-vs-14 tool count (s-10c2e47d) closed. Went beyond the story's declared file list (12 more trace_call_path sites in the integration doc, fixed). Result: done - node scripts/verify-code-intel.mjs: 8 pass / 0 fail.",
+        "isTrue": "The rename was still genuinely incomplete. Found by actually running /prism:griot-agent-architect headless against the real committed changes (not hand-simulated) - 16 more live instruction sites still called the nonexistent trace_call_path: agents/codebase-analyzer.md, commands/create_plan.md, commands/decompose_plan.md, skills/spectrum, skills/prism-plan, skills/prism-decompose, skills/prism-validate, skills/prism-subagent (+ its review-decision-matrix.md reference), and every one of their apps/prism-setup mirrors. verify-code-intel.mjs's I16 gate only ever checked the 3 files the story originally named - it never claimed repo-wide coverage, and I reported the fix as more complete than it was. Now genuinely fixed: all 16 sites corrected, swept with grep (zero remaining in agents/commands/skills), gate re-run (8 pass / 0 fail), claude plugin validate . clean, GitNexus blast radius 0. Committed e323ab4, pushed.",
+        "cause": "I15's earlier proxy-verdict lesson (trust the live check, not a hardcoded assumption) was not applied to my OWN 'went beyond scope' claim - I grepped the one file I happened to be reading (the integration doc) and reported that as the full sweep, without grepping the whole live-instruction surface (agents/commands/skills) the way this correction's own fix finally did. The actual, complete discovery only happened when I stopped hand-simulating griot-agent-architect's review and ran it for real."
       }
     },
     {
@@ -9827,6 +9834,14 @@
       "newEdges": 0,
       "corrections": [
         "N71"
+      ],
+      "refused": []
+    },
+    "amendPass85_2026_09_30": {
+      "newNodes": [],
+      "newEdges": 0,
+      "corrections": [
+        "N152"
       ],
       "refused": []
     }
