@@ -126,6 +126,16 @@
     "RESOLVED 2026-09-29: sync target = both, on separate gates -- CLI's own self-hosted caches AND digital-griot-marketplace, treated as two independent Stage-0 targets.",
     "RESOLVED 2026-09-29: CLI upgrade approved after verifying via web search that `claude update` only replaces the standalone binary at ~/.local/bin/claude.exe and never touches ~/.claude/plugins or settings.json. Backup taken to ~/.claude-preupdate-backup-20260929/ (settings.json, installed_plugins.json) before running. Ran `claude update`: 2.1.270 -> 2.1.285. Post-update diff of both backed-up files vs live: IDENTICAL. No data loss."
   ],
+  "stage1Complete": {
+    "heartbeat": "HB-S1-REBASELINE-OK",
+    "griotPlugins": {
+      "prism@prism-marketplace": {"version": "4.17.3", "status": "enabled", "note": "single-tool mirror TheDigitalGriot/prism-plugin ALSO synced this pass (not originally named in the handoff's Stage 0 scope, but confirmed as a genuine 4th channel via the new CHANNELS gate)"},
+      "cinopsis@cinopsis": {"version": "2.8.0", "status": "enabled", "note": "forced fresh via uninstall+reinstall to bypass the version-match-but-stale-content bug (drift 173)"},
+      "fragment@fragment-plugin": {"version": "4.4.0", "status": "enabled", "note": "marketplace refreshed, already current -- verified via direct `git ls-remote` against TheDigitalGriot/fragment-plugin, not just the CLI's own \"already at latest\" message"}
+    },
+    "installedPluginsJsonHealth": "1 unrelated suspect record (explanatory-output-style@claude-plugins-official, missing gitCommitSha, an April-dated Anthropic-official plugin -- out of Griot-plugin scope, not blocking)",
+    "note": "Fragment's OWN upstream sync pipeline (whether TheDigitalGriot/fragment-plugin itself is current relative to GriotApps/Fragment's authoring flow) was NOT audited -- that repo has no sync script and was never named in Stage 0's scope (only prism-marketplace, cinopsis-marketplace, digital-griot-mcp were). Flagging as a possible open question for Gavin, not treating it as a Stage 1 gap."
+  },
   "stage1CliUpgrade": {
     "status": "done",
     "before": "2.1.270",
