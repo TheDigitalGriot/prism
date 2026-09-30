@@ -67,7 +67,7 @@ When codebase-memory-mcp is available (check via list_projects), prefer
 graph tools for understanding code structure:
 
 1. Run get_graph_schema() FIRST for orientation
-2. Use trace_call_path(direction="both") to understand relationships
+2. Use trace_path(direction="both") to understand relationships
 3. Use get_code_snippet() to read specific functions by qualified name
 4. Use query_graph() for cross-service flow analysis
 5. Fall back to Read tool ONLY for detailed implementation analysis

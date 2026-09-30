@@ -60,7 +60,7 @@ REVIEWERS GET: diff + spec excerpt + raised_issues — nothing else.
 - **Repeated-issue detection** — if a reviewer raises an issue already in `state.json.raised_issues`, the fix isn't sticking → halt.
 - **Auto model escalation** — haiku → sonnet → opus on `BLOCKED`.
 - **Cross-task halt** — 3 consecutive tasks needing escalation → the plan itself is wrong, stop.
-- **Graph blast-radius pre-check** — if codebase-memory-mcp is available, run `trace_call_path` on each task's target functions before dispatch.
+- **Graph blast-radius pre-check** — if codebase-memory-mcp is available, run `trace_path` on each task's target functions before dispatch.
 
 ## Subagent Role Audit
 

@@ -64,7 +64,7 @@ Then wait for the user's input.
    - Return detailed explanations with file:line references
 
    **If codebase-memory-mcp is available:**
-   - Spawn graph-navigator to run trace_call_path for each change target
+   - Spawn graph-navigator to run trace_path for each change target
    - Populate the "Structural Impact Analysis" section with blast radius data
    - Order plan phases by risk (higher blast radius = later phase)
 

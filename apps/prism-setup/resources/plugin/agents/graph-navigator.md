@@ -3,7 +3,6 @@ name: graph-navigator
 description: Queries the codebase knowledge graph for structural information. Fast, cheap structural lookups — functions, call chains, dependencies, dead code. Use Task tool with subagent_type="graph-navigator" for structural analysis via knowledge graph. <example>Context — assessing blast radius before an edit. user — "What calls parseHostPort?" assistant — "Querying via the graph-navigator agent — cheap structural lookup on the knowledge graph." <commentary>Structural call-chain and dependency queries route here, not to Grep.</commentary></example>
 tools: mcp__codebase-memory-mcp__*
 model: haiku
-effort: low
 maxTurns: 5
 disallowedTools: Write, Edit, NotebookEdit, Bash
 ---
@@ -52,10 +51,7 @@ You are a structural code analyst. You query the codebase knowledge graph to ans
    - Use `get_code_snippet()` to read specific functions by qualified name
    - Use `query_graph()` for complex multi-hop Cypher patterns
 
-3. **Fall back to file tools ONLY when graph can't answer**
-   - `search_code()` for text content (string literals, comments, config values)
-   - `list_directory()` for file/directory discovery
-   - `read_file()` for full file context when graph snippets aren't enough
+3. **Fall back to `search_code()` ONLY when graph can't answer** — text content (string literals, comments, config values). No other file tool is granted to this agent (`tools: mcp__codebase-memory-mcp__*` only); do not reach for a directory-listing or raw-file-read call that isn't in that 14-tool set.
 
 ## Output Format
 

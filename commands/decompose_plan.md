@@ -167,7 +167,7 @@ For each story, derive:
 
 ### 7c. Graph-Informed Ordering (if codebase-memory-mcp available)
 
-1. Run trace_call_path for each change target identified in the plan
+1. Run trace_path for each change target identified in the plan
 2. Order stories so CALLEE changes come BEFORE CALLER changes
 3. Populate graphTargets with qualified names from graph search results
 4. Flag stories touching cross-service boundaries as higher risk

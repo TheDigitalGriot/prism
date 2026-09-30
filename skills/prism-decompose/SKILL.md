@@ -71,7 +71,7 @@ If the codebase is already indexed:
 
 ```
 For each story with known file targets:
-  trace_call_path(function_name, direction="inbound")
+  trace_path(function_name, direction="inbound")
   → Count callers; higher blast radius = implement earlier within the epic
 ```
 

@@ -136,7 +136,7 @@ Run graph-based verification to catch issues tests might miss:
 | Check | How | What It Catches |
 |-------|-----|-----------------|
 | No new dead code | `search_graph(max_degree=0, exclude_entry_points=true)` | Orphaned functions from refactoring |
-| Dependency integrity | `trace_call_path` for all modified functions | Broken call chains |
+| Dependency integrity | `trace_path` for all modified functions | Broken call chains |
 | Cross-service contracts | `search_graph(relationship="HTTP_CALLS")` | Contract breaks at service boundaries |
 | Boundary violations | `search_graph(file_pattern="ui/*", relationship="CALLS")` | Cross-boundary calls (e.g., UI calling DB directly) |
 

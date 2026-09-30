@@ -51,7 +51,7 @@ API contracts, IPC handlers, and shared type exports have callers you can't see 
 1. `grep -r "{exported_symbol}"` across the repo for each new/changed export
 2. Note the caller count in `state.json.tasks[*].caller_count`
 3. If callers exist that weren't in the task's `files` list → flag as DONE_WITH_CONCERNS (the change has blast radius the plan didn't acknowledge)
-4. If codebase-memory-mcp is available, prefer `trace_call_path` over grep
+4. If codebase-memory-mcp is available, prefer `trace_path` over grep
 
 ## Why "Experiment" Gets Light Review
 

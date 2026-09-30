@@ -53,7 +53,7 @@ Before presenting understanding, run a quick blast-radius scan. If `list_project
 
 1. `get_graph_schema()` — quick orientation, understand what's indexed
 2. `search_graph(label="Function", name_pattern="<target functions this plan touches>")` — identify the specific symbols being changed
-3. For each change target: `trace_call_path(function_name="<target>", direction="inbound", depth=3)` — blast radius
+3. For each change target: `trace_path(function_name="<target>", direction="inbound", depth=3)` — blast radius
 4. `search_graph(max_degree=0, exclude_entry_points=true)` — any dead code that can be safely removed alongside this change
 
 Use results to:
