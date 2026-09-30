@@ -142,5 +142,25 @@
     "after": "2.1.285",
     "verifiedSafe": "claude update replaces only the standalone binary (not npm-managed; lives at ~/.local/bin/claude.exe); settings.json and installed_plugins.json diffed byte-identical pre/post",
     "note": "Done ahead of the full Stage 1 reinstall because it does not touch plugin mirror content -- only claude plugin marketplace update / claude plugin update (Stage 1 steps 2-3) are gated behind Stage 0 per the locked ordering edge."
+  },
+  "stage4Complete": {
+    "heartbeat": "HB-S4-UPDATE-ROUNDTRIP-OK",
+    "cliVersion": "2.1.285",
+    "roundTripProven": {
+      "target": "cinopsis@cinopsis (self-hosted marketplace, source: \"./\")",
+      "step0c_bomPreflight": "clean on both plugin.json and marketplace.json (leading byte 0x7B, no BOM)",
+      "step1_authoringClone": "HEAD == origin/main (babc361) before running the update, so the pull could not clobber anything",
+      "versionBump": "2.8.0 -> 2.8.1, committed+pushed (babc361) specifically so this test exercised a real version change, not a same-version edge case",
+      "step2a_claudeCodeCLI": {
+        "marketplaceUpdate": "claude plugin marketplace update cinopsis -> Successfully updated marketplace: cinopsis (re-cloned git@github.com:TheDigitalGriot/Cinopsis.git)",
+        "pluginUpdate": "claude plugin update cinopsis@cinopsis -> Plugin \"cinopsis\" updated from 2.8.0 to 2.8.1 for scope user. NO exit-1, used the fully-qualified plugin@marketplace form."
+      },
+      "step3_downloaded": "new cache dir C:\\Users\\digit\\.claude\\plugins\\cache\\cinopsis\\cinopsis\\2.8.1\\ exists; grep confirmed the actual fix content present (app_settings.py line 13 reads claude-sonnet-5-5, video-fetcher.md frontmatter has no effort field)",
+      "step3_installed": "installed_plugins.json cinopsis@cinopsis entry: version 2.8.1, installPath repointed to .../2.8.1, gitCommitSha babc361f88d79d15205fa62aca7eba835c1ed1bb (matches the exact commit pushed), lastUpdated timestamp moved",
+      "step3_running": "fresh headless claude.exe -p process (new process = new session, since a plugin cache change needs a restart to apply) granted --add-dir onto the installed cache path, independently Read/Grepped the SAME three facts from its own loaded plugin path (not the source repo) and confirmed version 2.8.1, the corrected model line, and the absent effort field -- honest caveat noted by that session: the cinopsis MCP servers themselves did not connect in that headless run, so the MCP-daemon-process half of \"running\" (a separate runtime component) was not independently exercised, only the plugin FILE content a fresh process loads",
+      "oldFailuresCheck": "no exit-1 (fully-qualified plugin@marketplace form used throughout), no cache-miss (real version bump, not same-version), clean repoint (installPath + gitCommitSha both moved atomically to the new version) -- all three named failure modes in the skill's own gotchas list were absent this run"
+    },
+    "skillItself": "griot-plugin-update's SKILL.md required NO edit this pass -- every documented step (0c preflight, Step 1 reconcile, Step 2A marketplace+plugin update, Step 3 three-tier verify) worked exactly as written against CLI 2.1.285. 'Resurrect' here meant re-proving the path still works on the current CLI, not repairing broken instructions.",
+    "scopeNote": "Codex CLI and Claude Cowork round-trips were NOT separately tested this pass -- only Claude Code CLI, the surface Stage 4's own Process names Cinopsis's round-trip against. Available as a follow-on, not silently claimed as done."
   }
 }
