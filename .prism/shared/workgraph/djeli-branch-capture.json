@@ -84,7 +84,9 @@
     "amendPass78": "Stages 1-3 of the 2026-09-29 device re-baseline handoff recorded: plugin/CLI sync, griot-propagate channel de-collision (channel-5 fixed, channel-6 flagged open), and the full Arkestra Opus 5.5/Sonnet 5.5 model-line refresh with two real mobile-mirror bugs found and fixed. Gavin's mid-run instruction: workgraph updates now happen after every stage, not batched to the Stage 6 close-out.",
     "amendPass79": "Stage 4 of the 2026-09-29 device re-baseline handoff recorded: griot-plugin-update proven end to end against cinopsis@cinopsis on Claude Code CLI 2.1.285, real version bump, all three DOWNLOADED/INSTALLED/RUNNING tiers proven.",
     "amendPass80": "Stage 5 of the 2026-09-29 device re-baseline handoff recorded: all 3 Griot plugins validated + CHANNELS gate green, plus 3 real incidental findings (Cinopsis INV3 fixed, gitnexus silent-fail resolved, Prism decisions-execution-trail flagged).",
-    "amendPass81": "Retroactive: griot.md's Selectah-board section (commit 4521b39, 2026-09-23) confirmed live on device but had never been recorded as a node. No correction - work landed clean, just unfiled."
+    "amendPass81": "Retroactive: griot.md's Selectah-board section (commit 4521b39, 2026-09-23) confirmed live on device but had never been recorded as a node. No correction - work landed clean, just unfiled.",
+    "amendPass82": "Code-Intel Three-Way Phase A/B: drift-18 closed, Door 2 (.mcp.json embeddings extra) fixed+verified, Door 3/s-4bee6675 (I15 split + proxy-verdict) fixed, s-10c2e47d (trace_path/I16) fixed, a real commit-race defect found and flagged, CRLF cross-community trace done.",
+    "amendPass83": "N71 re-verified live (commit 6f1abd5), does not currently reproduce; parked pending either a recurrence or an understood root cause."
   },
   "groups": [
     {
@@ -3258,7 +3260,7 @@
       "localId": "N71",
       "kind": "defect",
       "group": "new-findings",
-      "state": "open",
+      "state": "parked",
       "direction": "local",
       "title": "codebase-memory-mcp list_projects reads a zero-byte _config.db - three stale projects reported, six real ones missing",
       "description": "list_projects reports three stale project entries and misses six real ones, traced to a zero-byte _config.db. index_status and search_graph by project name both work correctly against the real indexes, so the defect is isolated to list_projects' own catalogue read, not the underlying index.",
@@ -3266,7 +3268,14 @@
         "evidence": "list_projects output compared against index_status/search_graph results for the same projects this session: zero-byte _config.db confirmed as the read source for the stale/missing project list.",
         "result": "flagged-not-fixed - list_projects needs its catalogue rebuilt or repointed off the empty _config.db."
       },
-      "stateDetail": "flagged-not-fixed"
+      "stateDetail": "flagged-not-fixed",
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-09-30 amendPass83",
+        "from": "open",
+        "to": "parked",
+        "evidence": "Fresh direct measurement, written up and committed 6f1abd5 (.prism/shared/validation/2026-09-30-N71-cmm-config-db-reverify.md): _config.db is 12,288 bytes (not zero), live list_projects correctly returns the real GriotApps/Prism repo with counts matching this session's own index. Symptom does not currently reproduce. No code fix applied - self-healed, cause unidentified. Parked, not done: no engineered guarantee against recurrence."
+      }
     },
     {
       "id": "wg:djeli-branch:N72",
@@ -6309,6 +6318,118 @@
         "evidence": "digital-griot-skills commit 4521b39 (2026-09-23), griot-output-style/output-styles/griot.md +4 lines; confirmed live and matching on device at ~/.claude/output-styles/griot.md, section 'The Selectah board', read directly 2026-09-30.",
         "result": "built-and-live - confirmed on device this session, 7 days after landing, previously unrecorded"
       }
+    },
+    {
+      "id": "wg:djeli-branch:C42",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C42",
+      "kind": "branch",
+      "title": "Code-Intel Three-Way exploration - Phase A + B (in progress)",
+      "group": "this-stage",
+      "state": "open",
+      "direction": "local",
+      "verification": {
+        "evidence": "Inserted between Stage 5 and Stage 6 of the 2026-09-29 device re-baseline handoff, per Gavin's own reordering; full spec at .prism/shared/handoffs/2026-09-30T00-23-48Z_code-intel-three-way-exploration.md. Phase A: all four companions (gortex v0.64.5 via official installer, code-review-graph via uvx, codebase-memory-mcp --ui=true --port=9749, graphify via headless claude.exe -p --dangerously-skip-permissions on Gavin's explicit one-time grant) launched, verified live, and opened in Gavin's DG Chrome alongside GitNexus's own bundled web UI (localhost:4748, --server= param workaround for its hardcoded-4747 auto-connect).",
+        "result": "open - Phase A complete, Phase B in progress (Doors 1-3 closed, three more measured defects partially worked), Phase C (nine ranked lifts) not yet started"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N150",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N150",
+      "kind": "finding",
+      "title": "drift-18 closed: code-review-graph pipeline framing restored to canonical doctrine",
+      "group": "new-findings",
+      "state": "done",
+      "direction": "outbound",
+      "verification": {
+        "evidence": "griot-ontology/claude/CLAUDE.md's bare graphify-trigger block replaced with the full chain (code-review-graph -> graphify -> react-force-graph + Mindwalk), committed 1ae4c59, propagated via propagate.ps1 to ~/.claude/CLAUDE.md, ~/.codex/AGENTS.md, agent-ontology mirror. Drift entry 18 resolved with this commit sha as evidence, commit 9425d99 in griot-live-artifacts. NOT yet republished to the live Suite Drift Codex artifact (v55 at time of this pass still shows entry 18 flagged) - a real pending gap, not silently closed.",
+        "result": "done - repo half done (both repos), artifact republish still owed"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N151",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N151",
+      "kind": "finding",
+      "title": "code-review-graph Door 2: embeddings extra missing from .mcp.json, semantic search silently degraded to fts",
+      "group": "new-findings",
+      "state": "done",
+      "direction": "local",
+      "verification": {
+        "evidence": "Live semantic_search_nodes_tool call against Prism's own graph returned search_mode:fts despite 25,534 embedded nodes already in .code-review-graph/graph.db. Root cause: .mcp.json's code-review-graph entry launched via plain `uvx code-review-graph serve`, no [embeddings] extra, so sentence-transformers was never importable in that process. Verified the fix mechanism first (uvx --from code-review-graph[embeddings] resolves cleanly, sentence_transformers 6.1.0 importable) before editing per the handoff's own caution to verify a one-line fix before treating it as one. Edited .mcp.json (gitignored, not a repo commit); proved live via direct CLI call outside the stale in-session MCP connection: same query returned search_mode:hybrid with a materially different, more relevant top-3 (ApprovalMode class surfaced). This session's own live mcp__code-review-graph__* connection stays on the OLD args until reconnected/restarted - a session-lifecycle fact, not a defect in the fix.",
+        "result": "done - fix verified working outside this session's stale connection; in-session tools will show fts until this MCP server reconnects"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N152",
+      "originLane": "tracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N152",
+      "kind": "finding",
+      "title": "verify-code-intel.mjs I15: combined-verdict bug (s-4bee6675) plus a PROXY VERDICT riding along, both fixed",
+      "group": "tracked",
+      "state": "done",
+      "direction": "local",
+      "verification": {
+        "evidence": "Two defects in one check, landed together: (1) story s-4bee6675's own combined-verdict bug - bad.every(b=>b.startsWith('vectorSearch')) suppressed the code-review-graph fallback the moment a second capability also failed; restructured to one rec() row per capability (I15.graph/I15.fts/I15.vectorSearch). (2) A PROXY VERDICT found live-testing this session: the vectorSearch fallback treated .code-review-graph/graph.db merely EXISTING as proof semantic search works, when the real property is what .mcp.json actually launches (N151). Fixed to check the AUTHORED registry (.mcp.json's args) instead of file presence. Falsified both ways in a scratch test (reverting the [embeddings] extra flips I15.vectorSearch PASS->FAIL with the exact reason; restoring flips back). Committed ee916cf (landed under an unrelated automated commit message due to a concurrent device-side sync process racing this session's slow pre-commit hook - see N153). Story s-4bee6675 marked complete in .prism/stories/griot-codeintel-hygiene/stories.json with this sha.",
+        "result": "done - node scripts/verify-code-intel.mjs: 8 pass / 0 fail, re-verified after landing"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N153",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N153",
+      "kind": "defect",
+      "title": "A device-side sync process raced this session's own git commits twice during Phase B (ref-lock collision)",
+      "group": "new-findings",
+      "state": "open",
+      "direction": "local",
+      "verification": {
+        "evidence": "Two collisions, different failure shapes, same cause: an autonomous device-side process (commits ee916cf 'plan: freshness stamp...' and 03f35e4 'sync: djeli-branch-capture canonical copy, amendPass81') committed to this same Prism repo while this session's own git commit was mid pre-commit-hook (a ~90s full code-review-graph rebuild, itself made slower/forced-full by these same collisions interrupting its postprocess step - a self-perpetuating loop). Collision 1: the other process's commit swept this session's already-staged file in via its own git add -A, landing it under an unrelated message (silent, only caught by diffing git show --stat against the expected diff). Collision 2: git's own ref-lock correctly refused with 'cannot lock ref HEAD: is at X but expected Y' - loud, no data lost, just required a retry. Not yet investigated: which script/schedule is running this (dgs-sync-all.ps1? a standalone griot-workgraph-update loop? Task Scheduler?) or whether the pre-commit hook's rebuild-on-every-commit (never incremental, 'Previous build did not finish post-processing' on nearly every run) is itself downstream of these same collisions truncating the prior build.",
+        "result": "open - worth a standing CLAUDE.md note once the source process is identified; flagged to Gavin rather than silently worked around"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N154",
+      "originLane": "tracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N154",
+      "kind": "finding",
+      "title": "codebase-memory-mcp trace_call_path -> trace_path naming drift + 11-vs-14 tool count (s-10c2e47d) closed",
+      "group": "tracked",
+      "state": "done",
+      "direction": "local",
+      "verification": {
+        "evidence": "All four story-declared files corrected (both graph-navigator.md copies, the integration doc's count claim + frontmatter example). Went beyond the story's two declared line numbers in the integration doc - it carried trace_call_path at 12 more locations, fixed all of them so the new I16 gate (built for this story, reads `codebase-memory-mcp --help` directly for the live tool list) would not sit permanently red on pre-existing out-of-scope drift in the same file. NOT fixed, flagged not silently swept in: agents/codebase-analyzer.md, commands/decompose_plan.md, commands/create_plan.md carry the same stale name and are live-state docs, but were never in this story's file list. Committed 3f7e18c (the fix) + 6beaadd (completion note with the scope boundary spelled out). I16 falsified both ways: reintroducing trace_call_path flips it FAIL with the exact live tool list in the detail string.",
+        "result": "done - node scripts/verify-code-intel.mjs: 8 pass / 0 fail; grep for the other three files' occurrences still returns them, correctly, as a separate un-scoped finding"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N155",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N155",
+      "kind": "finding",
+      "title": "CRLF cross-community bridge traced via graphify explain: same false-positive class independently rediscovered 3x in 5 months",
+      "group": "new-findings",
+      "state": "open",
+      "direction": "adjacent",
+      "verification": {
+        "evidence": "graphify explain (not the broader query, which returned an unhelpful 160-node BFS dump) gave the precise 4-edge answer against the sandboxed graphify-out/graph.json built over .prism/shared/handoffs/. The CRLF-vs-content-hash false-positive bug (a script comparing files as \"different\" purely on line-ending normalization) independently rediscovered and independently fixed three times across five months in three unrelated subsystems: distribution mirrors, drift-log freshness checks, and griot-propagate's channel-5 CHANNELS gate (this very handoff's own Stage 2 fix).",
+        "result": "open - flagged as a strong candidate for a new locked CLAUDE.md standing rule (a fourth instance is likely without one), but not yet proposed or written - needs Gavin's explicit yes first, unlike drift-18's pre-authorized fix"
+      }
     }
   ],
   "edges": [
@@ -8189,15 +8310,63 @@
       "to": "wg:djeli-branch:B44",
       "kind": "in-epic",
       "label": "the widget B44 shipped without naming"
+    },
+    {
+      "from": "wg:djeli-branch:C42",
+      "to": "wg:djeli-branch:N150",
+      "kind": "in-epic",
+      "label": "drift-18 closure is part of the Code-Intel Three-Way capture"
+    },
+    {
+      "from": "wg:djeli-branch:C42",
+      "to": "wg:djeli-branch:N151",
+      "kind": "in-epic",
+      "label": "Door 2 is Phase B of the exploration"
+    },
+    {
+      "from": "wg:djeli-branch:C42",
+      "to": "wg:djeli-branch:N152",
+      "kind": "in-epic",
+      "label": "Door 3 is Phase B of the exploration"
+    },
+    {
+      "from": "wg:djeli-branch:C42",
+      "to": "wg:djeli-branch:N153",
+      "kind": "in-epic",
+      "label": "the commit-race defect surfaced while landing Phase B's fixes"
+    },
+    {
+      "from": "wg:djeli-branch:C42",
+      "to": "wg:djeli-branch:N154",
+      "kind": "in-epic",
+      "label": "the remaining Phase B tool-drift defect"
+    },
+    {
+      "from": "wg:djeli-branch:C42",
+      "to": "wg:djeli-branch:N155",
+      "kind": "in-epic",
+      "label": "the CRLF trace Gavin asked for before the full spec"
+    },
+    {
+      "from": "wg:djeli-branch:N151",
+      "to": "wg:djeli-branch:N152",
+      "kind": "outbound",
+      "label": "N151's proxy-verdict finding is what N152's fix actually checks against"
+    },
+    {
+      "from": "wg:djeli-branch:N152",
+      "to": "wg:djeli-branch:N153",
+      "kind": "outbound",
+      "label": "the collision that swallowed N152's own commit into an unrelated message"
     }
   ],
   "stats": {
-    "totalBranches": 101,
+    "totalBranches": 102,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 313,
+    "edgeCount": 321,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -9623,6 +9792,28 @@
       "newEdges": 1,
       "corrections": [],
       "refused": []
+    },
+    "amendPass82_2026_09_30": {
+      "newNodes": [
+        "C42",
+        "N150",
+        "N151",
+        "N152",
+        "N153",
+        "N154",
+        "N155"
+      ],
+      "newEdges": 8,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass83_2026_09_30": {
+      "advanced": [
+        "N71"
+      ],
+      "stateChanges": [
+        "N71 open -> parked"
+      ]
     }
   },
   "foreignLayer": {
