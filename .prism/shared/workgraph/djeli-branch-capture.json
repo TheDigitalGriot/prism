@@ -79,7 +79,8 @@
     "amendPass73": "Batch two of the Orca screen port landed (12 pairs, canvas 47 to 71, IDE Shell v37). The harvest artifacts moved to the Prism global on Gavin's ruling, and the parse check that closed that move found a BOM in emit-canvas-nodes.mjs that would have broken the skill silently.",
     "amendPass74": "Batch three landed (13 pairs, canvas 71 to 97, IDE Shell v39). The port-spec bridge closed the harvest-to-screen gap. A38 restored every CTA's evidence drawer after A36 had stripped all 66. The discovery stack ruled as layers and written into the ontology, with STORAGE-is-not-SYSTEM as its error class.",
     "amendPass75": "The Orca design surface landed as two bands (13 pairs, canvas 97 to 123, IDE Shell v40). A composition walk first overturned the shape: three independent capabilities, not one flow, and the proposed flagship component was dead code.",
-    "amendPass76": "The reactive-DAG lesson ruled and written into the ontology, plus three propagation defects found by running Gavin's own channel check - a stale source that would have overwritten live skills, a byte-vs-content proxy inside the check itself, and the account copy of griot-suite-context cut to 46 percent with the app lineage past the cut."
+    "amendPass76": "The reactive-DAG lesson ruled and written into the ontology, plus three propagation defects found by running Gavin's own channel check - a stale source that would have overwritten live skills, a byte-vs-content proxy inside the check itself, and the account copy of griot-suite-context cut to 46 percent with the app lineage past the cut.",
+    "amendPass77": "N103's central claim was false and the graph carried it for four days after the artifact disproved it. Corrected with the seven-verb evidence; N138 records the class - a correction that landed in an artifact and never reached the node."
   },
   "groups": [
     {
@@ -4754,7 +4755,14 @@
         "evidence": "gortex-harvest-report.json capabilities (12 rows, both sides cited) and openItems O4, O5, O6; scripts/verify-code-intel.mjs run this stage.",
         "result": "flagged-not-fixed - consolidation vs specialisation is Gavin's call, the GitNexus search defect is a fix."
       },
-      "stateDetail": "flagged-not-fixed"
+      "stateDetail": "flagged-not-fixed",
+      "evidence": "Overturned 2026-09-25 03:15-03:35 on digitalgriotpc by live runs recorded in the Code-Intel Three-Way artifact (claude.ai/artifact/3HsqpHRAU9ax5RQHgQhXDR, version 1790321786-34cf). gortex v0.64.4 built from source, go build -ldflags '-s -w', 298,095,104 bytes; repo grade B / 71.6 / 18,638 callables; 6,038 files, 178,857 nodes, 499,312 edges. Every figure in that artifact traces to a command that ran. The correction sat in the artifact for 4 days and never reached this node - caught 2026-09-29.",
+      "correction": {
+        "correctedAt": "2026-09-30 amendPass77",
+        "wasClaimed": "gortex has no capability we lack; it has one binary, one store, one daemon, one UI, one install. The harvest found consolidation, not a missing capability.",
+        "isTrue": "gortex has SEVEN verbs with no Griot equivalent anywhere: taint (pattern-driven source-to-sink dataflow), clones (near-duplicate function clusters), audit (repo-level A-F health grade), flow (ranked dataflow paths between two symbols), edit (verified mutation verbs), memory (durable session memory over the graph), wakeup (a ~500-token codebase digest with a --max-tokens budget). The consolidation half of the finding STANDS - three engines, ~2.6GB of index for one repo, code-review-graph wired into zero skills or agents, ~61 tools across three servers with no facade against 178 behind a 21-tool facade. Only the no-capability-gap half was false.",
+        "cause": "The claim came from a CODE READ of the gortex source, not from running the binary. A source read cannot see a runtime surface. One hour of actually running v0.64.4 against Prism at b9edf2e43f9d surfaced all seven verbs. The harvest's own invariant - read the source, not the summary - has a floor under it that was not stated until the run."
+      }
     },
     {
       "id": "wg:djeli-branch:S15",
@@ -6007,6 +6015,23 @@
       },
       "localId": "N137",
       "title": "The account copy of griot-suite-context is truncated to 46 percent, and the app lineage is past the cut"
+    },
+    {
+      "id": "wg:djeli-branch:N138",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "description": "The Code-Intel Three-Way artifact overturned N103's central claim on 2026-09-25 with seven measured verbs. N103 stayed [open] asserting the false claim, with a verification block and ZERO history records, and no node among 293 recorded the overturn - a grep for taint, wakeup, audit_agent_config, 'source read cannot see' and 'runtime surface' across the whole graph returned nothing. So for four days every surface reading the graph read the disproven claim as current, while the artifact next to it held the proof. This is the reactive-DAG ruling D14 rule 2 in the flesh: staleness is computed, not noticed - N103's input moved and nothing invalidated it. Two more instances of the same shape found in the same sweep: griot-suite-context L137-139 states in present tense that the Djeli Ceremonies tab renders graph views through prism-viz-engine and that the three code-intel servers 'sit behind one compact facade', when S13 records that workspace as PARKED and S15's L3 lists building that facade as a LIFT - so the durable map asserts as fact a thing its own suggestion lane proposes to build. And drift entry 18, 'code-review-graph dropped from the pipeline', logged 2026-09-05, is still status flagged with zero history records; the canonical head (code-review-graph then graphify then react-force-graph plus Mindwalk) was never restored in the ontology, whose only code-intel mention is a bare graphify trigger line.",
+      "kind": "finding",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "open",
+      "verification": {
+        "evidence": "Measured 2026-09-29: N103.state=open, N103.description contains 'no capability we lack'=True, N103.history=0 records; grep of all 293 nodes for taint|wakeup|audit_agent_config|source read cannot see|runtime surface returned zero matches; griot-suite-context SKILL.md L137-139 read verbatim; drift-entries.json entry 18 of 173 status=flagged logged=2026-09-05 history=0; griot-ontology claude/CLAUDE.md code-intel mentions are 3 lines, all bare graphify trigger text.",
+        "result": "N103 corrected in this pass. The griot-suite-context present-tense claim and drift 18 are named here and fixed separately in the same session - Gavin's note-then-fix-then-change-the-status loop, not parked."
+      },
+      "localId": "N138",
+      "title": "A correction landed in an artifact and never reached the node it disproved"
     }
   ],
   "edges": [
@@ -9152,6 +9177,16 @@
       ],
       "newEdges": 0,
       "corrections": [],
+      "refused": []
+    },
+    "amendPass77_2026_09_30": {
+      "newNodes": [
+        "N138"
+      ],
+      "newEdges": 0,
+      "corrections": [
+        "N103"
+      ],
       "refused": []
     }
   },

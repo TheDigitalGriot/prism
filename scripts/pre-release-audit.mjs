@@ -165,16 +165,29 @@ if (scanned === 0) {
   line(failed === failedBeforeStructural ? 'PASS' : 'FAIL', `structural checks (scoped to ${changed.size} changed files, ${scanned} examined)`);
 }
 
-// 5. Marketplace mirror freshness — the gate this audit shipped without. Two independent mirrors
+// 5. Marketplace mirror freshness — a TABLE-DRIVEN CHANNELS gate. Two independent mirrors once
 // drifted silently and nothing failed: TheDigitalGriot/prism-plugin froze at 4.15.2 (4.16.0-4.16.2
 // never ran Step 6.5) and digital-griot-marketplace froze at 4.12.1 (last sync eb23337,
 // 2026-08-24) — same class of bug as the M13 lockfile gap above, same fix: gate it, fail closed.
-// Compares local VERSION against the version actually published on the REMOTE, fetched fresh over
-// HTTPS. A local working copy proves nothing about what Cowork's marketplace backend actually
-// serves — that is the exact gap that let both mirrors go stale while every local check passed.
-// FAIL CLOSED: unlike the npm-registry check above (§3b), a network/parse error here is a FAIL,
-// never a WARN — "can't tell if the mirror is current" is precisely the blind spot this gate
-// exists to close, so treating it as environmental noise would recreate the defect it fixes.
+// A channel is ONE ROW in the CHANNELS array below, never a new code path — that is the whole
+// point of making this table-driven.
+//
+// TWO AXES PER CHANNEL, not one. VERSION alone is not enough: measured live 2026-09-29 during a
+// Griot re-baseline, digital-griot-marketplace's cinopsis-plugin read version 2.8.0 — an exact
+// match with source — while sitting 11 real commits behind, missing three whole skills and a
+// viewer/ directory that had shipped without a version bump. `claude plugin update` made the
+// identical mistake at the plugin-cache layer the same session ("already at the latest version").
+// So every channel is checked on CONTENT too: the git tree sha of each top-level mirrored
+// directory (skills, agents, scripts, ...) is compared directly against the LOCAL tree sha for
+// the same path — `git rev-parse HEAD:<dir>` for local, the GitHub Contents API's own `sha` field
+// on a directory listing for remote. Git tree hashing is content-addressable and repo-independent,
+// so equal shas are proof of byte-identical content with no clone, no download, and no diff.
+//
+// FAIL CLOSED throughout: unlike the npm-registry check above (§3b), a network/parse error here is
+// a FAIL, never a WARN — "can't tell if the mirror is current" is precisely the blind spot this
+// gate exists to close, so treating it as environmental noise would recreate the defect it fixes.
+// The one exception is a channel marked `optional` (a mirror repo that may not exist yet for this
+// plugin) — a 404 there is a WARN + skip, not a FAIL, and only on the very first (version) probe.
 if (existsSync('.claude-plugin/plugin.json') && existsSync('VERSION')) {
   const localVersion = readFileSync('VERSION', 'utf8').trim();
   const pluginName = JSON.parse(readFileSync('.claude-plugin/plugin.json', 'utf8')).name;
@@ -184,66 +197,111 @@ if (existsSync('.claude-plugin/plugin.json') && existsSync('VERSION')) {
   // an unauthenticated 403 still surfaces as a clear FAIL below, never a silent pass.
   const ghAuth = run('gh', ['auth', 'token']);
   const ghToken = ghAuth.status === 0 ? (ghAuth.stdout || '').trim() : '';
-
-  // GitHub's raw.githubusercontent.com is CDN-fronted and observably lags a real push by minutes
-  // (verified during this gate's own build: a push that landed cleanly, confirmed by fresh clone,
-  // still read the PRE-push version from raw.* for several minutes after, cache-busting query
-  // strings and no-cache headers included). That would make this gate flake FAIL on a genuinely
-  // fresh mirror — the exact "gate people learn to ignore" failure mode decision 2 warns against.
-  // The Contents API with the raw media type returns the same bytes without that CDN lag.
-  const fetchRemote = async (url) => {
+  const authHeaders = (accept) => {
+    const h = { Accept: accept };
+    if (ghToken) h.Authorization = `Bearer ${ghToken}`;
+    return h;
+  };
+  const fetchWith = async (url, accept, parse) => {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 10000);
     try {
-      const headers = { Accept: 'application/vnd.github.raw+json' };
-      if (ghToken) headers.Authorization = `Bearer ${ghToken}`;
-      const res = await fetch(url, { signal: controller.signal, headers });
+      const res = await fetch(url, { signal: controller.signal, headers: authHeaders(accept) });
+      if (res.status === 404) return { notFound: true };
       if (!res.ok) return { error: `HTTP ${res.status} fetching ${url}` };
-      return { body: await res.text() };
+      return { body: await parse(res) };
     } catch (e) {
       return { error: `${e.name === 'AbortError' ? 'timed out after 10s' : (e.message || String(e))} fetching ${url}` };
     } finally {
       clearTimeout(timer);
     }
   };
+  // GitHub's raw.githubusercontent.com is CDN-fronted and observably lags a real push by minutes
+  // (verified during this gate's original build: a push that landed cleanly, confirmed by fresh
+  // clone, still read the PRE-push version from raw.* for several minutes after, cache-busting
+  // query strings and no-cache headers included). The Contents API with the raw media type returns
+  // the same bytes without that CDN lag, which is why version reads go through it rather than the
+  // CDN host.
+  const fetchRawFile = (url) => fetchWith(url, 'application/vnd.github.raw+json', (res) => res.text());
+  const fetchDirListing = (url) => fetchWith(url, 'application/vnd.github+json', (res) => res.json());
+  const contentsUrl = (repo, path) => `https://api.github.com/repos/TheDigitalGriot/${repo}/contents/${path}?ref=main`;
 
-  const checkMirror = async (label, url, extractVersion) => {
-    const r = await fetchRemote(url);
-    if (r.error) {
-      failed++;
-      line('FAIL', `${label} — could not read remote version (${r.error}) — fail-closed`);
-      return;
-    }
-    let version;
-    try { version = extractVersion(r.body); } catch { /* falls through to the undefined check below */ }
-    if (!version) {
-      failed++;
-      line('FAIL', `${label} — remote response had no readable version field — fail-closed`);
-    } else if (version !== localVersion) {
-      failed++;
-      line('FAIL', `${label} is at v${version}, local VERSION is v${localVersion} — mirror is behind, run its sync`);
+  // The set of top-level dirs a thin mirror can carry — mirrors sync-to-marketplace.sh's own
+  // MIRROR_DIRS allow-list. Only dirs that actually exist locally are checked, so a plugin with no
+  // agents/ is never penalised for lacking one.
+  const MIRROR_DIR_CANDIDATES = ['.claude-plugin', 'skills', 'agents', 'commands', 'hooks', 'scripts', 'viewer'];
+  const localTreeSha = (dir) => {
+    const r = run('git', ['rev-parse', `HEAD:${dir}`]);
+    return r.status === 0 ? r.stdout.trim() : null;
+  };
+  const localDirs = MIRROR_DIR_CANDIDATES.filter((d) => localTreeSha(d) !== null);
+
+  const checkContent = async (ch, f) => {
+    const listPath = ch.contentPrefix ? ch.contentPrefix.replace(/\/$/, '') : '';
+    const r = await fetchDirListing(contentsUrl(ch.contentRepo, listPath));
+    if (r.error) { f.n++; line('FAIL', `${ch.label} content — could not list remote tree (${r.error}) — fail-closed`); return; }
+    if (r.notFound) { f.n++; line('FAIL', `${ch.label} content — remote path not found — fail-closed`); return; }
+    const remoteShaByName = new Map((Array.isArray(r.body) ? r.body : []).filter((e) => e.type === 'dir').map((e) => [e.name, e.sha]));
+    const mismatches = localDirs.filter((dir) => remoteShaByName.get(dir) !== localTreeSha(dir))
+      .map((dir) => (remoteShaByName.has(dir) ? dir : `${dir} (missing on remote)`));
+    if (mismatches.length) {
+      f.n++;
+      line('FAIL', `${ch.label} content — diverges from local HEAD in: ${mismatches.join(', ')} — run its sync (version string alone did not catch this)`);
     } else {
-      line('PASS', `${label} matches local v${localVersion}`);
+      line('PASS', `${ch.label} content matches local HEAD (${localDirs.length} dir${localDirs.length === 1 ? '' : 's'}, tree-sha compared)`);
     }
   };
 
-  const contentsUrl = (repo, path) => `https://api.github.com/repos/TheDigitalGriot/${repo}/contents/${path}?ref=main`;
+  const checkChannel = async (ch, f) => {
+    const vr = await fetchRawFile(ch.versionUrl);
+    if (vr.notFound) {
+      if (ch.optional) { line('WARN', `${ch.label} — no such mirror exists for this plugin yet, skipping (optional channel)`); return; }
+      f.n++; line('FAIL', `${ch.label} version — remote path not found — fail-closed`); return;
+    }
+    if (vr.error) {
+      f.n++; line('FAIL', `${ch.label} version — could not read remote version (${vr.error}) — fail-closed`);
+    } else {
+      let version;
+      try { version = ch.versionExtract(vr.body); } catch { /* falls through to the undefined check below */ }
+      if (!version) { f.n++; line('FAIL', `${ch.label} version — remote response had no readable version field — fail-closed`); }
+      else if (version !== localVersion) { f.n++; line('FAIL', `${ch.label} version is v${version}, local VERSION is v${localVersion} — mirror is behind, run its sync`); }
+      else line('PASS', `${ch.label} version matches local v${localVersion}`);
+    }
+    if (ch.contentRepo !== undefined) await checkContent(ch, f);
+  };
 
-  await checkMirror(
-    `TheDigitalGriot/${pluginName}-plugin mirror (single-tool, scripts/sync-prism-plugin.sh)`,
-    contentsUrl(`${pluginName}-plugin`, '.claude-plugin/plugin.json'),
-    (body) => JSON.parse(body).version
-  );
-  await checkMirror(
-    `digital-griot-marketplace root marketplace.json '${pluginName}' entry`,
-    contentsUrl('digital-griot-marketplace', '.claude-plugin/marketplace.json'),
-    (body) => (JSON.parse(body).plugins || []).find((p) => p.name === pluginName)?.version
-  );
-  await checkMirror(
-    `digital-griot-marketplace ${pluginName}-plugin/.claude-plugin/plugin.json`,
-    contentsUrl('digital-griot-marketplace', `${pluginName}-plugin/.claude-plugin/plugin.json`),
-    (body) => JSON.parse(body).version
-  );
+  // THE TABLE. Adding a fifth channel is one entry here — never a new code path.
+  const CHANNELS = [
+    {
+      label: `TheDigitalGriot/${pluginName}-plugin (single-tool mirror, scripts/sync-prism-plugin.sh)`,
+      versionUrl: contentsUrl(`${pluginName}-plugin`, '.claude-plugin/plugin.json'),
+      versionExtract: (body) => JSON.parse(body).version,
+      contentRepo: `${pluginName}-plugin`,
+      contentPrefix: '',
+      // Not every Griot tool has its own single-tool mirror repo (Cinopsis does not, as of
+      // 2026-09-29) — a missing repo here is a routing fact, not a freshness failure.
+      optional: true,
+    },
+    {
+      label: `digital-griot-marketplace root manifest '${pluginName}' entry`,
+      versionUrl: contentsUrl('digital-griot-marketplace', '.claude-plugin/marketplace.json'),
+      versionExtract: (body) => (JSON.parse(body).plugins || []).find((p) => p.name === pluginName)?.version,
+      // No independent content check: this file is a one-line manifest entry, not a mirrored tree.
+    },
+    {
+      label: `digital-griot-marketplace ${pluginName}-plugin/`,
+      versionUrl: contentsUrl('digital-griot-marketplace', `${pluginName}-plugin/.claude-plugin/plugin.json`),
+      versionExtract: (body) => JSON.parse(body).version,
+      contentRepo: 'digital-griot-marketplace',
+      contentPrefix: `${pluginName}-plugin`,
+    },
+  ];
+
+  for (const ch of CHANNELS) {
+    const f = { n: 0 };
+    await checkChannel(ch, f);
+    failed += f.n;
+  }
 } else {
   failed++;
   line('FAIL', 'no ./.claude-plugin/plugin.json or ./VERSION — cannot determine mirror-freshness target, fail-closed');

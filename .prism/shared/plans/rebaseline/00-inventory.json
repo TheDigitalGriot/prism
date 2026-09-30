@@ -1,0 +1,136 @@
+{
+  "stage": "D",
+  "measuredAt": "2026-09-29T23:46:00Z",
+  "surface": "local (digitalgriotpc, Claude Code CLI, C:\\Users\\digit\\GriotApps\\Prism)",
+  "gitMetadata": {
+    "repo": "TheDigitalGriot/prism",
+    "cwd": "c:\\Users\\digit\\GriotApps\\Prism",
+    "headCommit": "8482e884c761430dfce19ccbcfeb786c2003cd67",
+    "branch": "main",
+    "workingTreeDirty": false,
+    "untrackedFiles": [".prism/shared/handoffs/2026-09-29_22-52-52_griot-rebaseline-plugins-skills-models.md"]
+  },
+  "cliVersion": {
+    "measured": "2.1.270",
+    "handoffAssumption": ">=2.1.285",
+    "gap": true,
+    "note": "GATES STAGE 1. The handoff's entire re-baseline premise (upgrade first, then reinstall onto the fixed plugin/cache/validate layer) requires the CLI to actually reach >=2.1.285. It has not yet. `claude update` has not been run this stage (Stage D is discovery-only, no destructive/mutating step)."
+  },
+  "installedPlugins": {
+    "griotRelevant": [
+      {"name": "prism@prism-marketplace", "version": "4.17.2", "scope": "user", "status": "enabled"},
+      {"name": "cinopsis@cinopsis", "version": "2.8.0", "scope": "user", "status": "enabled"},
+      {"name": "fragment@fragment-plugin", "version": "4.4.0", "scope": "user", "status": "enabled"}
+    ],
+    "installedPluginsJsonHealth": "no invalid/corrupt records observed in the entries inspected; gitCommitSha present on each; no cache-miss warnings surfaced by `claude plugin list`",
+    "accountSyncCollisions": [
+      {"name": "cinopsis@synced", "note": "present in account sync but NOT loaded — cinopsis@cinopsis (marketplace plugin) takes precedence by same-name rule"},
+      {"name": "prism@synced", "note": "present in account sync but NOT loaded — prism@prism-marketplace (marketplace plugin) takes precedence by same-name rule"}
+    ]
+  },
+  "registeredMarketplaces": [
+    "claude-plugins-official", "mcp-apps", "ytmp4-ai-digest", "fragment-plugin",
+    "cl-plugin-structure", "cinopsis", "prism-marketplace", "claude-code-warp"
+  ],
+  "criticalArchitectureFinding": "digital-griot-marketplace (GriotMeta/digital-griot-marketplace) is NOT a registered Claude Code marketplace on this device. The device's real 'prism-marketplace' and 'cinopsis' marketplaces point DIRECTLY at each tool's own source repo (github.com/TheDigitalGriot/prism and .../Cinopsis) via self-hosted marketplace.json — not at digital-griot-marketplace. digital-griot-marketplace is a separate side/thin-mirror repo (cinopsis-plugin/, prism-plugin/ subfolders) whose actual consumer (Cowork sideload? Codex import?) was not identified this stage and should be confirmed before Stage 0 assumes it needs syncing for THIS device's CLI installs.",
+  "mirrorGapReMeasurement": {
+    "prismMarketplaceCache": {
+      "path": "~/.claude/plugins/marketplaces/prism-marketplace",
+      "handoffClaimed": "4.16.2 vs source 4.17.3, 37 blobs behind (16 missing, 21 differing)",
+      "measuredNow": {
+        "checkedOutVersion": "4.17.2",
+        "sourceVersion": "4.17.3",
+        "commitsBehindOriginMain": 55,
+        "lastFetchBeforeThisStage": "2026-09-18 (git log HEAD 0883b60)",
+        "originMainNowEqualsLocalRepoHead": true
+      },
+      "verdict": "PARTIALLY STALE CLAIM. The 4.16.2 figure and 37-blob count are outdated -- version already advanced to 4.17.2 in the cache. But a real, current gap still exists: 55 commits behind, one version short of source, and `claude plugin marketplace update` + `claude plugin update prism@prism-marketplace` have not been run since 2026-09-18.",
+      "griotHarvestUxUiCheck": {
+        "handoffClaimed": "entirely absent from the mirror",
+        "measuredNow": "PRESENT in the cache checkout, SKILL.md byte-identical to source (diff: 0 lines). Directory-count diff (40 source vs 39 cache) is only the source repo's own `skills/generated/` build-output folder, not a real skill gap.",
+        "verdict": "REFUTED -- this specific handoff claim no longer holds."
+      },
+      "digitalGriotMcpToolCount": {
+        "handoffClaimed": "9 tools source vs 7 mirror",
+        "measuredNow": {
+          "sourceTools": ["gavel_state","gavel_decide","gavel_open","gavel_scan","gavel_commit","gavel_verify","griot_assert","griot_viz_engine","griot_propagate_check"],
+          "sourceCount": 9,
+          "cacheCheckoutTools": ["gavel_state","gavel_decide","gavel_open","gavel_scan","gavel_commit","gavel_verify","griot_assert","griot_viz_engine"],
+          "cacheCount": 8
+        },
+        "verdict": "CONFIRMED, count off by one from handoff's figure (8 not 7) -- real, still-current gap. Cache checkout is missing `griot_propagate_check` (the newest tool). This session's own MCP status confirms plugin:prism:digital-griot-mcp failed to connect (cached retry), consistent with a stale/unrefreshed install."
+      }
+    },
+    "cinopsisMarketplaceCache": {
+      "path": "~/.claude/plugins/marketplaces/cinopsis",
+      "handoffClaimed": "2.2.0 vs source 2.8.0, 44 blobs behind (25 missing, 19 differing), mirror HEAD 18.5 days old",
+      "measuredNow": {
+        "checkedOutVersion": "2.8.0",
+        "sourceVersion": "2.8.0",
+        "commitsBehindOriginMain": 11,
+        "lastFetchBeforeThisStage": "2026-09-12 (git log HEAD dfdc426)",
+        "sourceLastCommit": "2026-09-27 (bcb1474)"
+      },
+      "verdict": "VERSION-STRING CLAIM REFUTED, SUBSTANTIVE GAP CONFIRMED. The 2.2.0-vs-2.8.0 headline figure is stale -- the cache already reads 2.8.0. But the version string lying is exactly the trap griot-plugin-update warns about: 11 real commits sit between the cache's checkout and origin/main at the SAME declared version 2.8.0, meaning content moved without a version bump. Confirmed materially behind: the Cinopsis ceremony skills are the proof.",
+      "ceremonySkillsCheck": {
+        "handoffClaimed": "cinopsis-closing-ceremony / cinopsis-bookend / cinopsis-release don't exist on a marketplace install",
+        "measuredNow": "CONFIRMED -- all three (cinopsis-bookend, cinopsis-closing-ceremony, cinopsis-release) exist in source (GriotApps/Cinopsis/skills/) and are ABSENT from the marketplace cache checkout entirely.",
+        "verdict": "CONFIRMED, still holds. Real Stage 0 blocker for Stage 6's ceremony run."
+      },
+      "staleModelPinCheck": {
+        "target": "scripts/app_settings.py:13",
+        "sourceValue": "\"model\": \"claude-sonnet-4-6\",  # used by claude_key",
+        "cacheValue": "\"model\": \"claude-sonnet-4-6\",  # used by claude_key",
+        "verdict": "CONFIRMED, present in BOTH source and the installed marketplace cache. Task 3's fix target (Stage 3, step 4) is real and current, and must land in the SOURCE repo before any resync, or the sync will just re-import the same stale pin."
+      }
+    },
+    "digitalGriotMarketplaceAuthoringClone": {
+      "path": "GriotMeta/digital-griot-marketplace",
+      "commitsBehindOriginMain": 4,
+      "lastFetchBeforeThisStage": "2026-09-11 (git log HEAD c2499f6)",
+      "cinopsisPluginSubfolderVersion": "2.2.0 (stale -- matches the OLD figure the handoff quoted, confirming this specific repo, not the CLI's own cinopsis marketplace cache, is where that 2.2.0 number actually lives)",
+      "note": "Not registered as a device marketplace (see criticalArchitectureFinding). If Stage 0's Task 0 process step 1 ('sync prism-marketplace / cinopsis-marketplace / digital-griot-mcp to source') is interpreted as 'sync digital-griot-marketplace,' that is a DIFFERENT repo than the one this CLI actually installs from. Needs Gavin's call on which one Stage 0 should target -- or both, for different consumers."
+    }
+  },
+  "modelOnboardScope": {
+    "skillPath": "GriotApps/Prism/skills/prism-model-onboard/SKILL.md",
+    "confirmedWriteTargets": [
+      "packages/prism-core/src/core/api/model-roster.ts (RosterEntry -- usually the only file)",
+      "model-policy.ts PROVIDER_CHAINS/PROVIDER_FLOORS (new provider only)",
+      "apps/prism-mobile/.../agent/model-policy.ts mirror",
+      "skills/griot-agent-architect/references/model-config.md (Claude line only)"
+    ],
+    "hardRule": "non-Anthropic ids never enter apps/prism-vscode/src/core/api/claude-sdk.ts MODEL_IDS -- that table is Anthropic-SDK-only",
+    "gateScripts": [
+      "node scripts/verify-model-policy-conformance.mjs",
+      "npx vitest run src/core/api/__tests__/ (from apps/prism-vscode)",
+      "node scripts/verify-invariants.mjs"
+    ]
+  },
+  "modelContract20260902": {
+    "path": ".prism/shared/plans/2026-09-02-model-line-sept2026-CONTEXT.md",
+    "scope": "Claude line ONLY, resume-not-redo",
+    "verifiedRosterAtTheTime": {
+      "Fable 5.1": "claude-fable-5-1, $10/$50, 1M ctx, 128K out, all 5 efforts default high",
+      "Opus 5": "claude-opus-5 (alias opus, flipped), $5/$25, 1M ctx, 128K out, all 5 efforts default high",
+      "Opus 4.8": "claude-opus-4-8 (alias opus48), $5/$25, 1M ctx, 128K out",
+      "Sonnet 5": "claude-sonnet-5 (alias sonnet), $2/$10, 1M ctx, 128K out, all 5 efforts (widened -- gained xhigh)",
+      "Haiku 4.5": "claude-haiku-4-5-20251001 (alias haiku), $1/$5, 200K ctx, 64K out, NO effort levels"
+    },
+    "deltasSinceThisContractPerHandoff": "Opus 5.5 default (Sept 22, 1M, $4/$20) and Sonnet 5.5 default (Sept 28, 1M, $2/$10) -- these are NET-NEW since 2026-09-02 and not yet re-verified live this session (that is Stage 3's job, not Stage D's).",
+    "namespaceSplit": "policy-key namespace renames bare 'opus' -> 'opus48'; SDK-alias namespace ('opus') stays as user-facing alias but resolves to whichever tier is current default",
+    "bugFixNoted": "scripts/fable-gate.sh:56 exact-match case statement needs prefix-match so claude-fable-5-1 (and any future 5.x) still gates -- STATUS NOT RE-CHECKED this stage, carry into Stage 3",
+    "doNotRelitigate": "the roster table above is 'verified live 2026-09-02 against platform.claude.com' by the contract's own words -- Stage 3 should verify only the STATED deltas (Opus/Sonnet 5.5, plus the net-new Codex line), not redo the whole table"
+  },
+  "openQuestionsForGavin": [
+    "RESOLVED 2026-09-29: sync target = both, on separate gates -- CLI's own self-hosted caches AND digital-griot-marketplace, treated as two independent Stage-0 targets.",
+    "RESOLVED 2026-09-29: CLI upgrade approved after verifying via web search that `claude update` only replaces the standalone binary at ~/.local/bin/claude.exe and never touches ~/.claude/plugins or settings.json. Backup taken to ~/.claude-preupdate-backup-20260929/ (settings.json, installed_plugins.json) before running. Ran `claude update`: 2.1.270 -> 2.1.285. Post-update diff of both backed-up files vs live: IDENTICAL. No data loss."
+  ],
+  "stage1CliUpgrade": {
+    "status": "done",
+    "before": "2.1.270",
+    "after": "2.1.285",
+    "verifiedSafe": "claude update replaces only the standalone binary (not npm-managed; lives at ~/.local/bin/claude.exe); settings.json and installed_plugins.json diffed byte-identical pre/post",
+    "note": "Done ahead of the full Stage 1 reinstall because it does not touch plugin mirror content -- only claude plugin marketplace update / claude plugin update (Stage 1 steps 2-3) are gated behind Stage 0 per the locked ordering edge."
+  }
+}
