@@ -1,6 +1,6 @@
 {
   "name": "griot-viz-engine",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "griot-viz-engine — the assembled cluster, built. Layer 01 generate -> JSON Canvas wire -> layer 02 render (xyflow) -> layer 03 substrate (Kuzu) -> layer 04 interactive shell (Waku click-any-box). Mounts standalone, composed into another app, or inside the Djeli container.",
   "license": "MIT",
   "griot": {

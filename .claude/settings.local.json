@@ -10,5 +10,6 @@
     "codebase-memory-mcp",
     "chrome-devtools",
     "code-review-graph"
-  ]
+  ],
+  "outputStyle": "Griot"
 }
