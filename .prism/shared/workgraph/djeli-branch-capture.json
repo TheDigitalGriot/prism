@@ -86,7 +86,8 @@
     "amendPass80": "Stage 5 of the 2026-09-29 device re-baseline handoff recorded: all 3 Griot plugins validated + CHANNELS gate green, plus 3 real incidental findings (Cinopsis INV3 fixed, gitnexus silent-fail resolved, Prism decisions-execution-trail flagged).",
     "amendPass81": "Retroactive: griot.md's Selectah-board section (commit 4521b39, 2026-09-23) confirmed live on device but had never been recorded as a node. No correction - work landed clean, just unfiled.",
     "amendPass82": "Code-Intel Three-Way Phase A/B: drift-18 closed, Door 2 (.mcp.json embeddings extra) fixed+verified, Door 3/s-4bee6675 (I15 split + proxy-verdict) fixed, s-10c2e47d (trace_path/I16) fixed, a real commit-race defect found and flagged, CRLF cross-community trace done.",
-    "amendPass83": "N71 re-verified live (commit 6f1abd5), does not currently reproduce; parked pending either a recurrence or an understood root cause."
+    "amendPass83": "N71 re-verified live (commit 6f1abd5), does not currently reproduce; parked pending either a recurrence or an understood root cause.",
+    "amendPass84": "Correcting amendPass83's own premature N71 closure: reproduced live, minutes later, in the same session. list_projects' enumeration is unreliable even when index_status(by name) and the per-project index are both healthy. Reopened."
   },
   "groups": [
     {
@@ -3260,13 +3261,13 @@
       "localId": "N71",
       "kind": "defect",
       "group": "new-findings",
-      "state": "parked",
+      "state": "open",
       "direction": "local",
       "title": "codebase-memory-mcp list_projects reads a zero-byte _config.db - three stale projects reported, six real ones missing",
       "description": "list_projects reports three stale project entries and misses six real ones, traced to a zero-byte _config.db. index_status and search_graph by project name both work correctly against the real indexes, so the defect is isolated to list_projects' own catalogue read, not the underlying index.",
       "verification": {
-        "evidence": "list_projects output compared against index_status/search_graph results for the same projects this session: zero-byte _config.db confirmed as the read source for the stale/missing project list.",
-        "result": "flagged-not-fixed - list_projects needs its catalogue rebuilt or repointed off the empty _config.db."
+        "evidence": "Both list_projects calls and the index_status call are this session's own live tool outputs, this pass; file mtimes read directly via ls -la on ~/.cache/codebase-memory-mcp/.",
+        "result": "open - list_projects' enumeration is unreliable; index_status(project=<exact name>) is the reliable path for a single project's status. No fix available at this layer (cmm is an installed binary, not our source) - operational workaround only: never trust list_projects' absence of a project as proof it is not indexed; confirm with index_status by name first."
       },
       "stateDetail": "flagged-not-fixed",
       "priorState": "open",
@@ -3275,6 +3276,12 @@
         "from": "open",
         "to": "parked",
         "evidence": "Fresh direct measurement, written up and committed 6f1abd5 (.prism/shared/validation/2026-09-30-N71-cmm-config-db-reverify.md): _config.db is 12,288 bytes (not zero), live list_projects correctly returns the real GriotApps/Prism repo with counts matching this session's own index. Symptom does not currently reproduce. No code fix applied - self-healed, cause unidentified. Parked, not done: no engineered guarantee against recurrence."
+      },
+      "correction": {
+        "correctedAt": "2026-09-30 amendPass84",
+        "wasClaimed": "amendPass83 advanced N71 open -> parked on evidence that _config.db was 12,288 bytes (not zero) and a live list_projects call correctly returned GriotApps-Prism with current counts - read as the symptom no longer reproducing, self-healed, no durable guarantee needed.",
+        "isTrue": "It reproduces intermittently within the SAME session. Minutes after that clean list_projects call, a fresh list_projects call dropped GriotApps-Prism again (available_projects: only 3 entries, GriotApps-Prism absent) while _config.db was still 12,288 bytes - not corrupted, not zero. index_status(project=\"C-Users-digit-GriotApps-Prism\") in the SAME moment correctly found it: status ready, 95,225 nodes, current git HEAD 6c560e4b. The defect is precisely isolated: list_projects' catalogue ENUMERATION is unreliable even when the named-lookup path (index_status) and the underlying per-project .db (186MB, fresh mtime) are both healthy. Also newly observed: at least 4 more real per-project .db files exist on disk (djeli.db, prism-griotapps.db, GBFolio-packages-avatar-engine.db, GBFolio-portfolio-r3f.db) that list_projects has never enumerated in any call this session - closer to the original 'six real ones missing' shape than the amendPass83 read acknowledged.",
+        "cause": "A single clean list_projects call was treated as proof the defect had resolved, without testing for intermittency before closing. The right test was always available and cheap (call it twice) and was not run before the state was advanced and published to the Code-Intel Three-Way artifact."
       }
     },
     {
@@ -9814,6 +9821,14 @@
       "stateChanges": [
         "N71 open -> parked"
       ]
+    },
+    "amendPass84_2026_09_30": {
+      "newNodes": [],
+      "newEdges": 0,
+      "corrections": [
+        "N71"
+      ],
+      "refused": []
     }
   },
   "foreignLayer": {
