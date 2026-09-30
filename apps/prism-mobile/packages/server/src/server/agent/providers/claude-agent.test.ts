@@ -349,8 +349,13 @@ describe("ClaudeAgentClient.listModels", () => {
     const client = new ClaudeAgentClient({ logger });
     const models = await client.listModels({ cwd: "/tmp/claude-models", force: false });
 
+    // 2026-09-30: claude-opus-5-5 and claude-sonnet-5-5 added at the front
+    // (the current line), isDefault moved to claude-opus-5-5; claude-opus-5 and
+    // claude-sonnet-5 kept as reachable legacy pins right after them.
     expect(models.map((m) => m.id)).toEqual([
       "claude-fable-5-1",
+      "claude-opus-5-5",
+      "claude-sonnet-5-5",
       "claude-opus-5",
       "claude-sonnet-5",
       "claude-opus-4-8",
@@ -368,7 +373,7 @@ describe("ClaudeAgentClient.listModels", () => {
     }
 
     const defaultModel = models.find((m) => m.isDefault);
-    expect(defaultModel?.id).toBe("claude-opus-5");
+    expect(defaultModel?.id).toBe("claude-opus-5-5");
   });
 });
 

@@ -50,15 +50,27 @@ const EXPECTED_CLAUDE_MODELS = [
     model: "Fable 5.1",
     descriptionFragment: "Gated escalation",
   },
+  // 2026-09-30: Opus 5.5 / Sonnet 5.5 added as the new ceiling + everyday pair;
+  // the previous ceiling pair (opus-5 / sonnet-5) kept reachable right after.
+  {
+    id: "claude-opus-5-5",
+    model: "Opus 5.5",
+    descriptionFragment: "Routine ceiling",
+  },
+  {
+    id: "claude-sonnet-5-5",
+    model: "Sonnet 5.5",
+    descriptionFragment: "speed and intelligence",
+  },
   {
     id: "claude-opus-5",
     model: "Opus 5",
-    descriptionFragment: "Routine ceiling",
+    descriptionFragment: "Previous ceiling",
   },
   {
     id: "claude-sonnet-5",
     model: "Sonnet 5",
-    descriptionFragment: "Best for everyday tasks",
+    descriptionFragment: "Previous Sonnet",
   },
   {
     id: "claude-opus-4-8",
@@ -386,7 +398,7 @@ try {
       "--quiet should print the current Claude catalog IDs",
     );
     assert(
-      claudeModelsFromJson.some((m) => m.id === "claude-sonnet-5"),
+      claudeModelsFromJson.some((m) => m.id === "claude-sonnet-5-5"),
       "captured --json output should include the current Claude everyday model id",
     );
     console.log("✓ provider models --quiet outputs model IDs only\n");

@@ -5,8 +5,13 @@ import { getClaudeModels, normalizeClaudeRuntimeModelId } from "./claude-models.
 describe("getClaudeModels", () => {
   it("returns all claude models", () => {
     const models = getClaudeModels();
+    // 2026-09-30: claude-opus-5-5 / claude-sonnet-5-5 added at the front,
+    // isDefault moved to claude-opus-5-5; the previous ceiling pair kept
+    // reachable right after them.
     expect(models.map((m) => m.id)).toEqual([
       "claude-fable-5-1",
+      "claude-opus-5-5",
+      "claude-sonnet-5-5",
       "claude-opus-5",
       "claude-sonnet-5",
       "claude-opus-4-8",
@@ -23,7 +28,7 @@ describe("getClaudeModels", () => {
     const models = getClaudeModels();
     const defaults = models.filter((m) => m.isDefault);
     expect(defaults).toHaveLength(1);
-    expect(defaults[0].id).toBe("claude-opus-5");
+    expect(defaults[0].id).toBe("claude-opus-5-5");
   });
 
   it("returns fresh copies each call", () => {
@@ -50,6 +55,14 @@ describe("normalizeClaudeRuntimeModelId", () => {
     expect(normalizeClaudeRuntimeModelId("claude-sonnet-5")).toBe("claude-sonnet-5");
     expect(normalizeClaudeRuntimeModelId("claude-fable-5-1")).toBe("claude-fable-5-1");
     expect(normalizeClaudeRuntimeModelId("claude-opus-4-8")).toBe("claude-opus-4-8");
+  })
+
+  it("normalizes major.minor ids from the 5.5 generation (2026-09-30)", () => {
+    // Regression guard for the Opus 5.5 / Sonnet 5.5 refresh: the major/minor
+    // capture groups must correctly split "5-5" into major=5, minor=5 rather
+    // than swallowing both digits as one major segment.
+    expect(normalizeClaudeRuntimeModelId("claude-opus-5-5")).toBe("claude-opus-5-5")
+    expect(normalizeClaudeRuntimeModelId("claude-sonnet-5-5")).toBe("claude-sonnet-5-5")
   });
 
   it("normalizes dated model IDs to base model", () => {

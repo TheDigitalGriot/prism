@@ -70,10 +70,12 @@ describe("readModelPolicy", () => {
   test("safe defaults when store + legacy flag are absent", () => {
     const root = makeProject()
     const policy = readModelPolicy(root)
-    // opus5 = "allow", NOT "ask": Opus 5 is the routine ceiling and carries no
-    // model-level gate (locked in icm-fuse-CONTEXT.md / OPUS5-INCORPORATION-PLAN.md).
-    // Only fable5 is HITL-gated.
-    expect(policy.models.opus5.mode).toBe("allow")
+    // opus55 = "allow", NOT "ask": Opus 5.5 (2026-09-30 refresh; was Opus 5 under
+    // the same rule) is the routine ceiling and carries no model-level gate
+    // (locked in icm-fuse-CONTEXT.md / OPUS5-INCORPORATION-PLAN.md). Only fable5
+    // is HITL-gated. opus5 (legacy) carries no explicit default entry, same as
+    // opus48 never has — it falls through to "allow" via effectiveMode instead.
+    expect(policy.models.opus55.mode).toBe("allow")
     expect(policy.models.fable5.mode).toBe("ask")
     expect(policy.headlessDefault).toBe("allow")
     expect(policy.surfaces).toEqual({})
@@ -83,7 +85,7 @@ describe("readModelPolicy", () => {
     const root = makeProject({ policy: "{ not valid json " })
     const policy = readModelPolicy(root)
     expect(policy.models.fable5.mode).toBe("ask")
-    expect(policy.models.opus5.mode).toBe("allow")
+    expect(policy.models.opus55.mode).toBe("allow")
   })
 
   test("reads an explicit store and fills missing default models", () => {
@@ -98,8 +100,8 @@ describe("readModelPolicy", () => {
     const policy = readModelPolicy(root)
     expect(policy.headlessDefault).toBe("deny")
     expect(policy.models.fable5.mode).toBe("deny")
-    // opus5 not in the file → filled from safe defaults.
-    expect(policy.models.opus5.mode).toBe("allow")
+    // opus55 not in the file → filled from safe defaults.
+    expect(policy.models.opus55.mode).toBe("allow")
     expect(policy.surfaces.vscode.fable5.mode).toBe("skip")
   })
 
@@ -155,26 +157,30 @@ describe("resolveModelDecision — modes", () => {
     expect(d.mode).toBe("skip")
   })
 
-  test("deny: downgrades past ask'd opus5 to the opus48 floor", async () => {
-    const root = policyRoot({ fable5: "deny", opus5: "ask" })
+  test("deny: downgrades past ask'd opus55/opus5 to the opus48 floor", async () => {
+    const root = policyRoot({ fable5: "deny", opus55: "ask", opus5: "ask" })
     const d = await resolveModelDecision({ requested: "fable5", projectRoot: root, env: {} })
     expect(d.model).toBe("opus48")
     expect(d.downgradedFrom).toBe("fable5")
     expect(d.mode).toBe("deny")
   })
 
-  test("deny: with DEFAULT policy, fable5 lands on opus5 (not the floor)", async () => {
-    // Regression guard for the un-gating decision: because opus5 now defaults to
-    // "allow", a denied fable5 stops at the ceiling instead of falling all the way
-    // through to legacy Opus 4.8. If opus5 ever regresses to "ask", this fails.
+  test("deny: with DEFAULT policy, fable5 lands on opus55 (not the floor)", async () => {
+    // Regression guard for the un-gating decision: because opus55 (the current
+    // ceiling, 2026-09-30 refresh) defaults to "allow", a denied fable5 stops at
+    // the ceiling instead of falling all the way through to legacy Opus 4.8. If
+    // opus55 ever regresses to "ask", this fails.
     const root = policyRoot({ fable5: "deny" })
     const d = await resolveModelDecision({ requested: "fable5", projectRoot: root, env: {} })
-    expect(d.model).toBe("opus5")
+    expect(d.model).toBe("opus55")
     expect(d.downgradedFrom).toBe("fable5")
   })
 
-  test("deny: downgrades to opus5 when opus5 is allow", async () => {
-    const root = policyRoot({ fable5: "deny", opus5: "allow" })
+  test("deny: downgrades to opus5 when opus55 is denied and opus5 is allow", async () => {
+    // opus55 must be explicitly denied here too — it now sits ahead of opus5 in
+    // the chain and defaults to "allow", so leaving it unset would land the walk
+    // on opus55 before ever reaching opus5.
+    const root = policyRoot({ fable5: "deny", opus55: "deny", opus5: "allow" })
     const d = await resolveModelDecision({ requested: "fable5", projectRoot: root, env: {} })
     expect(d.model).toBe("opus5")
     expect(d.downgradedFrom).toBe("fable5")
@@ -189,14 +195,14 @@ describe("resolveModelDecision — modes", () => {
   })
 
   test("ask headless (no confirm): headlessDefault=deny downgrades", async () => {
-    const root = policyRoot({ fable5: "ask", opus5: "ask" }, "deny")
+    const root = policyRoot({ fable5: "ask", opus55: "ask", opus5: "ask" }, "deny")
     const d = await resolveModelDecision({ requested: "fable5", projectRoot: root, env: {} })
     expect(d.model).toBe("opus48")
     expect(d.downgradedFrom).toBe("fable5")
   })
 
   test("ask headless: PRISM_MODEL_HEADLESS_DEFAULT overrides the store", async () => {
-    const root = policyRoot({ fable5: "ask", opus5: "ask" }, "allow")
+    const root = policyRoot({ fable5: "ask", opus55: "ask", opus5: "ask" }, "allow")
     const d = await resolveModelDecision({
       requested: "fable5",
       projectRoot: root,
@@ -220,7 +226,7 @@ describe("resolveModelDecision — modes", () => {
   })
 
   test("ask interactive: confirm=false downgrades", async () => {
-    const root = policyRoot({ fable5: "ask", opus5: "ask" })
+    const root = policyRoot({ fable5: "ask", opus55: "ask", opus5: "ask" })
     const confirm = jest.fn().mockResolvedValue(false)
     const d = await resolveModelDecision({
       requested: "fable5",
@@ -309,7 +315,10 @@ describe("emitModelEvent", () => {
 describe("decision + event emission", () => {
   test("a denied model downgrades AND writes a bus event naming the downgrade", async () => {
     const root = makeProject({
-      policy: { version: 1, models: { fable5: { mode: "deny" }, opus5: { mode: "ask" } } },
+      policy: {
+        version: 1,
+        models: { fable5: { mode: "deny" }, opus55: { mode: "ask" }, opus5: { mode: "ask" } },
+      },
     })
     const d = await resolveModelDecision({ requested: "fable5", projectRoot: root, env: {} })
     emitModelEvent(
@@ -367,6 +376,7 @@ describe("Arkestra — the provider axis", () => {
     version: 1,
     headlessDefault: "deny",
     models: {
+      opus55: { mode: "allow" },
       opus5: { mode: "allow" },
       fable5: { mode: "ask" },
       "gpt:gpt-6-astra": { mode: "deny" },
@@ -378,6 +388,7 @@ describe("Arkestra — the provider axis", () => {
   test("a denied CODEX model never becomes an Anthropic model", async () => {
     const root = makeProject({ policy: deniedEverything })
     const d = await resolveModelDecision({ requested: "gpt:gpt-6-astra", projectRoot: root })
+    expect(d.model).not.toBe("opus55")
     expect(d.model).not.toBe("opus5")
     expect(d.model).not.toBe("opus48")
     expect(d.model).not.toBe("fable5")
@@ -391,7 +402,7 @@ describe("Arkestra — the provider axis", () => {
     expect(d.blocked).toBe(true)
     expect(d.provider).toBe("local")
     // the whole point: nothing from another provider's chain
-    expect(["fable5", "opus5", "opus48"]).not.toContain(d.model)
+    expect(["fable5", "opus55", "opus5", "opus48"]).not.toContain(d.model)
   })
 
   test("ANTHROPIC downgrade behaviour is unchanged (no regression)", async () => {
@@ -399,12 +410,13 @@ describe("Arkestra — the provider axis", () => {
       policy: {
         version: 1,
         headlessDefault: "deny",
-        models: { fable5: { mode: "deny" }, opus5: { mode: "allow" } },
+        models: { fable5: { mode: "deny" } },
         surfaces: {},
       },
     })
     const d = await resolveModelDecision({ requested: "fable5", projectRoot: root })
-    expect(d.model).toBe("opus5")
+    // opus55 not set → defaults "allow" → the walk lands on the current ceiling.
+    expect(d.model).toBe("opus55")
     expect(d.downgradedFrom).toBe("fable5")
     expect(d.blocked).toBeFalsy()
     expect(d.provider).toBe("anthropic")
@@ -426,7 +438,7 @@ describe("Arkestra — the provider axis", () => {
     expect(d.provider).toBe("openai")
     // openai HAS a chain, so this correctly downgrades within openai rather than
     // blocking — and above all never lands on Anthropic.
-    expect(["fable5", "opus5", "opus48"]).not.toContain(d.model)
+    expect(["fable5", "opus55", "opus5", "opus48"]).not.toContain(d.model)
   })
 
   test("a provider with NO declared chain fails closed", async () => {
@@ -488,12 +500,19 @@ describe("Arkestra — the provider axis", () => {
 // ---------------------------------------------------------------------------
 describe("Arkestra — Codex roster", () => {
   test("a denied Codex model downgrades WITHIN openai, never to Anthropic", async () => {
+    // The roster's chain order as of 2026-09-30 is gpt-6.1-sol (default) ->
+    // gpt-6-astra -> gpt-6-luna -> gpt-5.6-sol -> ... . Denying astra alone would
+    // land on gpt-6-luna (the very next rung) rather than exercising a MULTI-hop
+    // skip within one provider, so gpt-6-luna is denied too — preserving this
+    // test's actual intent (verify the walk can skip more than one rung and still
+    // never cross providers), not just its old literal expected value.
     const root = makeProject({
       policy: {
         version: 1,
         headlessDefault: "deny",
         models: {
           "openai:gpt-6-astra": { mode: "deny" },
+          "openai:gpt-6-luna": { mode: "deny" },
           "openai:gpt-5.6-sol": { mode: "allow" },
         },
         surfaces: {},
@@ -503,7 +522,7 @@ describe("Arkestra — Codex roster", () => {
     expect(d.provider).toBe("openai")
     expect(d.model).toBe("openai:gpt-5.6-sol")
     expect(d.blocked).toBeFalsy()
-    expect(["fable5", "opus5", "opus48"]).not.toContain(d.model)
+    expect(["fable5", "opus55", "opus5", "opus48"]).not.toContain(d.model)
   })
 
   test("the openai chain terminates at its OWN floor, not Anthropic's", async () => {
@@ -532,7 +551,7 @@ describe("Arkestra — Codex roster", () => {
 // work" but "can any input still land a non-Anthropic request on an Anthropic
 // model" — the defect this release exists to fix.
 describe("Arkestra — adversarial provider-crossing attempts", () => {
-  const ANTHROPIC = ["fable5", "opus5", "opus48"]
+  const ANTHROPIC = ["fable5", "opus55", "opus5", "opus48"]
 
   test("a surface OVERRIDE cannot push a Codex model onto the Anthropic chain", async () => {
     const root = makeProject({

@@ -57,10 +57,11 @@ describe("resolveGatedModel", () => {
   })
 
   test("the `opus` alias is policy-governed and EMITS an event", async () => {
-    // Regression guard. Post-flip `opus` resolves to claude-opus-5 — the same id
-    // as `opus5` — so it must enter the control plane. It was previously absent
-    // from MODELNAME_TO_POLICY, which meant every dispatch through the default
-    // alias skipped policy AND emitted no bus event: a silent observability hole.
+    // Regression guard. Post-flip `opus` resolves to claude-opus-5-5 (the current
+    // ceiling, 2026-09-30 refresh) — policy key "opus55" — so it must enter the
+    // control plane. It was previously absent from MODELNAME_TO_POLICY, which
+    // meant every dispatch through the default alias skipped policy AND emitted
+    // no bus event: a silent observability hole.
     const root = makeWorkspace(JSON.stringify({ enabled: true }))
     roots.push(root)
     const eventsFile = path.join(root, ".prism", "local", "gavel", "_mcp", "state", "events")
@@ -70,7 +71,7 @@ describe("resolveGatedModel", () => {
       /* no prior events */
     }
 
-    // opus5 defaults to "allow", so the model runs unchanged — but observably.
+    // opus55 defaults to "allow", so the model runs unchanged — but observably.
     await expect(resolveGatedModel("opus", root)).resolves.toBe("opus")
     expect(showWarningMessage).not.toHaveBeenCalled()
 
@@ -80,17 +81,19 @@ describe("resolveGatedModel", () => {
       .filter(Boolean)
       .map((l) => JSON.parse(l) as { requested: string; resolved: string; mode: string })
     expect(lines.length).toBeGreaterThan(0)
-    expect(lines[lines.length - 1].requested).toBe("opus5")
+    expect(lines[lines.length - 1].requested).toBe("opus55")
     expect(lines[lines.length - 1].mode).toBe("allow")
   })
 
-  // A denied Fable now stops at the CEILING (opus5), not the legacy opus48 floor,
-  // because opus5 defaults to "allow" — the chain returns the first freely runnable
-  // entry. Previously opus5 defaulted to "ask" and the walk fell through to Opus 4.8.
-  test("flag OFF + fable -> opus5, no modal", async () => {
+  // A denied Fable now stops at the CEILING (opus55, the 2026-09-30 refresh — was
+  // opus5 under the same rule before it), not the legacy opus48 floor, because the
+  // ceiling defaults to "allow" — the chain returns the first freely runnable
+  // entry. Before opus5/opus55 existed with a default, the walk fell through to
+  // Opus 4.8.
+  test("flag OFF + fable -> opus55, no modal", async () => {
     const root = makeWorkspace(JSON.stringify({ enabled: false }))
     roots.push(root)
-    await expect(resolveGatedModel("fable", root)).resolves.toBe("opus5")
+    await expect(resolveGatedModel("fable", root)).resolves.toBe("opus55")
     expect(showWarningMessage).not.toHaveBeenCalled()
   })
 
@@ -115,18 +118,18 @@ describe("resolveGatedModel", () => {
     )
   })
 
-  test("flag ON + fable + Deny -> opus5", async () => {
+  test("flag ON + fable + Deny -> opus55", async () => {
     const root = makeWorkspace(JSON.stringify({ enabled: true }))
     roots.push(root)
     showWarningMessage.mockResolvedValueOnce("Deny")
-    await expect(resolveGatedModel("fable", root)).resolves.toBe("opus5")
+    await expect(resolveGatedModel("fable", root)).resolves.toBe("opus55")
     expect(showWarningMessage).toHaveBeenCalledTimes(1)
   })
 
-  test("flag ON + fable + dismissed (undefined) -> opus5", async () => {
+  test("flag ON + fable + dismissed (undefined) -> opus55", async () => {
     const root = makeWorkspace(JSON.stringify({ enabled: true }))
     roots.push(root)
     showWarningMessage.mockResolvedValueOnce(undefined)
-    await expect(resolveGatedModel("fable", root)).resolves.toBe("opus5")
+    await expect(resolveGatedModel("fable", root)).resolves.toBe("opus55")
   })
 })
