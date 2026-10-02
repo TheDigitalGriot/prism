@@ -88,7 +88,8 @@
     "amendPass82": "Code-Intel Three-Way Phase A/B: drift-18 closed, Door 2 (.mcp.json embeddings extra) fixed+verified, Door 3/s-4bee6675 (I15 split + proxy-verdict) fixed, s-10c2e47d (trace_path/I16) fixed, a real commit-race defect found and flagged, CRLF cross-community trace done.",
     "amendPass83": "N71 re-verified live (commit 6f1abd5), does not currently reproduce; parked pending either a recurrence or an understood root cause.",
     "amendPass84": "Correcting amendPass83's own premature N71 closure: reproduced live, minutes later, in the same session. list_projects' enumeration is unreliable even when index_status(by name) and the per-project index are both healthy. Reopened.",
-    "amendPass85": "Correcting N152's own 'went beyond scope, done' claim - it was not done. griot-agent-architect run for real (not hand-simulated) found 16 more live trace_call_path sites. All fixed now, commit e323ab4."
+    "amendPass85": "Correcting N152's own 'went beyond scope, done' claim - it was not done. griot-agent-architect run for real (not hand-simulated) found 16 more live trace_call_path sites. All fixed now, commit e323ab4.",
+    "amendPass86_2026_10_02": "Mixdown 2026-10-02: composed-board root-cause CORRECTION (template engine, not palette), griot-dubplate + griot-mixdown shipped, skill-guard regex fix, Kente unversioned finding."
   },
   "groups": [
     {
@@ -6444,6 +6445,91 @@
         "evidence": "graphify explain (not the broader query, which returned an unhelpful 160-node BFS dump) gave the precise 4-edge answer against the sandboxed graphify-out/graph.json built over .prism/shared/handoffs/. The CRLF-vs-content-hash false-positive bug (a script comparing files as \"different\" purely on line-ending normalization) independently rediscovered and independently fixed three times across five months in three unrelated subsystems: distribution mirrors, drift-log freshness checks, and griot-propagate's channel-5 CHANNELS gate (this very handoff's own Stage 2 fix).",
         "result": "open - flagged as a strong candidate for a new locked CLAUDE.md standing rule (a fourth instance is likely without one), but not yet proposed or written - needs Gavin's explicit yes first, unlike drift-18's pre-authorized fix"
       }
+    },
+    {
+      "id": "wg:djeli-branch:N156",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N156",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "done",
+      "direction": "outbound",
+      "title": "CORRECTION - the harvest-board failure was a template engine, not a palette problem",
+      "correction": {
+        "wasClaimed": "Earlier in this session the composed-board harvest problem was diagnosed as a palette problem (wrong colours on the boards, e.g. Meetily drawn dark).",
+        "isTrue": "The root cause is the generator: boards.mjs / gen-boards.mjs is a template engine of twelve parameterised shapes with BG='#0a0a0a' hardcoded at gen-boards.mjs line 5, so every app comes out as a sibling skeleton. The wrong palette was one symptom; motion written as a caption beside a static rectangle was another.",
+        "cause": "Diagnosed from the visible symptom (colour) before reading the generator source; the claim was made in chat and was not a graph node, so this node carries the correction inline rather than stamping a prior node."
+      },
+      "verification": {
+        "evidence": "Read 2026-10-02: Kente/harvest/gen-boards.mjs line 5 hardcodes the dark BG; djeli .prism/shared/plans/harvest-transcribe/CONTRACT-transcribe.md line 12 states 'twelve parameterised shapes ... BG=#0a0a0a hardcoded at line 5 ... The palette was invented and the motion was written as a CAPTION'. Drift entry 'Composed Meetily boards drew a light app dark' (real app is light per globals.css :root and tauri.conf.json theme Light).",
+        "result": "pass - root cause recorded; fix is griot-dubplate (A5), boards transcribed from source instead of composed"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:A5",
+      "originLane": "tracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "A5",
+      "kind": "branch",
+      "group": "tracked",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "griot-dubplate shipped - UI harvest rebuilt as source transcription (invariant every-value-on-a-board-is-cut-from-the-source)",
+      "verification": {
+        "evidence": "digital-griot-skills commit cb40033 'griot-dubplate: cut the UI from the source, not from a template'; published artifact 'The Dubplate Cut' https://claude.ai/artifact/CKHCPNy37wpPWoDpqnyNtp records the composed-vs-transcribed diagnosis and six-step method.",
+        "result": "pass - skill committed; replaces the composed-board harvest"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:A6",
+      "originLane": "tracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "A6",
+      "kind": "branch",
+      "group": "tracked",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "griot-mixdown shipped - the close-of-session chain, ten channels (invariant no-channel-is-silently-dropped)",
+      "verification": {
+        "evidence": "digital-griot-skills commits a4cc05f 'sum every channel of a session to one master' and a9b23e2 'the Selectah is channel 10, not a flourish'; ledgers produced by its first run in griot-live-artifacts adc9da9 (drift 185->190, gold 18->21).",
+        "result": "pass - skill committed, first run executed"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N157",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N157",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "defect-fixed",
+      "direction": "outbound",
+      "title": "skill-guard SKILL_AUTHORING_RE required a literal skills/ path segment, so every SKILL.md write in digital-griot-skills was refused",
+      "verification": {
+        "evidence": "~/.claude/hooks/skill-guard/skill_guard.py line 65 SKILL_AUTHORING_RE (read 2026-10-02); backup skill_guard.py.bak-20261002 present; drift entry 'skill-guard regex blocked all SKILL.md authoring in digital-griot-skills' (resolved) records the halt at griot-dubplate Process step 3. Fix per run contract: regex widened, 6 assertions + py_compile clean.",
+        "result": "pass - fixed and drift entry resolved"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N158",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N158",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "Kente is not a git repo - the three griot-dubplate extractors and every extracted theme have no history",
+      "verification": {
+        "evidence": "Measured: C:/Users/digit/GriotApps/Kente/.git does not exist (ls, 2026-10-02) while Kente/harvest/gen-boards.mjs and extractors sit there; drift entry 'harvest extractors live outside version control' status flagged (#186). The skill bundles verified copies so the method is safe.",
+        "result": "open - originals unversioned; needs a git init or move, Gavin's call"
+      }
     }
   ],
   "edges": [
@@ -8372,15 +8458,33 @@
       "to": "wg:djeli-branch:N153",
       "kind": "outbound",
       "label": "the collision that swallowed N152's own commit into an unrelated message"
+    },
+    {
+      "from": "wg:djeli-branch:N156",
+      "to": "wg:djeli-branch:A5",
+      "kind": "outbound",
+      "label": "the root-cause correction is what griot-dubplate was built to answer"
+    },
+    {
+      "from": "wg:djeli-branch:N157",
+      "to": "wg:djeli-branch:A5",
+      "kind": "outbound",
+      "label": "the guard defect halted the griot-dubplate build at Process step 3 (drift entry)"
+    },
+    {
+      "from": "wg:djeli-branch:N158",
+      "to": "wg:djeli-branch:A5",
+      "kind": "inbound",
+      "label": "the dubplate extractors that live in unversioned Kente/harvest (skill bundles copies)"
     }
   ],
   "stats": {
-    "totalBranches": 102,
+    "totalBranches": 104,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 321,
+    "edgeCount": 324,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -9843,6 +9947,18 @@
       "corrections": [
         "N152"
       ],
+      "refused": []
+    },
+    "amendPass86_2026_10_02_2026_10_02": {
+      "newNodes": [
+        "N156",
+        "A5",
+        "A6",
+        "N157",
+        "N158"
+      ],
+      "newEdges": 3,
+      "corrections": [],
       "refused": []
     }
   },
