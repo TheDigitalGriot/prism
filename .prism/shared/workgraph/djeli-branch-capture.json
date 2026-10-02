@@ -89,7 +89,8 @@
     "amendPass83": "N71 re-verified live (commit 6f1abd5), does not currently reproduce; parked pending either a recurrence or an understood root cause.",
     "amendPass84": "Correcting amendPass83's own premature N71 closure: reproduced live, minutes later, in the same session. list_projects' enumeration is unreliable even when index_status(by name) and the per-project index are both healthy. Reopened.",
     "amendPass85": "Correcting N152's own 'went beyond scope, done' claim - it was not done. griot-agent-architect run for real (not hand-simulated) found 16 more live trace_call_path sites. All fixed now, commit e323ab4.",
-    "amendPass86_2026_10_02": "Mixdown 2026-10-02: composed-board root-cause CORRECTION (template engine, not palette), griot-dubplate + griot-mixdown shipped, skill-guard regex fix, Kente unversioned finding."
+    "amendPass86_2026_10_02": "Mixdown 2026-10-02: composed-board root-cause CORRECTION (template engine, not palette), griot-dubplate + griot-mixdown shipped, skill-guard regex fix, Kente unversioned finding.",
+    "amendPass87_2026_10_02": "Branch-codex pass 2026-10-02: untracked djeli receipts, canvas 512-ceiling, Kente versioning open ask."
   },
   "groups": [
     {
@@ -6530,6 +6531,54 @@
         "evidence": "Measured: C:/Users/digit/GriotApps/Kente/.git does not exist (ls, 2026-10-02) while Kente/harvest/gen-boards.mjs and extractors sit there; drift entry 'harvest extractors live outside version control' status flagged (#186). The skill bundles verified copies so the method is safe.",
         "result": "open - originals unversioned; needs a git init or move, Gavin's call"
       }
+    },
+    {
+      "id": "wg:djeli-branch:N159",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N159",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "Djeli harvest MATERIAL receipts and transcription stage contracts are untracked - the boards that cite them are unauditable if lost",
+      "verification": {
+        "evidence": "git status --short .prism/shared in C:/Users/digit/GriotApps/djeli returned 22 status lines on 2026-10-02 (run contract counted 23 untracked paths; the one-line difference is how git collapses directories, not a change of state). Drift entry 'harvest receipts and stage contracts left uncommitted' status flagged.",
+        "result": "open - uncommitted; the run contract forbids committing djeli from this run"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N160",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N160",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "in-progress",
+      "direction": "local",
+      "title": "The Djeli IDE Shell design canvas is at the 512-file-per-version artifact ceiling - cut boards stay undelivered",
+      "verification": {
+        "evidence": "Measured 2026-10-02: live/djeli-ide-shell/project/canvas.json has 496 boards / 496 order entries; 567 *.dc.html files sit in project/. Drift entry records 'deploy 422: manifest exceeds 512 entries', 35 of 42 boards published, 7 deferred, ~29 Meetily boards on disk unpublished (parked).",
+        "result": "open - split the canvas across artifacts or prune; not resolved here"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA27",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA27",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Kente/harvest has no git history - init a repo in place, or move the extractors under a versioned repo?",
+      "verification": {
+        "evidence": "Kente/.git absent (ls 2026-10-02); N158 and drift entry 'harvest extractors live outside version control'. Two readings: (a) git init GriotApps/Kente, (b) move harvest/ into digital-griot-skills/griot-dubplate where verified copies already ship.",
+        "result": "open - Gavin's call, not inferred"
+      }
     }
   ],
   "edges": [
@@ -8476,6 +8525,18 @@
       "to": "wg:djeli-branch:A5",
       "kind": "inbound",
       "label": "the dubplate extractors that live in unversioned Kente/harvest (skill bundles copies)"
+    },
+    {
+      "from": "wg:djeli-branch:OA27",
+      "to": "wg:djeli-branch:N158",
+      "kind": "awaits",
+      "label": "the ruling decides how N158 is closed"
+    },
+    {
+      "from": "wg:djeli-branch:N160",
+      "to": "wg:djeli-branch:A5",
+      "kind": "inbound",
+      "label": "dubplate-cut boards are what overflow the canvas manifest (drift entry)"
     }
   ],
   "stats": {
@@ -8484,7 +8545,7 @@
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 324,
+    "edgeCount": 326,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -9400,61 +9461,70 @@
     },
     "generated": {
       "generatedBy": "griot-branch-codex/scripts/compute-generated.mjs",
-      "generatedAt": "2026-09-29T02:58:22.119Z",
-      "nodeCount": 279,
-      "edgeCount": 282,
+      "generatedAt": "2026-10-02T09:44:51.441Z",
+      "nodeCount": 325,
+      "edgeCount": 326,
       "laneCount": 6,
       "byLane": {
-        "new-findings": 131,
-        "untracked": 49,
-        "this-stage": 41,
-        "open-ask": 23,
+        "new-findings": 156,
+        "this-stage": 55,
+        "untracked": 50,
+        "open-ask": 24,
         "suggested": 21,
-        "tracked": 10,
+        "tracked": 15,
         "undefined": 4
       },
       "byKind": {
-        "finding": 92,
-        "branch": 90,
-        "defect": 39,
-        "open-ask": 24,
+        "finding": 107,
+        "branch": 104,
+        "defect": 51,
+        "open-ask": 25,
         "suggestion": 21,
-        "decision": 11,
+        "decision": 15,
         "open": 2
       },
       "byState": {
-        "done": 146,
-        "open": 113,
+        "done": 157,
+        "open": 120,
         "parked": 14,
-        "ruled-and-applied": 3,
-        "built-and-live": 2,
+        "built-and-live": 8,
+        "defect-fixed": 8,
+        "ruled-and-applied": 7,
+        "flagged-not-fixed": 5,
+        "corrected-verified": 3,
+        "in-progress": 2,
         "superseded": 1
       },
       "byDirection": {
-        "local": 179,
-        "outbound": 84,
-        "inbound": 12,
-        "adjacent": 4
+        "local": 193,
+        "outbound": 114,
+        "inbound": 13,
+        "adjacent": 5
       },
       "byEdgeKind": {
-        "outbound": 66,
-        "awaits": 53,
-        "ontology": 51,
-        "splinter": 43,
-        "in-epic": 37,
-        "inbound": 32
+        "outbound": 70,
+        "in-epic": 63,
+        "ontology": 56,
+        "awaits": 55,
+        "splinter": 48,
+        "inbound": 34
       },
       "byOriginLane": {
-        "new-findings": 133,
-        "untracked": 51,
-        "this-stage": 42,
-        "open-ask": 24,
+        "new-findings": 154,
+        "this-stage": 61,
+        "untracked": 52,
+        "open-ask": 25,
         "suggested": 21,
-        "tracked": 8
+        "tracked": 12
       },
       "movedLane": [
         "B4",
-        "B23"
+        "B23",
+        "N135",
+        "N136",
+        "N137",
+        "N138",
+        "D15"
       ],
       "corrections": [
         "B10",
@@ -9480,10 +9550,14 @@
         "OA10",
         "N58",
         "N65",
+        "N71",
         "N86",
         "N85",
+        "N103",
         "C27",
-        "N126"
+        "N126",
+        "N152",
+        "N156"
       ],
       "advanced": [
         "B2",
@@ -9493,6 +9567,7 @@
         "N28",
         "N64",
         "S8",
+        "N71",
         "N72",
         "OA16",
         "S11",
@@ -9645,7 +9720,7 @@
         "RULED and applied.": 1,
         "done - comparison complete, ruling recorded as D4.": 1,
         "defect-fixed - all four items closed this session.": 1,
-        "flagged-not-fixed - list_projects needs its catalogue rebuilt or repointed off the empty _config.db.": 1,
+        "open - list_projects' enumeration is unreliable; index_status(project=<exact name>) is the reliable path for a single project's status. No fix available at this layer (cmm is an installed binary, not our source) - operational workaround only: never trust list_projects' absence of a project as proof it is not indexed; confirm with index_status by name first.": 1,
         "flagged-not-fixed - repo half closed, card-publish half open for all 37, suite-drift-codex included.": 1,
         "flagged-not-fixed - needs the frontmatter quoted and the path updated to the canonical spectrum-architect name.": 1,
         "done - preservation commit landed; four items now named as B30-B33.": 1,
@@ -9757,7 +9832,53 @@
         "open - the gap is measured, the disposition is Gavins ruling. Filed as an ask so no answer is assumed.": 1,
         "open - reproduced twice, dry and apply, and no code changed yet.": 1,
         "open - reproduced on the published board, root-caused to the palette source of truth, and deliberately NOT patched in the repo.": 1,
-        "open - captured as inspiration at Gavins request, no design or implementation yet.": 1
+        "open - captured as inspiration at Gavins request, no design or implementation yet.": 1,
+        "twelve pairs ported, registered and published; the published canvas.json read back before the publish matched the pre-register base byte for byte, so nothing live was overwritten": 1,
+        "moved and repointed; the version-control tradeoff is surfaced to Gavin rather than absorbed silently": 1,
+        "BOM stripped, both harvest scripts parse; the lesson is that a check run only on the file you remember editing is not a check": 1,
+        "the Orca surface is now covered at the view and panel-tab level; what remains is 33 settings panes, held as a decision rather than a backlog": 1,
+        "the discovery layer can now reach a screen without being asked to draw one": 1,
+        "size is never a reason to remove evidence - scope is the size lever (A31/A32/A37): fewer rows, never thinner rows": 1,
+        "applied as doctrine, so every future session loads the layering rather than re-deriving it": 1,
+        "the two instruments that answer a system question are the ontology graph and the plugin manifests - both authored registries, both first. Recorded in griot-ontology as part of THE DISCOVERY STACK, and it is why visual-first is an instrument here rather than a presentation preference": 1,
+        "the design surface is on the canvas as flows AND components; four register calls failed G4 first on band spacing tighter than the 844-tall mobile twins and were respaced rather than forced": 1,
+        "size is never importance - a filter on looks-like-a-screen would have shipped 1 board and missed 37; also confirms the harvest map's line 33 is stale, since no designMode or inspectMode exists anywhere in browser-pane or native-chat": 1,
+        "applied as doctrine; the test is stated operationally - land a change and if nothing downstream turns yellow on its own, the graph recorded and did not drive": 1,
+        "regression prevented by the dry-run CONFLICT guard, which is the only thing standing between this channel and a silent overwrite of live skills": 1,
+        "MISMATCH recorded, not edited away - the fix is a change to Gavin's skill (compare git HEAD plus eol-normalized content instead of raw working-tree sha256) and is his call": 1,
+        "cause of the cut is UNKNOWN and deliberately not theorised; what is established is that it is truncation rather than staleness, and that the missing span is load-bearing context": 1,
+        "N103 corrected in this pass. The griot-suite-context present-tense claim and drift 18 are named here and fixed separately in the same session - Gavin's note-then-fix-then-change-the-status loop, not parked.": 1,
+        "3 of 7 stages complete and pushed; workgraph recording now made a standing per-stage habit at Gavin's explicit instruction, rather than batched to the Stage 6 close-out.": 1,
+        "Stage 1 heartbeat HB-S1-REBASELINE-OK recorded. No data loss; all three named plugin channels confirmed current.": 1,
+        "Stage 2 heartbeat HB-S2 recorded. Channel-5 conflict-free and content-normalized; channel-6 truncation cause measured and logged, not yet fixed - correctly reflected as open, not silently marked done.": 1,
+        "Both functions now content-normalize before hashing. Re-run against the same two clones reported 0 false conflicts.": 1,
+        "Genuinely open. Cause is named (46% truncation point on the account-sync propagation target); the fix is not yet built. Suite-context refresh (commit c147f7f, digital-griot-skills) explicitly states 'correct on disk only' pending this entry's resolution.": 1,
+        "Full round-trip proven: roster researched live, code changed in 2 repos + mobile mirror, 2 real bugs caught and fixed, tests updated and passing, docs refreshed, statusline live-verified, drift logged, all committed and pushed. One gap deferred with a contract (N143), not rushed.": 1,
+        "Consistent across every mirror checked this session; the convention is now written down as doctrine, not just tribal knowledge in one file.": 1,
+        "Verified via claude-agent.test.ts (27/27 pass) and claude-models.test.ts (10/10 pass, including a new regression test for the 5-5 major.minor split).": 1,
+        "Fix applied and code-review-graph's detect_changes_tool confirms the fixed function (buildOptions) as changed; test coverage for this specific path remains a named gap, tracked as N143, not silently assumed closed by the code fix alone.": 1,
+        "Genuinely open, with a concrete fix direction on file: add a focused test constructing a ClaudeAgentSession against a policy store that denies opus55, assert base.model substitutes to claude-opus-5-5.": 1,
+        "Heartbeat HB-S4-UPDATE-ROUNDTRIP-OK. Round trip proven on Claude Code CLI only - Codex CLI and Cowork were not separately tested this pass, named as a scope limit rather than silently claimed.": 1,
+        "Stage 5 heartbeat HB-S5-VALIDATE-CLEAN. Named scope (validate + CHANNELS gate) fully green for all 3 plugins. Cowork-component spot-check flagged as not run, not silently skipped.": 1,
+        "Resolved same pass. Drift ledger entry logged and republished, griot-live-artifacts commit 5b7c52f, Suite Drift Codex v55.": 1,
+        "This instance resolved via full reindex; the underlying gitnexus defect (no file attribution, misleading exit code on internal failure) remains and is not something this repo can fix. Drift ledger entry logged, griot-live-artifacts commit 5b7c52f, Suite Drift Codex v55.": 1,
+        "Genuinely open, needs real cross-repo git archaeology across griot-viz-engine (D2), digital-griot-skills (D3), and wherever GavelSurface/prism-gavel's extraction landed (D1) to backfill decisions.json, or an explicit deferral if truly not done. Drift ledger entry logged, griot-live-artifacts commit 5b7c52f, Suite Drift Codex v55.": 1,
+        "built-and-live - confirmed on device this session, 7 days after landing, previously unrecorded": 1,
+        "open - Phase A complete, Phase B in progress (Doors 1-3 closed, three more measured defects partially worked), Phase C (nine ranked lifts) not yet started": 1,
+        "done - repo half done (both repos), artifact republish still owed": 1,
+        "done - fix verified working outside this session's stale connection; in-session tools will show fts until this MCP server reconnects": 1,
+        "done - node scripts/verify-code-intel.mjs: 8 pass / 0 fail, re-verified after landing": 1,
+        "open - worth a standing CLAUDE.md note once the source process is identified; flagged to Gavin rather than silently worked around": 1,
+        "done - node scripts/verify-code-intel.mjs: 8 pass / 0 fail; grep for the other three files' occurrences still returns them, correctly, as a separate un-scoped finding": 1,
+        "open - flagged as a strong candidate for a new locked CLAUDE.md standing rule (a fourth instance is likely without one), but not yet proposed or written - needs Gavin's explicit yes first, unlike drift-18's pre-authorized fix": 1,
+        "pass - root cause recorded; fix is griot-dubplate (A5), boards transcribed from source instead of composed": 1,
+        "pass - skill committed; replaces the composed-board harvest": 1,
+        "pass - skill committed, first run executed": 1,
+        "pass - fixed and drift entry resolved": 1,
+        "open - originals unversioned; needs a git init or move, Gavin's call": 1,
+        "open - uncommitted; the run contract forbids committing djeli from this run": 1,
+        "open - split the canvas across artifacts or prune; not resolved here": 1,
+        "open - Gavin's call, not inferred": 1
       },
       "unverifiedNodes": []
     },
@@ -9958,6 +10079,16 @@
         "N158"
       ],
       "newEdges": 3,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass87_2026_10_02_2026_10_02": {
+      "newNodes": [
+        "N159",
+        "N160",
+        "OA27"
+      ],
+      "newEdges": 2,
       "corrections": [],
       "refused": []
     }
@@ -14095,29 +14226,29 @@
     ],
     "byLane": {
       "tracked": {
-        "closed": 8,
+        "closed": 13,
         "open": 2,
-        "pct": 80
+        "pct": 87
       },
       "untracked": {
-        "closed": 23,
+        "closed": 24,
         "open": 26,
-        "pct": 47
+        "pct": 48
       },
       "this-stage": {
-        "closed": 33,
-        "open": 5,
+        "closed": 45,
+        "open": 7,
         "pct": 87,
         "unclassified": 3
       },
       "open-ask": {
         "closed": 7,
-        "open": 16,
-        "pct": 30
+        "open": 17,
+        "pct": 29
       },
       "new-findings": {
-        "closed": 75,
-        "open": 54,
+        "closed": 89,
+        "open": 65,
         "pct": 58,
         "unclassified": 2
       },
@@ -14135,9 +14266,9 @@
       }
     },
     "total": {
-      "closed": 151,
-      "open": 113,
-      "pct": 57,
+      "closed": 183,
+      "open": 127,
+      "pct": 59,
       "unclassified": 15
     },
     "latent": {
