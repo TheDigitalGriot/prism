@@ -1,0 +1,1 @@
+CEREMONY_FAILED HB_STAGE_1_START review-audit gate: verify-invariants I9 FAIL - local brainstorm session 7354-1790199040 has 3 locked decisions (D1,D2,D3) with no commit or deferral; needs Gavin ruling (execute, defer, or explicit logged override)

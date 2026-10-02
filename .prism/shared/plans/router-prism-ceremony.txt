@@ -1,0 +1,5 @@
+﻿Read the stage contract at .prism/shared/plans/closing-ceremony-prism-5.0.0-CONTEXT.md and execute it exactly.
+Load only what each numbered step needs. Query the code graph for structure instead of reading whole files.
+Invoke the prism-closing-ceremony skill to do the work. Do not improvise around a failed gate.
+Append each heartbeat token to .prism/shared/plans/.hb-prism-ceremony as you reach it.
+Finish by writing the terminal marker file described in the contract.
