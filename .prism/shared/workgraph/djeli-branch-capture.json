@@ -90,7 +90,8 @@
     "amendPass84": "Correcting amendPass83's own premature N71 closure: reproduced live, minutes later, in the same session. list_projects' enumeration is unreliable even when index_status(by name) and the per-project index are both healthy. Reopened.",
     "amendPass85": "Correcting N152's own 'went beyond scope, done' claim - it was not done. griot-agent-architect run for real (not hand-simulated) found 16 more live trace_call_path sites. All fixed now, commit e323ab4.",
     "amendPass86_2026_10_02": "Mixdown 2026-10-02: composed-board root-cause CORRECTION (template engine, not palette), griot-dubplate + griot-mixdown shipped, skill-guard regex fix, Kente unversioned finding.",
-    "amendPass87_2026_10_02": "Branch-codex pass 2026-10-02: untracked djeli receipts, canvas 512-ceiling, Kente versioning open ask."
+    "amendPass87_2026_10_02": "Branch-codex pass 2026-10-02: untracked djeli receipts, canvas 512-ceiling, Kente versioning open ask.",
+    "amendPass88_2026_10_02": "Chat-viz pass 2026-10-02: The Dubplate Cut artifact reference; channel-strip widget source unreachable."
   },
   "groups": [
     {
@@ -6579,6 +6580,22 @@
         "evidence": "Kente/.git absent (ls 2026-10-02); N158 and drift entry 'harvest extractors live outside version control'. Two readings: (a) git init GriotApps/Kente, (b) move harvest/ into digital-griot-skills/griot-dubplate where verified copies already ship.",
         "result": "open - Gavin's call, not inferred"
       }
+    },
+    {
+      "id": "wg:djeli-branch:A7",
+      "originLane": "tracked",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "A7",
+      "kind": "branch",
+      "group": "tracked",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "Artifact reference: 'The Dubplate Cut' - composed-vs-transcribed diagnosis and the six-step dubplate method (self-contained, no extraction needed)",
+      "verification": {
+        "evidence": "URL https://claude.ai/artifact/CKHCPNy37wpPWoDpqnyNtp stated in the 2026-10-02 mixdown run contract; not fetched from this headless run (no network/Artifact tool). Related skill commit cb40033.",
+        "result": "unverified - published per the session that made it; this run could not open the URL"
+      }
     }
   ],
   "edges": [
@@ -8537,15 +8554,21 @@
       "to": "wg:djeli-branch:A5",
       "kind": "inbound",
       "label": "dubplate-cut boards are what overflow the canvas manifest (drift entry)"
+    },
+    {
+      "from": "wg:djeli-branch:A7",
+      "to": "wg:djeli-branch:A5",
+      "kind": "outbound",
+      "label": "the artifact is the record of what griot-dubplate (A5) replaces and how it works"
     }
   ],
   "stats": {
-    "totalBranches": 104,
+    "totalBranches": 105,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 326,
+    "edgeCount": 327,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -9461,9 +9484,9 @@
     },
     "generated": {
       "generatedBy": "griot-branch-codex/scripts/compute-generated.mjs",
-      "generatedAt": "2026-10-02T09:44:51.441Z",
-      "nodeCount": 325,
-      "edgeCount": 326,
+      "generatedAt": "2026-10-02T09:47:42.411Z",
+      "nodeCount": 326,
+      "edgeCount": 327,
       "laneCount": 6,
       "byLane": {
         "new-findings": 156,
@@ -9471,12 +9494,12 @@
         "untracked": 50,
         "open-ask": 24,
         "suggested": 21,
-        "tracked": 15,
+        "tracked": 16,
         "undefined": 4
       },
       "byKind": {
         "finding": 107,
-        "branch": 104,
+        "branch": 105,
         "defect": 51,
         "open-ask": 25,
         "suggestion": 21,
@@ -9487,7 +9510,7 @@
         "done": 157,
         "open": 120,
         "parked": 14,
-        "built-and-live": 8,
+        "built-and-live": 9,
         "defect-fixed": 8,
         "ruled-and-applied": 7,
         "flagged-not-fixed": 5,
@@ -9497,12 +9520,12 @@
       },
       "byDirection": {
         "local": 193,
-        "outbound": 114,
+        "outbound": 115,
         "inbound": 13,
         "adjacent": 5
       },
       "byEdgeKind": {
-        "outbound": 70,
+        "outbound": 71,
         "in-epic": 63,
         "ontology": 56,
         "awaits": 55,
@@ -9515,7 +9538,7 @@
         "untracked": 52,
         "open-ask": 25,
         "suggested": 21,
-        "tracked": 12
+        "tracked": 13
       },
       "movedLane": [
         "B4",
@@ -9878,7 +9901,8 @@
         "open - originals unversioned; needs a git init or move, Gavin's call": 1,
         "open - uncommitted; the run contract forbids committing djeli from this run": 1,
         "open - split the canvas across artifacts or prune; not resolved here": 1,
-        "open - Gavin's call, not inferred": 1
+        "open - Gavin's call, not inferred": 1,
+        "unverified - published per the session that made it; this run could not open the URL": 1
       },
       "unverifiedNodes": []
     },
@@ -10089,6 +10113,14 @@
         "OA27"
       ],
       "newEdges": 2,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass88_2026_10_02_2026_10_02": {
+      "newNodes": [
+        "A7"
+      ],
+      "newEdges": 1,
       "corrections": [],
       "refused": []
     }
@@ -14226,9 +14258,9 @@
     ],
     "byLane": {
       "tracked": {
-        "closed": 13,
+        "closed": 14,
         "open": 2,
-        "pct": 87
+        "pct": 88
       },
       "untracked": {
         "closed": 24,
@@ -14266,7 +14298,7 @@
       }
     },
     "total": {
-      "closed": 183,
+      "closed": 184,
       "open": 127,
       "pct": 59,
       "unclassified": 15
