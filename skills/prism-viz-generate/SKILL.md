@@ -1,6 +1,7 @@
 ---
 name: prism-viz-generate
-description: Layer 01 of griot-viz-engine — turn a real system into a diagram. Authors archify-shaped JSON IR from source you can cite, gates it against archify's own validator plus a grounding rule, and hands it to the engine, which picks the renderer from the diagram's shape. Use when Gavin asks to diagram, map, or draw a system — "diagram our Cloudflare setup", "map the CC5 to Blender pipeline", "draw how this repo fits together", "show me the deployment" — or when a harvest or codex needs a picture. Never invents a component: every non-external node cites path and line. Does not render (layer 02 does) and does not decide the canvas (route.ts does).
+description: >-
+  Layer 01 of griot-viz-engine — turn a real system into a diagram. Authors archify-shaped JSON IR from source you can cite, gates it against archify's own validator plus a grounding rule, and hands it to the engine, which picks the renderer from the diagram's shape. Use when Gavin asks to diagram, map, or draw a system — "diagram our Cloudflare setup", "map the CC5 to Blender pipeline", "draw how this repo fits together", "show me the deployment" — or when a harvest or codex needs a picture. Never invents a component: every non-external node cites path and line. Does not render (layer 02 does) and does not decide the canvas (route.ts does).
 model: opus
 ---
 
