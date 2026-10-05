@@ -4,6 +4,22 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [5.0.1] - 2026-10-05
+
+Audit gates the shipped release, mobile in the release add-list, docs reconciled.
+
+### Added
+
+- `griot-viz-engine` and the brainstorm gavel motion documented in `prism-docs`.
+
+### Changed
+
+- **`pre-release-audit`** audits the shipped release at a tagged HEAD (diffs against the previous tag).
+- **`prism-release`** add-list includes the mobile Expo package (`apps/prism-mobile/packages/app/package.json`).
+- Plugin docs pages reconciled with the v4.17.x code delta; marketplace mirror receives the plan/spectrum/code-intel files that were behind.
+
+Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-5.0.1.md`.
+
 ## [4.17.4] - 2026-10-05
 
 The Artifact publish route, the 5.5 model line, and the viz-engine rename.
