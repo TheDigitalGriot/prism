@@ -91,7 +91,8 @@
     "amendPass85": "Correcting N152's own 'went beyond scope, done' claim - it was not done. griot-agent-architect run for real (not hand-simulated) found 16 more live trace_call_path sites. All fixed now, commit e323ab4.",
     "amendPass86_2026_10_02": "Mixdown 2026-10-02: composed-board root-cause CORRECTION (template engine, not palette), griot-dubplate + griot-mixdown shipped, skill-guard regex fix, Kente unversioned finding.",
     "amendPass87_2026_10_02": "Branch-codex pass 2026-10-02: untracked djeli receipts, canvas 512-ceiling, Kente versioning open ask.",
-    "amendPass88_2026_10_02": "Chat-viz pass 2026-10-02: The Dubplate Cut artifact reference; channel-strip widget source unreachable."
+    "amendPass88_2026_10_02": "Chat-viz pass 2026-10-02: The Dubplate Cut artifact reference; channel-strip widget source unreachable.",
+    "amendPass89_2026_10_05": "Connected Griot logo brainstorm and app-icon local plugin packaged and installed; full original references retained. C43 closes the local package only. Canonical glyph/art approval, exports, account deployment and tracking publication remain separate unverified targets."
   },
   "groups": [
     {
@@ -6596,6 +6597,23 @@
         "evidence": "URL https://claude.ai/artifact/CKHCPNy37wpPWoDpqnyNtp stated in the 2026-10-02 mixdown run contract; not fetched from this headless run (no network/Artifact tool). Related skill commit cb40033.",
         "result": "unverified - published per the session that made it; this run could not open the URL"
       }
+    },
+    {
+      "id": "wg:djeli-branch:C43",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C43",
+      "kind": "branch",
+      "title": "Connected Griot logo brainstorm and app-icon plugin installed locally",
+      "state": "done",
+      "group": "this-stage",
+      "direction": "inbound",
+      "description": "Gavin requested a plugin that meshes griot-logo-brainstorm and griot-app-icons end to end and retains all supplied reference photos. The local griot-logo-brainstorm@griot-logo-brainstorm-local 0.1.0 package connects four skills, preserves source workflows, registers original references, and carries the Prod/Debug/Wave styling evidence and subtle Wave-edge correction. Canonical glyph approval, final artwork approval, platform exports, account deployment, and artifact publication are separate unfinished work; this node closes only the locally installed connected package.",
+      "verification": {
+        "evidence": "ICON_PLUGIN_OK source/cache, reported by parent session this run; package and executable validator: C:/Users/digit/Documents/Codex/2026-10-04/i/outputs/griot-logo-brainstorm-plugin; package contains 17 originals, 22 registered references, 38 preserved source files, four skills. Architect lineage pinned to Prism commit c4f11dc82f1879d1e29606cd46eea4fb12cb5e34. Final report and cache parity remain parent-owned.",
+        "result": "Local plugin package installed and connected; no claim that final icon art, canonical glyph, export, account deployment, or published tracking surfaces are complete."
+      }
     }
   ],
   "edges": [
@@ -8560,15 +8578,33 @@
       "to": "wg:djeli-branch:A5",
       "kind": "outbound",
       "label": "the artifact is the record of what griot-dubplate (A5) replaces and how it works"
+    },
+    {
+      "from": "wg:djeli-branch:N75",
+      "to": "wg:djeli-branch:C43",
+      "kind": "inbound",
+      "label": "Prism glyph-extraction and app-icon lineage"
+    },
+    {
+      "from": "wg:djeli-branch:B35",
+      "to": "wg:djeli-branch:C43",
+      "kind": "inbound",
+      "label": "Kente approved icon and glyph lineage"
+    },
+    {
+      "from": "wg:djeli-branch:D7",
+      "to": "wg:djeli-branch:C43",
+      "kind": "inbound",
+      "label": "Per-app ember styling context"
     }
   ],
   "stats": {
-    "totalBranches": 105,
+    "totalBranches": 106,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 327,
+    "edgeCount": 330,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -10121,6 +10157,14 @@
         "A7"
       ],
       "newEdges": 1,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass89_2026_10_05_2026_10_05": {
+      "newNodes": [
+        "C43"
+      ],
+      "newEdges": 3,
       "corrections": [],
       "refused": []
     }
