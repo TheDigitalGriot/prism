@@ -4,6 +4,27 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.17.4] - 2026-10-05
+
+The Artifact publish route, the 5.5 model line, and the viz-engine rename.
+
+### Added
+
+- **Claude Opus 5.5 / Sonnet 5.5** onboarded into Arkestra model governance.
+- **I16 live-tool-drift gate** in `verify-code-intel`, table-driven CHANNELS gate for marketplace mirror freshness, and a standalone-skill validator in griot-agent-architect.
+
+### Changed
+
+- **`prism-codex-plan-sync`** forward/reverse references now name the top-level `Artifact` publish with `url=` instead of the retired `update_artifact`.
+- **`trace_call_path` -> `trace_path`** across plan, spectrum and 16 further sites.
+- **`prism-viz-engine` renamed `griot-viz-engine`** (directory, path literals, live references).
+
+### Fixed
+
+- `prism-viz-generate` frontmatter folded to a block scalar so it parses; `graph-navigator` tools list resolves to real tools; invalid `effort` field removed from haiku agents; a zero-file structural scan in `pre-release-audit` is now a loud FAIL.
+
+Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-4.17.4.md`.
+
 ## [4.17.3] - 2026-09-20
 
 Developer/ path drift repointed, and gitnexus re-indexed to HEAD.
