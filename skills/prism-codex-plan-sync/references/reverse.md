@@ -64,7 +64,7 @@ the license posture, or a resolved OPEN decision. When it is:
    landed.
 3. **Add a DGS `ITEMS[]` decision row** (`type:'decision'`/`'open-question'`) recording the ruling,
    and update the `oss-inspo` decision axes if an OSS choice changed — via the `dgs-plan-update` loop.
-4. **Re-push the codex artifact** — `SendUserFile` → top-level `Artifact` publish with `url=` (the publish IS the card refresh; `update_artifact` is deprecated/unmounted in cloud). This is the step that goes
+4. **Re-push the codex artifact** — `SendUserFile` → top-level `Artifact` publish with `url=` (the publish IS the card refresh). This is the step that goes
    stale if skipped (the whole reason `dgs-plan-update` exists). The live gallery card must not lag
    the repo.
 5. **If the discovery landed a UI, carry the device too** — the device seam below.
