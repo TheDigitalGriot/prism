@@ -14,13 +14,14 @@ As of the Sept 2026 line, the three routing tiers resolve to:
 
 | Tier | Frontmatter alias | Resolves to | $/MTok (in/out) |
 |---|---|---|---|
-| Deep analysis | `model: opus` | `claude-opus-5` — the routine ceiling | $5 / $25 |
-| General work | `model: sonnet` | `claude-sonnet-5` | $2 / $10 |
+| Deep analysis | `model: opus` | `claude-opus-5-5` — the routine ceiling (**v4.17.x**; was `claude-opus-5`) | $4 / $20 |
+| General work | `model: sonnet` | `claude-sonnet-5-5` (**v4.17.x**; was `claude-sonnet-5`) | $2 / $10 |
 | Fast lookups | `model: haiku` | `claude-haiku-4-5-20251001` | $1 / $5 |
 
 Two models sit outside routing entirely:
 
 - **`claude-fable-5-1`** — a **HITL-gated escalation**, never a resting default and never auto-selected. Reached only through the `.prism/local/fable.flag` + confirm modal and the `fable-gate.sh` PreToolUse hook.
+- **`claude-opus-5`** — the previous ceiling, still reachable under the explicit `opus5` key.
 - **`claude-opus-4-8`** — legacy, reachable under the explicit `opus48` key for A/B eval only.
 
 Agents use **aliases, never pinned IDs**, so a family roll-forward does not require touching 14 frontmatter blocks. Pin a full ID only for reproducible eval runs.
@@ -34,10 +35,11 @@ Assignment is only half the picture — a **per-model approval mode** (`ask` / `
 | Policy key | Model | Default mode |
 |---|---|---|
 | `fable5` | `claude-fable-5-1` | **`ask`** — HITL-gated |
-| `opus5` | `claude-opus-5` | `allow` — the routine ceiling carries no model-level gate |
+| `opus55` | `claude-opus-5-5` | `allow` — the routine ceiling carries no model-level gate |
+| `opus5` | `claude-opus-5` | legacy, reachable; no explicit entry, falls through to `allow` |
 | `opus48` | `claude-opus-4-8` | free floor, not policy-listed |
 
-A `deny` downgrades along the **Anthropic** chain `fable5 → opus5 → opus48` and emits a bus event naming the substitution. **Every decision emits an event**, including `allow`, so a premium model never runs silently.
+A `deny` downgrades along the **Anthropic** chain `fable5 → opus55 → opus5 → opus48` and emits a bus event naming the substitution. **Every decision emits an event**, including `allow`, so a premium model never runs silently.
 
 ### The provider axis <Badge type="tip" text="v4.16.0" />
 

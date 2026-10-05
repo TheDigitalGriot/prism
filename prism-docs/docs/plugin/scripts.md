@@ -111,7 +111,7 @@ Initializes the `.prism/` directory structure in any project:
 | `worktree-setup.sh` | Bash | WorktreeCreate | Auto-setup: gitignore check, deps install, config copy, `.prism/shared` symlink |
 | `worktree-cleanup.sh` | Bash | WorktreeRemove | Warns on uncommitted changes, removes `.prism/shared` symlink |
 | `log-agent.py` | Python | SubagentStart/Stop | Logs agent dispatches to `.prism/local/agent-log.jsonl` |
-| `fable-gate.sh` | Bash | **PreToolUse** (Task) | **v4.1.0**, generalized **v4.11.0** — the Model Control Plane gate for Task dispatches. Governs `opus5` + `fable5` through the shared policy (per-model **ask** / **allow** / **deny** / **skip**), reading `.prism/local/model-policy.json` (back-compat: derives from a legacy `.prism/local/fable.flag` when absent). Emits a JSONL model-decision event; every non-policy model passes through untouched. Fail-open — telemetry never breaks a dispatch. Payload parsed with node (no `jq` dependency); POSIX-sh hardened for dash/busybox |
+| `fable-gate.sh` | Bash | **PreToolUse** (Task) | **v4.1.0**, generalized **v4.11.0** — the Model Control Plane gate for Task dispatches. Governs `opus55` + `opus5` + `fable5` (**v4.17.4** — `opus55` / `claude-opus-5-5` added; chain `fable5 → opus55 → opus5 → opus48`) through the shared policy (per-model **ask** / **allow** / **deny** / **skip**), reading `.prism/local/model-policy.json` (back-compat: derives from a legacy `.prism/local/fable.flag` when absent). Emits a JSONL model-decision event; every non-policy model passes through untouched. Fail-open — telemetry never breaks a dispatch. Payload parsed with node (no `jq` dependency); POSIX-sh hardened for dash/busybox |
 | `detect-changes-gate.sh` | Bash | PostToolUse (Write\|Edit) | **v4.1.0** — Non-blocking codemem change-impact advisory. Runs `codebase-memory-mcp cli detect_changes`; when the accumulated blast radius is HIGH/CRITICAL, surfaces an advisory via both a top-level `systemMessage` and `hookSpecificOutput.additionalContext`. LOW / MEDIUM / none / any error → no output; never blocks the tool (exits 0 on every path) |
 
 ### Other Scripts
@@ -133,13 +133,13 @@ The deterministic half of the closing-ceremony **Review & Audit gate** — run b
 
 | Script | Type | Description |
 |--------|------|-------------|
-| `pre-release-audit.mjs` | Node | Deterministic release-gate audit runner (closing-ceremony Step 0). Runs `claude plugin validate .`, discovers + runs every `scripts/verify-*.mjs`, and checks a handful of `cl-plugin-structure` best practices. Exits non-zero on any failure so the ceremony gates on it |
+| `pre-release-audit.mjs` | Node | Deterministic release-gate audit runner (closing-ceremony Step 0). Runs `claude plugin validate .`, discovers + runs every `scripts/verify-*.mjs`, and checks a handful of `cl-plugin-structure` best practices. Exits non-zero on any failure so the ceremony gates on it. **v4.17.4** — a structural scan that examines zero files is now a loud `AUDIT_STRUCTURAL_ZERO_SCAN` FAIL, never a quiet pass; at a freshly tagged HEAD it diffs against the previous tag so the shipped release is what gets audited; the marketplace-mirror freshness check is a table-driven `CHANNELS` gate that fails closed on a network or parse error |
 | `verify-branch-integrated.mjs` | Node | Release-integration guard — fails a release unless HEAD is `main`, the base version is tagged, and no finalized release is left untagged. Removes the "released off an unmerged branch, never tagged, main left stale" drift by requiring the branch be integrated to main and the release cut from there |
 | `verify-ceremony-gate.mjs` | Node | Static guard that the closing ceremony actually wires the Review & Audit gate **ahead of** bookend (gate = Sequence step 0, bookend = step 1) and references `spec-reviewer`, `quality-reviewer`, `pre-release-audit`, and `review-audit-gate` |
 | `verify-story-unification.mjs` | Node | Static guard that the plan → story → execute flow stays unified on `stories.json`. Phased checks: generation (default), `--check-consumers` (implement/subagent), `--check-coherence` (iterate/validate), `--all` (every phase) |
 | `verify-model-policy-conformance.mjs` | Node | Static guard that every dispatch surface resolves models through the shared model-policy core rather than re-implementing approval modes locally (see *Model Control Plane* below) |
 | `verify-invariants.mjs` | Node | **v4.14.0**, extended **v4.15.0** — the invariant runner. Computes the ontology's invariants (I1–I9) and reports `pass` / `fail` / `unverified` per invariant. Auto-discovered by `pre-release-audit.mjs` under the `verify-*.mjs` convention, so it gates every release |
-| `verify-code-intel.mjs` | Node | **v4.17.0** — the code-intelligence invariants (I11–I15): index address, index freshness (25-commit / 14-day tolerance), vendored-tree completeness against `VENDOR-MANIFEST.json`, shelf-to-install drift, and declared-capability health. Written after three correctly-built code-intel systems were found aimed at addresses that no longer existed, with nothing failing when they were ignored. Same `verify-*.mjs` auto-discovery, so it gates every release |
+| `verify-code-intel.mjs` | Node | **v4.17.0** — the code-intelligence invariants (I11–I16): index address, index freshness (25-commit / 14-day tolerance), vendored-tree completeness against `VENDOR-MANIFEST.json`, shelf-to-install drift, and declared-capability health. Written after three correctly-built code-intel systems were found aimed at addresses that no longer existed, with nothing failing when they were ignored. Same `verify-*.mjs` auto-discovery, so it gates every release. **v4.17.4** — adds **I16**, a live-tool-drift gate: it asks the running codebase-memory-mcp binary what it actually exposes and fails when docs or agents still name a stale tool (`trace_call_path` → `trace_path` is the known instance) |
 | `workgraph-screen.mjs` | Node | **v4.17.0** — renders the global workgraph as a screen: session-vs-everything scope, per-project state lanes, and project→project links keyed on the target slug. Chained from `workgraph-index.mjs`, so regenerating the index always regenerates the view that displays it |
 
 #### Invariants (v4.14.0, I3/I7/I8 in v4.15.0, I9 current)
@@ -199,6 +199,12 @@ versioned pre-commit hook (`core.hooksPath=hooks`) plus `.gitattributes` (`*.md`
   everything added in v4.13.0+. It should track `references/model-config.md`.
 :::
 
+### `griot-agent-architect` Standalone-Skill Validator (v4.17.4)
+
+| Script | Type | Description |
+|--------|------|-------------|
+| `skills/griot-agent-architect/scripts/validate-skill.sh` | Bash | Validates a **standalone** `SKILL.md` — a skill with no `.claude-plugin/plugin.json`, such as those in `digital-griot-skills` — for well-formed frontmatter and structure. `claude plugin validate .` refuses these by design, so this is the standalone equivalent. Rules come from a survey of the skill corpus; a rule under ~95% corpus compliance is a WARN, never a FAIL. Usage: `validate-skill.sh <path/to/skill-dir>` |
+
 ### Headless Release Cycle (v4.10.0)
 
 The release-cycle skills (`prism-bookend`, `prism-docs-update`, `prism-release`, `prism-closing-ceremony`) can run unattended under `claude -p` / Cowork cloud / CI. Each interactive gate resolves its answer from a static answers file when `PRISM_NONINTERACTIVE` is set; when it is unset, every gate prompts exactly as before and the answers file is ignored (purely additive — no interactive run changes).
@@ -217,7 +223,7 @@ Per-model **approval modes** (`ask` / `allow` / `deny` / `skip`) generalizing th
 
 | Script | Type | Description |
 |--------|------|-------------|
-| `statusline-model.sh` | Bash/Node | **v4.11.0** — Claude Code `statusLine` command rendering the active model + its approval mode as a compact segment, printed **loud** (ember / red ANSI) when a premium model (opus5 / fable5) is active so a costly model never runs silently. Reads the same `.prism/local/model-policy.json` (mirrors `model-policy.ts` `readModelPolicy` / `effectiveMode` for the `cli` surface). Fail-safe: no stdin / no node / malformed policy prints a quiet segment rather than crashing. Enable via `settings.json` `statusLine`; see `cl-plugin-structure/references/statusline-model.md` |
+| `statusline-model.sh` | Bash/Node | **v4.11.0** — Claude Code `statusLine` command rendering the active model + its approval mode as a compact segment, printed **loud** (ember / red ANSI) when a premium model (opus55 / opus5 / fable5) is active so a costly model never runs silently. Reads the same `.prism/local/model-policy.json` (mirrors `model-policy.ts` `readModelPolicy` / `effectiveMode` for the `cli` surface). Fail-safe: no stdin / no node / malformed policy prints a quiet segment rather than crashing. Enable via `settings.json` `statusLine`; see `cl-plugin-structure/references/statusline-model.md` |
 | `fable-gate.sh` | Bash | (see Hook Scripts) — generalized in v4.11.0 to govern `opus5` + `fable5` through the plane and emit model-decision events |
 | `spectrum.sh` | Bash | Emits a model-decision event per autonomous iteration so Spectrum runs surface their active model alongside every other surface |
 

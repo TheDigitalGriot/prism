@@ -37,7 +37,7 @@ Agents live at `agents/` and are spawned via `Task(subagent_type="agent-name")`.
 
 | # | Agent | File | Lines | Model | Tools | Role |
 |---|-------|------|-------|-------|-------|------|
-| 11 | `graph-navigator` | `graph-navigator.md` | 95 | **haiku** | codebase-memory-mcp (11 graph tools) | Queries the codebase knowledge graph for structural analysis — functions, call chains, dependencies, dead code, blast radius. Never reads files directly; uses graph tools exclusively. |
+| 11 | `graph-navigator` | `graph-navigator.md` | 95 | **haiku** | `mcp__codebase-memory-mcp__*` (the whole codebase-memory-mcp tool family; **v4.17.x** — the `tools:` field was prose and resolved to zero tools, now a real wildcard) | Queries the codebase knowledge graph for structural analysis — functions, call chains, dependencies, dead code, blast radius. Never reads files directly; uses graph tools exclusively. |
 
 ### Visual Regression Agent
 
