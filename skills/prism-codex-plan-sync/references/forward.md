@@ -78,7 +78,7 @@ For each `[OPT:OPEN]` / `decision:'undecided'` item:
    - `stage`: `now` · `next` · `later`
    — or, for a design question, a resolved answer.
 3. **Close it to the DGS store via the `dgs-plan-update` loop**: sync-check → edit the item's
-   `decision`/`role`/`stage` → verify render (Node regex counts) → git commit → `update_artifact`.
+   `decision`/`role`/`stage` → verify render (Node regex counts) → git commit → top-level `Artifact` publish with `url=` (the publish IS the card refresh; `update_artifact` is deprecated/unmounted in cloud).
    A tool not yet on the shelf is added to BOTH the Potluck `T[]` and a paired DGS `oss-inspo`
    item first, then decided.
 4. Anything Gavin defers/passes that would otherwise be a task → record it in the plan's
