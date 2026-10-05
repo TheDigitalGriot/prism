@@ -19397,7 +19397,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   },
   {
@@ -19410,7 +19410,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   },
   {
@@ -19423,7 +19423,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   },
   {
@@ -19436,7 +19436,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   },
   {
@@ -19449,7 +19449,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   },
   {
@@ -19462,7 +19462,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   },
   {
@@ -19475,7 +19475,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   },
   {
@@ -19488,7 +19488,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   },
   {
@@ -19501,7 +19501,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   },
   {
@@ -19514,7 +19514,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   },
   {
@@ -19527,7 +19527,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   },
   {
@@ -19540,7 +19540,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   },
   {
@@ -19553,7 +19553,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:07.137Z",
+   "lastTouched": "2026-10-05T05:01:38.326Z",
    "path": null
   }
  ],
@@ -24569,7 +24569,7 @@
    "label": "channel 1 - griot-workgraph-update amends the branch graph with the session's shape (amendPass86-88)"
   }
  ],
- "generated": "2026-10-05T05:01:07.137Z",
+ "generated": "2026-10-05T05:01:38.327Z",
  "stats": {
   "nodes": 854,
   "edges": 835,
