@@ -42,6 +42,16 @@ Skills live at `skills/*/SKILL.md` and are auto-discovered workflow orchestrator
 | 16 | `prism-design` | ~80 | **opus** | "design this", "create a design", "design the architecture" |
 | 17 | `prism-finish` | ~100 | **sonnet** | "finish this branch", "ready to merge", "create PR", "clean up branch" |
 
+### Diagram Generation Skill
+
+| # | Skill | Model | Trigger Patterns |
+|---|-------|-------|-----------------|
+| 19 | `prism-viz-generate` | **opus** | "diagram our setup", "map the pipeline", "draw how this repo fits together", "show me the deployment" |
+
+**`prism-viz-generate`** is layer 01 of **`griot-viz-engine`** (`apps/griot-viz-engine/`). The engine was renamed from `prism-viz-engine` in commit `460d0a2`; `prism-viz-engine` remains a deprecated alias that still resolves (the npm registry package, the `prism_viz_engine` MCP tool binding, module imports). The skill authors archify-shaped JSON IR from source it can cite (every non-`external` component carries a `path` and line), gates it with `skills/prism-viz-generate/scripts/gate-ir.mjs`, and hands it to the engine. It does not render and does not choose the canvas.
+
+The engine has four layers: **01 generate** (`src/layers/01-generate/archify-ir.ts`), the **JSON Canvas** wire format (`src/core/json-canvas.ts`), **02 render** (`src/layers/02-render/route.ts` picks a renderer from the diagram's shape: xyflow node graph, or isometric for infrastructure topology), **03 substrate** (`harvest-adapter.ts`) and **04 shell** (`Shell.tsx`, every box opens its source). Every placed node is routed to one of eleven layer roles; a finding that fits none is flagged `unplaceable`. `node scripts/emit-screen.mjs` writes a self-contained static screen for the brainstorm companion. The engine is reachable as the `griot_viz_engine` MCP tool (`render`, `layers`, `validate`) on the `digital-griot-mcp` channel. The `prism-graph` and Excalidraw renderers are named in the router but not built.
+
 ### Decision Cockpit Skills (v4.7.0)
 
 | # | Skill | Lines | Model | Trigger Patterns |
@@ -55,6 +65,8 @@ Both `prism-gavel` and `prism-brainstorm` ride one shared wake channel, **`digit
 **`prism-capture`** codifies design inspiration into a structured capture ledger that `prism-brainstorm` reads as pre-loaded context instead of starting from scratch. Three stages — Genesis (what + where) → Triage (categorize as active / reference / parked) → Translate (render source vs Griotwave side-by-side in the visual companion). Outputs to `.prism/shared/captures/YYYY-MM-DD-<topic>.md`. Precedes `prism-brainstorm`.
 
 **`prism-brainstorm`** includes a browser-based **Visual Companion** — a zero-dependency Node.js HTTP/WebSocket server that serves interactive HTML mockups for A/B design choices. User clicks are captured as JSONL events.
+
+**Gavel ceremony in the brainstorm companion.** The brainstorm frame carries a `gavel-ceremony` panel that closes a workgraph node for real: `POST /api/close` in `skills/prism-brainstorm/scripts/server.cjs` validates `id`, `state` (`done` | `superseded` | `parked`), `resolution`, `kind`, `lane` and `supersededBy` (required only for `superseded`), writes `state/workgraph.json` atomically, appends one record per close to `state/closed-outbox.ndjson`, and broadcasts the existing `workgraph-update` WebSocket event (commit `1391b89`). The renderer is `ps.renderers['gavel-ceremony']` in `helper.js`. Commit `ecf1bc1` gave it motion in `frame-template.html`: `gvFormIn` and `gvRowPick` on row select, `gvStrike` and `gvSettle` on the close, `gvRefuse` (a brief damped shake) on a refused close, with durations from the `--ps-dur-tale` and `--ps-dur-song` tokens. Under `prefers-reduced-motion` the animations are removed and the same state text still lands.
 
 **`prism-brand`** is a three-phase brand identity workflow: Ideation (12 divergent single-colour logo seeds at `lo` fidelity) → Refinement (2–3 seeds developed) → System (color, type, and motion tokens locked). Each phase gates on explicit user approval. Writes a brand spec to `.prism/shared/designs/YYYY-MM-DD-<topic>-brand.md` that `prism-design` consumes. Follows `prism-brainstorm`; precedes `prism-design`.
 
