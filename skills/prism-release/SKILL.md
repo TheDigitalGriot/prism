@@ -188,6 +188,7 @@ All three must print `{NEW_VERSION}`. A mismatch means a stale artifact survived
 ```bash
 git add VERSION .claude-plugin/ apps/prism-cli/main.go apps/prism-cli/app/footer.go \
   apps/prism-vscode/package.json apps/prism-electron/package.json \
+  apps/prism-mobile/packages/app/package.json \
   apps/prism-installer/package.json apps/prism-installer/src-tauri/Cargo.toml \
   apps/prism-installer/src-tauri/tauri.conf.json apps/prism-installer/src-tauri/src/ \
   apps/prism-installer/src/ \

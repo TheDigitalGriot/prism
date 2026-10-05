@@ -120,10 +120,23 @@ const walk = (dir) => existsSync(dir) ? readdirSync(dir, { withFileTypes: true }
 }) : [];
 const base = (run('git', ['describe', '--tags', '--abbrev=0']).stdout || '').trim()
   || (run('git', ['rev-parse', '--verify', 'main']).status === 0 ? 'main' : '');
+const SCANNABLE = /^(skills|commands|agents|hooks)\//;
+const diffSet = (b) => {
+  const r = run('git', ['diff', '--name-only', `${b}..HEAD`]);
+  return r.status === 0 ? new Set(r.stdout.split('\n').map(s => s.trim()).filter(Boolean)) : null;
+};
 let changed = null;
+let scanBase = base;
 if (base) {
-  const r = run('git', ['diff', '--name-only', `${base}..HEAD`]);
-  if (r.status === 0) changed = new Set(r.stdout.split('\n').map(s => s.trim()).filter(Boolean));
+  changed = diffSet(base);
+  // Run at a freshly TAGGED HEAD, nothing scannable has changed since the tag, so the diff is empty by
+  // construction (AUDIT_STRUCTURAL_ZERO_SCAN). The release under audit is then the one the tag IS: diff
+  // against the previous tag instead of reporting a false FAIL. A genuinely empty release still fails.
+  if (changed !== null && ![...changed].some(f => SCANNABLE.test(f)) && /^v\d/.test(base)) {
+    const prev = (run('git', ['describe', '--tags', '--abbrev=0', `${base}~1`]).stdout || '').trim();
+    const prevSet = prev ? diffSet(prev) : null;
+    if (prevSet && [...prevSet].some(f => SCANNABLE.test(f))) { changed = prevSet; scanBase = prev; line('INFO', `HEAD is at/after ${base} with nothing scannable since; structural scope = ${prev}..HEAD (the release ${base} shipped)`); }
+  }
 }
 if (changed === null) line('WARN', 'no base tag/branch to diff against — structural checks skipped (run in a repo with history)');
 else if (changed.size === 0) line('WARN', `no files changed vs ${base} — structural checks scanned 0 files (bootstrap / first release?)`);
