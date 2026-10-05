@@ -16,7 +16,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var version = "4.17.3"
+var version = "4.17.4"
 
 func main() {
 	var (
