@@ -2314,9 +2314,9 @@
    "title": "CanvasNote + ClassMate AI",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
-   "contentHash": "afc5854151f7"
+   "contentHash": "3246e98fb842"
   },
   {
    "id": "wg:synaptiq:2f0102c8344f",
@@ -2345,7 +2345,7 @@
     "Export component from barrel file"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "b2cab8d82ad0"
   },
@@ -2376,7 +2376,7 @@
     "Position toolbar above text selection using BubbleMenu"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "a9090f98959a"
   },
@@ -2399,15 +2399,15 @@
    ],
    "steps": [
     "Add Typography extension or configure input rules",
-    "Configure **text** ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ bold shortcut",
-    "Configure *text* ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ italic shortcut",
-    "Configure ~~text~~ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ strikethrough shortcut",
-    "Configure # , ## , ### ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ heading shortcuts",
-    "Configure - and 1. ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ list shortcuts",
-    "Configure > ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ blockquote shortcut"
+    "Configure **text** â†’ bold shortcut",
+    "Configure *text* â†’ italic shortcut",
+    "Configure ~~text~~ â†’ strikethrough shortcut",
+    "Configure # , ## , ### â†’ heading shortcuts",
+    "Configure - and 1. â†’ list shortcuts",
+    "Configure > â†’ blockquote shortcut"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "40c1a1716ee6"
   },
@@ -2439,7 +2439,7 @@
     "Update CardRenderer to use NoteCard for 'note' type"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "e198351d9e10"
   },
@@ -2468,7 +2468,7 @@
     "Allow manual resize to override auto height"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "e6bcc9290be6"
   },
@@ -2499,7 +2499,7 @@
     "Show saving indicator in card"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "3fb382a74822"
   },
@@ -2532,7 +2532,7 @@
     "Update CardRenderer for 'image' type"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "c2101bf4f833"
   },
@@ -2564,7 +2564,7 @@
     "Create ImageCard at drop position with file path"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "058ccb0d4aa2"
   },
@@ -2595,7 +2595,7 @@
     "Load full image on click or zoom"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "b167d61183b6"
   },
@@ -2628,7 +2628,7 @@
     "Update CardRenderer for 'link' type"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "a53a3af739a4"
   },
@@ -2662,7 +2662,7 @@
     "Handle fetch errors gracefully with fallback display"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "bc87f5d880e7"
   },
@@ -2694,7 +2694,7 @@
     "Update CardRenderer for 'task_list' type"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "ad1dcfc8738c"
   },
@@ -2727,7 +2727,7 @@
     "Persist task changes to database"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "de73e40b01eb"
   },
@@ -2756,7 +2756,7 @@
     "Test all card types render correctly in Canvas"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "08556c920fb2"
   },
@@ -2788,7 +2788,7 @@
     "Integrate TopBar into App layout"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "414545559ce5"
   },
@@ -2819,7 +2819,7 @@
     "Integrate into TopBar left section"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "c69cb7b09cf5"
   },
@@ -2851,7 +2851,7 @@
     "Integrate into TopBar right section"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "a48ee7bb3dc0"
   },
@@ -2883,7 +2883,7 @@
     "Integrate LeftToolbar into App layout"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "f0ec3a730121"
   },
@@ -2917,7 +2917,7 @@
     "Close menu on tool selection"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "7c9ba68b7862"
   },
@@ -2948,7 +2948,7 @@
     "Deselect tool after creating card (or optionally keep selected)"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "0abc761fd371"
   },
@@ -2978,7 +2978,7 @@
     "Handle empty board state (no cards) with appropriate UI"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "4e1e1affa90c"
   },
@@ -3010,7 +3010,7 @@
     "Reset canvas pan/zoom when switching boards"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "58e13f59e61c"
   },
@@ -3042,7 +3042,7 @@
     "Update CardRenderer for 'heading' type"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "9a5ffa7ed9ca"
   },
@@ -3073,7 +3073,7 @@
     "Update CardRenderer for 'column' type"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "c41eaab9bb43"
   },
@@ -3105,7 +3105,7 @@
     "Remove from column when dragged out"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "67196837f2b2"
   },
@@ -3137,7 +3137,7 @@
     "Update CardRenderer for 'board' type"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "ea98ef186ced"
   },
@@ -3170,7 +3170,7 @@
     "Update CardRenderer for 'comment' type"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "c8fae9def6c5"
   },
@@ -3203,7 +3203,7 @@
     "Update CardRenderer for 'table' type"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "5abf0db47ec3"
   },
@@ -3235,7 +3235,7 @@
     "Add resources/whisper/*.bin and resources/whisper/*.exe to .gitignore"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "18a81ae2f21d"
   },
@@ -3264,7 +3264,7 @@
     "Test transcription with a sample WAV file"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "a07a81787a32"
   },
@@ -3299,7 +3299,7 @@
     "Emit 'audioChunk' event with WAV buffer on each chunk"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "6b3ab0f9e027"
   },
@@ -3329,7 +3329,7 @@
     "Add start/stop/cleanup methods"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "ec4f5eaf35b9"
   },
@@ -3358,7 +3358,7 @@
     "Verify microphone PCM data flows from renderer to main"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "b25392236e2d"
   },
@@ -3383,7 +3383,7 @@
     "Create TranscriptionService class extending EventEmitter",
     "Resolve whisper binary path (dev vs production via app.isPackaged)",
     "Implement initialize() to verify binary and model exist, create temp dir",
-    "Implement processChunk(wavBuffer) â€” write temp WAV, spawn whisper-cli, collect stdout",
+    "Implement processChunk(wavBuffer) — write temp WAV, spawn whisper-cli, collect stdout",
     "Parse whisper output text into TranscriptSegment",
     "Clean up temp WAV files after processing",
     "Use -t 4 threads, -l en language, --no-timestamps flags",
@@ -3391,7 +3391,7 @@
     "Implement cleanup() to remove temp directory"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "71767e08e226"
   },
@@ -3415,8 +3415,8 @@
    ],
    "steps": [
     "Instantiate AudioCaptureService and TranscriptionService singletons in handlers.ts",
-    "Add audio:start handler â€” initialize transcription, start capture, wire audioChunk to processChunk",
-    "Add audio:stop handler â€” stop capture, remove listeners, cleanup transcription",
+    "Add audio:start handler — initialize transcription, start capture, wire audioChunk to processChunk",
+    "Add audio:stop handler — stop capture, remove listeners, cleanup transcription",
     "Add audio:pause and audio:resume handlers",
     "Add audio:status handler returning capture state",
     "Send transcript:update IPC event to renderer on each transcribed segment",
@@ -3424,7 +3424,7 @@
     "Append transcript segments to active session"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "be7aabf75aac"
   },
@@ -3448,7 +3448,7 @@
    "steps": [
     "Create NoteGenerationService class",
     "Implement addSegment() to accumulate transcript segments",
-    "Implement generateNotes() â€” build prompt from accumulated transcript, call claudeService.sendQuery()",
+    "Implement generateNotes() — build prompt from accumulated transcript, call claudeService.sendQuery()",
     "Create system prompt for note extraction (key concepts, definitions, bullet points, importance levels)",
     "Parse JSON notes from Claude response (handle markdown code fences)",
     "Map parsed notes to GeneratedNote[] with IDs and sourceSegments",
@@ -3457,7 +3457,7 @@
     "On failure, put segments back for retry"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "d894bdb4495d"
   },
@@ -3488,7 +3488,7 @@
     "Save generated notes to session"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "f88ee122153a"
   },
@@ -3521,7 +3521,7 @@
     "Clean up listeners and audio resources on unmount"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "d41ac45c320c"
   },
@@ -3553,7 +3553,7 @@
     "Export from barrel file"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "04fdddf95247"
   },
@@ -3584,7 +3584,7 @@
     "Add audio level indicator (simple VU meter bar)"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "1d195cc26fdf"
   },
@@ -3613,7 +3613,7 @@
     "Ensure layout integrates with existing session management UI"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "7a0f7e50fabc"
   },
@@ -3644,7 +3644,7 @@
     "Kill whisper process mid-chunk -> verify pipeline recovers"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "eba013c2ffb7"
   },
@@ -3675,7 +3675,7 @@
     "Export from barrel file"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "0532fdb0c8eb"
   },
@@ -3706,7 +3706,7 @@
     "Create line in database on finish"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "120e4cdaa7b2"
   },
@@ -3738,7 +3738,7 @@
     "Snap to card edge when close"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "ee6bb9b618c2"
   },
@@ -3769,7 +3769,7 @@
     "Detach line if endpoint dragged far from card"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "f78618894ed2"
   },
@@ -3803,7 +3803,7 @@
     "Show context menu on line right-click"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "1215731647fb"
   },
@@ -3835,7 +3835,7 @@
     "Integrate hook into App component"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "4d8ddacaf2b6"
   },
@@ -3869,7 +3869,7 @@
     "Add arrow keys for nudge (1px, 10px with Shift)"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "9c0069449b25"
   },
@@ -3901,7 +3901,7 @@
     "Close on Escape key"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "3a92a4444493"
   },
@@ -3932,7 +3932,7 @@
     "Set menu in main process on app ready"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "efd966d5a7fd"
   },
@@ -3964,7 +3964,7 @@
     "Wire menu actions to appropriate store actions"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "f02f8562db29"
   },
@@ -3996,7 +3996,7 @@
     "Integrate into App layout"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "f7a46ccde7c3"
   },
@@ -4029,7 +4029,7 @@
     "Add quick delete button per item"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "fed6b00856be"
   },
@@ -4065,7 +4065,7 @@
     "Click result to select/navigate to card"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "c3e43f511d83"
   },
@@ -4096,7 +4096,7 @@
     "Create exports directory at ~/.canvasnote/exports/"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "89057d059819"
   },
@@ -4129,7 +4129,7 @@
     "Return file path on success"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "0870256047b3"
   },
@@ -4160,7 +4160,7 @@
     "Create export:markdown and export:text IPC handlers"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "40a777beb96c"
   },
@@ -4192,7 +4192,7 @@
     "Wire to keyboard shortcut (Ctrl+E)"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "888e03d71f7d"
   },
@@ -4225,7 +4225,7 @@
     "Update CardRenderer for 'color' type"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "6837a2628e16"
   },
@@ -4253,7 +4253,7 @@
     "Add getHeadingContent() method to DatabaseService"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "31a40d28c4a6"
   },
@@ -4286,7 +4286,7 @@
     "Update CardRenderer for 'video' type"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "17e0357a3382"
   },
@@ -4323,7 +4323,7 @@
     "Initialize sync service in main/index.ts"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "f72d04dbdd02"
   },
@@ -4359,7 +4359,7 @@
     "Update CardRenderer for 'audio' and 'map' types"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "d36cc480c6f0"
   },
@@ -4389,7 +4389,7 @@
     "Enhance sync:cards-updated IPC event to include full SyncCard data array"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "97040a5dc208"
   },
@@ -4427,7 +4427,7 @@
     "Update CardRenderer for 'document' and 'sketch' types"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "8010299983a7"
   },
@@ -4462,7 +4462,7 @@
     "Add retry logic for transient failures"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "b88ccaeec4ff"
   },
@@ -4494,7 +4494,7 @@
     "Add smooth transition for pan changes"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "85e9494c34f7"
   },
@@ -4527,7 +4527,7 @@
     "Change cursor based on interaction state"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "d11af9682467"
   },
@@ -4557,7 +4557,7 @@
     "Verify TypeScript compiles in both projects"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "f173cad3ad1e"
   },
@@ -4591,7 +4591,7 @@
     "Add discard changes warning"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "e2885988c191"
   },
@@ -4623,7 +4623,7 @@
     "Add debouncing (500ms write, isWriting flag for self-trigger suppression)"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "487887629a83"
   },
@@ -4653,7 +4653,7 @@
     "Style modal with dark theme"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "0fcd6b9f0204"
   },
@@ -4685,7 +4685,7 @@
     "Stop sync service in app quit handler"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "4607ee98e36f"
   },
@@ -4723,7 +4723,7 @@
     "Add backup and reset buttons"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "081d03dfe207"
   },
@@ -4757,7 +4757,7 @@
     "Save preferences on change"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "bd95afa5342b"
   },
@@ -4786,7 +4786,7 @@
     "Push heading + note + bullet cards â†’ verify all types render correctly"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "70fd4593976b"
   },
@@ -4819,7 +4819,7 @@
     "Test box selection and multi-select"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "22e6b2c71cba"
   },
@@ -4850,7 +4850,7 @@
     "Document performance results"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "386c733a2966"
   },
@@ -4878,7 +4878,7 @@
     "Add comments where needed"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "3443a2b16b3b"
   },
@@ -4909,7 +4909,7 @@
     "Add license information"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "a2375c6b40d2"
   },
@@ -4937,7 +4937,7 @@
     "Document any packaging issues"
    ],
    "dialect": "B",
-   "lastTouched": "2026-02-23T21:02:20.114Z",
+   "lastTouched": "2026-10-06T08:23:10.474Z",
    "path": "C:\\Users\\digit\\GriotApps\\Synaptiq\\.prism\\shared\\stories\\stories.json",
    "contentHash": "3f1039204fbf"
   },
@@ -13320,7 +13320,7 @@
    "source": [],
    "maps": 0,
    "screen": null,
-   "lastTouched": "2026-09-23T22:15:05.533Z",
+   "lastTouched": "2026-10-05T16:54:05.055Z",
    "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\local\\brainstorm\\7354-1790199040\\state\\decisions.json",
    "contentHash": "875f059b1234"
   },
@@ -13341,7 +13341,7 @@
    "source": [],
    "maps": 0,
    "screen": null,
-   "lastTouched": "2026-09-23T22:15:05.533Z",
+   "lastTouched": "2026-10-05T16:54:05.055Z",
    "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\local\\brainstorm\\7354-1790199040\\state\\decisions.json",
    "contentHash": "e1eba5b295ef"
   },
@@ -13355,14 +13355,14 @@
    "title": "originLane is pivotal to the Riddim",
    "summary": "Six lanes, already in the graphs, never surfaced.",
    "choice": "A",
-   "revisit": null,
+   "revisit": "deferred - originLane surfacing not yet built; revisit next cycle",
    "state": "decided",
    "direction": "local",
    "destination": [],
    "source": [],
    "maps": 0,
    "screen": null,
-   "lastTouched": "2026-09-23T22:15:05.533Z",
+   "lastTouched": "2026-10-05T16:54:05.055Z",
    "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\local\\brainstorm\\7354-1790199040\\state\\decisions.json",
    "contentHash": "961747b3d8f4"
   },
@@ -13383,7 +13383,7 @@
    "source": [],
    "maps": 0,
    "screen": null,
-   "lastTouched": "2026-09-23T22:15:05.533Z",
+   "lastTouched": "2026-10-05T16:54:05.055Z",
    "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\local\\brainstorm\\7354-1790199040\\state\\decisions.json",
    "contentHash": "dbf12a7db0ff"
   },
@@ -13404,7 +13404,7 @@
    "source": [],
    "maps": 0,
    "screen": null,
-   "lastTouched": "2026-09-23T22:15:05.533Z",
+   "lastTouched": "2026-10-05T16:54:05.055Z",
    "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\local\\brainstorm\\7354-1790199040\\state\\decisions.json",
    "contentHash": "f2f8731890ee"
   },
@@ -18760,7 +18760,7 @@
    "title": "Cinodex Studio",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18772,7 +18772,7 @@
    "title": "Ashe",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18784,7 +18784,7 @@
    "title": "GBFolio",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18796,7 +18796,7 @@
    "title": "R3F Studio",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18808,7 +18808,7 @@
    "title": "Griot 3D pipeline",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18820,7 +18820,7 @@
    "title": "Prism",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18832,7 +18832,7 @@
    "title": "griot-live-artifacts",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18844,7 +18844,7 @@
    "title": "Griot Ontology",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18856,7 +18856,7 @@
    "title": "Djeli",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18868,7 +18868,7 @@
    "title": "Griot Viz Templates",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18880,7 +18880,7 @@
    "title": "SkillForge",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18892,7 +18892,7 @@
    "title": "Valence",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18904,7 +18904,7 @@
    "title": "Graft",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18916,7 +18916,7 @@
    "title": "viz-templates",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18928,7 +18928,7 @@
    "title": "agent-ontology",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18940,7 +18940,7 @@
    "title": "the workgraph",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18952,7 +18952,7 @@
    "title": "Kweli",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18964,7 +18964,7 @@
    "title": "Synaptiq",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18976,7 +18976,7 @@
    "title": "Arkestra",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18988,7 +18988,7 @@
    "title": "Audion",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19000,7 +19000,7 @@
    "title": "Hazine",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19012,7 +19012,7 @@
    "title": "Cinopsis",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19024,7 +19024,7 @@
    "title": "Meridian",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19036,7 +19036,7 @@
    "title": "griot_scrape",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19048,7 +19048,7 @@
    "title": "Lucid",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19060,7 +19060,7 @@
    "title": "digital-griot-mcp",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19072,7 +19072,7 @@
    "title": "formae (Aeraform)",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19084,7 +19084,7 @@
    "title": "Scrapling",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19096,7 +19096,7 @@
    "title": "Prism Gavel",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19108,7 +19108,7 @@
    "title": "The Griot Model",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19120,7 +19120,7 @@
    "title": "Kente",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19132,7 +19132,7 @@
    "title": "Manim",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19144,7 +19144,7 @@
    "title": "Math Formalism Ideation",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19156,7 +19156,7 @@
    "title": "ManimML",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19168,7 +19168,7 @@
    "title": "Mentorship Platform",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19180,7 +19180,7 @@
    "title": "everything",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19192,7 +19192,7 @@
    "title": "Fragment",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19204,7 +19204,7 @@
    "title": "every app",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19216,7 +19216,7 @@
    "title": "all agents",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19228,7 +19228,7 @@
    "title": "you",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19240,7 +19240,7 @@
    "title": "Sigil",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19252,7 +19252,7 @@
    "title": "Sigil/Synaptiq/Ashe",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19264,7 +19264,7 @@
    "title": "Anansi + Lucid",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19276,7 +19276,7 @@
    "title": "GBFolio / R3F",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19288,7 +19288,7 @@
    "title": "Glenn Lewis + AUXGOD",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19300,7 +19300,7 @@
    "title": "Kaleidoscope",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19312,7 +19312,7 @@
    "title": "Griot Hub",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19324,7 +19324,7 @@
    "title": "all",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19336,7 +19336,7 @@
    "title": "sankofa",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19348,7 +19348,7 @@
    "title": "Ophenia",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19360,7 +19360,7 @@
    "title": "Prism / Mindwalk",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19372,7 +19372,7 @@
    "title": "griot-dubplate",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19384,7 +19384,7 @@
    "title": "griot-mixdown",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-05T05:00:27.369Z",
+   "lastTouched": "2026-10-06T08:08:07.024Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19397,7 +19397,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   },
   {
@@ -19410,7 +19410,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   },
   {
@@ -19423,7 +19423,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   },
   {
@@ -19436,7 +19436,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   },
   {
@@ -19449,7 +19449,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   },
   {
@@ -19462,7 +19462,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   },
   {
@@ -19475,7 +19475,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   },
   {
@@ -19488,7 +19488,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   },
   {
@@ -19501,7 +19501,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   },
   {
@@ -19514,7 +19514,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   },
   {
@@ -19527,7 +19527,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   },
   {
@@ -19540,7 +19540,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   },
   {
@@ -19553,7 +19553,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-05T05:01:38.326Z",
+   "lastTouched": "2026-10-06T08:24:00.049Z",
    "path": null
   }
  ],
@@ -24569,7 +24569,7 @@
    "label": "channel 1 - griot-workgraph-update amends the branch graph with the session's shape (amendPass86-88)"
   }
  ],
- "generated": "2026-10-05T05:01:38.327Z",
+ "generated": "2026-10-06T08:24:00.049Z",
  "stats": {
   "nodes": 854,
   "edges": 835,

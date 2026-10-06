@@ -56,7 +56,7 @@
     };
   }
 
-  // ---------- Drawer rendering (Phase C â€” decisions + parking lot) ----------
+  // ---------- Drawer rendering (Phase C — decisions + parking lot) ----------
   function escapeHtml(s) {
     if (s == null) return '';
     return String(s)
@@ -70,7 +70,7 @@
   // ---------- Shared ordering ----------
   // One rule, used by BOTH the graph rail and the drawer, so the two panes can
   // never disagree about sequence. "Q3.1" sorts after "Q3" and before "Q4";
-  // un-numbered ids (standing decisions like "DÂ·slices") keep their relative
+  // un-numbered ids (standing decisions like "D·slices") keep their relative
   // order and sit after the numbered spine. Array#sort is stable, so ties hold.
   function qKey(q) {
     var m = String(q || '').match(/^Q\s*(\d+)(?:\.(\d+))?/i);
@@ -101,7 +101,7 @@
         dList.innerHTML = decisions.map(function (d) {
           var q = escapeHtml(d.q || '');
           var label = escapeHtml(d.label || '');
-          var choice = d.choice ? ' Â· <strong>' + escapeHtml(d.choice) + '</strong>' : '';
+          var choice = d.choice ? ' · <strong>' + escapeHtml(d.choice) + '</strong>' : '';
           var summary = d.summary ? '<span class="summary">' + escapeHtml(d.summary) + '</span>' : '';
           return '<li class="decision-item"><span class="q">' + q + '</span><span class="label">' + label + choice + '</span>' + summary + '</li>';
         }).join('');
@@ -125,7 +125,7 @@
           // a resolved tangent shows where it merged back instead of a revisit note
           var tail = merged
             ? '<span class="revisit">resolved at ' + escapeHtml(p.resolvedAt) +
-              (p.resolution ? ' â€” ' + escapeHtml(p.resolution) : '') + '</span>'
+              (p.resolution ? ' — ' + escapeHtml(p.resolution) : '') + '</span>'
             : (p.revisit ? '<span class="revisit">revisit: ' + escapeHtml(p.revisit) + '</span>' : '');
           return '<li class="parked-item' + (merged ? ' merged' : '') + '">' +
                  '<span class="q">' + (merged ? 'â†µ ' : 'from ') + fromQ + '</span>' +
@@ -152,7 +152,7 @@
     var parked = (state && Array.isArray(state.parked)) ? state.parked : [];
     var current = (state && state.current) ? String(state.current) : '';
     var upcoming = (state && Array.isArray(state.upcoming)) ? state.upcoming : [];
-    // viz-companion-fusion Step 4 â€” the WORKGRAPH channel, read alongside decisions.json.
+    // viz-companion-fusion Step 4 — the WORKGRAPH channel, read alongside decisions.json.
     // Decisions stay their own view (never merged into wgNodes); this is a second source
     // the same render pass folds in, per Decision 2 ("both halves land in this run").
     var wgNodes = (wgState && Array.isArray(wgState.nodes)) ? wgState.nodes.slice() : [];
@@ -193,7 +193,7 @@
              badge(o) + '</div>';
     }
 
-    // LAYERS â€” every layer collapses and filters independently. Spine order is
+    // LAYERS — every layer collapses and filters independently. Spine order is
     // preserved INSIDE each layer, so grouping never scrambles sequence.
     // TWO PANELS, ONE DATA SET.
     //   L = lanes by STATE      (where a thing stands)
@@ -207,11 +207,11 @@
     // destination silently left the Parked lane -- "Parked 0" was shown while five
     // parked items existed. Splitting the panels is what lets both axes be true.
     var L = { done: [], superseded: [], parked: [], open: [] };
-    // 'local' â€” viz-companion-fusion root-cause fix. dirOf() below always returned a value
+    // 'local' — viz-companion-fusion root-cause fix. dirOf() below always returned a value
     // (including the literal string 'local'), but this object never had that key, so
     // `if (D[dk]) D[dk].push(...)` silently dropped every flat/undirected item. A workgraph
-    // node with no destination/source/maps â€” the common case for a harvested component that
-    // hasn't been routed anywhere yet â€” is exactly what this was eating.
+    // node with no destination/source/maps — the common case for a harvested component that
+    // hasn't been routed anywhere yet — is exactly what this was eating.
     var D = { outbound: [], inbound: [], adjacent: [], local: [] };
     function dirOf(o) {
       if (!o) return 'local';
@@ -349,7 +349,7 @@
               '</div>';
     }
 
-    // â”€â”€ TIMELINE MODE â€” the original chronological spine. Same records, read
+    // â”€â”€ TIMELINE MODE — the original chronological spine. Same records, read
     //    in sequence instead of by layer. Splinters stay nested under parents.
     if (viewMode() === 'time') {
       var branches = {};
@@ -367,7 +367,7 @@
         }).join('');
       }
       // Each parent Q owns its children so a whole question collapses to one
-      // line â€” scan Q1, Q2, Q3 without the sub-threads in the way.
+      // line — scan Q1, Q2, Q3 without the sub-threads in the way.
       function item(parentRow, q) {
         var children = kids(q);
         if (!children) return '<div class="qg-item">' + parentRow + '</div>';
@@ -422,7 +422,7 @@
       return out + '</div></section>';
     }
     function groupHtml(g, rows) {
-      // Empty layers still render. "Parked 0" is information â€” it says nothing
+      // Empty layers still render. "Parked 0" is information — it says nothing
       // is un-dispositioned. A missing group says nothing at all.
       var empty = rows.length === 0;
       return '' +
@@ -695,7 +695,7 @@
   }
 
   // ---------- Companion agent (rail "agent" state) ----------
-  // Posts to /api/chat, which shells out to the local `claude` CLI â€” the same
+  // Posts to /api/chat, which shells out to the local `claude` CLI — the same
   // subscription path the Cinopsis companion uses. No API key, no streaming.
   function wireAgent() {
     var log = document.getElementById('ag-log');
@@ -718,7 +718,7 @@
       box.value = '';
       btn.disabled = true;
       add('you', msg);
-      var pending = add('think', 'thinkingâ€¦');
+      var pending = add('think', 'thinking…');
       fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -804,7 +804,7 @@
       atab.addEventListener('click', function () {
         applyAgent(!arail.classList.contains('collapsed'));
       });
-      // agent starts collapsed â€” the graph is the always-on state
+      // agent starts collapsed — the graph is the always-on state
       var st = null;
       try { st = sessionStorage.getItem('arail-collapsed'); } catch (e) {}
       applyAgent(st === null ? true : st === '1');
@@ -875,7 +875,7 @@
   }
 
   // Two independent channels, one render pass. Each is cached so a change on either side
-  // (a decision confirmed, a node harvested) re-renders qrail-graph with BOTH â€” decisions.json
+  // (a decision confirmed, a node harvested) re-renders qrail-graph with BOTH — decisions.json
   // and workgraph.json are on separate watchers/timers in server.cjs and never arrive together.
   var lastDecisionsState = { decisions: [], parked: [] };
   var lastWorkgraphState = { nodes: [], edges: [] };
@@ -898,7 +898,7 @@
       .then(function (r) { return r.json(); })
       .then(renderState)
       .catch(function () { renderState({ decisions: [], parked: [] }); });
-    // viz-companion-fusion Step 4 â€” seeded independently of decisions.json (server.cjs's GET
+    // viz-companion-fusion Step 4 — seeded independently of decisions.json (server.cjs's GET
     // route defaults to a genesis-only payload rather than 404ing), so this always resolves.
     fetch('/state/workgraph.json')
       .then(function (r) { return r.json(); })
@@ -949,9 +949,9 @@
         indicator.textContent = 'Click an option above, then return to the terminal';
       } else if (selected.length === 1) {
         const label = selected[0].querySelector('h3, .content h3, .card-body h3')?.textContent?.trim() || selected[0].dataset.choice;
-        indicator.innerHTML = '<span class="selected-text">' + label + ' selected</span> â€” return to terminal to continue';
+        indicator.innerHTML = '<span class="selected-text">' + label + ' selected</span> — return to terminal to continue';
       } else {
-        indicator.innerHTML = '<span class="selected-text">' + selected.length + ' selected</span> â€” return to terminal to continue';
+        indicator.innerHTML = '<span class="selected-text">' + selected.length + ' selected</span> — return to terminal to continue';
       }
     }, 0);
   });
@@ -1002,7 +1002,7 @@
         applyDrawerState(collapsed);
         try { sessionStorage.setItem('drawer-collapsed', collapsed ? '1' : ''); } catch (e) {}
       });
-      // Drawer starts COLLAPSED by default â€” the graph rail carries orientation
+      // Drawer starts COLLAPSED by default — the graph rail carries orientation
       // now, and the drawer is reserved for future uses. '0' means the user
       // explicitly opened it this session.
       try {
@@ -1062,7 +1062,7 @@
   connect();
   fetchInitialDrawer();
 
-  // ===== PANEL SYSTEM Â· workflow registry + transients (additive Â· 2026-09-15) =====
+  // ===== PANEL SYSTEM · workflow registry + transients (additive · 2026-09-15) =====
   // A workflow REGISTERS a surface into a zone the frame already owns instead of
   // arriving as its own app. The map is declarative (#ps-registry in the frame
   // template); this runtime only reads it, so adding a workflow is one entry and never
@@ -1137,7 +1137,7 @@
     return true;
   }
 
-  // --- transients: slide-over Â· sheet Â· inspector Â· palette -------------------
+  // --- transients: slide-over · sheet · inspector · palette -------------------
   function psZoneEl(key) {
     if (key === 'palette') return document.getElementById('ps-palette');
     var z = ps.zones[key];
@@ -1336,9 +1336,9 @@
     });
   }
 
-  // keyboard - Ctrl/Cmd+K opens the palette Â· Esc dismisses the transient that holds focus
-  // (else the top modal) Â· Tab is trapped inside the transient that holds focus, and pulled
-  // into a modal one Â· tab strips take arrow keys Â· each workflow's own shortcut toggles it
+  // keyboard - Ctrl/Cmd+K opens the palette · Esc dismisses the transient that holds focus
+  // (else the top modal) · Tab is trapped inside the transient that holds focus, and pulled
+  // into a modal one · tab strips take arrow keys · each workflow's own shortcut toggles it
   var PS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || '');
   function psOnKeydown(e) {
     if (!ps.ready || e.defaultPrevented) return;
@@ -1460,7 +1460,7 @@
       var edges = wg.edges || [];
       var ins = edges.filter(function (e) { return e && e.toNode === id; }).length;
       var outs = edges.filter(function (e) { return e && e.fromNode === id; }).length;
-      add('edges', ins + ' in Â· ' + outs + ' out');
+      add('edges', ins + ' in · ' + outs + ' out');
     }
     if (parked) add('parked from here', parked);
     box.innerHTML = '<div class="ps-node-head"><span class="ps-node-id">' + escapeHtml(id) + '</span>' +
@@ -1564,14 +1564,14 @@
         ps.borrowed[id].push({ node: node, marker: marker });
       });
       if (!ps.borrowed[id].length) {
-        psEmpty(host, w.label + ' Â· not in this frame', 'None of its native nodes (' + w.native.join(', ') + ') exist on this page.');
+        psEmpty(host, w.label + ' · not in this frame', 'None of its native nodes (' + w.native.join(', ') + ') exist on this page.');
       }
     } else if (w.screen) {
-      psEmpty(host, w.label, 'Loading ' + w.screen + 'â€¦');
+      psEmpty(host, w.label, 'Loading ' + w.screen + '…');
       fetch('/files/' + encodeURIComponent(w.screen), { cache: 'no-store' })
         .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
         .then(function (html) { if (ps.hosts[id] === host && host.parentNode) host.innerHTML = html; })
-        .catch(function (err) { if (ps.hosts[id] === host) psEmpty(host, w.label + ' Â· screen not served', w.screen + ' â†’ ' + err.message); });
+        .catch(function (err) { if (ps.hosts[id] === host) psEmpty(host, w.label + ' · screen not served', w.screen + ' â†’ ' + err.message); });
     } else {
       psProbe(w, host);
     }
@@ -1582,8 +1582,8 @@
   // renderer registered through brainstorm.panels.renderer(id, fn) takes the host instead -
   // that is the seam a lane primitive plugs into; this stage deliberately ships none.
   function psProbe(w, host) {
-    if (!w.channel) { psEmpty(host, w.label + ' Â· no channel', 'This entry declares no channel, and no renderer is mounted.'); return; }
-    psEmpty(host, w.label, 'Reading ' + w.channel + 'â€¦');
+    if (!w.channel) { psEmpty(host, w.label + ' · no channel', 'This entry declares no channel, and no renderer is mounted.'); return; }
+    psEmpty(host, w.label, 'Reading ' + w.channel + '…');
     fetch(w.channel, { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function (data) {
@@ -1591,12 +1591,12 @@
         var fn = ps.renderers[w.id];
         if (fn) {
           host.innerHTML = '';
-          try { fn(host, data, w); } catch (err) { psEmpty(host, w.label + ' Â· renderer failed', String((err && err.message) || err)); }
+          try { fn(host, data, w); } catch (err) { psEmpty(host, w.label + ' · renderer failed', String((err && err.message) || err)); }
           return;
         }
         var c = psCounts(w, data);
-        host.innerHTML = '<div class="ps-empty"><b>' + escapeHtml(w.label) + (c.total ? ' Â· no renderer mounted' : ' Â· nothing yet') + '</b>' +
-          '<span>' + escapeHtml(w.channel) + ' Â· ' + c.total + ' record' + (c.total === 1 ? '' : 's') + '</span>' +
+        host.innerHTML = '<div class="ps-empty"><b>' + escapeHtml(w.label) + (c.total ? ' · no renderer mounted' : ' · nothing yet') + '</b>' +
+          '<span>' + escapeHtml(w.channel) + ' · ' + c.total + ' record' + (c.total === 1 ? '' : 's') + '</span>' +
           (c.lanes.length ? '<span class="ps-counts">' + c.lanes.map(function (l) {
             return '<i>' + escapeHtml(l.name) + ' <b>' + l.n + '</b></i>';
           }).join('') + '</span>' : '') +
@@ -1604,7 +1604,7 @@
       })
       .catch(function (err) {
         if (ps.hosts[w.id] !== host) return;
-        psEmpty(host, w.label + ' Â· channel not served here',
+        psEmpty(host, w.label + ' · channel not served here',
           w.channel + ' â†’ ' + err.message + '. The entry is registered; this companion does not serve that channel.');
       });
   }
@@ -1679,7 +1679,7 @@
       if (empty) empty.hidden = ids.length > 0;
       var aw = act ? ps.workflows[act] : null;
       var title = el.querySelector(':scope > .ps-head .ps-title');
-      if (title) title.textContent = aw ? aw.label : (act === '@resident' ? z.label + ' Â· ' + z.resident : z.label);
+      if (title) title.textContent = aw ? aw.label : (act === '@resident' ? z.label + ' · ' + z.resident : z.label);
       var note = el.querySelector(':scope > .ps-head .ps-note');
       if (note) note.textContent = (aw && ps.promoted[act]) || '';
       var floor = 0;
@@ -1742,7 +1742,7 @@
       // cannot give minWidth hands the workflow to the slide-over instead of squeezing it.
       if (avail < w.minWidth) {
         target = 'slide-over';
-        note = 'promoted from the ' + ps.zones[key].label + ' Â· needs ' + w.minWidth + 'px, ' +
+        note = 'promoted from the ' + ps.zones[key].label + ' · needs ' + w.minWidth + 'px, ' +
                (avail > 0 ? 'it gives ' + Math.round(avail) + 'px' : 'it is collapsed');
         if (!opts.quiet) psToast(w.label + ': ' + note);
       }
@@ -1802,7 +1802,7 @@
         if (psIsTransient(key) && !psIsOpen(key)) return;
         var avail = psAvailable(key);
         if (avail > 0 && avail < w.minWidth) {
-          var note = 'promoted from the ' + ps.zones[key].label + ' Â· squeezed to ' + Math.round(avail) + 'px, needs ' + w.minWidth + 'px';
+          var note = 'promoted from the ' + ps.zones[key].label + ' · squeezed to ' + Math.round(avail) + 'px, needs ' + w.minWidth + 'px';
           psToast(w.label + ': ' + note);
           psMove(id, 'slide-over', note);
         }
@@ -1871,7 +1871,7 @@
     if (empty) {
       empty.hidden = ids.length > 0;
       empty.innerHTML = ps.order.length
-        ? '<b>No workflow matches</b><span>â€œ' + escapeHtml(psPal.q) + 'â€ is not a registered workflow.</span>'
+        ? '<b>No workflow matches</b><span>“' + escapeHtml(psPal.q) + '” is not a registered workflow.</span>'
         : '<b>No workflows registered</b><span>Add one entry to #ps-registry in the frame template.</span>';
     }
     var inp = document.getElementById('ps-q');

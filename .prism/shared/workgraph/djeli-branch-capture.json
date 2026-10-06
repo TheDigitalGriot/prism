@@ -92,7 +92,10 @@
     "amendPass86_2026_10_02": "Mixdown 2026-10-02: composed-board root-cause CORRECTION (template engine, not palette), griot-dubplate + griot-mixdown shipped, skill-guard regex fix, Kente unversioned finding.",
     "amendPass87_2026_10_02": "Branch-codex pass 2026-10-02: untracked djeli receipts, canvas 512-ceiling, Kente versioning open ask.",
     "amendPass88_2026_10_02": "Chat-viz pass 2026-10-02: The Dubplate Cut artifact reference; channel-strip widget source unreachable.",
-    "amendPass89_2026_10_05": "Connected Griot logo brainstorm and app-icon local plugin packaged and installed; full original references retained. C43 closes the local package only. Canonical glyph/art approval, exports, account deployment and tracking publication remain separate unverified targets."
+    "amendPass89_2026_10_05": "Connected Griot logo brainstorm and app-icon local plugin packaged and installed; full original references retained. C43 closes the local package only. Canonical glyph/art approval, exports, account deployment and tracking publication remain separate unverified targets.",
+    "amendPass90_2026_10_06": "Djeli brand ingest (C44): rulings D16-D18, findings N161-N162, defect N163, open ask OA28 glyph",
+    "amendPass91_2026_10_06": "Brand ingest round 2: Djeli App [WIP] canvas (C45), rulings D19-D21, findings N164-N165",
+    "amendPass92_2026_10_06": "N162 and OA28 closed by B2"
   },
   "groups": [
     {
@@ -6614,6 +6617,258 @@
         "evidence": "ICON_PLUGIN_OK source/cache, reported by parent session this run; package and executable validator: C:/Users/digit/Documents/Codex/2026-10-04/i/outputs/griot-logo-brainstorm-plugin; package contains 17 originals, 22 registered references, 38 preserved source files, four skills. Architect lineage pinned to Prism commit c4f11dc82f1879d1e29606cd46eea4fb12cb5e34. Final report and cache parity remain parent-owned.",
         "result": "Local plugin package installed and connected; no claim that final icon art, canonical glyph, export, account deployment, or published tracking surfaces are complete."
       }
+    },
+    {
+      "id": "wg:djeli-branch:C44",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C44",
+      "kind": "branch",
+      "title": "Djeli brand ingest - wave app icon, Djeli wordmark with open/collapse motion, cosmetic Orca to Djeli rename",
+      "state": "in-progress",
+      "group": "this-stage",
+      "direction": "outbound",
+      "description": "Gavin dropped the Djeli brand exports at GriotApps/djeli/.prism/brand/djeli-03-04-exports (03/04 wordmark PNG+SVG, prod/debug/wave icon renders, export-verification.json) plus the open/collapse wordmark motion prototype at .prism/brand/djeli-open-collapse. Asks: wave icon becomes the app icon (white bg removed), the SVG wordmark replaces the Orca logo, the mapped Orca cosmetic places become Djeli, the app runs live while it changes. Batches: B0 record, B1 app icon, B2 wordmark, B3 cosmetic rename; each a headless Spectrum run.",
+      "verification": {
+        "evidence": "Read this session: exports dir listing (11 files, mtimes 2026-10-05/06); export-verification.json (03 950x431, 04 956x431, svgIsApproximateTrace true, background original black); djeli-open-collapse/motion-verification.json (openVariant 04, collapse 99 frames, reverse 197, verifiedAt 2026-10-06T06:42:57Z).",
+        "result": "in-progress - B0 underway, B1-B3 owed"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D16",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D16",
+      "kind": "decision",
+      "title": "RULED - the brand ingest is recorded as new nodes in the existing Djeli branch graph, not a new branch capture",
+      "state": "ruled-and-applied",
+      "group": "this-stage",
+      "direction": "local",
+      "description": "Ask 2 resolved (b). Applied by this amend pass.",
+      "verification": {
+        "evidence": "Gavin's ruling in Cowork session 2026-10-06 (brand ingest): 'for Ask 2: (b) New nodes in the existing Djeli branch graph'. Applied: this amendPass90 payload.",
+        "result": "ruled and applied"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D17",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D17",
+      "kind": "decision",
+      "title": "RULED - Orca to Djeli rename reaches all five locales, the locale-policy scripts, docs and skill-guides; product name in prose only",
+      "state": "design-decision-locked",
+      "group": "this-stage",
+      "direction": "outbound",
+      "description": "Ask 3 (c) plus docs boundary (a). Values only, never i18n keys. Untouched: the orca CLI command literal and skill-guides/orca-*.md filenames (verify:bundled-skill-guides + skill-bundle manifest), A2 contracts (orca://, bundle id, pairing), B3 ORCA_* env vars (559), A6 endpoints, C upstream MIT attribution. Hit counts from the 2026-09-20 orca reference map (en.json 587, es 593, ja 594, ko 594, zh 596; A3 docs 1644) to be re-measured against HEAD before editing.",
+      "verification": {
+        "evidence": "Gavin's rulings in Cowork session 2026-10-06 (brand ingest): 'Ask 3 ruling: (c) all locales plus docs and skill-guides' and 'Docs boundary: (a) product name in prose only'. Scope source: GriotApps/djeli/.prism/shared/research/2026-09-20-orca-reference-map.md sections A2-A6, C; per-file counts from .prism/local/orca-map/hits.json buckets.A4_localization.",
+        "result": "ruled; execution owed (B3)"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D18",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D18",
+      "kind": "decision",
+      "title": "RULED - the Djeli wordmark lands on the rail header, onboarding, the About screen and the tray",
+      "state": "design-decision-locked",
+      "group": "this-stage",
+      "direction": "outbound",
+      "description": "Ask 4. The open/collapse motion maps to the Workspaces rail Condensed/Expanded state (D8, D9). Tray needs a monochrome mark - awaits the glyph (OA28).",
+      "verification": {
+        "evidence": "Gavin's ruling in Cowork session 2026-10-06 (brand ingest): 'Ask 4 rail header, onboarding, and the About screen and the tray icon'.",
+        "result": "ruled; execution owed (B2)"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N161",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N161",
+      "kind": "finding",
+      "title": "The wave icon render still carried its white background on disk - now removed via griot-app-icons rembg",
+      "state": "done",
+      "group": "new-findings",
+      "direction": "local",
+      "description": "djeli-wave-v1.png was RGB with no alpha, corner (253,253,254). griot-app-icons Part 1 (remove_bg.py, isnet-general-use, --border 1) produced the transparent icon.",
+      "verification": {
+        "evidence": "Before: PIL read of djeli-wave-v1.png -> 1254x1254 RGB, alpha None, corner (253,253,254). After: djeli-03-04-exports/djeli-wave-v1-transparent.png, 1137x1099, 1,431,688 B, alpha extrema (0,255), corner (0,0,0,0); magenta and dark composite read in-session (no halo, glow intact).",
+        "result": "done - verified on disk"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N162",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N162",
+      "kind": "finding",
+      "title": "Both wordmark SVG traces bake in a full-canvas black rectangle as their first path",
+      "state": "done",
+      "group": "new-findings",
+      "direction": "outbound",
+      "description": "djeli-03.svg and djeli-04.svg each open with a 0,0 to W,H path filled #000000 (the original black background traced in). It must be stripped before the wordmark sits on the glass UI. Traces are approximate (19 and 26 paths).",
+      "verification": {
+        "evidence": "Read djeli-04.svg head: first <path> is 'M0 0 C315.48 0 630.96 0 956 0 ... Z' fill=#000000; grep counts 19 (03) and 26 (04) paths; export-verification.json svgIsApproximateTrace true.",
+        "result": "open - strip owed in B2"
+      },
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-10-06 amendPass92_2026_10_06",
+        "from": "open",
+        "to": "done",
+        "evidence": "Black rect stripped -> .prism/brand/wordmark/djeli-wordmark-04*.svg; wordmark live via B2 run, B2W_GATES_OK"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N163",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N163",
+      "kind": "defect",
+      "title": "rembg venv wiped from TEMP; the first pip install outlived the 60s bridge timeout and raced the retry (WinError 32)",
+      "state": "defect-fixed",
+      "group": "new-findings",
+      "direction": "local",
+      "description": "%TEMP%\\rembg_env was absent though ~/.u2net kept the models. A synchronous install hit the device 60s response limit, kept running, and a second install collided on numba/core/options.py. Fixed by a detached Win32_Process.Create launch writing a marker file, tested once.",
+      "verification": {
+        "evidence": "PowerShell: Test-Path rembg_env python -> NO_VENV; rembg_setup.log 'WinError 32 ... numba\\core\\options.py'; rerun detached -> %TEMP%\\rembg_setup.done 'REMBG_OK 2.0.85'.",
+        "result": "fixed - venv proven by import"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA28",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA28",
+      "kind": "open-ask",
+      "title": "Glyph - no standalone Djeli mark on disk; point to the file, or extract the center mark from the wave render",
+      "state": "ruled-and-applied",
+      "group": "open-ask",
+      "direction": "inbound",
+      "description": "Needed for the tray template (monochrome). GriotBranding/Djeli holds only prod/debug/wave renders (each duplicated with and without .png); the exports hold only wordmarks. Options: (a) Gavin points to the file; (b) griot-app-icons Part 2B glyph_potrace.",
+      "verification": {
+        "evidence": "device listing of GriotBranding/Djeli (6 files, 3 unique renders, `file` confirms PNG 1254x1254 RGB) and djeli-03-04-exports (no mark-only asset).",
+        "result": "awaiting Gavin's ruling"
+      },
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-10-06 amendPass92_2026_10_06",
+        "from": "open",
+        "to": "ruled-and-applied",
+        "evidence": "Glyph = matrix cell 12 traced to .prism/brand/glyph/djeli-glyph-12.svg; tray template from it in B2, B2W_GATES_OK"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C45",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C45",
+      "kind": "branch",
+      "title": "Djeli App [WIP] - a sibling Design canvas holding the Orca port, rebranded to Djeli",
+      "state": "done",
+      "group": "this-stage",
+      "direction": "outbound",
+      "description": "All 108 Orca artboards from the Djeli - IDE Shell canvas (82 ported screens t11-t16 + 26 harvested-provenance cards, Gavin: 'those are all important') copied to a NEW canvas because IDE Shell sits at the type ceiling (512/512 files). Rebrand by script against the B2 rules: 14 titlebar marks -> wordmark (16px), 6 empty-state heroes (tile + ORCA h1) -> wordmark 72/64px, 5 mark+name headers -> wordmark, 235 'Orca' -> 'Djeli' in display copy and board titles; untouched: orca CLI literal, ORCA_* env vars, paths, stablyai links, the lowercase provenance labels. Wordmark uploaded as a canvas asset (djeli-wordmark-04, dark variant). File names keep the Orca prefix as lineage.",
+      "verification": {
+        "evidence": "Artifact https://claude.ai/artifact/CkBEW7T6iJem4k1YWX8SsR version 2 (1791273942-f2a7): 108 boards + canvas.json published; asset /_blob/c8e36de022917c45441ee5d192464be5; rebrand counts from scratchpad djeli-app-wip/rebrand-report.json; 0 orca-mark SVGs left.",
+        "result": "done - published v2; visual check is Gavin's"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N164",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N164",
+      "kind": "finding",
+      "title": "The Djeli - IDE Shell canvas is full: 512 of 512 files, the Design type ceiling",
+      "state": "open",
+      "group": "new-findings",
+      "direction": "outbound",
+      "description": "496 artboards + 16 support/type files. Any new artboard there is refused until a page is rehomed. Kente - Tool Harvest (137 boards) is the largest rehome candidate; Gavin chose a sibling canvas for this batch instead.",
+      "verification": {
+        "evidence": "Artifact list scope:files on KCbs8Kv72TQMG8bR6t9EW7 (version 1790930792-8750) -> 512 files; canvas.json boards=496.",
+        "result": "open - capacity owed a decision before the next batch lands there"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N165",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N165",
+      "kind": "finding",
+      "title": "D8/D9 presuppose a Condensed/Expanded rail setting that the code never built",
+      "state": "open",
+      "group": "new-findings",
+      "direction": "outbound",
+      "description": "The rail has only sidebarOpen (ui.ts:587, not persisted, unmounts SidebarHeader) and compactWorktreeCards (card density). The wordmark motion was hung on sidebarOpen in the titlebar strip instead.",
+      "verification": {
+        "evidence": "GriotApps/djeli/.prism/shared/research/2026-10-06-brand-b2-sites.md, Rail state wiring section (ui.ts:587/990/992, sidebar/index.tsx:46,176-200, App.tsx:2228-2236).",
+        "result": "open - D8/D9 setting unbuilt"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D19",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D19",
+      "kind": "decision",
+      "title": "RULED - the rail header is the titlebar strip (App.tsx:2000) and the landing hero is a fifth wordmark surface",
+      "state": "ruled-and-applied",
+      "group": "this-stage",
+      "direction": "local",
+      "description": "Gavin answered with two screenshots of the top-left strip and the empty-state hero.",
+      "verification": {
+        "evidence": "Gavin's ruling in Cowork session 2026-10-06 (brand ingest): 'Screenshots: (a) yes, the titlebar strip is the rail header and the landing hero is in'. Applied by B2 (B2W_GATES_OK).",
+        "result": "ruled and applied"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D20",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D20",
+      "kind": "decision",
+      "title": "RULED by delegation - the wordmark open/collapse follows sidebarOpen in the titlebar strip; About via setAboutPanelOptions; glyph = matrix cell 12",
+      "state": "ruled-and-applied",
+      "group": "this-stage",
+      "direction": "local",
+      "description": "Gavin handed the remaining UI calls to Claude with his visual verification as the gate ('i want to be able to trust you with these ui changes and me verifying visually'). Calls: motion on sidebarOpen (strip stays mounted); About panel options, app.setName untouched (userData path); glyph = cell 12 of the 16-mark matrix inside the motion prototype (its collapse endpoint 'original-12').",
+      "verification": {
+        "evidence": "Applied by B2 run: .prism/shared/research/2026-10-06-brand-b2-wordmark-report.md, heartbeat B2W_GATES_OK + B2W_DONE; glyph at GriotApps/djeli/.prism/brand/glyph/djeli-glyph-12.svg (glyph_potrace, 2 contours).",
+        "result": "ruled and applied"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D21",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D21",
+      "kind": "decision",
+      "title": "RULED - Djeli mobile ships as studio.digitalgriot.djeli, first build a development client",
+      "state": "ruled-and-applied",
+      "group": "this-stage",
+      "direction": "outbound",
+      "description": "Bundle id is the one-way door to the Apple team. mobile/app.json: name Djeli, slug djeli-mobile, wave icon, permission strings renamed; orca:// scheme kept for pairing compatibility; eas.json with development/preview/production; Expo project @digitalgriot/djeli-mobile linked. The first EAS build is Gavin's to start (interactive Apple sign-in).",
+      "verification": {
+        "evidence": "Gavin's rulings in Cowork session 2026-10-06 (brand ingest): 'Bundle id: (a) studio.digitalgriot.djeli', 'First build: (b) development client'. eas init -> projectId 93ed0391-b80b-41ef-9223-2157b1f14177 (https://expo.dev/accounts/digitalgriot/projects/djeli-mobile).",
+        "result": "ruled and applied; build owed"
+      }
     }
   ],
   "edges": [
@@ -8596,15 +8851,123 @@
       "to": "wg:djeli-branch:C43",
       "kind": "inbound",
       "label": "Per-app ember styling context"
+    },
+    {
+      "from": "wg:djeli-branch:D16",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "how the ingest is recorded"
+    },
+    {
+      "from": "wg:djeli-branch:D17",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "rename scope"
+    },
+    {
+      "from": "wg:djeli-branch:D18",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "wordmark homes"
+    },
+    {
+      "from": "wg:djeli-branch:N161",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "B1 input ready"
+    },
+    {
+      "from": "wg:djeli-branch:N162",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "B2 prerequisite"
+    },
+    {
+      "from": "wg:djeli-branch:N163",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "tooling defect hit on the way"
+    },
+    {
+      "from": "wg:djeli-branch:C44",
+      "to": "wg:djeli-branch:OA28",
+      "kind": "awaits",
+      "label": "tray mark needs the glyph"
+    },
+    {
+      "from": "wg:djeli-branch:B57",
+      "to": "wg:djeli-branch:C44",
+      "kind": "splinter",
+      "label": "brand layer of the live shell build"
+    },
+    {
+      "from": "wg:djeli-branch:C44",
+      "to": "wg:djeli-branch:B30",
+      "kind": "ontology",
+      "label": "rename scope comes from the Orca reference map"
+    },
+    {
+      "from": "wg:djeli-branch:D18",
+      "to": "wg:djeli-branch:D9",
+      "kind": "ontology",
+      "label": "collapsed rail shows the mark; motion follows rail state"
+    },
+    {
+      "from": "wg:djeli-branch:C45",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "brand ingest carried onto the design canvas"
+    },
+    {
+      "from": "wg:djeli-branch:N164",
+      "to": "wg:djeli-branch:C45",
+      "kind": "in-epic",
+      "label": "why a sibling canvas"
+    },
+    {
+      "from": "wg:djeli-branch:N165",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "found by B2 locate"
+    },
+    {
+      "from": "wg:djeli-branch:N165",
+      "to": "wg:djeli-branch:D8",
+      "kind": "ontology",
+      "label": "the setting D8 assumed"
+    },
+    {
+      "from": "wg:djeli-branch:D19",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "surface ruling"
+    },
+    {
+      "from": "wg:djeli-branch:D20",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "delegated UI calls"
+    },
+    {
+      "from": "wg:djeli-branch:D21",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "mobile identity"
+    },
+    {
+      "from": "wg:djeli-branch:C45",
+      "to": "wg:djeli-branch:B57",
+      "kind": "ontology",
+      "label": "artboards for the live shell build"
     }
   ],
   "stats": {
-    "totalBranches": 106,
+    "totalBranches": 108,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 330,
+    "edgeCount": 348,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -10167,6 +10530,44 @@
       "newEdges": 3,
       "corrections": [],
       "refused": []
+    },
+    "amendPass90_2026_10_06_2026_10_06": {
+      "newNodes": [
+        "C44",
+        "D16",
+        "D17",
+        "D18",
+        "N161",
+        "N162",
+        "N163",
+        "OA28"
+      ],
+      "newEdges": 10,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass91_2026_10_06_2026_10_06": {
+      "newNodes": [
+        "C45",
+        "N164",
+        "N165",
+        "D19",
+        "D20",
+        "D21"
+      ],
+      "newEdges": 8,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass92_2026_10_06_2026_10_06": {
+      "advanced": [
+        "N162",
+        "OA28"
+      ],
+      "stateChanges": [
+        "N162 open -> done",
+        "OA28 open -> ruled-and-applied"
+      ]
     }
   },
   "foreignLayer": {

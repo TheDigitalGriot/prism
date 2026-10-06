@@ -1,12 +1,12 @@
-﻿# The nine layer roles â€” the output taxonomy
+﻿# The nine layer roles — the output taxonomy
 
 **Source of truth:** griot-suite-map.html LNAME array (artifact c389ca6c, The Griot Stack).
 Locked verbatim in the stage contract
 (.prism/shared/plans/djeli-uxui-harvest/djeli-uxui-harvest-CONTEXT.md, decision 2). These nine
-strings are the **entire** output taxonomy for this skill â€” a finding gets exactly one, or
+strings are the **entire** output taxonomy for this skill — a finding gets exactly one, or
 `unplaceable`. Never invent a tenth.
 
-A UI pattern with no layer is unplaceable â€” that is the whole reason this skill could not be
+A UI pattern with no layer is unplaceable — that is the whole reason this skill could not be
 written before the roles existed (see the contract's "Why this was parked" section).
 
 | # | Layer role (verbatim) | Routing heuristic (working, not a source-verified definition) |
@@ -25,8 +25,8 @@ written before the roles existed (see the contract's "Why this was parked" secti
 
 State the candidate layer **and the file:line evidence that suggests it**, then let the
 orchestrator (or Gavin) confirm. If a screen genuinely straddles two roles (e.g. a Capture screen
-that hands off into Creation), record **both** with the seam file:line â€” do not silently pick one.
+that hands off into Creation), record **both** with the seam file:line — do not silently pick one.
 
 If nothing fits, write `unplaceable` and say why. Per decision 5 in the contract: this never gates
-or narrows what Gavin can fork, study, or remix â€” `unplaceable` is a routing gap to report, not a
+or narrows what Gavin can fork, study, or remix — `unplaceable` is a routing gap to report, not a
 reason to block the walk.
