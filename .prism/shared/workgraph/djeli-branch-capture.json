@@ -1,6 +1,7 @@
 {
   "schema": "griot-workgraph-primitive/v1",
   "meta": {
+    "93": "2026-10-06 mixdown: repo independence (C46/D22), IDE Shell seat refresh (C47/N166), dgs-sync gate repairs (C48/N167)",
     "capturedBy": "djeli-branch-capture stage contract",
     "sourceContract": ".prism/shared/plans/djeli-branch-capture/djeli-branch-capture-CONTEXT.md",
     "sessionDate": "2026-09-13",
@@ -6869,6 +6870,108 @@
         "evidence": "Gavin's rulings in Cowork session 2026-10-06 (brand ingest): 'Bundle id: (a) studio.digitalgriot.djeli', 'First build: (b) development client'. eas init -> projectId 93ed0391-b80b-41ef-9223-2157b1f14177 (https://expo.dev/accounts/digitalgriot/projects/djeli-mobile).",
         "result": "ruled and applied; build owed"
       }
+    },
+    {
+      "id": "wg:djeli-branch:C46",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C46",
+      "kind": "branch",
+      "title": "Djeli becomes its own repo - TheDigitalGriot/djeli carries full history, Orca rides as a fetch-only upstream",
+      "state": "done",
+      "group": "this-stage",
+      "direction": "outbound",
+      "description": "The local clone was shallow with origin=stablyai/orca, and TheDigitalGriot/djeli main was a single unrelated .prism-only commit (14056e0). Steps: unshallow; rename origin->upstream (push DISABLED); rename griot->origin; branch djeli/brand-ingest-2026-10-06 committed with the brand ingest; rerere on; old main kept as tag snapshot-2026-10-05; branch pushed and main force-with-lease replaced. Upstream changes now arrive by git fetch upstream + merge, with a real merge-base.",
+      "verification": {
+        "evidence": "GriotApps/djeli/.prism/local/repo-steps.log + repo-steps.done=DONE; git ls-remote origin: main=djeli/brand-ingest-2026-10-06=3c517a2a5477; tag snapshot-2026-10-05=14056e0b4acc; is-shallow=false; merge-base HEAD upstream/main=94009f63ff60.",
+        "result": "done - pushed live"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D22",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D22",
+      "kind": "decision",
+      "title": "RULED - Djeli is an independent repo that keeps Orca as an upstream it may pull from",
+      "state": "ruled-and-applied",
+      "group": "this-stage",
+      "direction": "outbound",
+      "description": "Gavin: the deep 3D integrations and customization will grow it into a whole new thing, so independence first, upstream pulls when he likes them. Applied as C46.",
+      "verification": {
+        "evidence": "Gavin in Cowork session 2026-10-06: 'yes please run steps 1-4 now end to end green light beloved'. Applied: repo-steps.done=DONE.",
+        "result": "ruled and applied"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C47",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C47",
+      "kind": "branch",
+      "title": "The djeli-ide-shell repo seat refreshed from the live canvas - 500 files",
+      "state": "done",
+      "group": "this-stage",
+      "direction": "local",
+      "description": "The seat at griot-live-artifacts/.prism/shared/designs/djeli-ide-shell held 18 files from 2026-09-25 against a 512-file canvas. Re-pulled from KCbs8Kv72TQMG8bR6t9EW7; the Djeli App [WIP] seat (111 files) landed beside it.",
+      "verification": {
+        "evidence": "griot-live-artifacts/.prism/shared/designs/djeli-ide-shell (500 files) + MIRROR-NOTE.json; designs/djeli-app-wip (111 files).",
+        "result": "done"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N166",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N166",
+      "kind": "finding",
+      "title": "Nine IDE Shell boards are named in canvas.json but have no file in the canvas",
+      "state": "open",
+      "group": "new-findings",
+      "direction": "outbound",
+      "description": "The mirror refresh found 9 board ids in project/canvas.json with no matching .dc.html in the artifact's file listing. They render as empty frames or not at all.",
+      "verification": {
+        "evidence": "griot-live-artifacts/.prism/shared/designs/djeli-ide-shell/MIRROR-NOTE.json (missing list).",
+        "result": "open - owed a decision: re-author or drop from canvas.json"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C48",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C48",
+      "kind": "branch",
+      "title": "dgs-sync gates repaired on the way through - stage 0b mojibake, the vocabulary gate, the canvas registry",
+      "state": "done",
+      "group": "this-stage",
+      "direction": "outbound",
+      "description": "Stage 0b: 10 compounded-mojibake strings in Synaptiq stories.json repaired by strict iterative cp1252->utf8, then all indexes regenerated (sweep dirty=0). verify-rename.mjs: .log exempt plus a block-aware exemption for channel-*/wg-data/workgraph-data record blocks (drift 165/171 prescription). build-artifact-registry.mjs: canvas rows generalised into a CANVASES list (djeli-ide-shell + djeli-app-wip).",
+      "verification": {
+        "evidence": "Synaptiq commit 7f167d7 (local); RENAME_GATE_OK; ARTIFACT_INDEX_OK (2 canvas); backups griot-live-artifacts/.prism/local/*.bak-20261006.",
+        "result": "done"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N167",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N167",
+      "kind": "finding",
+      "title": "Synaptiq has no git remote, so its stage-0b repair commit cannot leave the machine",
+      "state": "open",
+      "group": "new-findings",
+      "direction": "outbound",
+      "description": "git push failed: no remote configured. Commit 7f167d7 lives only on digitalgriotpc.",
+      "verification": {
+        "evidence": "git -C C:/Users/digit/Synaptiq remote -v -> empty; push error 2026-10-06.",
+        "result": "open - owed a remote"
+      }
     }
   ],
   "edges": [
@@ -8959,15 +9062,51 @@
       "to": "wg:djeli-branch:B57",
       "kind": "ontology",
       "label": "artboards for the live shell build"
+    },
+    {
+      "from": "wg:djeli-branch:C46",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "the brand ingest is the first commit on the independent main"
+    },
+    {
+      "from": "wg:djeli-branch:D22",
+      "to": "wg:djeli-branch:C46",
+      "kind": "in-epic",
+      "label": "ruling behind it"
+    },
+    {
+      "from": "wg:djeli-branch:C47",
+      "to": "wg:djeli-branch:C45",
+      "kind": "in-epic",
+      "label": "seat beside the sibling canvas"
+    },
+    {
+      "from": "wg:djeli-branch:N166",
+      "to": "wg:djeli-branch:C47",
+      "kind": "in-epic",
+      "label": "found by the refresh"
+    },
+    {
+      "from": "wg:djeli-branch:C48",
+      "to": "wg:djeli-branch:C44",
+      "kind": "in-epic",
+      "label": "gates cleared to sync the ingest"
+    },
+    {
+      "from": "wg:djeli-branch:N167",
+      "to": "wg:djeli-branch:C48",
+      "kind": "in-epic",
+      "label": "the repair commit has nowhere to go"
     }
   ],
   "stats": {
-    "totalBranches": 108,
+    "totalBranches": 111,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 348,
+    "edgeCount": 354,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -9883,59 +10022,60 @@
     },
     "generated": {
       "generatedBy": "griot-branch-codex/scripts/compute-generated.mjs",
-      "generatedAt": "2026-10-02T09:47:42.411Z",
-      "nodeCount": 326,
-      "edgeCount": 327,
+      "generatedAt": "2026-10-06T08:40:32.588Z",
+      "nodeCount": 347,
+      "edgeCount": 354,
       "laneCount": 6,
       "byLane": {
-        "new-findings": 156,
-        "this-stage": 55,
+        "new-findings": 163,
+        "this-stage": 68,
         "untracked": 50,
-        "open-ask": 24,
+        "open-ask": 25,
         "suggested": 21,
         "tracked": 16,
         "undefined": 4
       },
       "byKind": {
-        "finding": 107,
-        "branch": 105,
-        "defect": 51,
-        "open-ask": 25,
+        "finding": 113,
+        "branch": 111,
+        "defect": 52,
+        "open-ask": 26,
+        "decision": 22,
         "suggestion": 21,
-        "decision": 15,
         "open": 2
       },
       "byState": {
-        "done": 157,
-        "open": 120,
+        "done": 164,
+        "open": 124,
         "parked": 14,
+        "ruled-and-applied": 13,
         "built-and-live": 9,
-        "defect-fixed": 8,
-        "ruled-and-applied": 7,
+        "defect-fixed": 9,
         "flagged-not-fixed": 5,
         "corrected-verified": 3,
-        "in-progress": 2,
+        "in-progress": 3,
+        "design-decision-locked": 2,
         "superseded": 1
       },
       "byDirection": {
-        "local": 193,
-        "outbound": 115,
-        "inbound": 13,
+        "local": 199,
+        "outbound": 128,
+        "inbound": 15,
         "adjacent": 5
       },
       "byEdgeKind": {
+        "in-epic": 81,
         "outbound": 71,
-        "in-epic": 63,
-        "ontology": 56,
-        "awaits": 55,
-        "splinter": 48,
-        "inbound": 34
+        "ontology": 60,
+        "awaits": 56,
+        "splinter": 49,
+        "inbound": 37
       },
       "byOriginLane": {
-        "new-findings": 154,
-        "this-stage": 61,
+        "new-findings": 161,
+        "this-stage": 74,
         "untracked": 52,
-        "open-ask": 25,
+        "open-ask": 26,
         "suggested": 21,
         "tracked": 13
       },
@@ -10003,14 +10143,18 @@
         "B49",
         "OA25",
         "N121",
-        "S21"
+        "S21",
+        "N162",
+        "OA28"
       ],
       "verification": {
         "verified": 15,
         "pass": 12,
         "RULED and applied to the live design canvas.": 4,
+        "ruled and applied": 4,
         "flagged-not-fixed.": 2,
         "PROPOSED - awaiting a yes or no.": 2,
+        "done": 2,
         "MATCHES contract - 27 nodes / 7 layers confirmed exactly.": 1,
         "MATCHES contract - commit exists and its content matches the stated outputs.": 1,
         "MATCHES contract - written, not run. No execution evidence exists anywhere checked.": 1,
@@ -10301,7 +10445,22 @@
         "open - uncommitted; the run contract forbids committing djeli from this run": 1,
         "open - split the canvas across artifacts or prune; not resolved here": 1,
         "open - Gavin's call, not inferred": 1,
-        "unverified - published per the session that made it; this run could not open the URL": 1
+        "unverified - published per the session that made it; this run could not open the URL": 1,
+        "Local plugin package installed and connected; no claim that final icon art, canonical glyph, export, account deployment, or published tracking surfaces are complete.": 1,
+        "in-progress - B0 underway, B1-B3 owed": 1,
+        "ruled; execution owed (B3)": 1,
+        "ruled; execution owed (B2)": 1,
+        "done - verified on disk": 1,
+        "open - strip owed in B2": 1,
+        "fixed - venv proven by import": 1,
+        "awaiting Gavin's ruling": 1,
+        "done - published v2; visual check is Gavin's": 1,
+        "open - capacity owed a decision before the next batch lands there": 1,
+        "open - D8/D9 setting unbuilt": 1,
+        "ruled and applied; build owed": 1,
+        "done - pushed live": 1,
+        "open - owed a decision: re-author or drop from canvas.json": 1,
+        "open - owed a remote": 1
       },
       "unverifiedNodes": []
     },
@@ -10568,6 +10727,19 @@
         "N162 open -> done",
         "OA28 open -> ruled-and-applied"
       ]
+    },
+    "93_2026_10_06": {
+      "newNodes": [
+        "C46",
+        "D22",
+        "C47",
+        "N166",
+        "C48",
+        "N167"
+      ],
+      "newEdges": 6,
+      "corrections": [],
+      "refused": []
     }
   },
   "foreignLayer": {
@@ -14713,20 +14885,20 @@
         "pct": 48
       },
       "this-stage": {
-        "closed": 45,
-        "open": 7,
-        "pct": 87,
+        "closed": 57,
+        "open": 8,
+        "pct": 88,
         "unclassified": 3
       },
       "open-ask": {
-        "closed": 7,
+        "closed": 8,
         "open": 17,
-        "pct": 29
+        "pct": 32
       },
       "new-findings": {
-        "closed": 89,
-        "open": 65,
-        "pct": 58,
+        "closed": 92,
+        "open": 69,
+        "pct": 57,
         "unclassified": 2
       },
       "suggested": {
@@ -14743,9 +14915,9 @@
       }
     },
     "total": {
-      "closed": 184,
-      "open": 127,
-      "pct": 59,
+      "closed": 200,
+      "open": 132,
+      "pct": 60,
       "unclassified": 15
     },
     "latent": {
