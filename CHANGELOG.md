@@ -4,7 +4,7 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## [Unreleased]
+## [5.0.3] - 2026-10-09
 
 ### Fixed
 
