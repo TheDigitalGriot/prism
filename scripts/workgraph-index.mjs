@@ -309,7 +309,7 @@ try {
 // endpoints of cross-graph edges are indexed - the branch graphs themselves stay their own record.
 let crossGraphEdges = 0;
 {
-  const LIVE = path.join('C:/Users/digit/GriotMeta', 'griot-live-artifacts', 'live');
+  const LIVE = path.dirname(PLAN); // one source for the live dir: the plan path above (no second hardcode)
   let files = [];
   try { files = fs.readdirSync(LIVE).filter((f) => /-branch-capture-workgraph[.]json$/.test(f)); } catch { warnings.push('branch graphs: live dir unreadable'); }
   const graphs = new Map();
