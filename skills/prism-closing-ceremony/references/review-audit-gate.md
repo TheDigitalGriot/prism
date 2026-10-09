@@ -24,6 +24,13 @@ reviewer can reach the repo):
 
 Reviewers see diffs, not full files (the established prism-subagent review discipline).
 
+**Headless runs (`claude -p`).** Launch with `--agent claude` before `-p` so the main thread has the Agent
+tool: an enabled plugin can set a default main-thread agent in its `settings.json` (Cinopsis sets
+`digest-writer`, which has no Agent tool), and then neither reviewer can be dispatched (drift 277). Dispatch
+`prism:spec-reviewer` and `prism:quality-reviewer` exactly as in an interactive run and write their verdicts
+(`SPEC_PASS`/`SPEC_FAIL`, `QUALITY_PASS`/`QUALITY_FAIL`) to the run's marker. If the Agent tool is still absent,
+record `REVIEW SKIPPED-HEADLESS` in the marker and stop at this gate - never treat a missing review as a pass.
+
 ## C. Deterministic best-practices audit
 
 ```bash
