@@ -4,6 +4,16 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [5.0.2] - 2026-10-09
+
+The global workgraph index now carries edges between branch-capture graphs.
+
+### Changed
+
+- **`workgraph-index.mjs`** indexes cross-graph edges (drift 269): an edge whose far end sits in a sibling branch graph is carried verbatim, so `workgraph_edges(origin)` lists it as outbound at the writer and inbound at the origin. Index stats gain `sources.crossGraphEdges`; the index regenerated at 856/837.
+
+Release gate held: no public interface moved, so no tag, GitHub release or native builds for this version. Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-5.0.2.md`.
+
 ## [5.0.1] - 2026-10-05
 
 Audit gates the shipped release, mobile in the release add-list, docs reconciled.
