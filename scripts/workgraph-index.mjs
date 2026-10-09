@@ -299,6 +299,47 @@ try {
     [...referencedProjects].filter((s) => { const n = nodes.find((x) => x.localId === s && x.kind === 'project'); return n && n.inferred; }).join(', '));
 }
 
+// ============ 4c. cross-graph edges between branch-capture graphs (drift 269) ============
+// A branch graph (griot-live-artifacts/live/*-branch-capture-workgraph.json) may now carry an
+// edge whose far end is a node in a SIBLING branch graph: amend-workgraph writes it once, in
+// the graph that owns the outbound end, stamped crossGraph:true + crossGraphOrigin. Branch-graph
+// ids are already wg:<origin>:<id>, so both endpoints land here with node.id === envelopeId and
+// the edge is carried verbatim: workgraph_edges(origin) lists it as OUTBOUND at the writer and
+// INBOUND at the origin, and workgraph_awaits(<far node>) finds it by e.to === node.id. Only the
+// endpoints of cross-graph edges are indexed - the branch graphs themselves stay their own record.
+let crossGraphEdges = 0;
+{
+  const LIVE = path.join('C:/Users/digit/GriotMeta', 'griot-live-artifacts', 'live');
+  let files = [];
+  try { files = fs.readdirSync(LIVE).filter((f) => /-branch-capture-workgraph[.]json$/.test(f)); } catch { warnings.push('branch graphs: live dir unreadable'); }
+  const graphs = new Map();
+  for (const f of files) {
+    const g = readJSON(path.join(LIVE, f));
+    if (g && g.meta && g.meta.idPrefix) graphs.set(g.meta.idPrefix, { g, p: path.join(LIVE, f) });
+  }
+  const landNode = (id) => {
+    if (seen.has(id)) return true;
+    const ns = id.slice(0, id.lastIndexOf(':'));
+    const src = graphs.get(ns);
+    const n = src && (src.g.nodes || []).find((x) => x.id === id);
+    if (!n) { warnings.push('cross-graph endpoint not found in any branch graph: ' + id); return false; }
+    addNode({
+      id, envelopeId: id, localId: n.localId, kind: 'branch-node', origin: ns.replace(/^wg:/, ''),
+      title: n.title, state: n.state, direction: n.direction, branchKind: n.kind, group: n.group,
+      lastTouched: mtime(src.p), path: src.p,
+    });
+    return true;
+  };
+  for (const { g } of graphs.values()) {
+    for (const e of g.edges || []) {
+      if (!e.crossGraph) continue;
+      if (!landNode(e.from) || !landNode(e.to)) continue;
+      edges.push({ from: e.from, to: e.to, kind: e.kind, label: e.label || e.kind, crossGraph: true, crossGraphOrigin: e.crossGraphOrigin });
+      crossGraphEdges++;
+    }
+  }
+}
+
 // ============ 5. acyclicity — the DFS the design asks for (§3C) ============
 const adj = new Map();
 for (const e of edges) { if (e.kind !== 'awaits') continue; (adj.get(e.from) ?? adj.set(e.from, []).get(e.from)).push(e.to); }
@@ -330,7 +371,7 @@ const index = {
   stats: {
     nodes: nodes.length, edges: edges.length,
     byKind, byState, byDirection: byDir, byEdgeKind: byEdge,
-    sources: { storiesFiles: storyFiles.length, decisionFiles: decFiles.length, awaitsDeclarations: awaitLines },
+    sources: { storiesFiles: storyFiles.length, decisionFiles: decFiles.length, awaitsDeclarations: awaitLines, crossGraphEdges },
     cycles, warnings: warnings.slice(0, 40), warningCount: warnings.length,
   },
 };
