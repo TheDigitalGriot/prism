@@ -11,3 +11,7 @@ Patch bump covering seven commits since v5.0.1. One file outside `.prism` change
 - **Workgraph index.** New section 4c reads `griot-live-artifacts/live/*-branch-capture-workgraph.json`, and indexes edges stamped `crossGraph:true` together with both endpoint nodes. They show as outbound at the writing graph and inbound at the origin (drift 269, commit 90e4645). `stats.sources.crossGraphEdges` reports the count.
 - **Index regenerations.** `.prism/shared/workgraph/index.json` regenerated three times (854/835, then 856/837).
 - **Known follow-ups.** Section 4c hardcodes `C:/Users/digit/GriotMeta` for the live dir; the thin mirrors (prism-plugin, digital-griot-marketplace) diverge on `scripts/workgraph-index.mjs` until their sync runs.
+
+## Release ruling (drift 274, 2026-10-09)
+
+Gavin ruled: tag v5.0.2, sync the prism-plugin and marketplace mirrors, re-run the ceremony audit to green, push. On the re-run the audit's structural check failed AUDIT_STRUCTURAL_ZERO_SCAN because this release touches no skills/commands/agents/hooks file; the fix for exactly that (drift 253) had landed in Cinopsis 0f1f5f8 but never in Prism. It is lifted here directly (scripts/audit-structural-verdict.mjs + 5 node tests).

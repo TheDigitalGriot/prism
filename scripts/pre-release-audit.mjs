@@ -6,6 +6,7 @@
 // Exits non-zero on any failure so the ceremony can gate on it.
 import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { structuralVerdict } from './audit-structural-verdict.mjs';
 
 let failed = 0;
 const line = (mark, msg) => console.log(`[${mark}] ${msg}`);
@@ -171,11 +172,12 @@ for (const p of [...walk('skills'), ...walk('commands'), ...walk('hooks')].filte
   if (HARDCODED.test(readFileSync(p, 'utf8'))) { failed++; line('FAIL', `${p} contains a hardcoded absolute path (use \${CLAUDE_PLUGIN_ROOT} / project-relative)`); }
 }
 
-if (scanned === 0) {
-  failed++;
-  line('FAIL', `structural checks scanned 0 files (scoped to ${changed ? changed.size + ' changed files' : 'skipped'}) — AUDIT_STRUCTURAL_ZERO_SCAN, not a pass`);
-} else {
-  line(failed === failedBeforeStructural ? 'PASS' : 'FAIL', `structural checks (scoped to ${changed.size} changed files, ${scanned} examined)`);
+// F-A (lifted from Cinopsis 0f1f5f8, drift 253): a range that touches no skills/commands/agents/hooks
+// PASSES with an explicit "0 in-scope files" line; only in-scope-but-unexamined stays AUDIT_STRUCTURAL_ZERO_SCAN.
+{
+  const v = structuralVerdict({ changed, scanned, failedDuring: failed !== failedBeforeStructural });
+  if (v.countsAsFailure) failed++;
+  line(v.mark, v.message);
 }
 
 // 5. Marketplace mirror freshness — a TABLE-DRIVEN CHANNELS gate. Two independent mirrors once

@@ -12,7 +12,12 @@ The global workgraph index now carries edges between branch-capture graphs.
 
 - **`workgraph-index.mjs`** indexes cross-graph edges (drift 269): an edge whose far end sits in a sibling branch graph is carried verbatim, so `workgraph_edges(origin)` lists it as outbound at the writer and inbound at the origin. Index stats gain `sources.crossGraphEdges`; the index regenerated at 856/837.
 
-Release gate held: no public interface moved, so no tag, GitHub release or native builds for this version. Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-5.0.2.md`.
+### Fixed
+
+- **`pre-release-audit.mjs`** no longer fails a release whose range touches no `skills/` `commands/` `agents/` `hooks/` file (AUDIT_STRUCTURAL_ZERO_SCAN by construction on every scripts-only release). The verdict is lifted directly from Cinopsis 0f1f5f8 (drift 253) as `scripts/audit-structural-verdict.mjs`, with its five cases in `scripts/audit-structural-verdict.test.mjs`; in-scope-but-unexamined and no-range stay fail-closed.
+- **`workgraph-index.mjs`** section 4c derives the live dir from `PLAN` instead of a second hardcoded root (output unchanged, 856/837).
+
+Tagged v5.0.2 and both plugin mirrors synced on Gavin's drift-274 ruling (the held bump could not pass the ceremony audit untagged); no GitHub release or native builds. Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-5.0.2.md`.
 
 ## [5.0.1] - 2026-10-05
 
