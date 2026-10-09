@@ -10,6 +10,9 @@
 
 export const STRUCTURAL_ROOTS = ['skills/', 'commands/', 'agents/', 'hooks/'];
 
+// The audit's tag-fallback test uses the same roots: one source for the scope (quality review, v5.0.2).
+export const SCANNABLE = new RegExp('^(' + STRUCTURAL_ROOTS.map((r) => r.slice(0, -1)).join('|') + ')/');
+
 // Paths in the changed set that the structural checks are responsible for.
 export const inScopePaths = (changed) =>
   changed === null ? null : [...changed].filter((p) => STRUCTURAL_ROOTS.some((r) => p.startsWith(r)));
@@ -26,6 +29,15 @@ export function structuralVerdict({ changed, scanned, failedDuring }) {
       mark: 'FAIL',
       countsAsFailure: true,
       message: 'structural checks scanned 0 files (scoped to skipped) - AUDIT_STRUCTURAL_ZERO_SCAN, not a pass',
+    };
+  }
+  if (changed.size === 0) {
+    // An empty change set is indistinguishable from a range that diffs HEAD against itself (N91):
+    // fail closed. A tagged HEAD is handled upstream by diffing against the previous tag.
+    return {
+      mark: 'FAIL',
+      countsAsFailure: true,
+      message: 'structural checks scanned 0 files (empty change set: the range diffs HEAD against itself) - AUDIT_STRUCTURAL_ZERO_SCAN, not a pass',
     };
   }
   if (inScope.length === 0) {

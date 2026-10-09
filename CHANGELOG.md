@@ -4,6 +4,13 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Fixed
+
+- **Structural audit fails closed on an empty change set again.** The v5.0.2 lift passed an empty diff, which cannot be told apart from a range that diffs HEAD against itself; `structuralVerdict` now fails it (AUDIT_STRUCTURAL_ZERO_SCAN) and the tag fallback in `pre-release-audit.mjs` diffs against the previous tag whenever that range is non-empty. The scope lives in one place (`SCANNABLE` exported from `audit-structural-verdict.mjs`). Six cases in `scripts/verify-audit-structural-verdict.test.mjs`. Found by the two-stage review of v5.0.2, run after the headless ceremony could not dispatch it.
+- **`workgraph-index.mjs` 4c** resolves the live dir with `path.win32` (or `GRIOT_LIVE_DIR`) and warns when it is missing, resolves both endpoints before landing either (no orphan node), and counts a cross-graph edge declared twice once.
+
 ## [5.0.2] - 2026-10-09
 
 The global workgraph index now carries edges between branch-capture graphs.
@@ -14,7 +21,7 @@ The global workgraph index now carries edges between branch-capture graphs.
 
 ### Fixed
 
-- **`pre-release-audit.mjs`** no longer fails a release whose range touches no `skills/` `commands/` `agents/` `hooks/` file (AUDIT_STRUCTURAL_ZERO_SCAN by construction on every scripts-only release). The verdict is lifted directly from Cinopsis 0f1f5f8 (drift 253) as `scripts/audit-structural-verdict.mjs`, with its five cases in `scripts/audit-structural-verdict.test.mjs`; in-scope-but-unexamined and no-range stay fail-closed.
+- **`pre-release-audit.mjs`** no longer fails a release whose range touches no `skills/` `commands/` `agents/` `hooks/` file (AUDIT_STRUCTURAL_ZERO_SCAN by construction on every scripts-only release). The verdict is lifted directly from Cinopsis 0f1f5f8 (drift 253) as `scripts/audit-structural-verdict.mjs`, with its five cases in `scripts/verify-audit-structural-verdict.test.mjs` (run by the audit itself); in-scope-but-unexamined and no-range stay fail-closed.
 - **`workgraph-index.mjs`** section 4c derives the live dir from `PLAN` instead of a second hardcoded root (output unchanged, 856/837).
 
 Tagged v5.0.2 and both plugin mirrors synced on Gavin's drift-274 ruling (the held bump could not pass the ceremony audit untagged); no GitHub release or native builds. Full account: `.prism/shared/docs/PRISM-DOCUMENTATION-5.0.2.md`.

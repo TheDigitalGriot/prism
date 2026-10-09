@@ -309,7 +309,10 @@ try {
 // endpoints of cross-graph edges are indexed - the branch graphs themselves stay their own record.
 let crossGraphEdges = 0;
 {
-  const LIVE = path.dirname(PLAN); // one source for the live dir: the plan path above (no second hardcode)
+  // One source for the live dir: the plan path above, overridable for other machines (quality review, v5.0.2).
+  // PLAN is a Windows literal, so derive it with path.win32 - path.dirname on POSIX would return '.'.
+  const LIVE = process.env.GRIOT_LIVE_DIR || path.win32.dirname(PLAN);
+  if (!fs.existsSync(LIVE)) warnings.push('branch graphs: live dir not found: ' + LIVE + ' (set GRIOT_LIVE_DIR)');
   let files = [];
   try { files = fs.readdirSync(LIVE).filter((f) => /-branch-capture-workgraph[.]json$/.test(f)); } catch { warnings.push('branch graphs: live dir unreadable'); }
   const graphs = new Map();
@@ -317,23 +320,30 @@ let crossGraphEdges = 0;
     const g = readJSON(path.join(LIVE, f));
     if (g && g.meta && g.meta.idPrefix) graphs.set(g.meta.idPrefix, { g, p: path.join(LIVE, f) });
   }
-  const landNode = (id) => {
-    if (seen.has(id)) return true;
+  const resolve = (id) => {
     const ns = id.slice(0, id.lastIndexOf(':'));
     const src = graphs.get(ns);
     const n = src && (src.g.nodes || []).find((x) => x.id === id);
-    if (!n) { warnings.push('cross-graph endpoint not found in any branch graph: ' + id); return false; }
+    if (!n) { warnings.push('cross-graph endpoint not found in any branch graph: ' + id); return null; }
+    return { id, ns, src, n };
+  };
+  const landNode = ({ id, ns, src, n }) => {
+    if (seen.has(id)) return;
     addNode({
       id, envelopeId: id, localId: n.localId, kind: 'branch-node', origin: ns.replace(/^wg:/, ''),
       title: n.title, state: n.state, direction: n.direction, branchKind: n.kind, group: n.group,
       lastTouched: mtime(src.p), path: src.p,
     });
-    return true;
   };
+  const done = new Set();
   for (const { g } of graphs.values()) {
     for (const e of g.edges || []) {
       if (!e.crossGraph) continue;
-      if (!landNode(e.from) || !landNode(e.to)) continue;
+      const key = e.from + '|' + e.to + '|' + e.kind;
+      if (done.has(key)) continue; // the same edge declared in two graphs counts once
+      const a = resolve(e.from), b = resolve(e.to);
+      if (!a || !b) continue; // resolve both ends before landing either: no orphan endpoint
+      landNode(a); landNode(b); done.add(key);
       edges.push({ from: e.from, to: e.to, kind: e.kind, label: e.label || e.kind, crossGraph: true, crossGraphOrigin: e.crossGraphOrigin });
       crossGraphEdges++;
     }

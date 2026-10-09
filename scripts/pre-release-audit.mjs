@@ -6,7 +6,7 @@
 // Exits non-zero on any failure so the ceremony can gate on it.
 import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
-import { structuralVerdict } from './audit-structural-verdict.mjs';
+import { structuralVerdict, SCANNABLE } from './audit-structural-verdict.mjs';
 
 let failed = 0;
 const line = (mark, msg) => console.log(`[${mark}] ${msg}`);
@@ -121,7 +121,6 @@ const walk = (dir) => existsSync(dir) ? readdirSync(dir, { withFileTypes: true }
 }) : [];
 const base = (run('git', ['describe', '--tags', '--abbrev=0']).stdout || '').trim()
   || (run('git', ['rev-parse', '--verify', 'main']).status === 0 ? 'main' : '');
-const SCANNABLE = /^(skills|commands|agents|hooks)\//;
 const diffSet = (b) => {
   const r = run('git', ['diff', '--name-only', `${b}..HEAD`]);
   return r.status === 0 ? new Set(r.stdout.split('\n').map(s => s.trim()).filter(Boolean)) : null;
@@ -136,7 +135,7 @@ if (base) {
   if (changed !== null && ![...changed].some(f => SCANNABLE.test(f)) && /^v\d/.test(base)) {
     const prev = (run('git', ['describe', '--tags', '--abbrev=0', `${base}~1`]).stdout || '').trim();
     const prevSet = prev ? diffSet(prev) : null;
-    if (prevSet && [...prevSet].some(f => SCANNABLE.test(f))) { changed = prevSet; scanBase = prev; line('INFO', `HEAD is at/after ${base} with nothing scannable since; structural scope = ${prev}..HEAD (the release ${base} shipped)`); }
+    if (prevSet && prevSet.size > 0) { changed = prevSet; scanBase = prev; line('INFO', `HEAD is at/after ${base} with nothing scannable since; structural scope = ${prev}..HEAD (the release ${base} shipped)`); }
   }
 }
 if (changed === null) line('WARN', 'no base tag/branch to diff against — structural checks skipped (run in a repo with history)');

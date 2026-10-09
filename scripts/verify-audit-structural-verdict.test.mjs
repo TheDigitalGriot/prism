@@ -1,6 +1,6 @@
-// audit-structural-verdict.test.mjs - the five F-A cases from Cinopsis
+// verify-audit-structural-verdict.test.mjs - the six F-A cases from Cinopsis
 // tests/test_audit_structural_verdict.py (0f1f5f8, drift 253), ported to node:test.
-// Run: node --test scripts/audit-structural-verdict.test.mjs
+// Runs inside pre-release-audit.mjs (every scripts/verify-*.mjs), or: node --test scripts/verify-audit-structural-verdict.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { structuralVerdict } from './audit-structural-verdict.mjs';
@@ -33,6 +33,13 @@ test('normal case reports FAIL when a check failed', () => {
   const v = verdict(['commands/plan.md'], 1, true);
   assert.equal(v.mark, 'FAIL');
   assert.equal(v.countsAsFailure, false); // the failing check already counted itself
+});
+
+test('an empty change set fails closed (a self-diff looks the same)', () => {
+  const v = verdict([], 0);
+  assert.equal(v.mark, 'FAIL');
+  assert.equal(v.countsAsFailure, true);
+  assert.match(v.message, /AUDIT_STRUCTURAL_ZERO_SCAN/);
 });
 
 test('no range stays fail-closed', () => {
