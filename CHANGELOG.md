@@ -4,6 +4,12 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [5.0.4] - 2026-10-09
+
+### Fixed
+
+- **Headless closing ceremonies dispatch their own reviewers (drift 277).** `references/review-audit-gate.md` now tells a `claude -p` run to launch with `--agent claude`: an enabled plugin can set a default main-thread agent in its `settings.json` (Cinopsis set `digest-writer`, which has no Agent tool), and then neither `prism:spec-reviewer` nor `prism:quality-reviewer` could be dispatched. If the Agent tool is still absent the gate records `REVIEW SKIPPED-HEADLESS` and stops; a missing review is never a pass. Proven by a headless run of the gate that dispatched both reviewers (SPEC_PASS, QUALITY_PASS).
+
 ## [5.0.3] - 2026-10-09
 
 ### Fixed
