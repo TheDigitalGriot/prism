@@ -45,7 +45,14 @@ const ROOTS = [
   'C:\\Users\\digit\\Developer',
 ];
 const PLAN = 'C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html';
-const OUT = process.argv[2] || 'workgraph-index.json';
+// The only argument is an output path. A flag is never a path: `--help` once wrote a 924 KB
+// index to a file literally named `--help` at the repo root.
+const ARG = process.argv[2];
+if (ARG && ARG.startsWith('-')) {
+  console.log('usage: node scripts/workgraph-index.mjs [out.json]   (default workgraph-index.json)');
+  process.exit(ARG === '-h' || ARG === '--help' ? 0 : 2);
+}
+const OUT = ARG || 'workgraph-index.json';
 
 const nodes = [];
 const edges = [];
