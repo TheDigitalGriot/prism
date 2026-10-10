@@ -4,6 +4,12 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Fixed
+
+- `scripts/workgraph-index.mjs` no longer treats a flag as its output path: `--help` / `-h` print usage and exit 0, any other `-` argument exits 2, and nothing is written. Before, `--help` wrote the full 924 KB index to a file named `--help` at the repo root (drift 286).
+
 ## [5.1.0] - 2026-10-10
 
 Claude Haiku 5.5 becomes the default Haiku tier, and griot-agent-architect picks up the Claude Code 2.1.290-2.1.296 agent, hook and MCP fields.
