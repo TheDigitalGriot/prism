@@ -1,0 +1,1 @@
+Read and execute the stage contract at .prism/shared/plans/2026-10-10-changelog-haiku-5-5-CONTEXT.md in this repo. Follow its Process steps in order. Load only the inputs each step names. Write the terminal marker named in its Heartbeat section when finished.

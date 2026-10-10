@@ -96,7 +96,10 @@
     "amendPass89_2026_10_05": "Connected Griot logo brainstorm and app-icon local plugin packaged and installed; full original references retained. C43 closes the local package only. Canonical glyph/art approval, exports, account deployment and tracking publication remain separate unverified targets.",
     "amendPass90_2026_10_06": "Djeli brand ingest (C44): rulings D16-D18, findings N161-N162, defect N163, open ask OA28 glyph",
     "amendPass91_2026_10_06": "Brand ingest round 2: Djeli App [WIP] canvas (C45), rulings D19-D21, findings N164-N165",
-    "amendPass92_2026_10_06": "N162 and OA28 closed by B2"
+    "amendPass92_2026_10_06": "N162 and OA28 closed by B2",
+    "amendPass93_2026_10_09": "amendPass93: changelog-watch retune (C49) + model-binding, mirror-lag and architect-parity findings (N168-N170) + batch-mode and Prism-version asks (OA29, OA30)",
+    "amendPass94_2026_10_09": "amendPass94: OA30 search executed (N171), N169 corrected - mirror was current on origin, local clone stale",
+    "amendPass95_2026_10_10": "Weekly changelog watch (manual proving run): 3 ACTION-NEEDED items OA31-OA33, contracts written not launched"
   },
   "groups": [
     {
@@ -6972,6 +6975,182 @@
         "evidence": "git -C C:/Users/digit/Synaptiq remote -v -> empty; push error 2026-10-06.",
         "result": "open - owed a remote"
       }
+    },
+    {
+      "id": "wg:djeli-branch:C49",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C49",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "in-progress",
+      "direction": "outbound",
+      "title": "Changelog-watch scheduled task retune - Sonnet 5.5 + full Griot context (ontology, prism-model-onboard, release-repo griot-agent-architect)",
+      "description": "Gavin 2026-10-09: move trig_01EBJcscZvCFkHFU2nz7oZik off claude-opus-4-8 (he stopped its 22:03 run because it kept forcing the outdated model) onto claude-sonnet-5-5, and rewrite its prompt with Griot context: Prism at GriotApps/Prism, add models via /prism:prism-model-onboard, read griot-agent-architect from the Prism repo (the marketplace mirror lags). Lives on the Djeli branch codex as griot-wide internal work; a griot-specific branch codex may split off later.",
+      "verification": {
+        "evidence": "list_triggers 2026-10-09: trig_01EBJ model claude-opus-4-8, cron 0 13 * * 1, last_run FAILED 02:03Z (Gavin stopped it). prism-model-onboard SKILL.md read (GriotApps/Prism/skills/prism-model-onboard, 100 lines).",
+        "result": "model swap + prompt rewrite pending the batch-mode ruling OA29"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N168",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N168",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "route-identified-device-only",
+      "direction": "inbound",
+      "title": "Device-bound scheduled task - model cannot be patched alone; only inside the signed prompt edit approved from a linked session",
+      "description": "update_trigger(model) on trig_01EBJ was refused. The model change has to ride with the prompt rewrite, approved once from a Cowork session linked to digitalgriotpc. This is why opus-4-8 persisted.",
+      "verification": {
+        "evidence": "update_trigger error 2026-10-09 22:21: model cannot be patched directly on a device-bound routine; set the model inside the signed session_request edit",
+        "result": "route = send model + prompt together from this linked session"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N169",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N169",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "corrected-verified",
+      "direction": "outbound",
+      "title": "Prism thin marketplace mirror at v5.0.3 while source is tagged v5.0.4",
+      "description": "The v5.0.4 release (b67700a) has not reached digital-griot-marketplace/prism-plugin. Either today's closing ceremony is still in flight or the mirror-sync step was skipped. The mixdown/closing-ceremony sync is the gate.",
+      "verification": {
+        "evidence": "marketplace git log -- prism-plugin: 2f30e8d 2026-10-09 16:29 sync: prism v5.0.3; prism-plugin/.claude-plugin/plugin.json version 5.0.3; Prism git tag top v5.0.4 == origin/main b67700a, 0/0 ahead-behind",
+        "result": "flagged - resolve by running the Prism mirror sync, or confirm the ceremony is mid-flight"
+      },
+      "correction": {
+        "correctedAt": "2026-10-10 amendPass94_2026_10_09",
+        "wasClaimed": "The Prism marketplace mirror is at v5.0.3 while the source is v5.0.4",
+        "isTrue": "origin digital-griot-marketplace carried prism v5.0.4 since ce55f62 (17:05); the LOCAL clone was 3 commits behind. sync-to-marketplace.sh reported already up to date; pre-release-audit section 5 PASS on version and content (239 files) for both mirrors after a fresh sync-prism-plugin run.",
+        "cause": "proxy verdict: measured the local clone's git log and plugin.json, asserted the remote mirror's state"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N170",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N170",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "verified-reframe",
+      "direction": "local",
+      "title": "griot-agent-architect source vs mirror - content-identical; the 311-byte gap is CRLF vs LF",
+      "description": "The mirror SKILL.md looked newer and larger (28601 vs 28290 bytes). A line compare shows zero differing lines across 311 lines each; 311 lines = 311 bytes = line endings. The skill has not changed since f8ab33b (2026-09-29).",
+      "verification": {
+        "evidence": "Compare-Object on ReadAllLines(UTF8) of GriotApps/Prism/skills/griot-agent-architect/SKILL.md vs digital-griot-marketplace/prism-plugin/skills/griot-agent-architect/SKILL.md: 0 diffs, 311/311 lines",
+        "result": "no content lag on this skill today; the prompt still points at the Prism repo"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA29",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA29",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Changelog-watch batch mode - one digest, per-bucket, or per-finding fan-out",
+      "description": "How the weekly watch batches action-needed findings into post-ingestion work (A griot-plugin-update via griot-agent-architect, B Arkestra via prism-model-onboard, C FYI).",
+      "verification": {
+        "evidence": "options laid out in-session 2026-10-09 (changelog_watch_batch_and_post_ingestion diagram); ontology COORDINATION IS NOT FREE: fan-out is the cheap path, a contract flaw is paid N times",
+        "result": "awaiting Gavin's ruling"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA30",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA30",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "inbound",
+      "title": "Prism version - Gavin recalls v5.1+; every instrument measures v5.0.4 - where was 5.1 seen?",
+      "description": "Measured: tags top v5.0.4, origin/main b67700a, one worktree, zero Prism 5.1+ hits in all five branch workgraphs, the global index and the DGS plan. Unmeasured: another machine or an unpushed branch.",
+      "verification": {
+        "evidence": "git tag --sort=-v:refname after fetch; rev-list HEAD...origin/main 0/0; regex sweep of cinodex/cinopsis/djeli/gbfolio/griot-branch-codex graphs, index.json, dgs-definitive-plan.html",
+        "result": "awaiting Gavin - which surface showed 5.1"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N171",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N171",
+      "kind": "finding",
+      "group": "new-findings",
+      "state": "verified-reframe",
+      "direction": "inbound",
+      "title": "Prism 5.1 recall - zero real hits across 211 Cowork transcripts and claude.ai chats",
+      "description": "OA30 ruled search. Regex over every audit.jsonl under local-agent-mode-sessions returned only false matches (Superpowers v5.1.0, prisma 5.3.1); conversation_search returned only Jan 2026 chats. Artifacts and Desktop-project lanes not checked.",
+      "verification": {
+        "evidence": "recall.ps1 over 211 audit.jsonl files 2026-10-09 23:0x: 2 files, both non-Prism matches; conversation_search Prism v5.1 release: 5 hits, all 2025-11..2026-01, empty bodies",
+        "result": "no Prism 5.1 in sessions or web chats; OA30 back to Gavin"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA31",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "description": "Contract on disk: .prism/shared/plans/2026-10-10-changelog-haiku-5-5-CONTEXT.md. Not launched; awaiting Selectah ruling.",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "direction": "inbound",
+      "state": "open",
+      "verification": {
+        "evidence": "https://support.claude.com/en/articles/12138966-release-notes (2026-10-07 Haiku 5.5 launch); https://code.claude.com/docs/en/changelog v2.1.293 2026-10-07, v2.1.296 2026-10-09; Prism b67700a model-config.md lists Haiku 4.5 only",
+        "result": "ACTION-NEEDED, contract written, run owed"
+      },
+      "localId": "OA31",
+      "title": "Changelog 2026-10-10 B: Claude Haiku 5.5 + Sonnet 5.5 cache-read price into model-config"
+    },
+    {
+      "id": "wg:djeli-branch:OA32",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "description": "Contract on disk: .prism/shared/plans/2026-10-10-changelog-architect-frontmatter-CONTEXT.md. Not launched.",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "direction": "inbound",
+      "state": "open",
+      "verification": {
+        "evidence": "https://code.claude.com/docs/en/changelog v2.1.292 2026-10-06, v2.1.295 2026-10-08, v2.1.296 2026-10-09; grep of skills/griot-agent-architect at b67700a found none",
+        "result": "ACTION-NEEDED, contract written, run owed"
+      },
+      "localId": "OA32",
+      "title": "Changelog 2026-10-10 A: griot-agent-architect lacks autoCompactWindow, Agent effort, 32-skill cap, name limit, onFailure"
+    },
+    {
+      "id": "wg:djeli-branch:OA33",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "description": "Contract on disk: .prism/shared/plans/2026-10-10-changelog-plugin-update-cli-CONTEXT.md. Not launched.",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "direction": "inbound",
+      "state": "open",
+      "verification": {
+        "evidence": "https://code.claude.com/docs/en/changelog v2.1.289 2026-10-03, v2.1.292 2026-10-06, v2.1.293 2026-10-07, v2.1.295 2026-10-08; grep of griot-plugin-update SKILL.md found none",
+        "result": "ACTION-NEEDED, contract written, run owed"
+      },
+      "localId": "OA33",
+      "title": "Changelog 2026-10-10 A: griot-plugin-update lacks plugin install --marketplace and 2.1.289-295 plugin CLI changes"
     }
   ],
   "edges": [
@@ -9098,15 +9277,51 @@
       "to": "wg:djeli-branch:C48",
       "kind": "in-epic",
       "label": "the repair commit has nowhere to go"
+    },
+    {
+      "from": "wg:djeli-branch:C49",
+      "to": "wg:djeli-branch:OA29",
+      "kind": "awaits",
+      "label": "prompt shape waits on the batch ruling"
+    },
+    {
+      "from": "wg:djeli-branch:N168",
+      "to": "wg:djeli-branch:C49",
+      "kind": "in-epic",
+      "label": "why the model swap rides with the prompt"
+    },
+    {
+      "from": "wg:djeli-branch:N169",
+      "to": "wg:djeli-branch:C49",
+      "kind": "in-epic",
+      "label": "architect source routing"
+    },
+    {
+      "from": "wg:djeli-branch:N170",
+      "to": "wg:djeli-branch:C49",
+      "kind": "in-epic",
+      "label": "architect copies verified identical"
+    },
+    {
+      "from": "wg:djeli-branch:OA30",
+      "to": "wg:djeli-branch:C49",
+      "kind": "in-epic",
+      "label": "version reconciliation"
+    },
+    {
+      "from": "wg:djeli-branch:N171",
+      "to": "wg:djeli-branch:OA30",
+      "kind": "in-epic",
+      "label": "search ruling executed"
     }
   ],
   "stats": {
-    "totalBranches": 111,
+    "totalBranches": 112,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 354,
+    "edgeCount": 360,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -10738,6 +10953,39 @@
         "N167"
       ],
       "newEdges": 6,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass93_2026_10_09_2026_10_10": {
+      "newNodes": [
+        "C49",
+        "N168",
+        "N169",
+        "N170",
+        "OA29",
+        "OA30"
+      ],
+      "newEdges": 5,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass94_2026_10_09_2026_10_10": {
+      "newNodes": [
+        "N171"
+      ],
+      "newEdges": 1,
+      "corrections": [
+        "wg:djeli-branch:N169"
+      ],
+      "refused": []
+    },
+    "amendPass95_2026_10_10_2026_10_10": {
+      "newNodes": [
+        "OA31",
+        "OA32",
+        "OA33"
+      ],
+      "newEdges": 0,
       "corrections": [],
       "refused": []
     }
