@@ -39,6 +39,16 @@ mcp__plugin_<plugin-name>_<server-name>__<tool-name>
 
 This matters when writing `allowed-tools` / `disallowedTools` filters or `PreToolUse` hook matchers against a specific MCP tool — match the full namespaced name.
 
+## Description and instruction limits
+
+| Text | Limit | Since |
+|---|---|---|
+| Tool descriptions sent up front | **4,096 chars** (default; was 2,048) | 2.1.296 |
+| Server `instructions` | **4,096 chars** (default; was 2,048) | 2.1.296 |
+| Tool descriptions loaded through **tool search** | **16,384 chars** (was 2,048) | 2.1.295 |
+
+Text past the limit is cut, not rejected — silently. Put the routing-critical sentence (what the tool is for, when to call it) in the first 4,096 characters; longer reference detail only survives on the tool-search path. "Default" in the changelog implies the up-front limit is configurable, but no setting is documented as of 2026-10-10 — do not design against an override. Older Claude Code builds still cut at 2,048, so a server targeting them keeps its instructions under that. Changelog-only (the [mcp](https://code.claude.com/docs/en/mcp) page documents output limits but not these). Source: [changelog](https://code.claude.com/docs/en/changelog).
+
 ## Authentication
 
 - **Token / bearer** — simplest. Read the secret from `${user_config.<key>}` (prompted at enable-time via `userConfig` in `plugin.json`) or an env var; inject as a header. Never hardcode secrets in `.mcp.json` (it ships with the plugin).

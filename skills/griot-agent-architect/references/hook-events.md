@@ -34,6 +34,20 @@ Shell script receives event JSON on stdin. Exit `0` = pass (stdout → context);
 
 POSTs event JSON to URL. Response body injected into context.
 
+### `onFailure` — fail open or fail closed (command + http, Claude Code 2.1.295+)
+
+Per-hook field, `"continue"` (default — the action proceeds when the hook itself breaks) or `"block"`. With `"block"`, the action is blocked when the hook **can't start**, **times out**, exits with a code **other than 0 or 2**, hits an **HTTP error** (connection failure or non-2xx), or returns **invalid output** (unparseable or schema-failing JSON).
+
+```json
+{"hooks":{"PreToolUse":[{"matcher":"Bash","hooks":[{"type":"command","command":"node","args":["${CLAUDE_PROJECT_DIR}/.claude/hooks/check-command.js"],"onFailure":"block"}]}]}}
+```
+
+- Supported on `command` and `http` only — **not** `mcp_tool`, `prompt` or `agent` hooks.
+- No effect on `Stop`, `SubagentStop`, `TaskCompleted`, `TeammateIdle`, or on background hooks (`async: true` / `asyncRewake: true`).
+- **House rule:** every guard hook (secret scan, path guard, destructive-command check, the Fable HITL gate) sets `"onFailure": "block"`. A guard that fails open when its script is missing or crashes enforces nothing. Formatters and notifiers keep the default.
+
+Source: [hooks](https://code.claude.com/docs/en/hooks) (command + HTTP hook fields); [changelog 2.1.295](https://code.claude.com/docs/en/changelog).
+
 ### Prompt Hook (use sparingly)
 
 ```json

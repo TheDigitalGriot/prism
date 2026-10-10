@@ -168,6 +168,8 @@ effort: xhigh
 ---
 ```
 
+**Per-dispatch effort on the Agent tool (2.1.292+).** Beyond frontmatter, Claude can pass an `effort` parameter when dispatching a non-fork subagent ("run the reviewer at low effort"). Precedence, highest first: **`CLAUDE_CODE_EFFORT_LEVEL` env var > per-invocation `effort` parameter > agent frontmatter `effort` > session effort.** The parameter stays in effect when the subagent is resumed. This is the cost lever for a fan-out: keep a high-effort frontmatter default and dial individual mechanical dispatches down per call, rather than forking a second low-effort agent file. Source: [sub-agents](https://code.claude.com/docs/en/sub-agents).
+
 **`max` caveat:** session-only for all models. It can't be set persistently through `effortLevel` in settings. Use for one-shot critical work, not as a default.
 
 **`ultracode` (Claude Code only, not in agent frontmatter):** beyond effort levels. Sets `xhigh` per-message PLUS triggers an orchestrated dynamic workflow for substantive tasks. Set via `/effort` interactively or `"ultracode": true` in an Agent SDK control request. Session-only.
@@ -294,10 +296,22 @@ Note the practical unit change: on the current tokenizer, 1M tokens ≈ 555k wor
 | Session-only effort (`/effort s`) | v2.1.257 |
 | `/model` saves default | v2.1.153 |
 | Deterministic subagent caps (`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`, `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`) | v2.1.217 |
+| Agent/skill/plugin `name` capped at 256 chars (agent rejected; skill/plugin ignored) | v2.1.290 |
+| Agent tool per-invocation `effort` parameter | v2.1.292 |
+| Subagent `skills:` preload capped at first 32 distinct names | v2.1.295 |
+| Hook `onFailure: "block"` (command + http) | v2.1.295 |
+| MCP tool-search descriptions cut at 16,384 chars | v2.1.295 |
+| MCP up-front tool descriptions + server instructions cut at 4,096 chars | v2.1.296 |
+| `autoCompactWindow` in agent frontmatter / `--agents` | v2.1.296 |
+| `CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL` | v2.1.296 |
 | Haiku 4.5 access | *not documented in any changelog entry — treat as long-supported* |
 | `effort: max` (bare) | *not documented; it predates `xhigh` — do **not** cite v2.1.111 as its minimum* |
 
 **Deterministic subagent caps.** `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` and `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` bound how many subagents a run spawns at once and how deep the spawn tree goes, making fan-out reproducible run-to-run. Set them in the launcher env (Prism pins them in `scripts/spectrum.sh`, defaults `3` / `2`). They require **Claude Code ≥ 2.1.217**; older versions ignore the vars harmlessly. Pair the caps with the effort posture in §4 rather than leaving concurrency unbounded.
+
+**Workflow-agent model pin.** `CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL` (≥ 2.1.296) runs **every workflow agent on one model** while ordinary subagents keep their own `model:`. Same launcher-env family as the caps above — use it to keep a large workflow fan-out on a cheaper tier without editing agent files. Accepted values are undocumented as of 2026-10-10 (the [env-vars](https://code.claude.com/docs/en/env-vars) page does not list it yet); assume the same alias/ID forms as `model:` and verify before pinning. Never set it to a Fable ID — that would route every workflow agent around the HITL gate. Source: [changelog](https://code.claude.com/docs/en/changelog).
+
+**Subagent auto-compaction.** `autoCompactWindow` (≥ 2.1.296) in agent frontmatter or `--agents` JSON lets a subagent auto-compact earlier than the main conversation's window — relevant for long-running agents on the 1M line (§7), where waiting for the full window delays compaction. Changelog-only; value format undocumented as of 2026-10-10. `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` already applies to subagents too ([sub-agents](https://code.claude.com/docs/en/sub-agents)). Source: [changelog](https://code.claude.com/docs/en/changelog).
 
 Run `claude update` before relying on the newest model. If you're shipping a plugin that targets Fable 5.1, document **v2.1.257** as the minimum in your README; for Opus 5.5, **v2.1.280**; for Sonnet 5.5, **v2.1.284**.
 

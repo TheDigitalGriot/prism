@@ -120,6 +120,12 @@ disallowedTools: Write, Edit  # restrict unnecessary capabilities
 
 `model` and `color` are **required**. Other optional fields: `tools`, `skills`, `memory`, `background`, `isolation` ("worktree" → the agent gets its own git worktree). Plugin agents **cannot** use `hooks`, `mcpServers`, or `permissionMode`. Convention: put 2-4 worked trigger scenarios under a **"When to invoke"** section in the agent body and reference it from the description — it ties triggering to verifiable scenarios.
 
+**Agent field limits and newer fields (Claude Code changelog 2.1.290-2.1.296, verified 2026-10-10):**
+- `name` is **at most 256 characters** — a longer agent name is **rejected**, while a skill's or plugin file's `name` over 256 is **silently ignored** (2.1.290). Keep names short kebab-case anyway; the cap is a hard backstop, not a target. Source: [sub-agents](https://code.claude.com/docs/en/sub-agents), [changelog](https://code.claude.com/docs/en/changelog).
+- `skills:` preloads **at most the first 32 distinct names**, each once (2.1.295). Skills past 32 are not preloaded; an agent with the `Skill` tool can still invoke them on demand. A long `skills:` list is a token-budget smell. Source: [sub-agents](https://code.claude.com/docs/en/sub-agents).
+- `autoCompactWindow` (2.1.296) — in agent frontmatter and `--agents` JSON, lets a subagent auto-compact **earlier** than the main conversation's window. Changelog-only as of 2026-10-10: the sub-agents page does not yet list it and the value format is undocumented — confirm before setting it. Source: [changelog](https://code.claude.com/docs/en/changelog).
+- Per-dispatch **`effort` on the Agent tool** (2.1.292) — Claude can run a non-fork subagent at a requested effort; it **overrides the `effort` frontmatter field**, persists on resume, and is itself overridden by `CLAUDE_CODE_EFFORT_LEVEL`. Frontmatter `effort` accepts `low | medium | high | xhigh | max` (model-dependent). Source: [sub-agents](https://code.claude.com/docs/en/sub-agents). Precedence detail: [references/model-config.md §4](./references/model-config.md).
+
 ## Hook Configuration
 
 ```json
@@ -143,6 +149,8 @@ disallowedTools: Write, Edit  # restrict unnecessary capabilities
 - **PreToolUse** → `{"hookSpecificOutput": {"permissionDecision": "allow"|"deny"|"ask", "updatedInput": {...}}, "systemMessage": "..."}`
 - **Stop / SubagentStop** → `{"decision": "approve"|"block", "reason": "...", "systemMessage": "..."}`
 - `command` hooks signal via exit code (0 = pass, 2 = block) and may also print this JSON on stdout.
+
+**Fail closed on guard hooks: `"onFailure": "block"`** (Claude Code 2.1.295+, `command` and `http` hooks only). The default `"continue"` lets the action through when the hook itself breaks; `"block"` blocks it when the hook can't start, times out, exits with a code other than 0/2, gets an HTTP error, or returns invalid JSON. Set it on every security/path guard (a guard that fails open is decoration). No effect on `Stop`/`SubagentStop`/`TaskCompleted`/`TeammateIdle` or on `async` hooks. Source: [hooks](https://code.claude.com/docs/en/hooks); detail in [references/hook-events.md](./references/hook-events.md).
 
 `agent` hooks delegate to a full subagent for multi-step judgment. **Reach for `command` first; escalate to `prompt`/`agent` deliberately.** For the events table, exit-code vs JSON protocol, and the hook-pattern library: [references/hook-events.md](./references/hook-events.md). Validate + test hooks with the bundled `scripts/hook-linter.sh`, `scripts/test-hook.sh`, and `scripts/validate-hook-schema.sh`.
 
@@ -172,6 +180,8 @@ Two distinct mechanisms:
 ## MCP Servers (`.mcp.json`)
 
 Local stdio (auto-start on enable, runs with user permissions) or remote SSE/HTTP/WebSocket connectors. Plugin MCP tools are namespaced `mcp__plugin_<plugin>_<server>__<tool>`. Use `${CLAUDE_PLUGIN_ROOT}` for server paths. **Cowork routes remote connectors through Anthropic's cloud** — they must be publicly reachable (see Components table). Server types, OAuth/token auth, and tool-naming details: [references/mcp-patterns.md](./references/mcp-patterns.md).
+
+**Description budgets:** MCP tool descriptions sent up front and server `instructions` are cut at **4,096 characters** by default (raised from 2,048 in 2.1.296); descriptions loaded through tool search are cut at **16,384** (2.1.295). Put the load-bearing routing text in the first 4,096. Changelog-only as of 2026-10-10. Source: [changelog](https://code.claude.com/docs/en/changelog); see [references/mcp-patterns.md § Description and instruction limits](./references/mcp-patterns.md).
 
 **Shelling out from a local stdio server?** Keep stdout pure JSON-RPC, pass `stdin=subprocess.DEVNULL` to every child, sanitize proxy env, prefer the interpreter's own binaries, and bind spawned servers to a kill-on-close Job Object - or the server hangs and orphans on Windows. Full recipe: [references/mcp-patterns.md § Local stdio server hygiene](./references/mcp-patterns.md).
 
@@ -298,6 +308,8 @@ Every current tier except Haiku 4.5 (Haiku 5.5 included) ships a **native 1M con
 ⚠️ **Thinking cannot be disabled at all on Opus 5.5** (a step past Opus 5, which could disable it) — adaptive thinking is now forced on for every call. Sonnet 5.5 also runs adaptive thinking by default, but exposes a new `between_tools` setting that turns off up-front thinking at `high` effort or below, when a streaming consumer needs quiet gaps between tool calls. Thinking tokens bill as output *and* count against `max_tokens` — a workload tuned for a no-thinking baseline can **truncate**, not merely cost more, on either 5.5 model. Re-baseline `max_tokens` before flipping anything to the 5.5 line.
 
 **Fable 5.1 requires Claude Code v2.1.257+. Opus 5.5 requires v2.1.280+. Sonnet 5.5 requires v2.1.284+. Opus 5 requires v2.1.219+. Sonnet 5 requires v2.1.197+.** Run `claude update` before relying on any of them.
+
+**Workflow agents get their own model pin:** `CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL` (2.1.296) runs every workflow agent on one model while ordinary subagents keep theirs. It is a launcher-env lever, the same family as the subagent caps in [references/model-config.md §8](./references/model-config.md); accepted values are undocumented as of 2026-10-10, and it must never point at Fable (the HITL gate still applies). Source: [changelog](https://code.claude.com/docs/en/changelog).
 
 For the full per-provider alias resolution table, dateless-snapshot rule, effort-level matrix, Fable 5.1 API differences, the Mythos 5.1 non-routable note, currency-check protocol, and provider-specific env-var pins: [references/model-config.md](./references/model-config.md).
 ## Harness Architecture (load when building composed systems)
