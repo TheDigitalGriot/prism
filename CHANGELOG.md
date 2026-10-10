@@ -4,6 +4,23 @@ All notable changes to Prism Plugin will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [5.1.0] - 2026-10-10
+
+Claude Haiku 5.5 becomes the default Haiku tier, and griot-agent-architect picks up the Claude Code 2.1.290-2.1.296 agent, hook and MCP fields.
+
+### Changed
+
+- **`MODEL_IDS.haiku` now resolves to `claude-haiku-5-5`** (`apps/prism-vscode/src/core/api/claude-sdk.ts`). Haiku 4.5 stays reachable as the permanent pin `haiku45` (`claude-haiku-4-5-20251001`), following the generation-pin convention. On Bedrock / Google Cloud / Foundry / Claude Platform on AWS the bare `haiku` alias still resolves to Haiku 4.5; pin `claude-haiku-5-5` there.
+- **griot-agent-architect model line** (`SKILL.md`, `references/model-config.md`): Haiku 5.5 row ($0.10 / $0.50 per MTok, 1M context, 128K output, effort `low`-`max` with `medium` default), Haiku 4.5 marked Active legacy pin, per-provider `haiku` split, env pin, effort matrix and minimum-version rows. Eight tiers.
+
+### Added
+
+- **griot-agent-architect, Claude Code 2.1.290-2.1.296:** agent `name` capped at 256 chars, `skills:` preload capped at 32 names, `autoCompactWindow`, per-dispatch Agent tool `effort` and its precedence, hook `onFailure: "block"` for command/http guard hooks (`references/hook-events.md`, scan-secrets example), MCP description and instruction budgets of 4,096 / 16,384 chars (`references/mcp-patterns.md`), and `CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL`. Each carries its source URL or a changelog-only caveat.
+
+### Fixed
+
+- **Sonnet 5.5 cache-read price** in `references/model-config.md` is $0.10/MTok (0.05x input), not $0.20, matching the pricing page and Claude Code v2.1.296.
+
 ## [5.0.4] - 2026-10-09
 
 ### Fixed

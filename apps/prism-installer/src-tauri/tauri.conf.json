@@ -1,6 +1,6 @@
 {
   "productName": "Prism Setup",
-  "version": "5.0.4",
+  "version": "5.1.0",
   "identifier": "com.thedigitalgriot.prism-setup",
   "build": {
     "beforeBuildCommand": "npm run build",
