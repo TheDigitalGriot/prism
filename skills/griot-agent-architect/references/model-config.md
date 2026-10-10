@@ -1,6 +1,6 @@
 # Model Configuration (Claude Code, Current Model Line)
 
-> Last updated 2026-09-30 (Opus 5.5 / Sonnet 5.5 delta pass; see `.prism/shared/research/2026-09-30-claude-codex-model-roster.md` for full sourcing). This is the Claude-Code-specific guidance that drifts fastest as new models ship. When in doubt, cross-check [platform.claude.com/docs/en/models/overview](https://platform.claude.com/docs/en/models/overview) and [code.claude.com/docs/en/model-config](https://code.claude.com/docs/en/model-config) — the model line moves quarterly.
+> Last updated 2026-10-10 (Haiku 5.5 delta pass: Haiku 5.5 added, `haiku` rolled forward, Sonnet 5.5 cache-read repriced — sources inline in §1). Previous: 2026-09-30 (Opus 5.5 / Sonnet 5.5 delta pass; see `.prism/shared/research/2026-09-30-claude-codex-model-roster.md` for full sourcing). This is the Claude-Code-specific guidance that drifts fastest as new models ship. When in doubt, cross-check [platform.claude.com/docs/en/models/overview](https://platform.claude.com/docs/en/models/overview) and [code.claude.com/docs/en/model-config](https://code.claude.com/docs/en/model-config) — the model line moves quarterly.
 
 ---
 
@@ -20,7 +20,7 @@
 
 ## 1. Current Model Line
 
-As of **2026-09-30**:
+As of **2026-10-10** (Haiku 5.5 added 2026-10-07; the rest of the line as of 2026-09-30):
 
 | Model | Full Model ID | Alias | Pricing (in / out per MTok) | Context | Max output | Effort levels |
 |---|---|---|---|---|---|---|
@@ -30,9 +30,12 @@ As of **2026-09-30**:
 | **Opus 4.8** | `claude-opus-4-8` | `opus48` (explicit; legacy pin) | $5 / $25 | 1M | 128K | low, medium, high (default), xhigh, max |
 | **Sonnet 5.5** | `claude-sonnet-5-5` | `sonnet` | $2 / $10 | 1M | 128K (300K on Batch API) | low, medium, high (default), xhigh, max |
 | **Sonnet 5** | `claude-sonnet-5` | `sonnet5` (explicit; legacy pin) | $2 / $10 | 1M | 128K | low, medium, high (default), xhigh, max |
-| **Haiku 4.5** | `claude-haiku-4-5-20251001` | `haiku` (also `claude-haiku-4-5`) | $1 / $5 | 200K | 64K | none (effort not supported) |
+| **Haiku 5.5** | `claude-haiku-5-5` | `haiku` (Anthropic API; see §3 for other providers) | $0.10 / $0.50 ($0.50 / $2.50 for prompts over 100K) | 1M | 128K (300K on Batch API) | low, **medium (default)**, high, xhigh, max |
+| **Haiku 4.5** | `claude-haiku-4-5-20251001` | `haiku45` (explicit; legacy pin) · `claude-haiku-4-5` · still `haiku` on Bedrock / Google Cloud / Foundry / Claude Platform on AWS | $1 / $5 | 200K | 64K | none (effort not supported) |
 
-Cache-read pricing diverges between the two 5.5 models: Opus 5.5 reads cache at **$0.20/MTok, 5% of input** — a special lower rate vs. the standard 10%; Sonnet 5.5 reads cache at $0.20/MTok too, but that's the *standard* 10% of its lower $2 input price. Cache-write pricing: Opus 5.5 $5/MTok (5m) / $8/MTok (1h); Sonnet 5.5 $2.50/MTok (5m) / $4/MTok (1h).
+Cache-read pricing on the 5.5 line: Opus 5.5 and Sonnet 5.5 both read cache at **0.05× base input** — a special lower rate vs. the standard 0.1× (pricing page footnote: *"Cache hits and refreshes on Claude Opus 5.5 and Claude Sonnet 5.5 are priced at 0.05x the base input price"*). That is **$0.20/MTok on Opus 5.5** and **$0.10/MTok on Sonnet 5.5**. **Correction 2026-10-10:** this line previously gave Sonnet 5.5 as $0.20 (the standard 10%); Claude Code v2.1.296 (2026-10-09) fixed its own cost figures to *"price Sonnet 5.5 cache reads at $0.10 per million tokens (was $0.20)"*, and the pricing page confirms $0.10. Sonnet 5 stays $0.20. Cache-write pricing: Opus 5.5 $5/MTok (5m) / $8/MTok (1h); Sonnet 5.5 $2.50/MTok (5m) / $4/MTok (1h). **Haiku 5.5:** cache read $0.01/MTok, cache write $0.125 (5m) / $0.20 (1h) for prompts up to 100K; $0.05 read, $0.625 / $1 write over 100K; minimum cacheable prompt 512 tokens.
+
+**Haiku 5.5** (`claude-haiku-5-5`, released 2026-10-07) is the default Haiku on the Anthropic API as of Claude Code v2.1.293. Dateless id with no dated snapshot (unlike Haiku 4.5). Adaptive thinking is on by default; `thinking: {"type": "disabled"}` is accepted at `high` or below and returns a 400 at `xhigh`/`max`. Retirement not sooner than 2027-10-07. **Haiku 4.5 is NOT retired**: the deprecations page lists it *Active*, retirement *"Not sooner than October 15, 2026"*, no deprecation notice published as of 2026-10-10 (Anthropic gives at least 60 days notice, so the earliest real date is later than that floor); the models overview files it under *Legacy models (still available)*. Sources (retrieved 2026-10-10): [Haiku 5.5 overview](https://platform.claude.com/docs/en/models/haiku-5-5/overview) · [pricing](https://platform.claude.com/docs/en/about-claude/pricing) · [effort](https://platform.claude.com/docs/en/build-with-claude/effort) · [model deprecations](https://platform.claude.com/docs/en/about-claude/model-deprecations) · [Claude Code model-config](https://code.claude.com/docs/en/model-config) · [Claude Code changelog v2.1.293 / v2.1.296](https://code.claude.com/docs/en/changelog).
 
 > ⚠️ **Fable 5.1 — ENABLED, HITL-GATED.** It is reachable under the Max/Team Premium subscription, but never as a resting default: every use passes the human-in-the-loop gate (`.prism/local/fable.flag` + a confirm/deny modal, and the `fable-gate.sh` PreToolUse hook on Task dispatches), and nothing in routing auto-escalates to it. Opus 5.5 is the routine ceiling for standard Prism work. The SDK handles the `refusal` stop reason (§5, shipped). Read §5 before using — Fable's API surface differs from the Opus family, and it draws on a *capped weekly Max allowance* (~2.5× Opus 5.5 on list price if metered on the API — $10/$50 vs $4/$20; the effective/thinking-token multiplier behind the prior "≈2.6× Opus 5" figure was not re-derived for the 5.5 line).
 
@@ -65,7 +68,7 @@ Anthropic states it directly: *"A common misconception is that dateless model ID
 
 - Use `model: sonnet` / `model: opus` / `model: haiku` in agent/skill frontmatter when you want automatic updates to the latest model in that family. **This is the default for Prism's own agents — all 14 use aliases, zero pinned IDs.**
 - Use `model: claude-opus-4-8` (the dateless pinned form) when you want to lock to a specific version — useful for reproducible eval runs, marketplace plugin pins, or freezing critical-path agents.
-- For Haiku, the date suffix is still meaningful: `claude-haiku-4-5` is the alias that resolves to the dated `claude-haiku-4-5-20251001`. It is the **only** tier in the current line that still has real alias→snapshot indirection.
+- For Haiku 4.5, the date suffix is still meaningful: `claude-haiku-4-5` is the alias that resolves to the dated `claude-haiku-4-5-20251001`. It is the **only** model still listed that has real alias→snapshot indirection — **Haiku 5.5 dropped it** (`claude-haiku-5-5` only, no dated variant; checked 2026-10-10).
 
 This change matters most for plugin authors. A plugin shipping `model: claude-opus-4-6` in 2025 used to drift forward automatically; today the same string is pinned to the 4.6 release. Update intentionally.
 
@@ -78,7 +81,7 @@ This change matters most for plugin authors. A plugin shipping `model: claude-op
 | Namespace | Where | Keys |
 |---|---|---|
 | **Policy keys** — govern approval mode + the downgrade chain | `model-policy.ts`, `fable-gate.sh`, `statusline-model.sh`, mobile `model-policy.ts` | `fable5`, `opus55`, `opus5`, `opus48` — **no bare `opus`** (the downgrade chain, in order: `fable5 → opus55 → opus5 → opus48`) |
-| **SDK aliases** — map a friendly name to an API ID | `claude-sdk.ts` `MODEL_IDS` | `opus` (→ Opus 5.5), `opus55` (→ Opus 5.5, explicit pin), `opus5`, `opus48`, `sonnet` (→ Sonnet 5.5), `sonnet5`, `haiku`, `fable` |
+| **SDK aliases** — map a friendly name to an API ID | `claude-sdk.ts` `MODEL_IDS` | `opus` (→ Opus 5.5), `opus55` (→ Opus 5.5, explicit pin), `opus5`, `opus48`, `sonnet` (→ Sonnet 5.5), `sonnet5`, `haiku` (→ Haiku 5.5 as of 2026-10-10), `haiku45` (→ Haiku 4.5, explicit legacy pin), `fable` |
 
 The bare `opus` and bare `sonnet` survive only as *user-facing SDK aliases* (agent frontmatter depends on them tracking "current"). In the policy namespace, the current ceiling is always addressed by its numbered pin (`opus55`) so a policy key never silently means "whichever Opus is current" — that ambiguity is exactly what the `opus` → `opus48` rename solved the first time this pattern appeared, and `opus55` now carries it forward. Sonnet has no separate policy/downgrade-chain namespace today (only the Opus line is HITL-gated and chain-governed), so `sonnet`/`sonnet5` exist only as SDK aliases.
 
@@ -88,12 +91,14 @@ The bare `opus` and bare `sonnet` survive only as *user-facing SDK aliases* (age
 
 Aliases resolve differently per provider — the same `model: opus` may run a different model depending on where Claude Code is connecting:
 
-| Provider | `opus` resolves to | `sonnet` resolves to | Fable |
-|---|---|---|---|
-| Anthropic API (direct) | Opus 5.5 (`claude-opus-5-5`) | Sonnet 5.5 (`claude-sonnet-5-5`) | none — use `claude-fable-5-1` |
-| Claude Platform on AWS | *(pin explicitly — confirm listing before relying on the alias)* | Sonnet 5.5 | `claude-fable-5-1` |
-| Amazon Bedrock | `anthropic.claude-opus-5-5` | `anthropic.claude-sonnet-5-5` | `anthropic.claude-fable-5-1` |
-| Google Cloud / Microsoft Foundry | `claude-opus-5-5` | `claude-sonnet-5-5` | `claude-fable-5-1` |
+| Provider | `opus` resolves to | `sonnet` resolves to | `haiku` resolves to | Fable |
+|---|---|---|---|---|
+| Anthropic API (direct) | Opus 5.5 (`claude-opus-5-5`) | Sonnet 5.5 (`claude-sonnet-5-5`) | **Haiku 5.5** (`claude-haiku-5-5`) | none — use `claude-fable-5-1` |
+| Claude Platform on AWS | *(pin explicitly — confirm listing before relying on the alias)* | Sonnet 5.5 | Haiku 4.5 | `claude-fable-5-1` |
+| Amazon Bedrock | `anthropic.claude-opus-5-5` | `anthropic.claude-sonnet-5-5` | Haiku 4.5 (5.5 id: `anthropic.claude-haiku-5-5`) | `anthropic.claude-fable-5-1` |
+| Google Cloud / Microsoft Foundry | `claude-opus-5-5` | `claude-sonnet-5-5` | Haiku 4.5 (5.5 id: `claude-haiku-5-5`) | `claude-fable-5-1` |
+
+**`haiku` splits by provider (checked 2026-10-10, [code.claude.com/docs/en/model-config](https://code.claude.com/docs/en/model-config)):** only the direct Anthropic API rolled `haiku` to 5.5; every third-party provider still resolves it to Haiku 4.5 even though 5.5 is listed there. Pin `claude-haiku-5-5` (or set `ANTHROPIC_DEFAULT_HAIKU_MODEL`) if a plugin must run 5.5 everywhere. Also note Claude Code v2.1.295 routes background requests behind a Claude apps gateway to Haiku 4.5.
 
 Every provider surfaces the same bare, dateless ids for the 5.5 line (`claude-opus-5-5` / `claude-sonnet-5-5`) — Anthropic's own docs for both models list only that one id on every platform, with no alternate dated variant shown anywhere (checked 2026-09-30). This differs from Haiku's alias→dated-snapshot indirection; see §2.
 
@@ -104,7 +109,7 @@ Every provider surfaces the same bare, dateless ids for the 5.5 line (`claude-op
 ```bash
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-5-5'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-5-5'
-export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5-20251001'
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-5-5'   # was claude-haiku-4-5-20251001 before 2026-10-07
 ```
 
 For Bedrock specifically, use the provider-prefixed form: `us.anthropic.claude-opus-5-5`. Note that Bedrock dropped the `-v1` suffix starting with Sonnet 4.6 — Opus 4.6 (`anthropic.claude-opus-4-6-v1`) was the last ID to carry it.
@@ -124,9 +129,10 @@ The `effort` field in agent or skill frontmatter controls adaptive reasoning. Hi
 | **Sonnet 5** | `low`, `medium`, `high`, `xhigh`, `max` — **`xhigh` is new in Sonnet 5**; 4.6 lacked it |
 | Opus 4.8, Opus 4.7 | `low`, `medium`, `high`, `xhigh`, `max` |
 | Opus 4.6, Sonnet 4.6 | `low`, `medium`, `high`, `max` — **no `xhigh`** |
+| **Haiku 5.5** | `low`, `medium` (**default**), `high`, `xhigh`, `max` — *"Claude Haiku 5.5 supports all five effort levels, and `medium` is the default"* ([effort docs](https://platform.claude.com/docs/en/build-with-claude/effort), 2026-10-10); adaptive thinking on by default, disable allowed only at `high` or below |
 | **Haiku 4.5** / earlier | **none** — effort is not supported |
 
-**Defaults:** every effort-supporting model in the current line defaults to `high` **except Opus 5.5, which defaults to `medium`.** This is verified against Opus 5.5's own model page (2026-09-30), not inferred — it is a real, documented asymmetry and not an oversight to normalize away. (`high` is exactly equivalent to omitting the parameter on every other tier; on Opus 5.5, omitting it gets you `medium`.)
+**Defaults:** every effort-supporting model in the current line defaults to `high` **except Opus 5.5 and Haiku 5.5, which default to `medium`.** (Haiku 5.5 added 2026-10-10 from the effort docs.) This is verified against Opus 5.5's own model page (2026-09-30), not inferred — it is a real, documented asymmetry and not an oversight to normalize away. (`high` is exactly equivalent to omitting the parameter on every other tier; on Opus 5.5, omitting it gets you `medium`.)
 
 > ⚠️ **`high` is NOT comparable across models.** Anthropic states the token allocation behind each effort level changed between generations: *"Run a fresh effort sweep on your own evals rather than reusing them."* Do not assume Opus 5.5 `high` costs what Opus 5 `high` cost, or that either costs what Opus 4.8 `high` cost. Re-measure; never port an effort setting between tiers on faith.
 
@@ -243,7 +249,7 @@ Other phrases (`think`, `think hard`, `think more`) are passed through as ordina
 
 ## 7. 1M-Token Context
 
-**Every model in the current line except Haiku 4.5 has a native 1M-token context window** — Fable 5.1, Opus 5.5, Opus 5, Opus 4.8, Sonnet 5.5, and Sonnet 5 all ship 1M by default. Haiku 4.5 remains 200K. Opus 5.5 and Sonnet 5.5 additionally support a **300K max output** on the Batch API (beta header `output-300k-2026-03-24`), up from the standard 128K sync ceiling.
+**Every model in the current line except Haiku 4.5 has a native 1M-token context window** — Fable 5.1, Opus 5.5, Opus 5, Opus 4.8, Sonnet 5.5, Sonnet 5, and Haiku 5.5 all ship 1M by default. Haiku 4.5 remains 200K. Opus 5.5, Sonnet 5.5 and Haiku 5.5 additionally support a **300K max output** on the Batch API (beta header `output-300k-2026-03-24`), up from the standard 128K sync ceiling.
 
 This makes the `[1m]` suffix a **no-op for the current line**. It remains meaningful only when pinning an older model that gated 1M behind it:
 
@@ -277,6 +283,7 @@ Note the practical unit change: on the current tokenizer, 1M tokens ≈ 555k wor
 | Feature | Minimum Claude Code |
 |---|---|
 | **Fable 5.1** (`claude-fable-5-1`) access | **v2.1.257** |
+| **Haiku 5.5** (`claude-haiku-5-5`) default Haiku | **v2.1.293** |
 | **Sonnet 5.5** (`claude-sonnet-5-5`) default | **v2.1.284** |
 | **Opus 5.5** (`claude-opus-5-5`) default | **v2.1.280** |
 | **Opus 5** (`claude-opus-5`) access | **v2.1.219** |

@@ -64,7 +64,14 @@ export const MODEL_IDS = {
   sonnet: "claude-sonnet-5-5",
   /** Permanent pin to the PREVIOUS Sonnet generation (Sonnet 5). */
   sonnet5: "claude-sonnet-5",
-  haiku: "claude-haiku-4-5-20251001",
+  /**
+   * Fast lookups. `haiku` resolves to Haiku 5.5 as of the 2026-10-07 launch —
+   * Claude Code v2.1.293 made it the default Haiku on the Anthropic API.
+   * Dateless id, no dated snapshot (platform.claude.com/docs/en/models/haiku-5-5/overview).
+   */
+  haiku: "claude-haiku-5-5",
+  /** Permanent pin to the PREVIOUS Haiku generation (Haiku 4.5, dated snapshot). */
+  haiku45: "claude-haiku-4-5-20251001",
   /** HITL-gated escalation only — never a resting default. */
   fable: "claude-fable-5-1",
 } as const
