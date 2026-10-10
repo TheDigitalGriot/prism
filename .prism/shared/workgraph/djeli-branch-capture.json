@@ -101,7 +101,8 @@
     "amendPass94_2026_10_09": "amendPass94: OA30 search executed (N171), N169 corrected - mirror was current on origin, local clone stale",
     "amendPass95_2026_10_10": "Weekly changelog watch (manual proving run): 3 ACTION-NEEDED items OA31-OA33, contracts written not launched",
     "amendPass96_2026_10_10": "amendPass96: Prism v5.1.0 landing (C50, f4f9f9e) + OA29-OA33 ruled/landed (3094f98, 29b1e6c, 9df175a)",
-    "amendPass97_2026_10_10": "amendPass97: OA29-OA33 advanced on landed evidence (mixdown 2026-10-10)"
+    "amendPass97_2026_10_10": "amendPass97: OA29-OA33 advanced on landed evidence (mixdown 2026-10-10)",
+    "amendPass98_2026_10_10": "amendPass98: declared embeds - the Ontology Codex (griot-ontology-codex.html) framed in full on the Djeli codex, ruled by Gavin 2026-10-10; engine gained the embeds payload key (griot-branch-codex declared-embeds contract)"
   },
   "groups": [
     {
@@ -11095,6 +11096,15 @@
         "OA32 open -> done",
         "OA33 open -> done"
       ]
+    },
+    "amendPass98_2026_10_10_2026_10_10": {
+      "newNodes": [],
+      "newEdges": 0,
+      "corrections": [],
+      "refused": [],
+      "newEmbeds": [
+        "ontology-codex"
+      ]
     }
   },
   "foreignLayer": {
@@ -15311,5 +15321,13 @@
     ],
     "dispositionSource": "prism-gavel's existing decision axis - reused, not reinvented (see N13).",
     "closeSemantics": "defer and pass clear the item from the live view; the node and its record stay. An S node left undisposed past its useful life IS drift by the Suite Drift Codex's own definition and should age into a griot-drift-log entry."
-  }
+  },
+  "embeds": [
+    {
+      "id": "ontology-codex",
+      "title": "The Ontology Codex",
+      "src": "griot-ontology-codex.html",
+      "note": "Embedded in full. Djeli N5: griot-ontology-codex.html is an under-consulted source of truth - consult it FIRST for any suite-node repo or provenance question, then still verify on disk and git."
+    }
+  ]
 }
