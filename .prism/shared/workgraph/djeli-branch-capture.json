@@ -99,7 +99,9 @@
     "amendPass92_2026_10_06": "N162 and OA28 closed by B2",
     "amendPass93_2026_10_09": "amendPass93: changelog-watch retune (C49) + model-binding, mirror-lag and architect-parity findings (N168-N170) + batch-mode and Prism-version asks (OA29, OA30)",
     "amendPass94_2026_10_09": "amendPass94: OA30 search executed (N171), N169 corrected - mirror was current on origin, local clone stale",
-    "amendPass95_2026_10_10": "Weekly changelog watch (manual proving run): 3 ACTION-NEEDED items OA31-OA33, contracts written not launched"
+    "amendPass95_2026_10_10": "Weekly changelog watch (manual proving run): 3 ACTION-NEEDED items OA31-OA33, contracts written not launched",
+    "amendPass96_2026_10_10": "amendPass96: Prism v5.1.0 landing (C50, f4f9f9e) + OA29-OA33 ruled/landed (3094f98, 29b1e6c, 9df175a)",
+    "amendPass97_2026_10_10": "amendPass97: OA29-OA33 advanced on landed evidence (mixdown 2026-10-10)"
   },
   "groups": [
     {
@@ -7058,13 +7060,20 @@
       "localId": "OA29",
       "kind": "open-ask",
       "group": "open-ask",
-      "state": "open",
+      "state": "ruled-and-applied",
       "direction": "local",
       "title": "Changelog-watch batch mode - one digest, per-bucket, or per-finding fan-out",
       "description": "How the weekly watch batches action-needed findings into post-ingestion work (A griot-plugin-update via griot-agent-architect, B Arkestra via prism-model-onboard, C FYI).",
       "verification": {
         "evidence": "options laid out in-session 2026-10-09 (changelog_watch_batch_and_post_ingestion diagram); ontology COORDINATION IS NOT FREE: fan-out is the cheap path, a contract flaw is paid N times",
         "result": "awaiting Gavin's ruling"
+      },
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-10-10 amendPass97_2026_10_10",
+        "from": "open",
+        "to": "ruled-and-applied",
+        "evidence": "Gavin ruled per-finding plus one digest with a Selectah relay; applied in the watch prompt v2 and the 2026-10-10 proving fire, recorded at live-artifacts 2f2ebd1"
       }
     },
     {
@@ -7075,13 +7084,20 @@
       "localId": "OA30",
       "kind": "open-ask",
       "group": "open-ask",
-      "state": "open",
+      "state": "ruled-and-applied",
       "direction": "inbound",
       "title": "Prism version - Gavin recalls v5.1+; every instrument measures v5.0.4 - where was 5.1 seen?",
       "description": "Measured: tags top v5.0.4, origin/main b67700a, one worktree, zero Prism 5.1+ hits in all five branch workgraphs, the global index and the DGS plan. Unmeasured: another machine or an unpushed branch.",
       "verification": {
         "evidence": "git tag --sort=-v:refname after fetch; rev-list HEAD...origin/main 0/0; regex sweep of cinodex/cinopsis/djeli/gbfolio/griot-branch-codex graphs, index.json, dgs-definitive-plan.html",
         "result": "awaiting Gavin - which surface showed 5.1"
+      },
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-10-10 amendPass97_2026_10_10",
+        "from": "open",
+        "to": "ruled-and-applied",
+        "evidence": "Gavin ruled release 5.1.0; Prism f4f9f9e tagged v5.1.0, GitHub release v5.1.0 with 9 assets"
       }
     },
     {
@@ -7110,13 +7126,20 @@
       "kind": "open-ask",
       "group": "open-ask",
       "direction": "inbound",
-      "state": "open",
+      "state": "done",
       "verification": {
         "evidence": "https://support.claude.com/en/articles/12138966-release-notes (2026-10-07 Haiku 5.5 launch); https://code.claude.com/docs/en/changelog v2.1.293 2026-10-07, v2.1.296 2026-10-09; Prism b67700a model-config.md lists Haiku 4.5 only",
         "result": "ACTION-NEEDED, contract written, run owed"
       },
       "localId": "OA31",
-      "title": "Changelog 2026-10-10 B: Claude Haiku 5.5 + Sonnet 5.5 cache-read price into model-config"
+      "title": "Changelog 2026-10-10 B: Claude Haiku 5.5 + Sonnet 5.5 cache-read price into model-config",
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-10-10 amendPass97_2026_10_10",
+        "from": "open",
+        "to": "done",
+        "evidence": "Prism 3094f98 feat(model-config): Haiku 5.5 default haiku tier, gates green; shipped in v5.1.0 f4f9f9e"
+      }
     },
     {
       "id": "wg:djeli-branch:OA32",
@@ -7127,13 +7150,20 @@
       "kind": "open-ask",
       "group": "open-ask",
       "direction": "inbound",
-      "state": "open",
+      "state": "done",
       "verification": {
         "evidence": "https://code.claude.com/docs/en/changelog v2.1.292 2026-10-06, v2.1.295 2026-10-08, v2.1.296 2026-10-09; grep of skills/griot-agent-architect at b67700a found none",
         "result": "ACTION-NEEDED, contract written, run owed"
       },
       "localId": "OA32",
-      "title": "Changelog 2026-10-10 A: griot-agent-architect lacks autoCompactWindow, Agent effort, 32-skill cap, name limit, onFailure"
+      "title": "Changelog 2026-10-10 A: griot-agent-architect lacks autoCompactWindow, Agent effort, 32-skill cap, name limit, onFailure",
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-10-10 amendPass97_2026_10_10",
+        "from": "open",
+        "to": "done",
+        "evidence": "Prism 29b1e6c docs(griot-agent-architect): 2.1.290-2.1.296 fields, validator exit 0; shipped in v5.1.0 f4f9f9e"
+      }
     },
     {
       "id": "wg:djeli-branch:OA33",
@@ -7144,13 +7174,37 @@
       "kind": "open-ask",
       "group": "open-ask",
       "direction": "inbound",
-      "state": "open",
+      "state": "done",
       "verification": {
         "evidence": "https://code.claude.com/docs/en/changelog v2.1.289 2026-10-03, v2.1.292 2026-10-06, v2.1.293 2026-10-07, v2.1.295 2026-10-08; grep of griot-plugin-update SKILL.md found none",
         "result": "ACTION-NEEDED, contract written, run owed"
       },
       "localId": "OA33",
-      "title": "Changelog 2026-10-10 A: griot-plugin-update lacks plugin install --marketplace and 2.1.289-295 plugin CLI changes"
+      "title": "Changelog 2026-10-10 A: griot-plugin-update lacks plugin install --marketplace and 2.1.289-295 plugin CLI changes",
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-10-10 amendPass97_2026_10_10",
+        "from": "open",
+        "to": "done",
+        "evidence": "digital-griot-skills 9df175a griot-plugin-update 0.2.0, redeployed with sha parity 3cbba73c, account card saved"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C50",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C50",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "built-and-live",
+      "direction": "outbound",
+      "title": "Prism v5.1.0 release - changelog-watch landing (Haiku 5.5 tier, architect 2.1.290-296 fields) shipped",
+      "description": "Gavin ruled release 5.1.0 instead of 5.0.5 (2026-10-10). Landing: review (2 High fixed), B1 3094f98 model-config Haiku 5.5, B2 29b1e6c griot-agent-architect fields, plans 165fc5a. First headless ceremony exited mid-release after backgrounding the Electron build; the resume run (foreground only) finished it.",
+      "verification": {
+        "evidence": "Prism release commit f4f9f9e + tag v5.1.0 (git ls-remote origin = f4f9f9e); https://github.com/TheDigitalGriot/prism/releases/tag/v5.1.0 with 9 assets; pre-release-audit exit 0 all sections PASS incl. section 5 mirrors at 5.1.0; .prism/shared/plans/2026-10-10-changelog-resume-510-RESULT.md",
+        "result": "released, local HEAD == origin/main == f4f9f9e"
+      }
     }
   ],
   "edges": [
@@ -9313,15 +9367,27 @@
       "to": "wg:djeli-branch:OA30",
       "kind": "in-epic",
       "label": "search ruling executed"
+    },
+    {
+      "from": "wg:djeli-branch:C50",
+      "to": "wg:djeli-branch:C49",
+      "kind": "in-epic",
+      "label": "landing of the changelog-watch retune"
+    },
+    {
+      "from": "wg:djeli-branch:OA30",
+      "to": "wg:djeli-branch:C50",
+      "kind": "outbound",
+      "label": "ruled: release as 5.1.0"
     }
   ],
   "stats": {
-    "totalBranches": 112,
+    "totalBranches": 113,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 360,
+    "edgeCount": 362,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -10988,6 +11054,30 @@
       "newEdges": 0,
       "corrections": [],
       "refused": []
+    },
+    "amendPass96_2026_10_10_2026_10_10": {
+      "newNodes": [
+        "C50"
+      ],
+      "newEdges": 2,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass97_2026_10_10_2026_10_10": {
+      "advanced": [
+        "OA29",
+        "OA30",
+        "OA31",
+        "OA32",
+        "OA33"
+      ],
+      "stateChanges": [
+        "OA29 open -> ruled-and-applied",
+        "OA30 open -> ruled-and-applied",
+        "OA31 open -> done",
+        "OA32 open -> done",
+        "OA33 open -> done"
+      ]
     }
   },
   "foreignLayer": {
