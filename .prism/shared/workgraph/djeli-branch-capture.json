@@ -10303,60 +10303,63 @@
     },
     "generated": {
       "generatedBy": "griot-branch-codex/scripts/compute-generated.mjs",
-      "generatedAt": "2026-10-06T08:40:32.588Z",
-      "nodeCount": 347,
-      "edgeCount": 354,
+      "generatedAt": "2026-10-10T05:39:14.014Z",
+      "nodeCount": 358,
+      "edgeCount": 362,
       "laneCount": 6,
       "byLane": {
-        "new-findings": 163,
-        "this-stage": 68,
+        "new-findings": 167,
+        "this-stage": 70,
         "untracked": 50,
-        "open-ask": 25,
+        "open-ask": 30,
         "suggested": 21,
         "tracked": 16,
         "undefined": 4
       },
       "byKind": {
-        "finding": 113,
-        "branch": 111,
+        "finding": 117,
+        "branch": 113,
         "defect": 52,
-        "open-ask": 26,
+        "open-ask": 31,
         "decision": 22,
         "suggestion": 21,
         "open": 2
       },
       "byState": {
-        "done": 164,
+        "done": 167,
         "open": 124,
+        "ruled-and-applied": 15,
         "parked": 14,
-        "ruled-and-applied": 13,
-        "built-and-live": 9,
+        "built-and-live": 10,
         "defect-fixed": 9,
         "flagged-not-fixed": 5,
-        "corrected-verified": 3,
-        "in-progress": 3,
+        "corrected-verified": 4,
+        "in-progress": 4,
         "design-decision-locked": 2,
-        "superseded": 1
+        "verified-reframe": 2,
+        "superseded": 1,
+        "route-identified-device-only": 1
       },
       "byDirection": {
-        "local": 199,
-        "outbound": 128,
-        "inbound": 15,
+        "local": 201,
+        "outbound": 131,
+        "inbound": 21,
         "adjacent": 5
       },
       "byEdgeKind": {
-        "in-epic": 81,
-        "outbound": 71,
+        "in-epic": 87,
+        "outbound": 72,
         "ontology": 60,
-        "awaits": 56,
+        "awaits": 57,
         "splinter": 49,
         "inbound": 37
       },
+      "crossGraphEdges": [],
       "byOriginLane": {
-        "new-findings": 161,
-        "this-stage": 74,
+        "new-findings": 165,
+        "this-stage": 76,
         "untracked": 52,
-        "open-ask": 26,
+        "open-ask": 31,
         "suggested": 21,
         "tracked": 13
       },
@@ -10400,7 +10403,8 @@
         "C27",
         "N126",
         "N152",
-        "N156"
+        "N156",
+        "N169"
       ],
       "advanced": [
         "B2",
@@ -10426,15 +10430,22 @@
         "N121",
         "S21",
         "N162",
-        "OA28"
+        "OA28",
+        "OA29",
+        "OA30",
+        "OA31",
+        "OA32",
+        "OA33"
       ],
       "verification": {
         "verified": 15,
         "pass": 12,
         "RULED and applied to the live design canvas.": 4,
         "ruled and applied": 4,
+        "ACTION-NEEDED, contract written, run owed": 3,
         "flagged-not-fixed.": 2,
         "PROPOSED - awaiting a yes or no.": 2,
+        "awaiting Gavin's ruling": 2,
         "done": 2,
         "MATCHES contract - 27 nodes / 7 layers confirmed exactly.": 1,
         "MATCHES contract - commit exists and its content matches the stated outputs.": 1,
@@ -10734,14 +10745,20 @@
         "done - verified on disk": 1,
         "open - strip owed in B2": 1,
         "fixed - venv proven by import": 1,
-        "awaiting Gavin's ruling": 1,
         "done - published v2; visual check is Gavin's": 1,
         "open - capacity owed a decision before the next batch lands there": 1,
         "open - D8/D9 setting unbuilt": 1,
         "ruled and applied; build owed": 1,
         "done - pushed live": 1,
         "open - owed a decision: re-author or drop from canvas.json": 1,
-        "open - owed a remote": 1
+        "open - owed a remote": 1,
+        "model swap + prompt rewrite pending the batch-mode ruling OA29": 1,
+        "route = send model + prompt together from this linked session": 1,
+        "flagged - resolve by running the Prism mirror sync, or confirm the ceremony is mid-flight": 1,
+        "no content lag on this skill today; the prompt still points at the Prism repo": 1,
+        "awaiting Gavin - which surface showed 5.1": 1,
+        "no Prism 5.1 in sessions or web chats; OA30 back to Gavin": 1,
+        "released, local HEAD == origin/main == f4f9f9e": 1
       },
       "unverifiedNodes": []
     },
@@ -15223,20 +15240,20 @@
         "pct": 48
       },
       "this-stage": {
-        "closed": 57,
-        "open": 8,
-        "pct": 88,
+        "closed": 58,
+        "open": 9,
+        "pct": 87,
         "unclassified": 3
       },
       "open-ask": {
-        "closed": 8,
+        "closed": 13,
         "open": 17,
-        "pct": 32
+        "pct": 43
       },
       "new-findings": {
-        "closed": 92,
+        "closed": 96,
         "open": 69,
-        "pct": 57,
+        "pct": 58,
         "unclassified": 2
       },
       "suggested": {
@@ -15253,9 +15270,9 @@
       }
     },
     "total": {
-      "closed": 200,
-      "open": 132,
-      "pct": 60,
+      "closed": 210,
+      "open": 133,
+      "pct": 61,
       "unclassified": 15
     },
     "latent": {
