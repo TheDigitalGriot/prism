@@ -1232,9 +1232,9 @@
    "title": "griot-codeintel-hygiene",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-09-30T16:18:42.674Z",
+   "lastTouched": "2026-10-11T00:22:33.015Z",
    "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\stories\\griot-codeintel-hygiene\\stories.json",
-   "contentHash": "ca3650bbac89"
+   "contentHash": "c548ae7bf570"
   },
   {
    "id": "wg:prism:cea07e4c47c3",
@@ -1262,7 +1262,7 @@
     "Run node scripts/verify-code-intel.mjs and confirm separate per-capability lines and an honest exit code."
    ],
    "dialect": "A",
-   "lastTouched": "2026-09-30T16:18:42.674Z",
+   "lastTouched": "2026-10-11T00:22:33.015Z",
    "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\stories\\griot-codeintel-hygiene\\stories.json",
    "contentHash": "bfeeb6038f0e"
   },
@@ -1294,7 +1294,7 @@
     "Confirm graph-navigator still resolves its tools after the frontmatter edit."
    ],
    "dialect": "A",
-   "lastTouched": "2026-09-30T16:18:42.674Z",
+   "lastTouched": "2026-10-11T00:22:33.015Z",
    "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\stories\\griot-codeintel-hygiene\\stories.json",
    "contentHash": "46915329a681"
   },
@@ -1324,39 +1324,39 @@
     "Verify the gate fails on a deliberately stale stamp and passes after regeneration."
    ],
    "dialect": "A",
-   "lastTouched": "2026-09-30T16:18:42.674Z",
+   "lastTouched": "2026-10-11T00:22:33.015Z",
    "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\stories\\griot-codeintel-hygiene\\stories.json",
    "contentHash": "a9cd6a4bcb3e"
   },
   {
-   "id": "wg:prism:990879b2ff2d",
-   "envelopeId": "wg:prism:990879b2ff2d",
-   "localId": "s-b02d6c48",
+   "id": "wg:prism:c28b5af6fd8c",
+   "envelopeId": "wg:prism:c28b5af6fd8c",
+   "localId": "s-5248f29d",
    "kind": "story",
    "origin": "prism",
    "epic": "griot-codeintel-hygiene",
-   "title": "Make verify-cards compare the published body it actually read back",
-   "description": "verify-cards.ps1 must report a card in sync when its published body is byte-identical to the repo file. Observed 2026-09-22 14:11: immediately after DGS v52 and Branch Capture v31 were published and read back byte-identical to the published files, the gate still listed both as stale with missingKB deltas of 46KB and 41KB; four of its six stale rows share the same 4-5KB delta shape (CARDS_OUT_OF_SYNC=8, 84 in sync, 6 stale, 2 no-card). This fix is OBSERVATION-LED: capture the actual injected wrapper from a real published card FIRST, then change the strip to match what the capture shows. A lead to test, explicitly a hypothesis and not the diagnosis: the strip at verify-cards.ps1:44 requires the literal script tag with type=\"application/json\" preceding id=\"cowork-artifact-meta\", so a different attribute order or an extra attribute would leave the wrapper in the hashed body and produce exactly this false stale. Do not edit on that hypothesis alone - confirm it against a captured card first.",
+   "title": "Make verify-artifacts compare the published body it actually read back",
+   "description": "verify-artifacts.ps1 must report a card in sync when its published body is byte-identical to the repo file. Observed 2026-09-22 14:11: immediately after DGS v52 and Branch Capture v31 were published and read back byte-identical to the published files, the gate still listed both as stale with missingKB deltas of 46KB and 41KB; four of its six stale rows share the same 4-5KB delta shape (CARDS_OUT_OF_SYNC=8, 84 in sync, 6 stale, 2 no-card). This fix is OBSERVATION-LED: capture the actual injected wrapper from a real published card FIRST, then change the strip to match what the capture shows. A lead to test, explicitly a hypothesis and not the diagnosis: the strip at verify-artifacts.ps1:44 requires the literal script tag with type=\"application/json\" preceding id=\"cowork-artifact-meta\", so a different attribute order or an extra attribute would leave the wrapper in the hashed body and produce exactly this false stale. Do not edit on that hypothesis alone - confirm it against a captured card first.",
    "priority": 1,
    "state": "open",
    "status": "pending",
    "statusRaw": "pending",
    "direction": "local",
    "files": [
-    "verify-cards.ps1"
+    "verify-artifacts.ps1"
    ],
    "steps": [
     "Publish or fetch one card and capture its raw published HTML verbatim.",
     "Extract the actual injected meta block, including exact attribute names and order.",
-    "Test the current regex at verify-cards.ps1:44 against that captured block and record whether it matches.",
+    "Test the current regex at verify-artifacts.ps1:44 against that captured block and record whether it matches.",
     "Change the strip only to cover what the capture shows; keep hashing the body, never size or mtime.",
     "Re-run the gate against a card whose read-back is byte-identical and confirm it reports in sync.",
     "Confirm no previously in-sync card flips to stale as a result."
    ],
    "dialect": "A",
-   "lastTouched": "2026-09-30T16:18:42.674Z",
+   "lastTouched": "2026-10-11T00:22:33.015Z",
    "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\stories\\griot-codeintel-hygiene\\stories.json",
-   "contentHash": "67af2662fab8"
+   "contentHash": "7cd27df5de5e"
   },
   {
    "id": "wg:prism:5a1400f6767c",
@@ -1366,26 +1366,26 @@
    "origin": "prism",
    "epic": "griot-codeintel-hygiene",
    "title": "Resolve codex cards through the registry instead of reporting NO CARD",
-   "description": "verify-cards.ps1 must resolve a codex to its card through the registry, so a codex that has a live card is never reported as having none. Observed 2026-09-22: the gate listed griot-branch-codex-branch-capture-codex and gbfolio-branch-capture-codex as NO CARD while both had live cards (1Gic4C4XR93Ua538kZzACP and Qucc6tFXG2UDioBm4AddM7); the cause was missing registry rows, not missing cards. Re-verified 2026-09-22 after this pass: both slugs now return 2 matches each in live/dgs-definitive-plan.html, so the registry rows exist and the remaining defect is that the gate does not read them. A gate that reports a present thing as absent trains people to ignore its output, which is the same hole as a gate that cannot fail.",
+   "description": "verify-artifacts.ps1 must resolve a codex to its card through the registry, so a codex that has a live card is never reported as having none. Observed 2026-09-22: the gate listed griot-branch-codex-branch-capture-codex and gbfolio-branch-capture-codex as NO CARD while both had live cards (1Gic4C4XR93Ua538kZzACP and Qucc6tFXG2UDioBm4AddM7); the cause was missing registry rows, not missing cards. Re-verified 2026-09-22 after this pass: both slugs now return 2 matches each in live/dgs-definitive-plan.html, so the registry rows exist and the remaining defect is that the gate does not read them. A gate that reports a present thing as absent trains people to ignore its output, which is the same hole as a gate that cannot fail.",
    "priority": 2,
    "state": "parked",
    "status": "pending",
    "statusRaw": "pending",
    "direction": "local",
    "files": [
-    "verify-cards.ps1"
+    "verify-artifacts.ps1"
    ],
    "steps": [
     "Confirm both codex slugs resolve in the plan registry before changing any logic.",
-    "Make verify-cards.ps1 resolve each live/*.html to its card id via the registry rather than by name convention alone.",
+    "Make verify-artifacts.ps1 resolve each live/*.html to its card id via the registry rather than by name convention alone.",
     "Keep a genuine missing card reported as NO CARD - the fix narrows a false negative, it must not suppress a true one.",
     "Re-run the gate and confirm zero NO-CARD rows for codexes carrying a registry row.",
     "Confirm a codex with no registry row and no card is still reported."
    ],
    "dialect": "A",
-   "lastTouched": "2026-09-30T16:18:42.674Z",
+   "lastTouched": "2026-10-11T00:22:33.015Z",
    "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\stories\\griot-codeintel-hygiene\\stories.json",
-   "contentHash": "f0247a36c4ac"
+   "contentHash": "c6d50f128dd7"
   },
   {
    "id": "wg:prism:b6324b55a40b",
@@ -1414,7 +1414,7 @@
     "Record the card republish as a handoff item rather than publishing it in this pass."
    ],
    "dialect": "A",
-   "lastTouched": "2026-09-30T16:18:42.674Z",
+   "lastTouched": "2026-10-11T00:22:33.015Z",
    "path": "C:\\Users\\digit\\GriotApps\\Prism\\.prism\\stories\\griot-codeintel-hygiene\\stories.json",
    "contentHash": "54abdc74424f"
   },
@@ -18760,7 +18760,7 @@
    "title": "Cinopsis",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18772,7 +18772,7 @@
    "title": "GBFolio",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18784,7 +18784,7 @@
    "title": "Cinodex Studio",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18796,7 +18796,7 @@
    "title": "Ashe",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18808,7 +18808,7 @@
    "title": "R3F Studio",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18820,7 +18820,7 @@
    "title": "Griot 3D pipeline",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18832,7 +18832,7 @@
    "title": "Prism",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18844,7 +18844,7 @@
    "title": "griot-live-artifacts",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18856,7 +18856,7 @@
    "title": "Griot Ontology",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18868,7 +18868,7 @@
    "title": "Djeli",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18880,7 +18880,7 @@
    "title": "Griot Viz Templates",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18892,7 +18892,7 @@
    "title": "SkillForge",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18904,7 +18904,7 @@
    "title": "Valence",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18916,7 +18916,7 @@
    "title": "Graft",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18928,7 +18928,7 @@
    "title": "viz-templates",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18940,7 +18940,7 @@
    "title": "agent-ontology",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18952,7 +18952,7 @@
    "title": "the workgraph",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18964,7 +18964,7 @@
    "title": "Kweli",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18976,7 +18976,7 @@
    "title": "Synaptiq",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18988,7 +18988,7 @@
    "title": "Arkestra",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19000,7 +19000,7 @@
    "title": "Audion",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19012,7 +19012,7 @@
    "title": "Hazine",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19024,7 +19024,7 @@
    "title": "Meridian",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19036,7 +19036,7 @@
    "title": "griot_scrape",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19048,7 +19048,7 @@
    "title": "Lucid",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19060,7 +19060,7 @@
    "title": "digital-griot-mcp",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19072,7 +19072,7 @@
    "title": "formae (Aeraform)",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19084,7 +19084,7 @@
    "title": "Scrapling",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19096,7 +19096,7 @@
    "title": "Prism Gavel",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19108,7 +19108,7 @@
    "title": "The Griot Model",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19120,7 +19120,7 @@
    "title": "Kente",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19132,7 +19132,7 @@
    "title": "Manim",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19144,7 +19144,7 @@
    "title": "Math Formalism Ideation",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19156,7 +19156,7 @@
    "title": "ManimML",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19168,7 +19168,7 @@
    "title": "Mentorship Platform",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19180,7 +19180,7 @@
    "title": "everything",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19192,7 +19192,7 @@
    "title": "Fragment",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19204,7 +19204,7 @@
    "title": "every app",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19216,7 +19216,7 @@
    "title": "all agents",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19228,7 +19228,7 @@
    "title": "you",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19240,7 +19240,7 @@
    "title": "Sigil",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19252,7 +19252,7 @@
    "title": "Sigil/Synaptiq/Ashe",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19264,7 +19264,7 @@
    "title": "Anansi + Lucid",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19276,7 +19276,7 @@
    "title": "GBFolio / R3F",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19288,7 +19288,7 @@
    "title": "Glenn Lewis + AUXGOD",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19300,7 +19300,7 @@
    "title": "Kaleidoscope",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19312,7 +19312,7 @@
    "title": "Griot Hub",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19324,7 +19324,7 @@
    "title": "all",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19336,7 +19336,7 @@
    "title": "sankofa",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19348,7 +19348,7 @@
    "title": "Ophenia",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19360,7 +19360,7 @@
    "title": "Prism / Mindwalk",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19372,7 +19372,7 @@
    "title": "griot-dubplate",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19384,7 +19384,7 @@
    "title": "griot-mixdown",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-10T05:38:12.481Z",
+   "lastTouched": "2026-10-11T00:42:58.369Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19397,7 +19397,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19410,7 +19410,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19423,7 +19423,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19436,7 +19436,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19449,7 +19449,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19462,7 +19462,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19475,7 +19475,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19488,7 +19488,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19501,7 +19501,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19514,7 +19514,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19527,7 +19527,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19540,7 +19540,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19553,7 +19553,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-10T05:38:41.266Z",
+   "lastTouched": "2026-10-11T00:43:31.000Z",
    "path": null
   },
   {
@@ -19923,7 +19923,7 @@
    "label": "belongs to griot-codeintel-hygiene"
   },
   {
-   "from": "wg:prism:990879b2ff2d",
+   "from": "wg:prism:c28b5af6fd8c",
    "to": "wg:prism:c6db9ed4a0a2",
    "kind": "in-epic",
    "label": "belongs to griot-codeintel-hygiene"
@@ -19947,7 +19947,7 @@
    "label": "blocks"
   },
   {
-   "from": "wg:prism:990879b2ff2d",
+   "from": "wg:prism:c28b5af6fd8c",
    "to": "wg:prism:5a1400f6767c",
    "kind": "awaits",
    "label": "blocks"
@@ -24222,7 +24222,7 @@
    "from": "wg:dgs:f4b5f657e354",
    "to": "wg:dgs:8fa1d5d2064a",
    "kind": "ontology",
-   "label": "griot-codeintel-hygiene epic — s-b02d6c48 (verify-artifacts compares the body it read back) and s-3eeb40a6 (resolve codex cards through the registry) are emitted from Prism .prism/stories but land in griot-live-artifacts"
+   "label": "griot-codeintel-hygiene epic — s-5248f29d (verify-artifacts compares the body it read back) and s-3eeb40a6 (resolve codex cards through the registry) are emitted from Prism .prism/stories but land in griot-live-artifacts"
   },
   {
    "from": "wg:dgs:f4b5f657e354",
@@ -24611,7 +24611,7 @@
    "crossGraphOrigin": "wg:cinodex-branch"
   }
  ],
- "generated": "2026-10-10T05:38:41.278Z",
+ "generated": "2026-10-11T00:43:31.010Z",
  "stats": {
   "nodes": 856,
   "edges": 837,

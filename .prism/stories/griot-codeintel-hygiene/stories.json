@@ -71,19 +71,19 @@
       "commitHash": null
     },
     {
-      "id": "s-b02d6c48",
-      "title": "Make verify-cards compare the published body it actually read back",
-      "description": "verify-cards.ps1 must report a card in sync when its published body is byte-identical to the repo file. Observed 2026-09-22 14:11: immediately after DGS v52 and Branch Capture v31 were published and read back byte-identical to the published files, the gate still listed both as stale with missingKB deltas of 46KB and 41KB; four of its six stale rows share the same 4-5KB delta shape (CARDS_OUT_OF_SYNC=8, 84 in sync, 6 stale, 2 no-card). This fix is OBSERVATION-LED: capture the actual injected wrapper from a real published card FIRST, then change the strip to match what the capture shows. A lead to test, explicitly a hypothesis and not the diagnosis: the strip at verify-cards.ps1:44 requires the literal script tag with type=\"application/json\" preceding id=\"cowork-artifact-meta\", so a different attribute order or an extra attribute would leave the wrapper in the hashed body and produce exactly this false stale. Do not edit on that hypothesis alone - confirm it against a captured card first.",
+      "id": "s-5248f29d",
+      "title": "Make verify-artifacts compare the published body it actually read back",
+      "description": "verify-artifacts.ps1 must report a card in sync when its published body is byte-identical to the repo file. Observed 2026-09-22 14:11: immediately after DGS v52 and Branch Capture v31 were published and read back byte-identical to the published files, the gate still listed both as stale with missingKB deltas of 46KB and 41KB; four of its six stale rows share the same 4-5KB delta shape (CARDS_OUT_OF_SYNC=8, 84 in sync, 6 stale, 2 no-card). This fix is OBSERVATION-LED: capture the actual injected wrapper from a real published card FIRST, then change the strip to match what the capture shows. A lead to test, explicitly a hypothesis and not the diagnosis: the strip at verify-artifacts.ps1:44 requires the literal script tag with type=\"application/json\" preceding id=\"cowork-artifact-meta\", so a different attribute order or an extra attribute would leave the wrapper in the hashed body and produce exactly this false stale. Do not edit on that hypothesis alone - confirm it against a captured card first.",
       "priority": 1,
       "status": "pending",
       "blockedBy": [],
       "files": [
-        "verify-cards.ps1"
+        "verify-artifacts.ps1"
       ],
       "steps": [
         "Publish or fetch one card and capture its raw published HTML verbatim.",
         "Extract the actual injected meta block, including exact attribute names and order.",
-        "Test the current regex at verify-cards.ps1:44 against that captured block and record whether it matches.",
+        "Test the current regex at verify-artifacts.ps1:44 against that captured block and record whether it matches.",
         "Change the strip only to cover what the capture shows; keep hashing the body, never size or mtime.",
         "Re-run the gate against a card whose read-back is byte-identical and confirm it reports in sync.",
         "Confirm no previously in-sync card flips to stale as a result."
@@ -94,18 +94,18 @@
     {
       "id": "s-3eeb40a6",
       "title": "Resolve codex cards through the registry instead of reporting NO CARD",
-      "description": "verify-cards.ps1 must resolve a codex to its card through the registry, so a codex that has a live card is never reported as having none. Observed 2026-09-22: the gate listed griot-branch-codex-branch-capture-codex and gbfolio-branch-capture-codex as NO CARD while both had live cards (1Gic4C4XR93Ua538kZzACP and Qucc6tFXG2UDioBm4AddM7); the cause was missing registry rows, not missing cards. Re-verified 2026-09-22 after this pass: both slugs now return 2 matches each in live/dgs-definitive-plan.html, so the registry rows exist and the remaining defect is that the gate does not read them. A gate that reports a present thing as absent trains people to ignore its output, which is the same hole as a gate that cannot fail.",
+      "description": "verify-artifacts.ps1 must resolve a codex to its card through the registry, so a codex that has a live card is never reported as having none. Observed 2026-09-22: the gate listed griot-branch-codex-branch-capture-codex and gbfolio-branch-capture-codex as NO CARD while both had live cards (1Gic4C4XR93Ua538kZzACP and Qucc6tFXG2UDioBm4AddM7); the cause was missing registry rows, not missing cards. Re-verified 2026-09-22 after this pass: both slugs now return 2 matches each in live/dgs-definitive-plan.html, so the registry rows exist and the remaining defect is that the gate does not read them. A gate that reports a present thing as absent trains people to ignore its output, which is the same hole as a gate that cannot fail.",
       "priority": 2,
       "status": "pending",
       "blockedBy": [
-        "s-b02d6c48"
+        "s-5248f29d"
       ],
       "files": [
-        "verify-cards.ps1"
+        "verify-artifacts.ps1"
       ],
       "steps": [
         "Confirm both codex slugs resolve in the plan registry before changing any logic.",
-        "Make verify-cards.ps1 resolve each live/*.html to its card id via the registry rather than by name convention alone.",
+        "Make verify-artifacts.ps1 resolve each live/*.html to its card id via the registry rather than by name convention alone.",
         "Keep a genuine missing card reported as NO CARD - the fix narrows a false negative, it must not suppress a true one.",
         "Re-run the gate and confirm zero NO-CARD rows for codexes carrying a registry row.",
         "Confirm a codex with no registry row and no card is still reported."

@@ -2,7 +2,7 @@
 
 Plan: `.prism/shared/plans/2026-09-22-griot-codeintel-hygiene.md`
 Stage contract: `.prism/shared/plans/2026-09-22-codex-plan-sync-eve-CONTEXT.md`
-Emitted: 2026-09-22 by the codex-plan-sync evening stage (forward direction).
+Emitted: 2026-09-22 by the codex-plan-sync evening stage (forward direction). Re-emitted 2026-10-10 (drift 279, ruling a): `s-b02d6c48` retitled verify-cards -> verify-artifacts, id re-derived to `s-5248f29d` (s- + md5(title)[0:8]).
 
 Requirements found = 6. Stories emitted = 6. Intentional exclusions = 12. No requirement dropped.
 
@@ -13,14 +13,14 @@ Requirements found = 6. Stories emitted = 6. Intentional exclusions = 12. No req
 | D3(a) | GitNexus fts + vectorSearch report unavailable; `verify-code-intel.mjs` 4 pass / 1 fail (harvest O5, workgraph N103) | `s-4bee6675` | `node scripts/verify-code-intel.mjs` emits one verdict per capability; exit code still non-zero while a capability has no provider |
 | D3(b) | codebase-memory-mcp exposes 14 tools; four non-snapshot files declare 11 (harvest O6) | `s-10c2e47d` | `grep -rn "11 tools" --include=*.md . \| grep -v "/evals/"` returns nothing; a check fails on declared-vs-actual drift |
 | D3(c) | Global workgraph index 11 days stale; nothing re-runs the generator (workgraph N96) | `s-5ff38680` | `node scripts/verify-workgraph-index.mjs` fails on a stale stamp, passes after `node scripts/workgraph-index.mjs` |
-| D3(d) | verify-cards reports stale right after a publish whose read-back was byte-identical (workgraph N99) | `s-b02d6c48` | Gate reports in sync for a card whose read-back is byte-identical; no previously in-sync card flips |
+| D3(d) | verify-artifacts reports stale right after a publish whose read-back was byte-identical (workgraph N99) | `s-5248f29d` | Gate reports in sync for a card whose read-back is byte-identical; no previously in-sync card flips |
 | D3(e) | Two codexes with live cards reported NO CARD; registry rows now exist, gate does not read them (workgraph N100) | `s-3eeb40a6` | Zero NO-CARD rows for codexes carrying a registry row; a genuinely cardless codex is still reported |
 | D3(f) | Griot Ontology Codex render has no owner and is 11 days behind (workgraph N102) | `s-8f068ed6` | A check fails when the render is older than the ontology's last commit; passes after regeneration |
 
 ## Dependency edges
 
 - `s-10c2e47d` blockedBy `s-4bee6675` — both edit `scripts/verify-code-intel.mjs`.
-- `s-3eeb40a6` blockedBy `s-b02d6c48` — both edit `verify-cards.ps1`.
+- `s-3eeb40a6` blockedBy `s-5248f29d` — both edit `verify-artifacts.ps1`.
 
 File overlap on two pairs means this epic is **not** dispatch-eligible. See the routing note below.
 
@@ -48,10 +48,10 @@ None is decomposed here; decomposing one would decide it by writing it down as w
 ## Executor routing (from the emitted story graph)
 
 Six stories, two `blockedBy` edges, and file overlap on `scripts/verify-code-intel.mjs` and
-`verify-cards.ps1`. Per the forward pipeline's routing table that is **`prism-subagent`** — serial,
+`verify-artifacts.ps1`. Per the forward pipeline's routing table that is **`prism-subagent`** — serial,
 fresh-context-isolated, two-stage review. Not `prism-dispatch`: `files[]` are not disjoint, so true
 fan-out would collide. Not `spectrum`: six stories is below the 10+ threshold.
 
-Note the cross-repo split — `s-b02d6c48`, `s-3eeb40a6` land in `griot-live-artifacts` and
+Note the cross-repo split — `s-5248f29d`, `s-3eeb40a6` land in `griot-live-artifacts` and
 `s-8f068ed6` in `griot-ontology`; only the other three are Prism-local. An executor must change repo
 for those, and the card-republish half of `s-8f068ed6` is deliberately left as a handoff item (D6).
