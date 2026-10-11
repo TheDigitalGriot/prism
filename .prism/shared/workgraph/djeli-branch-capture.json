@@ -102,7 +102,8 @@
     "amendPass95_2026_10_10": "Weekly changelog watch (manual proving run): 3 ACTION-NEEDED items OA31-OA33, contracts written not launched",
     "amendPass96_2026_10_10": "amendPass96: Prism v5.1.0 landing (C50, f4f9f9e) + OA29-OA33 ruled/landed (3094f98, 29b1e6c, 9df175a)",
     "amendPass97_2026_10_10": "amendPass97: OA29-OA33 advanced on landed evidence (mixdown 2026-10-10)",
-    "amendPass98_2026_10_10": "amendPass98: declared embeds - the Ontology Codex (griot-ontology-codex.html) framed in full on the Djeli codex, ruled by Gavin 2026-10-10; engine gained the embeds payload key (griot-branch-codex declared-embeds contract)"
+    "amendPass98_2026_10_10": "amendPass98: declared embeds - the Ontology Codex (griot-ontology-codex.html) framed in full on the Djeli codex, ruled by Gavin 2026-10-10; engine gained the embeds payload key (griot-branch-codex declared-embeds contract)",
+    "amendPass99_2026_10_10": "B51 correction: story id s-b02d6c48 -> s-5248f29d after the 2026-10-10 retitle (the id hashes the title, drift 290). session-close-clean stage."
   },
   "groups": [
     {
@@ -4846,12 +4847,18 @@
       "state": "done",
       "direction": "local",
       "title": "codex-plan-sync forward pass: the griot-codeintel-hygiene epic - six defects decomposed, every Gavin decision left undecided",
-      "description": "Forward direction under a Gavel boundary. Decomposed only work needing no ruling: split the I15 capability verdicts so one degraded capability cannot mask another (s-4bee6675); correct the declared codebase-memory tool count and gate it (s-10c2e47d); give the global workgraph index a regeneration owner and staleness gate (s-5ff38680); make verify-artifacts compare the published body it actually read back (s-b02d6c48); resolve codex cards through the registry instead of reporting NO ARTIFACT (s-3eeb40a6); give the Griot Ontology Codex render an owner and a freshness gate (s-8f068ed6). Epic back-link written. Existing epics untouched: ceremony-review-audit-gate 4/4 and prism-gavel 5/5 stay done, channel-adoption stays 0/25 as OA20.",
+      "description": "Forward direction under a Gavel boundary. Decomposed only work needing no ruling: split the I15 capability verdicts so one degraded capability cannot mask another (s-4bee6675); correct the declared codebase-memory tool count and gate it (s-10c2e47d); give the global workgraph index a regeneration owner and staleness gate (s-5ff38680); make verify-artifacts compare the published body it actually read back (s-5248f29d); resolve codex cards through the registry instead of reporting NO ARTIFACT (s-3eeb40a6); give the Griot Ontology Codex render an owner and a freshness gate (s-8f068ed6). Epic back-link written. Existing epics untouched: ceremony-review-audit-gate 4/4 and prism-gavel 5/5 stay done, channel-adoption stays 0/25 as OA20.",
       "verification": {
         "evidence": "Prism d989066 + bd88be8 (report .prism/codex-plan-sync-eve-report.json: stores 5 to 6, stories 57 to 63, 0 decided); griot-live-artifacts plan items and 2 edges in bd6a1e03, DGS card v54, drift ledger 82 to 88.",
         "result": "done - six stories pending, zero decisions taken."
       },
-      "stateDetail": "done"
+      "stateDetail": "done",
+      "correction": {
+        "correctedAt": "2026-10-11 amendPass99_2026_10_10",
+        "wasClaimed": "story id s-b02d6c48 (make verify-artifacts compare the published body it actually read back)",
+        "isTrue": "s-5248f29d after the 2026-10-10 retitle (Prism 81f0752, stories.json + workgraph index s-b02d6c48=0, s-5248f29d=2)",
+        "cause": "the stories-contract id hashes the story title, so retitling the story re-minted its id; contract rule 4 never names the hashed field (drift 290)"
+      }
     },
     {
       "id": "wg:djeli-branch:N104",
@@ -10304,7 +10311,7 @@
     },
     "generated": {
       "generatedBy": "griot-branch-codex/scripts/compute-generated.mjs",
-      "generatedAt": "2026-10-10T05:39:14.014Z",
+      "generatedAt": "2026-10-11T00:58:05.912Z",
       "nodeCount": 358,
       "edgeCount": 362,
       "laneCount": 6,
@@ -10401,6 +10408,7 @@
         "N86",
         "N85",
         "N103",
+        "B51",
         "C27",
         "N126",
         "N152",
@@ -11105,6 +11113,14 @@
       "newEmbeds": [
         "ontology-codex"
       ]
+    },
+    "amendPass99_2026_10_10_2026_10_11": {
+      "newNodes": [],
+      "newEdges": 0,
+      "corrections": [
+        "B51"
+      ],
+      "refused": []
     }
   },
   "foreignLayer": {
