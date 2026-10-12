@@ -1,0 +1,1 @@
+Read .prism/shared/plans/2026-10-12-changelog-sol-ultrafast-CONTEXT.md and execute it exactly. Load only each step inputs. Emit the heartbeat tokens it lists and finish with its terminal marker file.
