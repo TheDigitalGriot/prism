@@ -1,0 +1,1 @@
+Read C:\Users\digit\GriotApps\Prism\.prism\shared\plans\2026-10-19-changelog-gpt55-retire-CONTEXT.md and execute it as a Spectrum stage-walk exactly as written. Do not re-litigate its Decisions. Load only each step inputs. Emit its heartbeat tokens and write its terminal marker.
