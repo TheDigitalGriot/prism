@@ -106,7 +106,8 @@
     "amendPass99_2026_10_10": "B51 correction: story id s-b02d6c48 -> s-5248f29d after the 2026-10-10 retitle (the id hashes the title, drift 290). session-close-clean stage.",
     "amendPass100_2026_10_12": "Changelog watch 2026-10-12: one B item (Sol Ultrafast) contracted; all else already landed at v5.1.0.",
     "amendPass101_2026_10_19": "Changelog watch 2026-10-19: one bucket-B contract (GPT-5.5 retired in Codex ChatGPT-auth), ruling owed.",
-    "amendPass102_2026_10_21": "2026-10-21 mixdown (disk session 2026-10-19..21): A8 griot-disktree skill landed (2346a12, b67bbd2); D23 Gavin deletion ruling applied; N78 prism-mobile advanced to done on 9f2d394 (private repo, HEAD==origin)"
+    "amendPass102_2026_10_21": "2026-10-21 mixdown (disk session 2026-10-19..21): A8 griot-disktree skill landed (2346a12, b67bbd2); D23 Gavin deletion ruling applied; N78 prism-mobile advanced to done on 9f2d394 (private repo, HEAD==origin)",
+    "amendPass103_2026_10_21": "2026-10-21 mixdown handover: three open asks for the Selectah - OA34 indexer Developer root, OA35 yt-dlp JS runtime config, OA36 disktree Potluck ruling"
   },
   "groups": [
     {
@@ -7295,6 +7296,60 @@
         "evidence": "Ruling listed in session brief GriotSandbox/_runs/mixdown-brief.md (Rulings by Gavin); applied in digital-griot-skills b67bbd2 commit subject 'ask per item before cleanup; permanent clears handed to Gavin as commands'",
         "result": "pass"
       }
+    },
+    {
+      "id": "wg:djeli-branch:OA34",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA34",
+      "kind": "open-ask",
+      "title": "workgraph-index ROOTS still lists C:/Users/digit/Developer - repoint to D:/Oct2026-bkp/Developer, or remove the root?",
+      "state": "open",
+      "direction": "local",
+      "group": "open-ask",
+      "description": "Repoint keeps the 62 prism-plugin testdata + prism-test nodes in the index from the backup copy; remove drops them for good. Either way the indexer should warn on a missing root (drift 376). Plan item: OPEN - workgraph-index ROOTS still lists C:/Users/digit/Developer.",
+      "verification": {
+        "checked": true,
+        "evidence": "GriotApps/Prism/scripts/workgraph-index.mjs line 45; regenerate 2026-10-21 went 856 -> 794 nodes, all 62 lost nodes sourced under C:/Users/digit/Developer (HEAD index vs new, measured); drift 376",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA35",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA35",
+      "kind": "open-ask",
+      "title": "Write --js-runtimes node into ~/.config/yt-dlp/config through the Cinopsis doctor?",
+      "state": "open",
+      "direction": "local",
+      "group": "open-ask",
+      "description": "Yes: one config line, stream URLs resolve again and stream-engine frame capture works. No: keep --engine local (downloads once per video) as the frame path and leave the config alone. Drift 372.",
+      "verification": {
+        "checked": true,
+        "evidence": "Session brief GriotSandbox/_runs/mixdown-brief.md drift 2 (fix needs Gavin's yes); drift 372",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA36",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA36",
+      "kind": "open-ask",
+      "title": "Rule the disktree Potluck row: adopt (it is built, elevated and wrapped by griot-disktree) or keep undecided?",
+      "state": "open",
+      "direction": "local",
+      "group": "open-ask",
+      "description": "POT_T tobi/disktree (src potluck:8PbcHRw6sJM) is decision undecided, tg Valence 1 auto-mapped. The session built v0.11.0 and griot-disktree (2346a12) launches it. Adopt would also retarget tg away from the auto-mapped Valence.",
+      "verification": {
+        "checked": true,
+        "evidence": "dgs-definitive-plan.html POT_T row n=disktree slug=tobi/disktree decision=undecided (read 2026-10-21); GriotSandbox/disktree/bin/disktree.exe present",
+        "result": "pass"
+      }
     }
   ],
   "edges": [
@@ -9475,6 +9530,12 @@
       "to": "wg:djeli-branch:A8",
       "kind": "in-epic",
       "label": "the deletion ruling is encoded in griot-disktree and disk-space-audit"
+    },
+    {
+      "from": "wg:djeli-branch:OA34",
+      "to": "wg:djeli-branch:A8",
+      "kind": "awaits",
+      "label": "the indexer root was left dangling by the disk move A8 documents"
     }
   ],
   "stats": {
@@ -9483,7 +9544,7 @@
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 363,
+    "edgeCount": 364,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -10399,15 +10460,15 @@
     },
     "generated": {
       "generatedBy": "griot-branch-codex/scripts/compute-generated.mjs",
-      "generatedAt": "2026-10-21T06:08:46.049Z",
-      "nodeCount": 362,
-      "edgeCount": 363,
+      "generatedAt": "2026-10-21T06:28:27.982Z",
+      "nodeCount": 365,
+      "edgeCount": 364,
       "laneCount": 6,
       "byLane": {
         "new-findings": 167,
         "this-stage": 73,
         "untracked": 50,
-        "open-ask": 30,
+        "open-ask": 33,
         "suggested": 21,
         "tracked": 17,
         "undefined": 4
@@ -10416,14 +10477,14 @@
         "finding": 117,
         "branch": 116,
         "defect": 52,
-        "open-ask": 31,
+        "open-ask": 34,
         "decision": 23,
         "suggestion": 21,
         "open": 2
       },
       "byState": {
         "done": 169,
-        "open": 123,
+        "open": 126,
         "ruled-and-applied": 16,
         "parked": 14,
         "built-and-live": 10,
@@ -10438,7 +10499,7 @@
         "route-identified-device-only": 1
       },
       "byDirection": {
-        "local": 203,
+        "local": 206,
         "outbound": 133,
         "inbound": 21,
         "adjacent": 5
@@ -10447,7 +10508,7 @@
         "in-epic": 88,
         "outbound": 72,
         "ontology": 60,
-        "awaits": 57,
+        "awaits": 58,
         "splinter": 49,
         "inbound": 37
       },
@@ -10456,7 +10517,7 @@
         "new-findings": 165,
         "this-stage": 79,
         "untracked": 52,
-        "open-ask": 31,
+        "open-ask": 34,
         "suggested": 21,
         "tracked": 14
       },
@@ -10537,8 +10598,8 @@
         "OA33"
       ],
       "verification": {
+        "pass": 17,
         "verified": 15,
-        "pass": 14,
         "RULED and applied to the live design canvas.": 4,
         "ruled and applied": 4,
         "ACTION-NEEDED, contract written, run owed": 3,
@@ -11243,6 +11304,16 @@
       "stateChanges": [
         "N78 open -> done"
       ]
+    },
+    "amendPass103_2026_10_21_2026_10_21": {
+      "newNodes": [
+        "OA34",
+        "OA35",
+        "OA36"
+      ],
+      "newEdges": 1,
+      "corrections": [],
+      "refused": []
     }
   },
   "foreignLayer": {
@@ -15395,8 +15466,8 @@
       },
       "open-ask": {
         "closed": 13,
-        "open": 17,
-        "pct": 43
+        "open": 20,
+        "pct": 39
       },
       "new-findings": {
         "closed": 97,
@@ -15419,7 +15490,7 @@
     },
     "total": {
       "closed": 213,
-      "open": 134,
+      "open": 137,
       "pct": 61,
       "unclassified": 15
     },
