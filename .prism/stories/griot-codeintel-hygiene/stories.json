@@ -57,11 +57,11 @@
       "status": "pending",
       "blockedBy": [],
       "files": [
-        "scripts/workgraph-index.mjs",
+        "C:/Users/digit/GriotMeta/workgraph-index/workgraph-index.mjs",
         "scripts/verify-workgraph-index.mjs"
       ],
       "steps": [
-        "Confirm scripts/workgraph-index.mjs regenerates index.json cleanly and is safe to re-run.",
+        "Confirm C:/Users/digit/GriotMeta/workgraph-index/workgraph-index.mjs regenerates index.json cleanly and is safe to re-run.",
         "Add scripts/verify-workgraph-index.mjs asserting index.json is no more than a set number of days behind the newest source workgraph.",
         "Name the owner that re-runs the generator and record it where the other surface owners are declared.",
         "Regenerate the index once so the stamp is current, and record the resulting node/edge counts.",

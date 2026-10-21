@@ -14,7 +14,7 @@
     "apps/griot-viz-engine"
   ],
   "scripts": {
-    "workgraph": "node scripts/workgraph-index.mjs .prism/shared/workgraph/index.json",
+    "workgraph": "node ../../GriotMeta/workgraph-index/workgraph-index.mjs",
     "workgraph:distil": "node scripts/workgraph-distil.mjs",
     "verify:code-intel": "node scripts/verify-code-intel.mjs"
   }

@@ -9,7 +9,7 @@ const verdict = (changed, scanned, failedDuring = false) =>
   structuralVerdict({ changed: changed === null ? null : new Set(changed), scanned, failedDuring });
 
 test('a range with no structural files passes explicitly', () => {
-  const v = verdict(['scripts/workgraph-index.mjs', 'CHANGELOG.md', 'VERSION'], 0);
+  const v = verdict(['scripts/workgraph-screen.mjs', 'CHANGELOG.md', 'VERSION'], 0);
   assert.equal(v.mark, 'PASS');
   assert.equal(v.countsAsFailure, false);
   assert.equal(v.message, 'structural checks: 0 in-scope files (range touches no skills/commands/agents/hooks)');
