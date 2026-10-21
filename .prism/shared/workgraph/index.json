@@ -7846,579 +7846,6 @@
    "contentHash": "157cb3ea008e"
   },
   {
-   "id": "wg:prism-plugin:0e9ed0a72941",
-   "envelopeId": "wg:prism-plugin:0e9ed0a72941",
-   "localId": "New Project",
-   "kind": "epic",
-   "origin": "prism-plugin",
-   "title": "New Project",
-   "state": "open",
-   "direction": "local",
-   "lastTouched": "2026-04-06T15:36:45.756Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\apps\\prism-cli\\.prism\\stories\\stories.json",
-   "contentHash": "4ebb1b9faf9e"
-  },
-  {
-   "id": "wg:prism-plugin:56c37e20b98d",
-   "envelopeId": "wg:prism-plugin:56c37e20b98d",
-   "localId": "Test Plan - Prism CLI Demo",
-   "kind": "epic",
-   "origin": "prism-plugin",
-   "title": "Test Plan - Prism CLI Demo",
-   "state": "open",
-   "direction": "local",
-   "lastTouched": "2026-04-06T15:36:45.803Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\apps\\prism-cli\\testdata\\stories.json",
-   "contentHash": "b950d54badc1"
-  },
-  {
-   "id": "wg:prism-plugin:53fcc1fd5c50",
-   "envelopeId": "wg:prism-plugin:53fcc1fd5c50",
-   "localId": "STORY-001",
-   "kind": "story",
-   "origin": "prism-plugin",
-   "epic": "Test Plan - Prism CLI Demo",
-   "title": "Create user model",
-   "description": "Define the User type with basic fields",
-   "priority": 1,
-   "state": "resolved",
-   "status": "done",
-   "statusRaw": "complete",
-   "direction": "local",
-   "files": [
-    "src/models/user.ts"
-   ],
-   "steps": [
-    "Define User interface",
-    "Add validation"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-04-06T15:36:45.803Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\apps\\prism-cli\\testdata\\stories.json",
-   "contentHash": "49a0d373c46b"
-  },
-  {
-   "id": "wg:prism-plugin:db30acdfb138",
-   "envelopeId": "wg:prism-plugin:db30acdfb138",
-   "localId": "STORY-002",
-   "kind": "story",
-   "origin": "prism-plugin",
-   "epic": "Test Plan - Prism CLI Demo",
-   "title": "Add user repository",
-   "description": "Create repository for user CRUD operations",
-   "priority": 2,
-   "state": "parked",
-   "status": "pending",
-   "statusRaw": "pending",
-   "direction": "local",
-   "files": [
-    "src/repos/user-repo.ts"
-   ],
-   "steps": [
-    "Create UserRepository class",
-    "Implement CRUD methods"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-04-06T15:36:45.803Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\apps\\prism-cli\\testdata\\stories.json",
-   "contentHash": "f779841d58de"
-  },
-  {
-   "id": "wg:prism-plugin:0015a9eb2403",
-   "envelopeId": "wg:prism-plugin:0015a9eb2403",
-   "localId": "STORY-003",
-   "kind": "story",
-   "origin": "prism-plugin",
-   "epic": "Test Plan - Prism CLI Demo",
-   "title": "Add authentication service",
-   "description": "Implement login/logout functionality",
-   "priority": 3,
-   "state": "parked",
-   "status": "pending",
-   "statusRaw": "pending",
-   "direction": "local",
-   "files": [
-    "src/services/auth.ts"
-   ],
-   "steps": [
-    "Create AuthService",
-    "Add JWT handling"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-04-06T15:36:45.803Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\apps\\prism-cli\\testdata\\stories.json",
-   "contentHash": "b54071708a6f"
-  },
-  {
-   "id": "wg:prism-plugin:82c5626099ff",
-   "envelopeId": "wg:prism-plugin:82c5626099ff",
-   "localId": "STORY-004",
-   "kind": "story",
-   "origin": "prism-plugin",
-   "epic": "Test Plan - Prism CLI Demo",
-   "title": "Add documentation",
-   "description": "Write API documentation",
-   "priority": 10,
-   "state": "open",
-   "status": "pending",
-   "statusRaw": "pending",
-   "direction": "local",
-   "files": [
-    "docs/api.md"
-   ],
-   "steps": [
-    "Document endpoints"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-04-06T15:36:45.803Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\apps\\prism-cli\\testdata\\stories.json",
-   "contentHash": "b31ed42c62e3"
-  },
-  {
-   "id": "wg:prism-test:0b0d033fe758",
-   "envelopeId": "wg:prism-test:0b0d033fe758",
-   "localId": "Settings Dashboard with Theme System",
-   "kind": "epic",
-   "origin": "prism-test",
-   "title": "Settings Dashboard with Theme System",
-   "state": "open",
-   "direction": "local",
-   "lastTouched": "2026-02-20T00:03:08.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-ready\\.prism\\stories\\stories.json",
-   "contentHash": "710ffa93e5d8"
-  },
-  {
-   "id": "wg:prism-test:3ecb09ff207e",
-   "envelopeId": "wg:prism-test:3ecb09ff207e",
-   "localId": "STORY-001",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Settings Dashboard with Theme System",
-   "title": "Create settings state management with electron-store",
-   "description": "Set up persistent settings storage using electron-store with TypeScript types and default values for all app preferences.",
-   "priority": 1,
-   "state": "resolved",
-   "status": "done",
-   "statusRaw": "complete",
-   "direction": "local",
-   "files": [
-    "package.json",
-    "src/store/settings.ts",
-    "src/types/settings.ts"
-   ],
-   "steps": [
-    "Install electron-store dependency",
-    "Define TypeScript interfaces for all settings categories",
-    "Create settings store with schema validation",
-    "Add default values for all settings"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:03:08.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-ready\\.prism\\stories\\stories.json",
-   "contentHash": "3289b8e4b09e"
-  },
-  {
-   "id": "wg:prism-test:bd915dd46e1e",
-   "envelopeId": "wg:prism-test:bd915dd46e1e",
-   "localId": "STORY-002",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Settings Dashboard with Theme System",
-   "title": "Build settings IPC layer",
-   "description": "Create bidirectional IPC communication for reading/writing settings between main and renderer processes.",
-   "priority": 2,
-   "state": "resolved",
-   "status": "done",
-   "statusRaw": "complete",
-   "direction": "local",
-   "files": [
-    "src/preload.ts",
-    "src/main.ts",
-    "src/ipc/settings-handlers.ts"
-   ],
-   "steps": [
-    "Register IPC handlers for settings CRUD in main process",
-    "Expose settings API through preload contextBridge",
-    "Add settings change event broadcasting to all windows"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:03:08.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-ready\\.prism\\stories\\stories.json",
-   "contentHash": "dc5b6a87beb6"
-  },
-  {
-   "id": "wg:prism-test:ce3f98194036",
-   "envelopeId": "wg:prism-test:ce3f98194036",
-   "localId": "STORY-003",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Settings Dashboard with Theme System",
-   "title": "Implement CSS custom properties theme system",
-   "description": "Build a theme engine using CSS custom properties with light/dark/system modes and smooth transitions.",
-   "priority": 3,
-   "state": "resolved",
-   "status": "done",
-   "statusRaw": "complete",
-   "direction": "local",
-   "files": [
-    "src/themes/theme-engine.ts",
-    "src/themes/light.css",
-    "src/themes/dark.css",
-    "src/index.css"
-   ],
-   "steps": [
-    "Define CSS custom property tokens for colors, spacing, typography",
-    "Create light theme CSS file",
-    "Create dark theme CSS file",
-    "Implement theme-engine.ts with system preference detection",
-    "Add smooth transition animations on theme switch"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:03:08.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-ready\\.prism\\stories\\stories.json",
-   "contentHash": "cdaec29e2b20"
-  },
-  {
-   "id": "wg:prism-test:8318cd7fa33a",
-   "envelopeId": "wg:prism-test:8318cd7fa33a",
-   "localId": "STORY-004",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Settings Dashboard with Theme System",
-   "title": "Create settings page layout with navigation tabs",
-   "description": "Build the settings page shell with a sidebar tab navigation for General, Appearance, Keyboard Shortcuts, and About sections.",
-   "priority": 4,
-   "state": "resolved",
-   "status": "done",
-   "statusRaw": "complete",
-   "direction": "local",
-   "files": [
-    "src/components/Settings/SettingsPage.tsx",
-    "src/components/Settings/SettingsSidebar.tsx",
-    "src/components/Settings/SettingsPanel.tsx",
-    "src/components/Settings/settings.css"
-   ],
-   "steps": [
-    "Create SettingsPage container with sidebar + content layout",
-    "Build SettingsSidebar with tab navigation items",
-    "Create SettingsPanel wrapper with scroll and heading",
-    "Add keyboard navigation between tabs"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:03:08.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-ready\\.prism\\stories\\stories.json",
-   "contentHash": "cb76669c8e34"
-  },
-  {
-   "id": "wg:prism-test:1fe7f35b9639",
-   "envelopeId": "wg:prism-test:1fe7f35b9639",
-   "localId": "STORY-005",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Settings Dashboard with Theme System",
-   "title": "Build appearance settings panel with live theme preview",
-   "description": "Create the Appearance tab with theme selector, font size controls, and a live preview that applies changes in real-time.",
-   "priority": 5,
-   "state": "resolved",
-   "status": "done",
-   "statusRaw": "complete",
-   "direction": "local",
-   "files": [
-    "src/components/Settings/AppearancePanel.tsx",
-    "src/components/Settings/ThemePreview.tsx",
-    "src/hooks/useSettings.ts"
-   ],
-   "steps": [
-    "Create AppearancePanel with theme mode selector (light/dark/system)",
-    "Add font size slider with live preview",
-    "Build ThemePreview component showing sample UI elements",
-    "Create useSettings hook for reactive settings access"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:03:08.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-ready\\.prism\\stories\\stories.json",
-   "contentHash": "b1be22e795db"
-  },
-  {
-   "id": "wg:prism-test:d233e5e0be70",
-   "envelopeId": "wg:prism-test:d233e5e0be70",
-   "localId": "STORY-006",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Settings Dashboard with Theme System",
-   "title": "Build general settings and keyboard shortcuts panels",
-   "description": "Create the General settings tab (language, startup behavior, notifications) and Keyboard Shortcuts tab with customizable bindings.",
-   "priority": 6,
-   "state": "parked",
-   "status": "in_progress",
-   "statusRaw": "in_progress",
-   "direction": "local",
-   "files": [
-    "src/components/Settings/GeneralPanel.tsx",
-    "src/components/Settings/ShortcutsPanel.tsx",
-    "src/components/Settings/ShortcutRow.tsx"
-   ],
-   "steps": [
-    "Create GeneralPanel with startup and notification settings",
-    "Build ShortcutsPanel with editable key binding rows",
-    "Implement key capture modal for shortcut recording",
-    "Add conflict detection for duplicate shortcuts"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:03:08.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-ready\\.prism\\stories\\stories.json",
-   "contentHash": "88e01a55aa4f"
-  },
-  {
-   "id": "wg:prism-test:419b0c81f4a3",
-   "envelopeId": "wg:prism-test:419b0c81f4a3",
-   "localId": "STORY-007",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Settings Dashboard with Theme System",
-   "title": "Add settings search and reset functionality",
-   "description": "Implement a search bar that filters settings across all tabs, plus individual and global reset-to-defaults buttons.",
-   "priority": 7,
-   "state": "parked",
-   "status": "pending",
-   "statusRaw": "pending",
-   "direction": "local",
-   "files": [
-    "src/components/Settings/SettingsSearch.tsx",
-    "src/components/Settings/ResetButton.tsx",
-    "src/components/Settings/SettingsPage.tsx"
-   ],
-   "steps": [
-    "Create SettingsSearch component with fuzzy matching",
-    "Highlight matching settings across all panels",
-    "Add per-section reset-to-defaults button",
-    "Add global reset with confirmation dialog"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:03:08.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-ready\\.prism\\stories\\stories.json",
-   "contentHash": "177356a4c2d4"
-  },
-  {
-   "id": "wg:prism-test:8503ade4eaca",
-   "envelopeId": "wg:prism-test:8503ade4eaca",
-   "localId": "STORY-008",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Settings Dashboard with Theme System",
-   "title": "Wire settings into app shell with menu and tray",
-   "description": "Connect settings page to the main app navigation, add Settings item to app menu and system tray context menu.",
-   "priority": 8,
-   "state": "parked",
-   "status": "pending",
-   "statusRaw": "pending",
-   "direction": "local",
-   "files": [
-    "src/main.ts",
-    "src/App.tsx",
-    "src/menu.ts"
-   ],
-   "steps": [
-    "Add Settings route/view to App.tsx",
-    "Create application menu with Settings shortcut (Cmd/Ctrl+,)",
-    "Add Settings to system tray context menu",
-    "Persist window position and size as settings"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:03:08.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-ready\\.prism\\stories\\stories.json",
-   "contentHash": "10e86a9d6ec0"
-  },
-  {
-   "id": "wg:prism-test:0dd091f36b5a",
-   "envelopeId": "wg:prism-test:0dd091f36b5a",
-   "localId": "Electron Auto-Update System",
-   "kind": "epic",
-   "origin": "prism-test",
-   "title": "Electron Auto-Update System",
-   "state": "open",
-   "direction": "local",
-   "lastTouched": "2026-02-20T00:02:42.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-update\\thoughts\\shared\\ralph\\stories.json",
-   "contentHash": "f20146493b2c"
-  },
-  {
-   "id": "wg:prism-test:965265ff6905",
-   "envelopeId": "wg:prism-test:965265ff6905",
-   "localId": "STORY-001",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Electron Auto-Update System",
-   "title": "Configure electron-updater dependency",
-   "description": "Install and configure electron-updater package with proper Electron Forge integration for auto-update support.",
-   "priority": 1,
-   "state": "resolved",
-   "status": "done",
-   "statusRaw": "complete",
-   "direction": "local",
-   "files": [
-    "package.json",
-    "forge.config.ts"
-   ],
-   "steps": [
-    "Install electron-updater as a dependency",
-    "Configure Electron Forge publisher for GitHub releases",
-    "Add update-related scripts to package.json"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:02:42.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-update\\thoughts\\shared\\ralph\\stories.json",
-   "contentHash": "453a6100c2c4"
-  },
-  {
-   "id": "wg:prism-test:3e757f015889",
-   "envelopeId": "wg:prism-test:3e757f015889",
-   "localId": "STORY-002",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Electron Auto-Update System",
-   "title": "Implement main process update manager",
-   "description": "Create the main process module that checks for updates, downloads them, and manages the update lifecycle with proper error handling.",
-   "priority": 2,
-   "state": "resolved",
-   "status": "done",
-   "statusRaw": "complete",
-   "direction": "local",
-   "files": [
-    "src/main.ts",
-    "src/updater.ts"
-   ],
-   "steps": [
-    "Create updater.ts module with autoUpdater configuration",
-    "Add update check on app ready event",
-    "Implement download progress tracking",
-    "Handle update-downloaded event with install prompt"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:02:42.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-update\\thoughts\\shared\\ralph\\stories.json",
-   "contentHash": "1c3e868723d6"
-  },
-  {
-   "id": "wg:prism-test:80644e59de77",
-   "envelopeId": "wg:prism-test:80644e59de77",
-   "localId": "STORY-003",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Electron Auto-Update System",
-   "title": "Build IPC bridge for update status",
-   "description": "Create IPC channels between main and renderer processes to communicate update status, progress, and user actions.",
-   "priority": 3,
-   "state": "open",
-   "status": "in_progress",
-   "statusRaw": "in_progress",
-   "direction": "local",
-   "files": [
-    "src/preload.ts",
-    "src/ipc-handlers.ts",
-    "src/types/update.ts"
-   ],
-   "steps": [
-    "Define TypeScript interfaces for update events",
-    "Expose update API through preload contextBridge",
-    "Create IPC handler registration in main process",
-    "Add type-safe IPC channel constants"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:02:42.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-update\\thoughts\\shared\\ralph\\stories.json",
-   "contentHash": "9acd1692e659"
-  },
-  {
-   "id": "wg:prism-test:fcc29b9b7478",
-   "envelopeId": "wg:prism-test:fcc29b9b7478",
-   "localId": "STORY-004",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Electron Auto-Update System",
-   "title": "Create update notification UI component",
-   "description": "Build a React component that shows update availability, download progress, and restart prompt to the user.",
-   "priority": 4,
-   "state": "parked",
-   "status": "pending",
-   "statusRaw": "pending",
-   "direction": "local",
-   "files": [
-    "src/components/UpdateBanner.tsx",
-    "src/components/UpdateBanner.css",
-    "src/App.tsx"
-   ],
-   "steps": [
-    "Create UpdateBanner component with update states",
-    "Add progress bar for download visualization",
-    "Implement restart button with confirmation",
-    "Style banner with CSS animations for state transitions"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:02:42.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-update\\thoughts\\shared\\ralph\\stories.json",
-   "contentHash": "769a5faadb47"
-  },
-  {
-   "id": "wg:prism-test:976326ccfdab",
-   "envelopeId": "wg:prism-test:976326ccfdab",
-   "localId": "STORY-005",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Electron Auto-Update System",
-   "title": "Add update preferences and skip version logic",
-   "description": "Allow users to skip specific versions and configure update check frequency through a preferences store.",
-   "priority": 5,
-   "state": "parked",
-   "status": "pending",
-   "statusRaw": "pending",
-   "direction": "local",
-   "files": [
-    "src/store/preferences.ts",
-    "src/updater.ts",
-    "src/components/UpdateSettings.tsx"
-   ],
-   "steps": [
-    "Create electron-store based preferences module",
-    "Add skip-version tracking logic",
-    "Build UpdateSettings component for preferences UI",
-    "Wire preferences into updater check logic"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:02:42.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-update\\thoughts\\shared\\ralph\\stories.json",
-   "contentHash": "6df35072e726"
-  },
-  {
-   "id": "wg:prism-test:5e241ebef700",
-   "envelopeId": "wg:prism-test:5e241ebef700",
-   "localId": "STORY-006",
-   "kind": "story",
-   "origin": "prism-test",
-   "epic": "Electron Auto-Update System",
-   "title": "Implement rollback and error recovery",
-   "description": "Handle failed updates gracefully with rollback capability and user-friendly error messages.",
-   "priority": 6,
-   "state": "parked",
-   "status": "pending",
-   "statusRaw": "pending",
-   "direction": "local",
-   "files": [
-    "src/updater.ts",
-    "src/components/UpdateError.tsx"
-   ],
-   "steps": [
-    "Add error event handlers to updater module",
-    "Implement retry logic with exponential backoff",
-    "Create UpdateError component with retry/dismiss actions",
-    "Log update failures for diagnostics"
-   ],
-   "dialect": "B",
-   "lastTouched": "2026-02-20T00:02:42.000Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-test\\electron-update\\thoughts\\shared\\ralph\\stories.json",
-   "contentHash": "6856e8b5389b"
-  },
-  {
    "id": "wg:cinopsis:d56b5589b9eb",
    "envelopeId": "wg:cinopsis:d56b5589b9eb",
    "localId": "Q1",
@@ -17552,846 +16979,6 @@
    "contentHash": "5d11f73f3e06"
   },
   {
-   "id": "wg:prism-plugin:c9b7938d4a1b",
-   "envelopeId": "wg:prism-plugin:c9b7938d4a1b",
-   "localId": "Q1",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "1179-1780489271",
-   "title": "Session invocation model",
-   "summary": "Skill offers it — separate message, opt-in only",
-   "choice": "A",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:05.785Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\1179-1780489271\\state\\decisions.json",
-   "contentHash": "46909bba6cf1"
-  },
-  {
-   "id": "wg:prism-plugin:fb229864e9ad",
-   "envelopeId": "wg:prism-plugin:fb229864e9ad",
-   "localId": "Q2",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "1179-1780489271",
-   "title": "Fidelity progression trigger",
-   "summary": "Classifier-driven: decide → advance, clarify → escalate, park → defer",
-   "choice": "B",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:05.785Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\1179-1780489271\\state\\decisions.json",
-   "contentHash": "af4dd8d94eff"
-  },
-  {
-   "id": "wg:prism-plugin:094c8a4b877b",
-   "envelopeId": "wg:prism-plugin:094c8a4b877b",
-   "localId": "Q3",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "1179-1780489271",
-   "title": "Drawer content model",
-   "summary": "Two-pane split — decisions spine + parking lot",
-   "choice": "C",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:05.785Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\1179-1780489271\\state\\decisions.json",
-   "contentHash": "a7538a6a098e"
-  },
-  {
-   "id": "wg:prism-plugin:08a26790b873",
-   "envelopeId": "wg:prism-plugin:08a26790b873",
-   "localId": "Q4",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "1179-1780489271",
-   "title": "Screen content format",
-   "summary": "Fragment-first — frame template wraps; full docs opt-out via <!DOCTYPE",
-   "choice": "B",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:05.785Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\1179-1780489271\\state\\decisions.json",
-   "contentHash": "773a7cfa3bd2"
-  },
-  {
-   "id": "wg:prism-plugin:18441c62504d",
-   "envelopeId": "wg:prism-plugin:18441c62504d",
-   "localId": "Q5",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "1179-1780489271",
-   "title": "Selection microinteraction",
-   "summary": "Spring lift + confirm bar — 2-gesture contract, forgiving, keyboard-safe",
-   "choice": "B",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:05.785Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\1179-1780489271\\state\\decisions.json",
-   "contentHash": "f1e877dcafc1"
-  },
-  {
-   "id": "wg:prism-plugin:0f400a5f3c62",
-   "envelopeId": "wg:prism-plugin:0f400a5f3c62",
-   "localId": "Q6",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "1179-1780489271",
-   "title": "Animation spring constants",
-   "summary": "Harmonic spring — stiffness 300, damping 28, ~2px overshoot",
-   "choice": "B",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:05.785Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\1179-1780489271\\state\\decisions.json",
-   "contentHash": "bbee36113ca0"
-  },
-  {
-   "id": "wg:prism-plugin:fde68d9dab6a",
-   "envelopeId": "wg:prism-plugin:fde68d9dab6a",
-   "localId": "Q7",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "1179-1780489271",
-   "title": "Decision ledger output format",
-   "summary": "§1 locked decisions · §2 deferred concerns · §3 ref artifacts · §4 impl handoff",
-   "choice": "A",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:05.785Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\1179-1780489271\\state\\decisions.json",
-   "contentHash": "c7d6ddcf7da7"
-  },
-  {
-   "id": "wg:prism-plugin:d5e084f69fd0",
-   "envelopeId": "wg:prism-plugin:d5e084f69fd0",
-   "localId": "Q1",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "1179-1780489271",
-   "title": "Mobile / narrow viewport",
-   "summary": "Companion assumes ≥900px — drawer collapses, demo cards reflow, but small viewports are untested",
-   "choice": null,
-   "revisit": "post-MVP, after first real user sessions",
-   "state": "parked",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:05.785Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\1179-1780489271\\state\\decisions.json",
-   "contentHash": "19ec3fdfd674"
-  },
-  {
-   "id": "wg:prism-plugin:2c4a441c6596",
-   "envelopeId": "wg:prism-plugin:2c4a441c6596",
-   "localId": "Q2",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "1179-1780489271",
-   "title": "Cross-question /hi carry-forward after override",
-   "summary": "If user slashes /hi mid-clarify loop, does the next decide downshift or hold at hi?",
-   "choice": null,
-   "revisit": "when implementing the classifier rule in the skill",
-   "state": "parked",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:05.785Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\1179-1780489271\\state\\decisions.json",
-   "contentHash": "37eb710b5b24"
-  },
-  {
-   "id": "wg:prism-plugin:f9c034c71057",
-   "envelopeId": "wg:prism-plugin:f9c034c71057",
-   "localId": "Q1",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "6520-1781316817",
-   "title": "Code-intel placement",
-   "summary": "Lives behind the daemon, reachable by every surface incl. mobile.",
-   "choice": "Daemon-brokered service",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T03:52:41.133Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\6520-1781316817\\state\\decisions.json",
-   "contentHash": "3f15a72ef6b0"
-  },
-  {
-   "id": "wg:prism-plugin:16d0682285e1",
-   "envelopeId": "wg:prism-plugin:16d0682285e1",
-   "localId": "Q2",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "6520-1781316817",
-   "title": "Daemon shape",
-   "summary": "Normalizes N donor protocols into ONE client protocol. Registry + SKILL.md discovery + relay.",
-   "choice": "Multi-service broker",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T03:52:41.133Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\6520-1781316817\\state\\decisions.json",
-   "contentHash": "bdac3a57a9f3"
-  },
-  {
-   "id": "wg:prism-plugin:3ec297abddaf",
-   "envelopeId": "wg:prism-plugin:3ec297abddaf",
-   "localId": "Q3",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "6520-1781316817",
-   "title": "Memory layer",
-   "summary": "code-intel = codebasemem (keep); knowledge/STORE = Graphify → Synaptiq's multi-modal engine. Fills the vacant STORE slot.",
-   "choice": "C · Layer both — Graphify powers Synaptiq",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T03:52:41.133Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\6520-1781316817\\state\\decisions.json",
-   "contentHash": "a7dbb32335e9"
-  },
-  {
-   "id": "wg:prism-plugin:e7e12fe96dd7",
-   "envelopeId": "wg:prism-plugin:e7e12fe96dd7",
-   "localId": "Q4",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "6520-1781316817",
-   "title": "Graphify sovereignty",
-   "summary": "License verified MIT. Fork safishamsi/graphify -> TheDigitalGriot, track upstream, fine-tune. Becomes Synaptiq's engine. EXECUTION PENDING user go.",
-   "choice": "Fork it (MIT)",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T03:52:41.133Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\6520-1781316817\\state\\decisions.json",
-   "contentHash": "809dd5f67272"
-  },
-  {
-   "id": "wg:prism-plugin:42fa60575d73",
-   "envelopeId": "wg:prism-plugin:42fa60575d73",
-   "localId": "Q5",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "6520-1781316817",
-   "title": "Build approach",
-   "summary": "Not extend-paseo, not a monolith. A thin registry-spine fronts per-service relays/adapters, each speaking its backend's native protocol (WS / REST / stdio-MCP / Python-Flask), unified by SKILL.md discovery + one client protocol + try-local→cloud. paseo = one backend. design-studio :7457 = the working prototype. This is the Fragment-template DNA.",
-   "choice": "Thin broker + per-service relays",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T03:52:41.133Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\6520-1781316817\\state\\decisions.json",
-   "contentHash": "75d2f2c5ef55"
-  },
-  {
-   "id": "wg:prism-plugin:77dd33943240",
-   "envelopeId": "wg:prism-plugin:77dd33943240",
-   "localId": "Q2",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "6520-1781316817",
-   "title": "design-gen broker-integration",
-   "summary": "VSCode wiring done (PrismPanelProvider, /api/skills probe). Pending: register design-gen as a formal relay behind the broker.",
-   "choice": null,
-   "revisit": "daemon architecture (now)",
-   "state": "parked",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T03:52:41.133Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\6520-1781316817\\state\\decisions.json",
-   "contentHash": "ff51e34b300c"
-  },
-  {
-   "id": "wg:prism-plugin:2e5094eb334a",
-   "envelopeId": "wg:prism-plugin:2e5094eb334a",
-   "localId": "Q3",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "6520-1781316817",
-   "title": "How Synaptiq wraps Graphify",
-   "summary": "Synaptiq's agentic visual canvas over Graphify's engine: node model, addressing, vector/hybrid-search layer.",
-   "choice": null,
-   "revisit": "Synaptiq design phase",
-   "state": "parked",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T03:52:41.133Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\6520-1781316817\\state\\decisions.json",
-   "contentHash": "62904958266a"
-  },
-  {
-   "id": "wg:prism-plugin:38c17441c09c",
-   "envelopeId": "wg:prism-plugin:38c17441c09c",
-   "localId": "Diarization backend",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "cowork-audion-20260708-052930",
-   "title": "HF token + Sortformer",
-   "summary": "HF account/token created and model permissions accepted via JHU course. Thread B diarization unblocked.",
-   "choice": "Resolved",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-07-08T10:06:04.667Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\cowork-audion-20260708-052930\\state\\decisions.json",
-   "contentHash": "9796c89dc7a3"
-  },
-  {
-   "id": "wg:prism-plugin:14d6fdffe0fe",
-   "envelopeId": "wg:prism-plugin:14d6fdffe0fe",
-   "localId": "Synaptiq integration",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "cowork-audion-20260708-052930",
-   "title": "JSON sync bridge",
-   "summary": "TypeScript-verified. Audion inherits this pattern to feed the graph.",
-   "choice": "Complete 5/5",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-07-08T10:06:04.667Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\cowork-audion-20260708-052930\\state\\decisions.json",
-   "contentHash": "cc1fbcef1278"
-  },
-  {
-   "id": "wg:prism-plugin:0f5b91ee241c",
-   "envelopeId": "wg:prism-plugin:0f5b91ee241c",
-   "localId": "Audion v1",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "cowork-audion-20260708-052930",
-   "title": "Transcription engine",
-   "summary": "whisper.cpp (offline) vs WhisperLiveKit (streaming + diarization) — pick one or bridge.",
-   "choice": null,
-   "revisit": "before v1 scaffold",
-   "state": "parked",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-07-08T10:06:04.667Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\cowork-audion-20260708-052930\\state\\decisions.json",
-   "contentHash": "abb44a6a83cd"
-  },
-  {
-   "id": "wg:prism-plugin:ef33d1675351",
-   "envelopeId": "wg:prism-plugin:ef33d1675351",
-   "localId": "Deployment",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "cowork-audion-20260708-052930",
-   "title": "Standalone vs Synaptiq-first",
-   "summary": "ship overlay standalone or wire into Synaptiq first.",
-   "choice": null,
-   "revisit": "post-engine",
-   "state": "parked",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-07-08T10:06:04.667Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\cowork-audion-20260708-052930\\state\\decisions.json",
-   "contentHash": "84ebc02470eb"
-  },
-  {
-   "id": "wg:prism-plugin:cc7e223fcf79",
-   "envelopeId": "wg:prism-plugin:cc7e223fcf79",
-   "localId": "Repo",
-   "kind": "worklane",
-   "origin": "prism-plugin",
-   "session": "cowork-audion-20260708-052930",
-   "title": "Consolidate codebases",
-   "summary": "fold interception-app + synaptiq-electron into one Audion repo.",
-   "choice": null,
-   "revisit": "after engine + scope",
-   "state": "parked",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-07-08T10:06:04.667Z",
-   "path": "C:\\Users\\digit\\Developer\\prism-plugin\\.prism\\local\\brainstorm\\cowork-audion-20260708-052930\\state\\decisions.json",
-   "contentHash": "6c2f911e9036"
-  },
-  {
-   "id": "wg:visual-companion-brainstorm-session:d686445183b4",
-   "envelopeId": "wg:visual-companion-brainstorm-session:d686445183b4",
-   "localId": "Q1",
-   "kind": "worklane",
-   "origin": "visual-companion-brainstorm-session",
-   "session": "visual-companions-brainstorm-ux-flow",
-   "title": "Session invocation model",
-   "summary": "Skill offers it — separate message, opt-in only",
-   "choice": "A",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:04.000Z",
-   "path": "C:\\Users\\digit\\Developer\\visual-companion-brainstorm-session\\visual-companions-brainstorm-ux-flow\\state\\decisions.json",
-   "contentHash": "46909bba6cf1"
-  },
-  {
-   "id": "wg:visual-companion-brainstorm-session:5ca6dd09439f",
-   "envelopeId": "wg:visual-companion-brainstorm-session:5ca6dd09439f",
-   "localId": "Q2",
-   "kind": "worklane",
-   "origin": "visual-companion-brainstorm-session",
-   "session": "visual-companions-brainstorm-ux-flow",
-   "title": "Fidelity progression trigger",
-   "summary": "Classifier-driven: decide → advance, clarify → escalate, park → defer",
-   "choice": "B",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:04.000Z",
-   "path": "C:\\Users\\digit\\Developer\\visual-companion-brainstorm-session\\visual-companions-brainstorm-ux-flow\\state\\decisions.json",
-   "contentHash": "af4dd8d94eff"
-  },
-  {
-   "id": "wg:visual-companion-brainstorm-session:5cd1adf2e013",
-   "envelopeId": "wg:visual-companion-brainstorm-session:5cd1adf2e013",
-   "localId": "Q3",
-   "kind": "worklane",
-   "origin": "visual-companion-brainstorm-session",
-   "session": "visual-companions-brainstorm-ux-flow",
-   "title": "Drawer content model",
-   "summary": "Two-pane split — decisions spine + parking lot",
-   "choice": "C",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:04.000Z",
-   "path": "C:\\Users\\digit\\Developer\\visual-companion-brainstorm-session\\visual-companions-brainstorm-ux-flow\\state\\decisions.json",
-   "contentHash": "a7538a6a098e"
-  },
-  {
-   "id": "wg:visual-companion-brainstorm-session:bd4baaf7fbf1",
-   "envelopeId": "wg:visual-companion-brainstorm-session:bd4baaf7fbf1",
-   "localId": "Q4",
-   "kind": "worklane",
-   "origin": "visual-companion-brainstorm-session",
-   "session": "visual-companions-brainstorm-ux-flow",
-   "title": "Screen content format",
-   "summary": "Fragment-first — frame template wraps; full docs opt-out via <!DOCTYPE",
-   "choice": "B",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:04.000Z",
-   "path": "C:\\Users\\digit\\Developer\\visual-companion-brainstorm-session\\visual-companions-brainstorm-ux-flow\\state\\decisions.json",
-   "contentHash": "773a7cfa3bd2"
-  },
-  {
-   "id": "wg:visual-companion-brainstorm-session:7ae2c3e5b494",
-   "envelopeId": "wg:visual-companion-brainstorm-session:7ae2c3e5b494",
-   "localId": "Q5",
-   "kind": "worklane",
-   "origin": "visual-companion-brainstorm-session",
-   "session": "visual-companions-brainstorm-ux-flow",
-   "title": "Selection microinteraction",
-   "summary": "Spring lift + confirm bar — 2-gesture contract, forgiving, keyboard-safe",
-   "choice": "B",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:04.000Z",
-   "path": "C:\\Users\\digit\\Developer\\visual-companion-brainstorm-session\\visual-companions-brainstorm-ux-flow\\state\\decisions.json",
-   "contentHash": "f1e877dcafc1"
-  },
-  {
-   "id": "wg:visual-companion-brainstorm-session:864bba633333",
-   "envelopeId": "wg:visual-companion-brainstorm-session:864bba633333",
-   "localId": "Q6",
-   "kind": "worklane",
-   "origin": "visual-companion-brainstorm-session",
-   "session": "visual-companions-brainstorm-ux-flow",
-   "title": "Animation spring constants",
-   "summary": "Harmonic spring — stiffness 300, damping 28, ~2px overshoot",
-   "choice": "B",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:04.000Z",
-   "path": "C:\\Users\\digit\\Developer\\visual-companion-brainstorm-session\\visual-companions-brainstorm-ux-flow\\state\\decisions.json",
-   "contentHash": "bbee36113ca0"
-  },
-  {
-   "id": "wg:visual-companion-brainstorm-session:31d886e7c603",
-   "envelopeId": "wg:visual-companion-brainstorm-session:31d886e7c603",
-   "localId": "Q7",
-   "kind": "worklane",
-   "origin": "visual-companion-brainstorm-session",
-   "session": "visual-companions-brainstorm-ux-flow",
-   "title": "Decision ledger output format",
-   "summary": "§1 locked decisions · §2 deferred concerns · §3 ref artifacts · §4 impl handoff",
-   "choice": "A",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:04.000Z",
-   "path": "C:\\Users\\digit\\Developer\\visual-companion-brainstorm-session\\visual-companions-brainstorm-ux-flow\\state\\decisions.json",
-   "contentHash": "c7d6ddcf7da7"
-  },
-  {
-   "id": "wg:visual-companion-brainstorm-session:8583605afc8e",
-   "envelopeId": "wg:visual-companion-brainstorm-session:8583605afc8e",
-   "localId": "Q1",
-   "kind": "worklane",
-   "origin": "visual-companion-brainstorm-session",
-   "session": "visual-companions-brainstorm-ux-flow",
-   "title": "Mobile / narrow viewport",
-   "summary": "Companion assumes ≥900px — drawer collapses, demo cards reflow, but small viewports are untested",
-   "choice": null,
-   "revisit": "post-MVP, after first real user sessions",
-   "state": "parked",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:04.000Z",
-   "path": "C:\\Users\\digit\\Developer\\visual-companion-brainstorm-session\\visual-companions-brainstorm-ux-flow\\state\\decisions.json",
-   "contentHash": "19ec3fdfd674"
-  },
-  {
-   "id": "wg:visual-companion-brainstorm-session:28c4ba62b62e",
-   "envelopeId": "wg:visual-companion-brainstorm-session:28c4ba62b62e",
-   "localId": "Q2",
-   "kind": "worklane",
-   "origin": "visual-companion-brainstorm-session",
-   "session": "visual-companions-brainstorm-ux-flow",
-   "title": "Cross-question /hi carry-forward after override",
-   "summary": "If user slashes /hi mid-clarify loop, does the next decide downshift or hold at hi?",
-   "choice": null,
-   "revisit": "when implementing the classifier rule in the skill",
-   "state": "parked",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-03T12:38:04.000Z",
-   "path": "C:\\Users\\digit\\Developer\\visual-companion-brainstorm-session\\visual-companions-brainstorm-ux-flow\\state\\decisions.json",
-   "contentHash": "37eb710b5b24"
-  },
-  {
-   "id": "wg:ytmp4-ai-digest:d077257ca82d",
-   "envelopeId": "wg:ytmp4-ai-digest:d077257ca82d",
-   "localId": "Q1",
-   "kind": "worklane",
-   "origin": "ytmp4-ai-digest",
-   "session": "2133-1781189837",
-   "title": "Upgrade scope",
-   "summary": "Full Dashboard Pass — header, sidebar, stats cards, summary, chat bubble. Coherent single-pass upgrade.",
-   "choice": "C",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-11T15:04:49.471Z",
-   "path": "C:\\Users\\digit\\Developer\\ytmp4-ai-digest\\.prism\\local\\brainstorm\\2133-1781189837\\state\\decisions.json",
-   "contentHash": "a0686c6113c6"
-  },
-  {
-   "id": "wg:ytmp4-ai-digest:99198fdb9629",
-   "envelopeId": "wg:ytmp4-ai-digest:99198fdb9629",
-   "localId": "Q2",
-   "kind": "worklane",
-   "origin": "ytmp4-ai-digest",
-   "session": "2133-1781189837",
-   "title": "Effect intensity",
-   "summary": "Full Griotwave — ambient blooms, ember glow on stat numbers, neural blue accents, full 40px frost blur on all glass surfaces.",
-   "choice": "B",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-11T15:04:49.471Z",
-   "path": "C:\\Users\\digit\\Developer\\ytmp4-ai-digest\\.prism\\local\\brainstorm\\2133-1781189837\\state\\decisions.json",
-   "contentHash": "9cbcd5b9a62b"
-  },
-  {
-   "id": "wg:ytmp4-ai-digest:6322e3eb6f0f",
-   "envelopeId": "wg:ytmp4-ai-digest:6322e3eb6f0f",
-   "localId": "Q1",
-   "kind": "worklane",
-   "origin": "ytmp4-ai-digest",
-   "session": "26431-1781377382",
-   "title": "Cowork experience tier",
-   "summary": "Browser-launched dashboard — MCP boots the existing Flask viewer, returns a localhost link. Full dashboard on both surfaces.",
-   "choice": "B",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T20:14:36.001Z",
-   "path": "C:\\Users\\digit\\Developer\\ytmp4-ai-digest\\.prism\\local\\brainstorm\\26431-1781377382\\state\\decisions.json",
-   "contentHash": "e165252bacf5"
-  },
-  {
-   "id": "wg:ytmp4-ai-digest:1137abc4b802",
-   "envelopeId": "wg:ytmp4-ai-digest:1137abc4b802",
-   "localId": "Q2",
-   "kind": "worklane",
-   "origin": "ytmp4-ai-digest",
-   "session": "26431-1781377382",
-   "title": "Claude Code's path after change",
-   "summary": "Dual path, shared Python core — Code keeps slash commands/scripts/hooks; add an MCP server for Cowork; both call the same functions.",
-   "choice": "A",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T20:14:36.001Z",
-   "path": "C:\\Users\\digit\\Developer\\ytmp4-ai-digest\\.prism\\local\\brainstorm\\26431-1781377382\\state\\decisions.json",
-   "contentHash": "9565ba6facfa"
-  },
-  {
-   "id": "wg:ytmp4-ai-digest:e868e7ee29e5",
-   "envelopeId": "wg:ytmp4-ai-digest:e868e7ee29e5",
-   "localId": "Q3",
-   "kind": "worklane",
-   "origin": "ytmp4-ai-digest",
-   "session": "26431-1781377382",
-   "title": "Dependency bootstrapping in Cowork",
-   "summary": "Self-bootstrapping venv in ${CLAUDE_PLUGIN_DATA} — first MCP call builds venv + installs requirements once, reused after. Zero terminal needed.",
-   "choice": "A",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T20:14:36.001Z",
-   "path": "C:\\Users\\digit\\Developer\\ytmp4-ai-digest\\.prism\\local\\brainstorm\\26431-1781377382\\state\\decisions.json",
-   "contentHash": "fa6c19befbb7"
-  },
-  {
-   "id": "wg:ytmp4-ai-digest:8e79fe398628",
-   "envelopeId": "wg:ytmp4-ai-digest:8e79fe398628",
-   "localId": "Q4",
-   "kind": "worklane",
-   "origin": "ytmp4-ai-digest",
-   "session": "26431-1781377382",
-   "title": "In-viewer chat auth model",
-   "summary": "Agent SDK + API-key fallback — Python claude-agent-sdk via local claude CLI (subscription) primary; Anthropic API key via userConfig fallback when CLI absent.",
-   "choice": "B",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T20:14:36.001Z",
-   "path": "C:\\Users\\digit\\Developer\\ytmp4-ai-digest\\.prism\\local\\brainstorm\\26431-1781377382\\state\\decisions.json",
-   "contentHash": "e4fbf43c97bf"
-  },
-  {
-   "id": "wg:ytmp4-ai-digest:b4c5b67a5a9c",
-   "envelopeId": "wg:ytmp4-ai-digest:b4c5b67a5a9c",
-   "localId": "Q5",
-   "kind": "worklane",
-   "origin": "ytmp4-ai-digest",
-   "session": "26431-1781377382",
-   "title": "Model providers + settings",
-   "summary": "Provider interface + Settings panel now. 3 adapters (claude-sub, claude-key, openai-compatible). Kimi/Gemma become config rows later. Saved to PLUGIN_DATA/settings.json.",
-   "choice": "A",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T20:14:36.001Z",
-   "path": "C:\\Users\\digit\\Developer\\ytmp4-ai-digest\\.prism\\local\\brainstorm\\26431-1781377382\\state\\decisions.json",
-   "contentHash": "2e1ba7cb2cd6"
-  },
-  {
-   "id": "wg:ytmp4-ai-digest:a86ec7f6c080",
-   "envelopeId": "wg:ytmp4-ai-digest:a86ec7f6c080",
-   "localId": "Q6",
-   "kind": "worklane",
-   "origin": "ytmp4-ai-digest",
-   "session": "26431-1781377382",
-   "title": "Frame capture without system ffmpeg",
-   "summary": "Bundle ffmpeg via imageio-ffmpeg pip wheel into the venv; capture_frames uses get_ffmpeg_exe(); falls back to YouTube thumbnails. Real capture parity, zero system install.",
-   "choice": "A",
-   "revisit": null,
-   "state": "decided",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T20:14:36.001Z",
-   "path": "C:\\Users\\digit\\Developer\\ytmp4-ai-digest\\.prism\\local\\brainstorm\\26431-1781377382\\state\\decisions.json",
-   "contentHash": "3f04388ed284"
-  },
-  {
-   "id": "wg:ytmp4-ai-digest:58a73be1dbc3",
-   "envelopeId": "wg:ytmp4-ai-digest:58a73be1dbc3",
-   "localId": "Q5",
-   "kind": "worklane",
-   "origin": "ytmp4-ai-digest",
-   "session": "26431-1781377382",
-   "title": "Stand up local Kimi/Gemma endpoints",
-   "summary": "Plumbing + Settings UI are built now, but the actual local model servers aren't configured yet.",
-   "choice": null,
-   "revisit": "User task, post-implementation — becomes a config row in Settings.",
-   "state": "parked",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T20:14:36.001Z",
-   "path": "C:\\Users\\digit\\Developer\\ytmp4-ai-digest\\.prism\\local\\brainstorm\\26431-1781377382\\state\\decisions.json",
-   "contentHash": "d689b5cc94d3"
-  },
-  {
-   "id": "wg:ytmp4-ai-digest:420715f6a0f4",
-   "envelopeId": "wg:ytmp4-ai-digest:420715f6a0f4",
-   "localId": "Q1",
-   "kind": "worklane",
-   "origin": "ytmp4-ai-digest",
-   "session": "26431-1781377382",
-   "title": "Cowork viewer launch UX",
-   "summary": "MCP tool returns a clickable localhost link (default); auto-open browser behavior in Cowork is unverified.",
-   "choice": null,
-   "revisit": "Confirm during implementation against actual Cowork behavior.",
-   "state": "parked",
-   "direction": "local",
-   "destination": [],
-   "source": [],
-   "maps": 0,
-   "screen": null,
-   "lastTouched": "2026-06-13T20:14:36.001Z",
-   "path": "C:\\Users\\digit\\Developer\\ytmp4-ai-digest\\.prism\\local\\brainstorm\\26431-1781377382\\state\\decisions.json",
-   "contentHash": "8b581b4580d6"
-  },
-  {
    "id": "wg:prism:f1b2bc89a4bc",
    "envelopeId": "wg:prism:f1b2bc89a4bc",
    "localId": "cowork-prism-realign",
@@ -18760,7 +17347,7 @@
    "title": "Cinopsis",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18772,7 +17359,7 @@
    "title": "GBFolio",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18784,7 +17371,7 @@
    "title": "Cinodex Studio",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18796,7 +17383,7 @@
    "title": "Ashe",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18808,7 +17395,7 @@
    "title": "R3F Studio",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18820,7 +17407,7 @@
    "title": "Griot 3D pipeline",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18832,7 +17419,7 @@
    "title": "Prism",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18844,7 +17431,7 @@
    "title": "griot-live-artifacts",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18856,7 +17443,7 @@
    "title": "Griot Ontology",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18868,7 +17455,7 @@
    "title": "Djeli",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18880,7 +17467,7 @@
    "title": "Griot Viz Templates",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18892,7 +17479,7 @@
    "title": "SkillForge",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18904,7 +17491,7 @@
    "title": "Valence",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18916,7 +17503,7 @@
    "title": "Graft",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18928,7 +17515,7 @@
    "title": "viz-templates",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18940,7 +17527,7 @@
    "title": "agent-ontology",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18952,7 +17539,7 @@
    "title": "the workgraph",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18964,7 +17551,7 @@
    "title": "Kweli",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18976,7 +17563,7 @@
    "title": "Synaptiq",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -18988,7 +17575,7 @@
    "title": "Arkestra",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19000,7 +17587,7 @@
    "title": "Audion",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19012,7 +17599,7 @@
    "title": "Hazine",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19024,7 +17611,7 @@
    "title": "Meridian",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19036,7 +17623,7 @@
    "title": "griot_scrape",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19048,7 +17635,7 @@
    "title": "Lucid",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19060,7 +17647,7 @@
    "title": "digital-griot-mcp",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19072,7 +17659,7 @@
    "title": "formae (Aeraform)",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19084,7 +17671,7 @@
    "title": "Scrapling",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19096,7 +17683,7 @@
    "title": "Prism Gavel",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19108,7 +17695,7 @@
    "title": "The Griot Model",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19120,7 +17707,7 @@
    "title": "Kente",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19132,7 +17719,7 @@
    "title": "Manim",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19144,7 +17731,7 @@
    "title": "Math Formalism Ideation",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19156,7 +17743,7 @@
    "title": "ManimML",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19168,7 +17755,7 @@
    "title": "Mentorship Platform",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19180,7 +17767,7 @@
    "title": "everything",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19192,7 +17779,7 @@
    "title": "Fragment",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19204,7 +17791,7 @@
    "title": "every app",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19216,7 +17803,7 @@
    "title": "all agents",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19228,7 +17815,7 @@
    "title": "you",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19240,7 +17827,7 @@
    "title": "Sigil",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19252,7 +17839,7 @@
    "title": "Sigil/Synaptiq/Ashe",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19264,7 +17851,7 @@
    "title": "Anansi + Lucid",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19276,7 +17863,7 @@
    "title": "GBFolio / R3F",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19288,7 +17875,7 @@
    "title": "Glenn Lewis + AUXGOD",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19300,7 +17887,7 @@
    "title": "Kaleidoscope",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19312,7 +17899,7 @@
    "title": "Griot Hub",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19324,7 +17911,7 @@
    "title": "all",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19336,7 +17923,7 @@
    "title": "sankofa",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19348,7 +17935,7 @@
    "title": "Ophenia",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19360,7 +17947,7 @@
    "title": "Prism / Mindwalk",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19372,7 +17959,7 @@
    "title": "griot-dubplate",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19384,7 +17971,7 @@
    "title": "griot-mixdown",
    "state": "open",
    "direction": "local",
-   "lastTouched": "2026-10-17T05:49:41.096Z",
+   "lastTouched": "2026-10-21T06:08:47.440Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\dgs-definitive-plan.html"
   },
   {
@@ -19397,7 +17984,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19410,7 +17997,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19423,7 +18010,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19436,7 +18023,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19449,7 +18036,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19462,7 +18049,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19475,7 +18062,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19488,7 +18075,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19501,7 +18088,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19514,7 +18101,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19527,7 +18114,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19540,7 +18127,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19553,7 +18140,7 @@
    "state": "open",
    "direction": "local",
    "inferred": true,
-   "lastTouched": "2026-10-17T06:08:55.221Z",
+   "lastTouched": "2026-10-21T06:09:31.543Z",
    "path": null
   },
   {
@@ -19567,7 +18154,7 @@
    "direction": "outbound",
    "branchKind": "branch",
    "group": "this-stage",
-   "lastTouched": "2026-10-15T21:17:18.917Z",
+   "lastTouched": "2026-10-21T06:08:45.932Z",
    "path": "C:\\Users\\digit\\GriotMeta\\griot-live-artifacts\\live\\gbfolio-branch-capture-workgraph.json"
   },
   {
@@ -22137,402 +20724,6 @@
    "label": "blocks"
   },
   {
-   "from": "wg:prism-plugin:53fcc1fd5c50",
-   "to": "wg:prism-plugin:56c37e20b98d",
-   "kind": "in-epic",
-   "label": "belongs to Test Plan - Prism CLI Demo"
-  },
-  {
-   "from": "wg:prism-plugin:db30acdfb138",
-   "to": "wg:prism-plugin:56c37e20b98d",
-   "kind": "in-epic",
-   "label": "belongs to Test Plan - Prism CLI Demo"
-  },
-  {
-   "from": "wg:prism-plugin:0015a9eb2403",
-   "to": "wg:prism-plugin:56c37e20b98d",
-   "kind": "in-epic",
-   "label": "belongs to Test Plan - Prism CLI Demo"
-  },
-  {
-   "from": "wg:prism-plugin:82c5626099ff",
-   "to": "wg:prism-plugin:56c37e20b98d",
-   "kind": "in-epic",
-   "label": "belongs to Test Plan - Prism CLI Demo"
-  },
-  {
-   "from": "wg:prism-plugin:53fcc1fd5c50",
-   "to": "wg:prism-plugin:db30acdfb138",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-plugin:db30acdfb138",
-   "to": "wg:prism-plugin:0015a9eb2403",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:3ecb09ff207e",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:bd915dd46e1e",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:ce3f98194036",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:8318cd7fa33a",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:1fe7f35b9639",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:d233e5e0be70",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:419b0c81f4a3",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:8503ade4eaca",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:3ecb09ff207e",
-   "to": "wg:prism-test:ce3f98194036",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:bd915dd46e1e",
-   "to": "wg:prism-test:8318cd7fa33a",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:ce3f98194036",
-   "to": "wg:prism-test:1fe7f35b9639",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:8318cd7fa33a",
-   "to": "wg:prism-test:d233e5e0be70",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:d233e5e0be70",
-   "to": "wg:prism-test:419b0c81f4a3",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:419b0c81f4a3",
-   "to": "wg:prism-test:8503ade4eaca",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:965265ff6905",
-   "to": "wg:prism-test:0dd091f36b5a",
-   "kind": "in-epic",
-   "label": "belongs to Electron Auto-Update System"
-  },
-  {
-   "from": "wg:prism-test:3e757f015889",
-   "to": "wg:prism-test:0dd091f36b5a",
-   "kind": "in-epic",
-   "label": "belongs to Electron Auto-Update System"
-  },
-  {
-   "from": "wg:prism-test:80644e59de77",
-   "to": "wg:prism-test:0dd091f36b5a",
-   "kind": "in-epic",
-   "label": "belongs to Electron Auto-Update System"
-  },
-  {
-   "from": "wg:prism-test:fcc29b9b7478",
-   "to": "wg:prism-test:0dd091f36b5a",
-   "kind": "in-epic",
-   "label": "belongs to Electron Auto-Update System"
-  },
-  {
-   "from": "wg:prism-test:976326ccfdab",
-   "to": "wg:prism-test:0dd091f36b5a",
-   "kind": "in-epic",
-   "label": "belongs to Electron Auto-Update System"
-  },
-  {
-   "from": "wg:prism-test:5e241ebef700",
-   "to": "wg:prism-test:0dd091f36b5a",
-   "kind": "in-epic",
-   "label": "belongs to Electron Auto-Update System"
-  },
-  {
-   "from": "wg:prism-test:80644e59de77",
-   "to": "wg:prism-test:fcc29b9b7478",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:fcc29b9b7478",
-   "to": "wg:prism-test:976326ccfdab",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:3e757f015889",
-   "to": "wg:prism-test:5e241ebef700",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:3ecb09ff207e",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:bd915dd46e1e",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:ce3f98194036",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:8318cd7fa33a",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:1fe7f35b9639",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:d233e5e0be70",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:419b0c81f4a3",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:8503ade4eaca",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:3ecb09ff207e",
-   "to": "wg:prism-test:ce3f98194036",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:bd915dd46e1e",
-   "to": "wg:prism-test:8318cd7fa33a",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:ce3f98194036",
-   "to": "wg:prism-test:1fe7f35b9639",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:8318cd7fa33a",
-   "to": "wg:prism-test:d233e5e0be70",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:d233e5e0be70",
-   "to": "wg:prism-test:419b0c81f4a3",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:419b0c81f4a3",
-   "to": "wg:prism-test:8503ade4eaca",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:965265ff6905",
-   "to": "wg:prism-test:0dd091f36b5a",
-   "kind": "in-epic",
-   "label": "belongs to Electron Auto-Update System"
-  },
-  {
-   "from": "wg:prism-test:3e757f015889",
-   "to": "wg:prism-test:0dd091f36b5a",
-   "kind": "in-epic",
-   "label": "belongs to Electron Auto-Update System"
-  },
-  {
-   "from": "wg:prism-test:80644e59de77",
-   "to": "wg:prism-test:0dd091f36b5a",
-   "kind": "in-epic",
-   "label": "belongs to Electron Auto-Update System"
-  },
-  {
-   "from": "wg:prism-test:fcc29b9b7478",
-   "to": "wg:prism-test:0dd091f36b5a",
-   "kind": "in-epic",
-   "label": "belongs to Electron Auto-Update System"
-  },
-  {
-   "from": "wg:prism-test:976326ccfdab",
-   "to": "wg:prism-test:0dd091f36b5a",
-   "kind": "in-epic",
-   "label": "belongs to Electron Auto-Update System"
-  },
-  {
-   "from": "wg:prism-test:5e241ebef700",
-   "to": "wg:prism-test:0dd091f36b5a",
-   "kind": "in-epic",
-   "label": "belongs to Electron Auto-Update System"
-  },
-  {
-   "from": "wg:prism-test:80644e59de77",
-   "to": "wg:prism-test:fcc29b9b7478",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:fcc29b9b7478",
-   "to": "wg:prism-test:976326ccfdab",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:3e757f015889",
-   "to": "wg:prism-test:5e241ebef700",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:3ecb09ff207e",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:bd915dd46e1e",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:ce3f98194036",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:8318cd7fa33a",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:1fe7f35b9639",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:d233e5e0be70",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:419b0c81f4a3",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:8503ade4eaca",
-   "to": "wg:prism-test:0b0d033fe758",
-   "kind": "in-epic",
-   "label": "belongs to Settings Dashboard with Theme System"
-  },
-  {
-   "from": "wg:prism-test:3ecb09ff207e",
-   "to": "wg:prism-test:ce3f98194036",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:bd915dd46e1e",
-   "to": "wg:prism-test:8318cd7fa33a",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:ce3f98194036",
-   "to": "wg:prism-test:1fe7f35b9639",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:8318cd7fa33a",
-   "to": "wg:prism-test:d233e5e0be70",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:d233e5e0be70",
-   "to": "wg:prism-test:419b0c81f4a3",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
-   "from": "wg:prism-test:419b0c81f4a3",
-   "to": "wg:prism-test:8503ade4eaca",
-   "kind": "awaits",
-   "label": "blocks"
-  },
-  {
    "from": "wg:cinopsis:ef09ecfcd34c",
    "to": "wg:cinopsis:211dbef8bfc0",
    "kind": "splinter",
@@ -24045,54 +22236,6 @@
    "label": "branched from Q6"
   },
   {
-   "from": "wg:prism-plugin:c9b7938d4a1b",
-   "to": "wg:prism-plugin:d5e084f69fd0",
-   "kind": "splinter",
-   "label": "branched from Q1"
-  },
-  {
-   "from": "wg:prism-plugin:fb229864e9ad",
-   "to": "wg:prism-plugin:2c4a441c6596",
-   "kind": "splinter",
-   "label": "branched from Q2"
-  },
-  {
-   "from": "wg:prism-plugin:16d0682285e1",
-   "to": "wg:prism-plugin:77dd33943240",
-   "kind": "splinter",
-   "label": "branched from Q2"
-  },
-  {
-   "from": "wg:prism-plugin:3ec297abddaf",
-   "to": "wg:prism-plugin:2e5094eb334a",
-   "kind": "splinter",
-   "label": "branched from Q3"
-  },
-  {
-   "from": "wg:visual-companion-brainstorm-session:d686445183b4",
-   "to": "wg:visual-companion-brainstorm-session:8583605afc8e",
-   "kind": "splinter",
-   "label": "branched from Q1"
-  },
-  {
-   "from": "wg:visual-companion-brainstorm-session:5ca6dd09439f",
-   "to": "wg:visual-companion-brainstorm-session:28c4ba62b62e",
-   "kind": "splinter",
-   "label": "branched from Q2"
-  },
-  {
-   "from": "wg:ytmp4-ai-digest:b4c5b67a5a9c",
-   "to": "wg:ytmp4-ai-digest:58a73be1dbc3",
-   "kind": "splinter",
-   "label": "branched from Q5"
-  },
-  {
-   "from": "wg:ytmp4-ai-digest:6322e3eb6f0f",
-   "to": "wg:ytmp4-ai-digest:420715f6a0f4",
-   "kind": "splinter",
-   "label": "branched from Q1"
-  },
-  {
    "from": "wg:prism:79e7db6aaebc",
    "to": "wg:prism:f1b2bc89a4bc",
    "kind": "awaits",
@@ -24617,43 +22760,43 @@
    "crossGraphOrigin": "wg:cinodex-branch"
   }
  ],
- "generated": "2026-10-17T06:08:55.245Z",
+ "generated": "2026-10-21T06:09:31.590Z",
  "stats": {
-  "nodes": 856,
-  "edges": 838,
+  "nodes": 794,
+  "edges": 764,
   "byKind": {
-   "epic": 19,
-   "story": 277,
-   "worklane": 467,
+   "epic": 15,
+   "story": 259,
+   "worklane": 427,
    "stage": 9,
    "artifact": 16,
    "project": 66,
    "branch-node": 2
   },
   "byState": {
-   "open": 158,
-   "parked": 222,
-   "resolved": 137,
-   "decided": 337,
+   "open": 152,
+   "parked": 203,
+   "resolved": 129,
+   "decided": 308,
    "done": 2
   },
   "byDirection": {
-   "local": 757,
+   "local": 695,
    "adjacent": 16,
    "outbound": 65,
    "inbound": 18
   },
   "byEdgeKind": {
-   "in-epic": 299,
-   "awaits": 209,
-   "splinter": 152,
+   "in-epic": 259,
+   "awaits": 183,
+   "splinter": 144,
    "outbound": 97,
    "inbound": 12,
    "ontology": 69
   },
   "sources": {
-   "storiesFiles": 22,
-   "decisionFiles": 50,
+   "storiesFiles": 15,
+   "decisionFiles": 44,
    "awaitsDeclarations": 9,
    "crossGraphEdges": 1
   },
@@ -24700,6 +22843,6 @@
    "dialect-B sequential id \"STORY-002\" in C:\\Users\\digit\\GriotApps\\Prism\\apps\\prism-cli\\testdata\\stories.json — the stories contract forbids this form (ids must be content-hashed)",
    "dialect-B sequential id \"STORY-003\" in C:\\Users\\digit\\GriotApps\\Prism\\apps\\prism-cli\\testdata\\stories.json — the stories contract forbids this form (ids must be content-hashed)"
   ],
-  "warningCount": 262
+  "warningCount": 222
  }
 }

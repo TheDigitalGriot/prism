@@ -105,7 +105,8 @@
     "amendPass98_2026_10_10": "amendPass98: declared embeds - the Ontology Codex (griot-ontology-codex.html) framed in full on the Djeli codex, ruled by Gavin 2026-10-10; engine gained the embeds payload key (griot-branch-codex declared-embeds contract)",
     "amendPass99_2026_10_10": "B51 correction: story id s-b02d6c48 -> s-5248f29d after the 2026-10-10 retitle (the id hashes the title, drift 290). session-close-clean stage.",
     "amendPass100_2026_10_12": "Changelog watch 2026-10-12: one B item (Sol Ultrafast) contracted; all else already landed at v5.1.0.",
-    "amendPass101_2026_10_19": "Changelog watch 2026-10-19: one bucket-B contract (GPT-5.5 retired in Codex ChatGPT-auth), ruling owed."
+    "amendPass101_2026_10_19": "Changelog watch 2026-10-19: one bucket-B contract (GPT-5.5 retired in Codex ChatGPT-auth), ruling owed.",
+    "amendPass102_2026_10_21": "2026-10-21 mixdown (disk session 2026-10-19..21): A8 griot-disktree skill landed (2346a12, b67bbd2); D23 Gavin deletion ruling applied; N78 prism-mobile advanced to done on 9f2d394 (private repo, HEAD==origin)"
   },
   "groups": [
     {
@@ -3810,7 +3811,7 @@
       "localId": "N78",
       "kind": "finding",
       "group": "new-findings",
-      "state": "open",
+      "state": "done",
       "direction": "local",
       "title": "Developer/prism-mobile holds 1,733 uncommitted files and has never had a commit on main",
       "description": "The working-tree lens found prism-mobile with 1,733 changed files and a main branch carrying zero commits - not stale work, unbacked work. No going-dark lens would surface this: the freshness lens cannot compute an age with no HEAD, and the plan lens has no dark flag on it. It is the loudest signal in the 84-repo scan and it is invisible to every existing flag.",
@@ -3818,7 +3819,14 @@
         "evidence": "All-roots scan 2026-09-21: 'git -C C:\\\\Users\\\\digit\\\\Developer\\\\prism-mobile log -1' returned \"fatal: your current branch 'main' does not have any commits yet\"; 'git status --porcelain' counted 1733 entries.",
         "result": "flagged-not-fixed - reported, not touched. Committing someone else's working tree is not this pass's call."
       },
-      "stateDetail": "flagged-not-fixed"
+      "stateDetail": "flagged-not-fixed",
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-10-21 amendPass102_2026_10_21",
+        "from": "open",
+        "to": "done",
+        "evidence": "prism-mobile first commit 9f2d394 (feat: initial commit of prism-mobile, a Paseo 0.1.65 fork) pushed to private repo git@github.com:TheDigitalGriot/prism-mobile.git; at D:/Oct2026-bkp/Developer/prism-mobile git rev-parse HEAD == origin/main == 9f2d394caa85350cfc244bdcfe952e06421807db (read 2026-10-21). Committed with --no-verify on Gavin's word."
+      }
     },
     {
       "id": "wg:djeli-branch:N79",
@@ -7249,6 +7257,44 @@
       },
       "localId": "C52",
       "title": "Changelog watch 2026-10-19 - GPT-5.5 retired in Codex for ChatGPT sign-in (bucket B) contract written, awaiting ruling"
+    },
+    {
+      "id": "wg:djeli-branch:A8",
+      "originLane": "tracked",
+      "outputs": [
+        "digital-griot-skills/griot-disktree/"
+      ],
+      "contractPath": "digital-griot-skills/.prism/shared/plans/griot-disktree-CONTEXT.md",
+      "localId": "A8",
+      "kind": "branch",
+      "title": "griot-disktree skill - elevated disktree launch, verified backup protocol, ruling-board cleanup",
+      "state": "done",
+      "direction": "local",
+      "group": "tracked",
+      "description": "Authored through griot-agent-architect headless under a Spectrum contract. Encodes the disktree RUNASADMIN launch, the robocopy /L + mklink lossless backup protocol used for the C: Developer move, and two guardrails from the session: deletion-hazards.md (SendToRecycleBin falls back to permanent delete on deep trees) and template-routing.md (a decision needs a ruling template, not a status table). Companion edit to disk-space-audit: ask per item, permanent clears handed to Gavin as commands.",
+      "verification": {
+        "checked": true,
+        "evidence": "digital-griot-skills commits 2346a12 (feat: add griot-disktree skill) and b67bbd2 (disk-space-audit: ask per item), both on origin/main (git branch -r --contains b67bbd2 = origin/main, read 2026-10-21); validate-skill.sh passed on both per session brief GriotSandbox/_runs/mixdown-brief.md; contract file present on disk",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:D23",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "D23",
+      "kind": "decision",
+      "title": "Ruled: delete = BOTH, per case; visualization first then text; data protection always; permanent deletes handed to Gavin",
+      "state": "ruled-and-applied",
+      "direction": "local",
+      "group": "this-stage",
+      "description": "Gavin's ruling in the 2026-10-19..21 disk session. Also ruled: Reallusion content and every Griot* folder stay on C:. Applied in disk-space-audit (b67bbd2) and griot-disktree (2346a12).",
+      "verification": {
+        "checked": true,
+        "evidence": "Ruling listed in session brief GriotSandbox/_runs/mixdown-brief.md (Rulings by Gavin); applied in digital-griot-skills b67bbd2 commit subject 'ask per item before cleanup; permanent clears handed to Gavin as commands'",
+        "result": "pass"
+      }
     }
   ],
   "edges": [
@@ -9423,15 +9469,21 @@
       "to": "wg:djeli-branch:C50",
       "kind": "outbound",
       "label": "ruled: release as 5.1.0"
+    },
+    {
+      "from": "wg:djeli-branch:D23",
+      "to": "wg:djeli-branch:A8",
+      "kind": "in-epic",
+      "label": "the deletion ruling is encoded in griot-disktree and disk-space-audit"
     }
   ],
   "stats": {
-    "totalBranches": 115,
+    "totalBranches": 116,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 362,
+    "edgeCount": 363,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -10347,32 +10399,32 @@
     },
     "generated": {
       "generatedBy": "griot-branch-codex/scripts/compute-generated.mjs",
-      "generatedAt": "2026-10-11T00:58:05.912Z",
-      "nodeCount": 358,
-      "edgeCount": 362,
+      "generatedAt": "2026-10-21T06:08:46.049Z",
+      "nodeCount": 362,
+      "edgeCount": 363,
       "laneCount": 6,
       "byLane": {
         "new-findings": 167,
-        "this-stage": 70,
+        "this-stage": 73,
         "untracked": 50,
         "open-ask": 30,
         "suggested": 21,
-        "tracked": 16,
+        "tracked": 17,
         "undefined": 4
       },
       "byKind": {
         "finding": 117,
-        "branch": 113,
+        "branch": 116,
         "defect": 52,
         "open-ask": 31,
-        "decision": 22,
+        "decision": 23,
         "suggestion": 21,
         "open": 2
       },
       "byState": {
-        "done": 167,
-        "open": 124,
-        "ruled-and-applied": 15,
+        "done": 169,
+        "open": 123,
+        "ruled-and-applied": 16,
         "parked": 14,
         "built-and-live": 10,
         "defect-fixed": 9,
@@ -10381,17 +10433,18 @@
         "in-progress": 4,
         "design-decision-locked": 2,
         "verified-reframe": 2,
+        "written-not-launched": 2,
         "superseded": 1,
         "route-identified-device-only": 1
       },
       "byDirection": {
-        "local": 201,
-        "outbound": 131,
+        "local": 203,
+        "outbound": 133,
         "inbound": 21,
         "adjacent": 5
       },
       "byEdgeKind": {
-        "in-epic": 87,
+        "in-epic": 88,
         "outbound": 72,
         "ontology": 60,
         "awaits": 57,
@@ -10401,11 +10454,11 @@
       "crossGraphEdges": [],
       "byOriginLane": {
         "new-findings": 165,
-        "this-stage": 76,
+        "this-stage": 79,
         "untracked": 52,
         "open-ask": 31,
         "suggested": 21,
-        "tracked": 13
+        "tracked": 14
       },
       "movedLane": [
         "B4",
@@ -10462,6 +10515,7 @@
         "N71",
         "N72",
         "OA16",
+        "N78",
         "S11",
         "OA18",
         "N88",
@@ -10484,7 +10538,7 @@
       ],
       "verification": {
         "verified": 15,
-        "pass": 12,
+        "pass": 14,
         "RULED and applied to the live design canvas.": 4,
         "ruled and applied": 4,
         "ACTION-NEEDED, contract written, run owed": 3,
@@ -10492,6 +10546,7 @@
         "PROPOSED - awaiting a yes or no.": 2,
         "awaiting Gavin's ruling": 2,
         "done": 2,
+        "contract written, ruling owed": 2,
         "MATCHES contract - 27 nodes / 7 layers confirmed exactly.": 1,
         "MATCHES contract - commit exists and its content matches the stated outputs.": 1,
         "MATCHES contract - written, not run. No execution evidence exists anywhere checked.": 1,
@@ -11173,6 +11228,21 @@
       "newEdges": 0,
       "corrections": [],
       "refused": []
+    },
+    "amendPass102_2026_10_21_2026_10_21": {
+      "newNodes": [
+        "A8",
+        "D23"
+      ],
+      "newEdges": 1,
+      "corrections": [],
+      "refused": [],
+      "advanced": [
+        "N78"
+      ],
+      "stateChanges": [
+        "N78 open -> done"
+      ]
     }
   },
   "foreignLayer": {
@@ -15308,7 +15378,7 @@
     ],
     "byLane": {
       "tracked": {
-        "closed": 14,
+        "closed": 15,
         "open": 2,
         "pct": 88
       },
@@ -15318,9 +15388,9 @@
         "pct": 48
       },
       "this-stage": {
-        "closed": 58,
-        "open": 9,
-        "pct": 87,
+        "closed": 59,
+        "open": 11,
+        "pct": 84,
         "unclassified": 3
       },
       "open-ask": {
@@ -15329,9 +15399,9 @@
         "pct": 43
       },
       "new-findings": {
-        "closed": 96,
-        "open": 69,
-        "pct": 58,
+        "closed": 97,
+        "open": 68,
+        "pct": 59,
         "unclassified": 2
       },
       "suggested": {
@@ -15348,8 +15418,8 @@
       }
     },
     "total": {
-      "closed": 210,
-      "open": 133,
+      "closed": 213,
+      "open": 134,
       "pct": 61,
       "unclassified": 15
     },
