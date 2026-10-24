@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+
+- **spectrum-architect stage-contract template carries a HEADLESS RULE** (`skills/spectrum-architect/assets/templates/prism-stage-CONTEXT.md`, `references/prism-run-contract.md`). `claude -p` ends the process when its turn ends, so a contract now says to launch long jobs detached from the Windows side (`Start-Process wsl.exe` running a script file) and wait in-run on the exit marker, never background a job and end the turn. Every contract authored from the template inherits it (drift 382, 3b6da05).
+
 ### Fixed
 
 - `scripts/workgraph-index.mjs` no longer treats a flag as its output path: `--help` / `-h` print usage and exit 0, any other `-` argument exits 2, and nothing is written. Before, `--help` wrote the full 924 KB index to a file named `--help` at the repo root (drift 286).
