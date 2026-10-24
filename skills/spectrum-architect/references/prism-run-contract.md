@@ -53,6 +53,24 @@ ask** (a headless run hangs on interactive prompts; there is no one to answer). 
 write the `BLOCKED-<why>` heartbeat and stop the stage cleanly — leave the tree committed or clean,
 never half-edited.
 
+## HEADLESS RULE
+
+Every stage contract carries this section (the template `assets/templates/prism-stage-CONTEXT.md`
+already does), so contracts authored anywhere inherit it:
+
+- A headless stage is `claude.exe -p`: ending the turn ENDS THE PROCESS and kills anything the run
+  backgrounded (measured 2026-10-23: a run that backgrounded its job and replied died with EPIPE).
+- Never use run_in_background, Monitor, or "I'll wait for the task" and then reply.
+- Launch any job longer than ~9 minutes detached from the WINDOWS side: `Start-Process wsl.exe
+  -WindowStyle Hidden` running a SCRIPT FILE (`<job>.sh`) that owns the job, logs to
+  `/mnt/c/<log>`, and writes the exit marker `<marker>`. Two measured dead ends:
+  `wsl -- setsid ... & disown` does NOT survive wsl.exe exiting, so the job never starts
+  (2026-10-23); an inline `bash -lc "<cmd>"` string passed through `Start-Process -ArgumentList`
+  died silently (2026-10-24).
+- Then WAIT INSIDE THE RUN: repeated foreground commands, each under 9 minutes, that sleep-loop on
+  `<marker>` existing. Continue only after it exists.
+- Do not end the turn until the DONE or BLOCKED marker is written.
+
 ## Concision (Opus 5)
 
 Opus 5 defaults to longer output; on this pipeline that reads as noise, not thoroughness. Answer at
