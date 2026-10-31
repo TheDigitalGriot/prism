@@ -108,7 +108,8 @@
     "amendPass101_2026_10_19": "Changelog watch 2026-10-19: one bucket-B contract (GPT-5.5 retired in Codex ChatGPT-auth), ruling owed.",
     "amendPass102_2026_10_21": "2026-10-21 mixdown (disk session 2026-10-19..21): A8 griot-disktree skill landed (2346a12, b67bbd2); D23 Gavin deletion ruling applied; N78 prism-mobile advanced to done on 9f2d394 (private repo, HEAD==origin)",
     "amendPass103_2026_10_21": "2026-10-21 mixdown handover: three open asks for the Selectah - OA34 indexer Developer root, OA35 yt-dlp JS runtime config, OA36 disktree Potluck ruling",
-    "amendPass104_2026_10_27": "Changelog watch 2026-10-27: 1 action-needed (GPT-6.1 Terra, bucket B) filed as open ask; contract on disk, not launched."
+    "amendPass104_2026_10_27": "Changelog watch 2026-10-27: 1 action-needed (GPT-6.1 Terra, bucket B) filed as open ask; contract on disk, not launched.",
+    "amendPass105_2026_10_31": "2026-10-31 mixdown (disk-space audit session 2026-10-29..31): A9 artifact store repointed off OneDrive in verify-artifacts.ps1 (c1d98b8, drift 414 resolved), A10 griot-meridian-reflect store path repointed (fd0d16f), C53 the OneDrive known-folder exit as machine work, N172 Pictures known folder still points at OneDrive in the registry at mixdown (measured, contradicts the session claim), N173 griot-morning-briefing index.html absent from the new store, OA38 the elevated OneDrive lockdown. gbfolio atlas and simulator seed already present as A3/A4 since a0ec50d, not re-added."
   },
   "groups": [
     {
@@ -7368,6 +7369,118 @@
       },
       "localId": "OA37",
       "title": "Changelog watch 2026-10-27 - GPT-6.1 Terra launched in Codex (bucket B): rule run / park / not-relevant"
+    },
+    {
+      "id": "wg:djeli-branch:A9",
+      "originLane": "tracked",
+      "outputs": [
+        "griot-live-artifacts/verify-artifacts.ps1"
+      ],
+      "contractPath": "griot-live-artifacts/.prism/shared/plans/surface-gate-CONTEXT.md",
+      "localId": "A9",
+      "kind": "branch",
+      "group": "tracked",
+      "direction": "outbound",
+      "state": "done",
+      "title": "Artifact store repointed off OneDrive - verify-artifacts.ps1 artRoot + ARTIFACT_STORE_MISSING guard (drift 414 resolved)",
+      "description": "verify-artifacts.ps1 artRoot moved from the dead OneDrive Documents store to C:\\Users\\digit\\Documents\\Claude\\Artifacts, and a missing store now exits 2 with ARTIFACT_STORE_MISSING instead of reporting 104 phantom drifts. Contract .prism/shared/plans/surface-gate-CONTEXT.md L14. Residual ARTIFACTS_OUT_OF_SYNC=18 is real publish backlog, logged as its own drift.",
+      "verification": {
+        "checked": true,
+        "evidence": "griot-live-artifacts c1d98b8 on origin/main (git branch -r --contains c1d98b8, read 2026-10-31); verify-artifacts.ps1 L24 reads artRoot C:\\Users\\digit\\Documents\\Claude\\Artifacts and L28 the ARTIFACT_STORE_MISSING exit 2 guard; store present with 128 artifact dirs (Test-Path, read 2026-10-31)",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:A10",
+      "originLane": "tracked",
+      "outputs": [
+        "digital-griot-skills/griot-meridian-reflect/SKILL.md"
+      ],
+      "contractPath": "digital-griot-skills/.prism/shared/plans/meridian-reflect-repoint-CONTEXT.md",
+      "localId": "A10",
+      "kind": "branch",
+      "group": "tracked",
+      "direction": "outbound",
+      "state": "done",
+      "title": "griot-meridian-reflect artifact store path moved off OneDrive (SKILL.md L50-56, 350, 392, 406)",
+      "description": "Edited by a headless griot-agent-architect run under a Spectrum contract; validate-skill.sh PASS 0 errors 0 warnings; propagated to ~/.claude/skills hash-equal. Account-snapshot landing not yet observed.",
+      "verification": {
+        "checked": true,
+        "evidence": "digital-griot-skills fd0d16f on origin/main (git branch -r --contains fd0d16f, read 2026-10-31); SKILL.md L350 and L392 now name C:\\Users\\digit\\Documents\\Claude\\Artifacts (grep, read 2026-10-31)",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C53",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C53",
+      "kind": "branch",
+      "group": "this-stage",
+      "direction": "outbound",
+      "state": "in-progress",
+      "title": "Disk-space audit + OneDrive known-folder exit on digitalgriotpc (griot-disktree session 2026-10-29..31)",
+      "description": "Machine work, not a repo: griot-disktree audit, round 2 OneDrive Desktop backup to F:\\dgpc-backups (120,610 identical, 5,536 local-only copied), repoint v3 steps 0-G (Claude storage folder, iZotope, Ableton, iClone, 10 scratch scripts), Pictures copied home, OneDrive app uninstalled and autostart disabled. Open: Pictures known folder (N172), lockdown policy (OA38).",
+      "verification": {
+        "checked": true,
+        "evidence": "Measured 2026-10-31 at mixdown: OneDrive.exe absent from %LOCALAPPDATA%\\Microsoft\\OneDrive; C:\\Users\\digit\\Pictures holds 4,916 files (session record says 4,918); no OneDrive* scheduled task registered. Backup figures are from D:\\GriotRuns\\mixdown-20261031\\SESSION-CONTEXT.md and were NOT re-read: F: was not mounted at mixdown (Get-PSDrive shows C/D/E only).",
+        "result": "partial"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N172",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N172",
+      "kind": "finding",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "flagged-not-fixed",
+      "title": "Pictures known folder still points at OneDrive in the registry - the session's 'registry repointed' claim does not hold at mixdown",
+      "description": "HKCU User Shell Folders 'My Pictures' and {0DDD015D-B06C-45D5-8C4C-F59713854639} both read C:\\Users\\digit\\OneDrive\\Pictures; {B7BEDE81} Screenshots reads C:\\Users\\digit\\Pictures\\Screenshots; {AB5FB87B} Camera Roll is empty. This is the measured cause of File Explorer opening OneDrive\\Pictures (drift 2) - either the repoint reverted or the Restore Default attempts rewrote it. Machine state not changed by the mixdown: Gavin's call.",
+      "verification": {
+        "checked": true,
+        "evidence": "Get-ItemProperty HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders, read 2026-10-31 by the mixdown run",
+        "result": "fail"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N173",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N173",
+      "kind": "finding",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "flagged-not-fixed",
+      "title": "griot-morning-briefing\\index.html does not exist in the repointed artifact store, yet griot-meridian-reflect SKILL.md L350/L392 read it",
+      "description": "The Meridian publish step copies the store file into live/griot-morning-briefing.html. With no store copy the step has no source; 6 GriotMeta scratch scripts read the same path. Not in the 10-29 F: backup either (session record).",
+      "verification": {
+        "checked": true,
+        "evidence": "Test-Path C:\\Users\\digit\\Documents\\Claude\\Artifacts\\griot-morning-briefing\\index.html = False (read 2026-10-31); digital-griot-skills griot-meridian-reflect/SKILL.md L350 and L392 name that path (grep, read 2026-10-31)",
+        "result": "fail"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA38",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA38",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "direction": "local",
+      "state": "open",
+      "title": "Run D:\\GriotRuns\\repoint\\onedrive-lockdown.ps1 elevated (DisableFileSyncNGSC=1) - and extend it to remove the Microsoft.OneDriveSync Store package for all users plus the Default-profile OneDriveSetup Run value?",
+      "description": "Windows 11 Home 25H2 with Office Click-to-Run. Needs an elevated shell, so it is Gavin's to run.",
+      "verification": {
+        "checked": true,
+        "evidence": "D:\\GriotRuns\\repoint\\onedrive-lockdown.ps1 exists, 902 bytes, 2026-10-31 03:32 (ls, read 2026-10-31)",
+        "result": "pass"
+      }
     }
   ],
   "edges": [
@@ -9554,15 +9667,51 @@
       "to": "wg:djeli-branch:A8",
       "kind": "awaits",
       "label": "the indexer root was left dangling by the disk move A8 documents"
+    },
+    {
+      "from": "wg:djeli-branch:C53",
+      "to": "wg:djeli-branch:A9",
+      "kind": "splinter",
+      "label": "the OneDrive exit moved the artifact store, which the surface gate had to follow"
+    },
+    {
+      "from": "wg:djeli-branch:C53",
+      "to": "wg:djeli-branch:A10",
+      "kind": "splinter",
+      "label": "the same store move reached the Meridian publish step"
+    },
+    {
+      "from": "wg:djeli-branch:C53",
+      "to": "wg:djeli-branch:N172",
+      "kind": "splinter",
+      "label": "the Pictures repoint is the part of the exit that did not hold"
+    },
+    {
+      "from": "wg:djeli-branch:A10",
+      "to": "wg:djeli-branch:N173",
+      "kind": "splinter",
+      "label": "repointing the skill exposed that its source file is absent from the new store"
+    },
+    {
+      "from": "wg:djeli-branch:OA38",
+      "to": "wg:djeli-branch:C53",
+      "kind": "in-epic",
+      "label": "the lockdown policy finishes the OneDrive exit"
+    },
+    {
+      "from": "wg:djeli-branch:C53",
+      "to": "wg:djeli-branch:A8",
+      "kind": "ontology",
+      "label": "the audit ran through the griot-disktree skill A8 documents"
     }
   ],
   "stats": {
-    "totalBranches": 116,
+    "totalBranches": 119,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 364,
+    "edgeCount": 370,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -10478,38 +10627,38 @@
     },
     "generated": {
       "generatedBy": "griot-branch-codex/scripts/compute-generated.mjs",
-      "generatedAt": "2026-10-21T06:28:27.982Z",
-      "nodeCount": 365,
-      "edgeCount": 364,
+      "generatedAt": "2026-10-31T07:56:01.689Z",
+      "nodeCount": 372,
+      "edgeCount": 370,
       "laneCount": 6,
       "byLane": {
-        "new-findings": 167,
-        "this-stage": 73,
+        "new-findings": 169,
+        "this-stage": 74,
         "untracked": 50,
-        "open-ask": 33,
+        "open-ask": 35,
         "suggested": 21,
-        "tracked": 17,
+        "tracked": 19,
         "undefined": 4
       },
       "byKind": {
-        "finding": 117,
-        "branch": 116,
+        "branch": 119,
+        "finding": 119,
         "defect": 52,
-        "open-ask": 34,
+        "open-ask": 36,
         "decision": 23,
         "suggestion": 21,
         "open": 2
       },
       "byState": {
-        "done": 169,
-        "open": 126,
+        "done": 171,
+        "open": 128,
         "ruled-and-applied": 16,
         "parked": 14,
         "built-and-live": 10,
         "defect-fixed": 9,
-        "flagged-not-fixed": 5,
+        "flagged-not-fixed": 7,
+        "in-progress": 5,
         "corrected-verified": 4,
-        "in-progress": 4,
         "design-decision-locked": 2,
         "verified-reframe": 2,
         "written-not-launched": 2,
@@ -10517,27 +10666,27 @@
         "route-identified-device-only": 1
       },
       "byDirection": {
-        "local": 206,
-        "outbound": 133,
-        "inbound": 21,
+        "local": 209,
+        "outbound": 136,
+        "inbound": 22,
         "adjacent": 5
       },
       "byEdgeKind": {
-        "in-epic": 88,
+        "in-epic": 89,
         "outbound": 72,
-        "ontology": 60,
+        "ontology": 61,
         "awaits": 58,
-        "splinter": 49,
+        "splinter": 53,
         "inbound": 37
       },
       "crossGraphEdges": [],
       "byOriginLane": {
-        "new-findings": 165,
-        "this-stage": 79,
+        "new-findings": 167,
+        "this-stage": 80,
         "untracked": 52,
-        "open-ask": 34,
+        "open-ask": 36,
         "suggested": 21,
-        "tracked": 14
+        "tracked": 16
       },
       "movedLane": [
         "B4",
@@ -10616,7 +10765,7 @@
         "OA33"
       ],
       "verification": {
-        "pass": 17,
+        "pass": 20,
         "verified": 15,
         "RULED and applied to the live design canvas.": 4,
         "ruled and applied": 4,
@@ -10626,6 +10775,7 @@
         "awaiting Gavin's ruling": 2,
         "done": 2,
         "contract written, ruling owed": 2,
+        "fail": 2,
         "MATCHES contract - 27 nodes / 7 layers confirmed exactly.": 1,
         "MATCHES contract - commit exists and its content matches the stated outputs.": 1,
         "MATCHES contract - written, not run. No execution evidence exists anywhere checked.": 1,
@@ -10937,7 +11087,9 @@
         "no content lag on this skill today; the prompt still points at the Prism repo": 1,
         "awaiting Gavin - which surface showed 5.1": 1,
         "no Prism 5.1 in sessions or web chats; OA30 back to Gavin": 1,
-        "released, local HEAD == origin/main == f4f9f9e": 1
+        "released, local HEAD == origin/main == f4f9f9e": 1,
+        "contract on disk, awaiting Gavin ruling": 1,
+        "partial": 1
       },
       "unverifiedNodes": []
     },
@@ -11338,6 +11490,19 @@
         "OA37"
       ],
       "newEdges": 0,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass105_2026_10_31_2026_10_31": {
+      "newNodes": [
+        "A9",
+        "A10",
+        "C53",
+        "N172",
+        "N173",
+        "OA38"
+      ],
+      "newEdges": 6,
       "corrections": [],
       "refused": []
     }
@@ -15475,9 +15640,9 @@
     ],
     "byLane": {
       "tracked": {
-        "closed": 15,
+        "closed": 17,
         "open": 2,
-        "pct": 88
+        "pct": 89
       },
       "untracked": {
         "closed": 24,
@@ -15486,19 +15651,19 @@
       },
       "this-stage": {
         "closed": 59,
-        "open": 11,
-        "pct": 84,
+        "open": 12,
+        "pct": 83,
         "unclassified": 3
       },
       "open-ask": {
         "closed": 13,
-        "open": 20,
-        "pct": 39
+        "open": 22,
+        "pct": 37
       },
       "new-findings": {
         "closed": 97,
-        "open": 68,
-        "pct": 59,
+        "open": 70,
+        "pct": 58,
         "unclassified": 2
       },
       "suggested": {
@@ -15515,9 +15680,9 @@
       }
     },
     "total": {
-      "closed": 213,
-      "open": 137,
-      "pct": 61,
+      "closed": 215,
+      "open": 142,
+      "pct": 60,
       "unclassified": 15
     },
     "latent": {
