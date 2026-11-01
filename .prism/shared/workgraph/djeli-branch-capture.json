@@ -109,7 +109,8 @@
     "amendPass102_2026_10_21": "2026-10-21 mixdown (disk session 2026-10-19..21): A8 griot-disktree skill landed (2346a12, b67bbd2); D23 Gavin deletion ruling applied; N78 prism-mobile advanced to done on 9f2d394 (private repo, HEAD==origin)",
     "amendPass103_2026_10_21": "2026-10-21 mixdown handover: three open asks for the Selectah - OA34 indexer Developer root, OA35 yt-dlp JS runtime config, OA36 disktree Potluck ruling",
     "amendPass104_2026_10_27": "Changelog watch 2026-10-27: 1 action-needed (GPT-6.1 Terra, bucket B) filed as open ask; contract on disk, not launched.",
-    "amendPass105_2026_10_31": "2026-10-31 mixdown (disk-space audit session 2026-10-29..31): A9 artifact store repointed off OneDrive in verify-artifacts.ps1 (c1d98b8, drift 414 resolved), A10 griot-meridian-reflect store path repointed (fd0d16f), C53 the OneDrive known-folder exit as machine work, N172 Pictures known folder still points at OneDrive in the registry at mixdown (measured, contradicts the session claim), N173 griot-morning-briefing index.html absent from the new store, OA38 the elevated OneDrive lockdown. gbfolio atlas and simulator seed already present as A3/A4 since a0ec50d, not re-added."
+    "amendPass105_2026_10_31": "2026-10-31 mixdown (disk-space audit session 2026-10-29..31): A9 artifact store repointed off OneDrive in verify-artifacts.ps1 (c1d98b8, drift 414 resolved), A10 griot-meridian-reflect store path repointed (fd0d16f), C53 the OneDrive known-folder exit as machine work, N172 Pictures known folder still points at OneDrive in the registry at mixdown (measured, contradicts the session claim), N173 griot-morning-briefing index.html absent from the new store, OA38 the elevated OneDrive lockdown. gbfolio atlas and simulator seed already present as A3/A4 since a0ec50d, not re-added.",
+    "amendPass106_2026_11_01": "GitHub Actions session close 2026-11-01 (contract 2026-11-01-gha-close): C54 Batch C turned Actions off on 10 repos (BATCH_C_PROOF off=10/10); C55 batch board figures slot + placement (f3ad92b, 8bff49a, TEST 52/52, D7 6/6), related to C28 which stays open; C56 mods half uncommitted pending the other session; N174 spine label overlap B4/B5 in r3."
   },
   "groups": [
     {
@@ -7481,6 +7482,84 @@
         "evidence": "D:\\GriotRuns\\repoint\\onedrive-lockdown.ps1 exists, 902 bytes, 2026-10-31 03:32 (ls, read 2026-10-31)",
         "result": "pass"
       }
+    },
+    {
+      "id": "wg:djeli-branch:C54",
+      "originLane": "this-stage",
+      "outputs": [
+        ".prism/local/gha-sweep-20261101/batch-c-applied-20261101.json"
+      ],
+      "contractPath": null,
+      "localId": "C54",
+      "kind": "branch",
+      "group": "this-stage",
+      "title": "GitHub Actions turned off on 10 repos (Batch C) - upstream CI armed in non-fork copies was billing private minutes",
+      "description": "GitHub Actions minutes sweep 2026-11-01. djeli (a non-fork copy of Orca) and prism-mobile (a non-fork copy of Paseo) inherited the upstream workflows still armed, so scheduled CI ran on private minutes: djeli 477.9 min over 189 runs (102 failed, schedule-driven Terminal Perf, Computer-use e2e, E2E), prism-mobile 19.7 min over 7 runs. Batch C, ruled by Gavin at 6:33 am, turned Actions off on 10 repos: djeli, prism-mobile, gearh3ad-wp, paseo, prism-design-engine, opencode, cline, codebuff, triplex, claude-cookbooks. Reversible: PUT repos/{repo}/actions/permissions {enabled:true} and restore allowed_actions from the recorded before state.",
+      "state": "done",
+      "direction": "local",
+      "verification": {
+        "checked": true,
+        "evidence": "BATCH_C_PROOF off=10/10. .prism/local/gha-sweep-20261101/batch-c-applied-20261101.json (sha256 54b92026d71ed05a.., at 2026-11-01T11:33:24Z): per repo before {enabled:true, allowed_actions:all}, putStatus 204, after {enabled:false}, plus the reverse command. Minutes from private-breakdown.json in the same folder: djeli 477.9 min / 189 runs / 102 fail, prism-mobile 19.7 min / 7 runs / 6 fail.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C55",
+      "originLane": "this-stage",
+      "outputs": [
+        "tools/fill-batch-board.mjs",
+        "tools/test-fill-batch-board-figures.mjs",
+        "live/_selectah/batch-board-gha-20261101-r3.inner.html"
+      ],
+      "contractPath": ".prism/shared/plans/2026-11-01-batch-board-figures-placement-CONTEXT.md",
+      "localId": "C55",
+      "kind": "branch",
+      "group": "this-stage",
+      "title": "Batch board figures slot + placement amendment (fill-batch-board.mjs carries FIGURES, after stats and before channels)",
+      "description": "The figures slot from template 11 was ported to the second Selectah generator, tools/fill-batch-board.mjs: overlay FIGURES validated before any write, fails loud, prints FIGURES=<n>, and with no figures strips the [[FIG]] fences so the output is literally byte-identical to the pre-slot baseline (D7). Gavin then ruled the diagram belongs under the stats section (2026-11-01 06:08), so the placement amendment moved the section to directly after stats and before channels, guarded by section order in the filler and the test.",
+      "state": "done",
+      "direction": "local",
+      "verification": {
+        "checked": true,
+        "evidence": "griot-live-artifacts f3ad92b (slot) + dfd8713 (slot REPORT) + 8bff49a (placement) + 6ed4dc9 (placement REPORT), all pushed. node tools/test-fill-batch-board-figures.mjs -> TEST_FILL_BATCH_BOARD_FIGURES_OK 52/52; D7_OK 6/6 (gha 91214749.., aniq2 433750b2.., each absent/null/[]); FOREIGN_HUNKS_INTACT hunks=2 plusLines=3 missing=0; R3_RENDER_OK (Playwright file://). Source: .prism/shared/plans/2026-11-01-batch-board-figures-placement-REPORT.md lines 35-57.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C56",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C56",
+      "kind": "branch",
+      "group": "this-stage",
+      "title": "Mods half of the figures slot uncommitted (widget.html + template.json hunks wait on the other session)",
+      "description": "The digital-griot-mods half of the batch board figures slot (templates/griotwave-sequence-batch-board/widget.html and template.json) sits uncommitted on top of another session's uncommitted Watch-button hunks from 2026-10-29. It was deliberately not staged or committed. To land it: once the other session commits, apply this stage's hunks from .prism/local/bb-figs-snap/this-stage.patch (regenerated at placement), then commit with the template changelog line and regenerate dist/parity.json.",
+      "state": "open",
+      "direction": "local",
+      "verification": {
+        "checked": true,
+        "evidence": "2026-11-01-batch-board-figures-placement-REPORT.md line 41-46 (this-stage.patch 12836 B, sha256 prefix 4caccddc7e3d33f0; mods index empty, nothing staged) and line 68 (changelog entry + dist/parity.json owed); digital-griot-mods HEAD 15fa940 with 3 dirty paths at the GHC_SNAP snapshot.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N174",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N174",
+      "kind": "finding",
+      "group": "new-findings",
+      "title": "Batch board spine labels B4 and B5 overlap in the r3 board",
+      "description": "In batch-board-gha-20261101-r3 the spine labels for B4 and B5 collide: \"Apply + re-run\" runs into \"Close: workgraph, ledgers,\". The placement stage locked the spine as unchanged (A1), so it was observed and not fixed. It needs its own ruling on spine label width or wrapping.",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "verification": {
+        "checked": true,
+        "evidence": "2026-11-01-batch-board-figures-placement-REPORT.md line 66, read off the screenshot .prism/local/bb-place-snap/r3-render.png.",
+        "result": "pass"
+      }
     }
   ],
   "edges": [
@@ -9703,15 +9782,33 @@
       "to": "wg:djeli-branch:A8",
       "kind": "ontology",
       "label": "the audit ran through the griot-disktree skill A8 documents"
+    },
+    {
+      "from": "wg:djeli-branch:C55",
+      "to": "wg:djeli-branch:C28",
+      "kind": "ontology",
+      "label": "related: the same two-generator class C28 names; C28 (template-11 chat path) stays open on its own evidence"
+    },
+    {
+      "from": "wg:djeli-branch:C55",
+      "to": "wg:djeli-branch:C56",
+      "kind": "splinter",
+      "label": "the mods template half of the slot, left uncommitted beside another session's hunks"
+    },
+    {
+      "from": "wg:djeli-branch:C55",
+      "to": "wg:djeli-branch:N174",
+      "kind": "splinter",
+      "label": "spine label overlap seen in the r3 proof render, out of the placement stage's scope"
     }
   ],
   "stats": {
-    "totalBranches": 119,
+    "totalBranches": 122,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 370,
+    "edgeCount": 373,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -10627,13 +10724,13 @@
     },
     "generated": {
       "generatedBy": "griot-branch-codex/scripts/compute-generated.mjs",
-      "generatedAt": "2026-10-31T07:56:01.689Z",
-      "nodeCount": 372,
-      "edgeCount": 370,
+      "generatedAt": "2026-11-01T11:44:34.706Z",
+      "nodeCount": 376,
+      "edgeCount": 373,
       "laneCount": 6,
       "byLane": {
-        "new-findings": 169,
-        "this-stage": 74,
+        "new-findings": 170,
+        "this-stage": 77,
         "untracked": 50,
         "open-ask": 35,
         "suggested": 21,
@@ -10641,8 +10738,8 @@
         "undefined": 4
       },
       "byKind": {
-        "branch": 119,
-        "finding": 119,
+        "branch": 122,
+        "finding": 120,
         "defect": 52,
         "open-ask": 36,
         "decision": 23,
@@ -10650,13 +10747,13 @@
         "open": 2
       },
       "byState": {
-        "done": 171,
-        "open": 128,
+        "done": 173,
+        "open": 129,
         "ruled-and-applied": 16,
         "parked": 14,
         "built-and-live": 10,
         "defect-fixed": 9,
-        "flagged-not-fixed": 7,
+        "flagged-not-fixed": 8,
         "in-progress": 5,
         "corrected-verified": 4,
         "design-decision-locked": 2,
@@ -10666,7 +10763,7 @@
         "route-identified-device-only": 1
       },
       "byDirection": {
-        "local": 209,
+        "local": 213,
         "outbound": 136,
         "inbound": 22,
         "adjacent": 5
@@ -10674,15 +10771,15 @@
       "byEdgeKind": {
         "in-epic": 89,
         "outbound": 72,
-        "ontology": 61,
+        "ontology": 62,
         "awaits": 58,
-        "splinter": 53,
+        "splinter": 55,
         "inbound": 37
       },
       "crossGraphEdges": [],
       "byOriginLane": {
-        "new-findings": 167,
-        "this-stage": 80,
+        "new-findings": 168,
+        "this-stage": 83,
         "untracked": 52,
         "open-ask": 36,
         "suggested": 21,
@@ -10765,7 +10862,7 @@
         "OA33"
       ],
       "verification": {
-        "pass": 20,
+        "pass": 24,
         "verified": 15,
         "RULED and applied to the live design canvas.": 4,
         "ruled and applied": 4,
@@ -11503,6 +11600,17 @@
         "OA38"
       ],
       "newEdges": 6,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass106_2026_11_01_2026_11_01": {
+      "newNodes": [
+        "C54",
+        "C55",
+        "C56",
+        "N174"
+      ],
+      "newEdges": 3,
       "corrections": [],
       "refused": []
     }
@@ -15650,9 +15758,9 @@
         "pct": 48
       },
       "this-stage": {
-        "closed": 59,
-        "open": 12,
-        "pct": 83,
+        "closed": 61,
+        "open": 13,
+        "pct": 82,
         "unclassified": 3
       },
       "open-ask": {
@@ -15662,7 +15770,7 @@
       },
       "new-findings": {
         "closed": 97,
-        "open": 70,
+        "open": 71,
         "pct": 58,
         "unclassified": 2
       },
@@ -15680,8 +15788,8 @@
       }
     },
     "total": {
-      "closed": 215,
-      "open": 142,
+      "closed": 217,
+      "open": 144,
       "pct": 60,
       "unclassified": 15
     },
