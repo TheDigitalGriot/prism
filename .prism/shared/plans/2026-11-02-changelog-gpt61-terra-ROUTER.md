@@ -1,0 +1,1 @@
+Read and execute the stage contract at .prism/shared/plans/2026-11-02-changelog-gpt61-terra-CONTEXT.md. Load only each step's inputs plus code-intel slices, never whole files. Follow its Decisions as locked, write each Heartbeat token to .prism/changelog-gpt61-terra-progress.txt as you pass it, and end by writing the terminal marker the contract names.
