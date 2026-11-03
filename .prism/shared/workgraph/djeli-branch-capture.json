@@ -10890,37 +10890,37 @@
     },
     "generated": {
       "generatedBy": "griot-branch-codex/scripts/compute-generated.mjs",
-      "generatedAt": "2026-11-01T11:44:34.706Z",
-      "nodeCount": 376,
-      "edgeCount": 373,
+      "generatedAt": "2026-11-03T13:00:14.287Z",
+      "nodeCount": 383,
+      "edgeCount": 378,
       "laneCount": 6,
       "byLane": {
-        "new-findings": 170,
-        "this-stage": 77,
+        "new-findings": 173,
+        "this-stage": 79,
         "untracked": 50,
-        "open-ask": 35,
+        "open-ask": 37,
         "suggested": 21,
         "tracked": 19,
         "undefined": 4
       },
       "byKind": {
-        "branch": 122,
+        "branch": 124,
         "finding": 120,
-        "defect": 52,
-        "open-ask": 36,
+        "defect": 55,
+        "open-ask": 38,
         "decision": 23,
         "suggestion": 21,
         "open": 2
       },
       "byState": {
-        "done": 173,
-        "open": 129,
+        "done": 174,
+        "open": 131,
         "ruled-and-applied": 16,
-        "parked": 14,
+        "parked": 15,
         "built-and-live": 10,
+        "flagged-not-fixed": 10,
         "defect-fixed": 9,
-        "flagged-not-fixed": 8,
-        "in-progress": 5,
+        "in-progress": 6,
         "corrected-verified": 4,
         "design-decision-locked": 2,
         "verified-reframe": 2,
@@ -10929,7 +10929,7 @@
         "route-identified-device-only": 1
       },
       "byDirection": {
-        "local": 213,
+        "local": 220,
         "outbound": 136,
         "inbound": 22,
         "adjacent": 5
@@ -10938,16 +10938,16 @@
         "in-epic": 89,
         "outbound": 72,
         "ontology": 62,
-        "awaits": 58,
-        "splinter": 55,
+        "awaits": 60,
+        "splinter": 58,
         "inbound": 37
       },
       "crossGraphEdges": [],
       "byOriginLane": {
-        "new-findings": 168,
-        "this-stage": 83,
+        "new-findings": 171,
+        "this-stage": 85,
         "untracked": 52,
-        "open-ask": 36,
+        "open-ask": 38,
         "suggested": 21,
         "tracked": 16
       },
@@ -11028,7 +11028,7 @@
         "OA33"
       ],
       "verification": {
-        "pass": 24,
+        "pass": 31,
         "verified": 15,
         "RULED and applied to the live design canvas.": 4,
         "ruled and applied": 4,
@@ -15944,21 +15944,21 @@
         "pct": 48
       },
       "this-stage": {
-        "closed": 61,
-        "open": 13,
+        "closed": 62,
+        "open": 14,
         "pct": 82,
         "unclassified": 3
       },
       "open-ask": {
         "closed": 13,
-        "open": 22,
-        "pct": 37
+        "open": 24,
+        "pct": 35
       },
       "new-findings": {
         "closed": 97,
-        "open": 71,
-        "pct": 58,
-        "unclassified": 2
+        "open": 73,
+        "pct": 57,
+        "unclassified": 3
       },
       "suggested": {
         "closed": 5,
@@ -15974,10 +15974,10 @@
       }
     },
     "total": {
-      "closed": 217,
-      "open": 144,
-      "pct": 60,
-      "unclassified": 15
+      "closed": 218,
+      "open": 149,
+      "pct": 59,
+      "unclassified": 16
     },
     "latent": {
       "studio": {
@@ -15995,8 +15995,8 @@
       "parked",
       "superseded"
     ],
-    "unclassifiedNodeCount": 15,
-    "unclassifiedNote": "2 state(s) are in neither closedStates nor openStates, so 15 node(s) are excluded from every percentage above. This is recorded rather than absorbed: classify them, or rule that they stay outside the model. Classifying a state is a judgment and is not made by this script."
+    "unclassifiedNodeCount": 16,
+    "unclassifiedNote": "2 state(s) are in neither closedStates nor openStates, so 16 node(s) are excluded from every percentage above. This is recorded rather than absorbed: classify them, or rule that they stay outside the model. Classifying a state is a judgment and is not made by this script."
   },
   "readinessModel": {
     "rule": "Readiness is a QUICK-CLOSE aid, not a decision. Five factors, 0-20 each, summed to 0-100, each stored separately and each tagged measured or judged so the number always decomposes. The LOWEST factor names the reason the item is not closed - that is the whole point.",
