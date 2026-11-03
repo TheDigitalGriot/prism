@@ -111,7 +111,8 @@
     "amendPass104_2026_10_27": "Changelog watch 2026-10-27: 1 action-needed (GPT-6.1 Terra, bucket B) filed as open ask; contract on disk, not launched.",
     "amendPass105_2026_10_31": "2026-10-31 mixdown (disk-space audit session 2026-10-29..31): A9 artifact store repointed off OneDrive in verify-artifacts.ps1 (c1d98b8, drift 414 resolved), A10 griot-meridian-reflect store path repointed (fd0d16f), C53 the OneDrive known-folder exit as machine work, N172 Pictures known folder still points at OneDrive in the registry at mixdown (measured, contradicts the session claim), N173 griot-morning-briefing index.html absent from the new store, OA38 the elevated OneDrive lockdown. gbfolio atlas and simulator seed already present as A3/A4 since a0ec50d, not re-added.",
     "amendPass106_2026_11_01": "GitHub Actions session close 2026-11-01 (contract 2026-11-01-gha-close): C54 Batch C turned Actions off on 10 repos (BATCH_C_PROOF off=10/10); C55 batch board figures slot + placement (f3ad92b, 8bff49a, TEST 52/52, D7 6/6), related to C28 which stays open; C56 mods half uncommitted pending the other session; N174 spine label overlap B4/B5 in r3.",
-    "amendPass107_2026_11_02": "changelog watch 2026-11-02"
+    "amendPass107_2026_11_02": "changelog watch 2026-11-02",
+    "amendPass108_2026_11_03": "2026-11-03 disk, cache and drift session (mixdown 2026-11-03-1): C57 uv/pnpm hardlink caveat landed (digital-griot-skills 72fcc62); C58 C: drive space map built, rulings owed; N175 DGS mirror tabs frozen, parked with the mirror-refresh contract (drift 461, bcdd7b6); N176 hand-built board skipped griotwave-07 (drift 460); N177 rebuild-dgs-mirrors.ps1 dry run not write-free; OA39 scanner routing ruling; OA40 C: move and system-lever rulings."
   },
   "groups": [
     {
@@ -7561,6 +7562,140 @@
         "evidence": "2026-11-01-batch-board-figures-placement-REPORT.md line 66, read off the screenshot .prism/local/bb-place-snap/r3-render.png.",
         "result": "pass"
       }
+    },
+    {
+      "id": "wg:djeli-branch:C57",
+      "originLane": "this-stage",
+      "outputs": [
+        "digital-griot-skills/griot-disktree/references/keep-rules.md",
+        "digital-griot-skills/disk-space-audit/references/categorization.md"
+      ],
+      "contractPath": "digital-griot-skills/.prism/shared/plans/2026-11-03-cache-hardlink-caveat-CONTEXT.md",
+      "localId": "C57",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "done",
+      "direction": "local",
+      "title": "uv/pnpm hardlink caveat landed in griot-disktree keep-rules and disk-space-audit categorization",
+      "description": "Measured before any cache move: 585/865 sampled uv archive files and 210/300 pnpm store files carry nlink > 1, so a cross-drive redirect turns later installs into full copies and pnpm projects error ERR_PNPM_UNEXPECTED_STORE until reinstalled; real reclaim is unshared bytes only. npm and pip carry no links. Landed through griot-agent-architect headless, validator exit 0 on both skills, ~/.claude/skills SHA-256 parity, Ubuntu disk-space-audit copy synced, account save cards saved.",
+      "verification": {
+        "checked": true,
+        "evidence": "digital-griot-skills commit 72fcc62 (pushed); handoff 2026-11-03_07-58-00_disk-cache-drift-mirrors.md Recent Changes + Learnings (nlink sample via python os.stat().st_nlink).",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C58",
+      "originLane": "this-stage",
+      "outputs": [
+        "D:/GriotBuild/disk-run/csizes.json",
+        "D:/GriotBuild/disk-run/croot.json"
+      ],
+      "contractPath": null,
+      "localId": "C58",
+      "kind": "branch",
+      "group": "this-stage",
+      "state": "in-progress",
+      "direction": "local",
+      "title": "C: drive space map built for the F: external SSD move (no move rulings yet)",
+      "description": "robocopy /L + griot-disktree size-folders.ps1 map of C: (Program Files 133.3, uv cache 59.6, Roaming/Claude 45.9, Local/Reallusion 45.4, Downloads 44.9 GB ...; pagefile 61.2, hiberfil 12.5). About 50 GB unexplained, likely System Volume Information, UNVERIFIED (needs elevation). WSL already on D: (Ubuntu 98.24 GB vhdx, MixarBuild 14.05 GB). Free space rose 0.2 -> 5.92 GB between 2026-11-02 and 2026-11-03 07:58 with no delete in this session, unexplained.",
+      "verification": {
+        "checked": true,
+        "evidence": "handoff Learnings bullets 1 and 3; D:/GriotBuild/disk-run/csizes.json + croot.json on disk.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N175",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": ".prism/shared/plans/2026-11-03-mirror-refresh-CONTEXT.md",
+      "localId": "N175",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "parked",
+      "direction": "local",
+      "title": "DGS mirror tabs frozen: inline-mirror-tabs.js has no in-place payload refresh (drift 461)",
+      "description": "The plan mirror tabs are inline mirror-payload JSON blocks; inline-mirror-tabs.js no-ops once any payload exists, and rebuild-dgs-mirrors.ps1 refuses because all recent plan commits carry payloads, while its -BaseRef escape would regress the plan. Drift entry 460 never reached the plan Drift tab. Parked with a stage contract for a --refresh mode.",
+      "verification": {
+        "checked": true,
+        "evidence": "griot-live-artifacts 4669c9d (drift 461) and bcdd7b6 (contract); plan drift payload 515,899 chars before and after 4d07286.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N176",
+      "originLane": "new-findings",
+      "outputs": [
+        "D:/GriotBuild/disk-run/fill-gw07.py"
+      ],
+      "contractPath": null,
+      "localId": "N176",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "Hand-built Selectah board skipped the griotwave-07 template (drift 460); filler script exists outside mods",
+      "description": "A board was hand-built instead of filled from digital-griot-mods/templates/griotwave-07-selectah-board. The data-driven filler D:/GriotBuild/disk-run/fill-gw07.py now fills it from a JSON file; the class fix (move the filler beside the template, name griotwave-07 in griot-disktree template-routing.md and beside template 11 in the Selectah rule) is owed.",
+      "verification": {
+        "checked": true,
+        "evidence": "griot-live-artifacts efdf751 (drift 460); handoff Action Item 10; fill-gw07.py on disk.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N177",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N177",
+      "kind": "defect",
+      "group": "new-findings",
+      "state": "flagged-not-fixed",
+      "direction": "local",
+      "title": "rebuild-dgs-mirrors.ps1 dry run is not write-free",
+      "description": "Without -Commit the script checks out the base plan (line 54), builds into it (line 61) and exits 0 at line 91 without restoring HEAD, leaving a modified plan in the working tree; it also copies tools/verify-mirrors.mjs over GriotApps/Prism/apps/prism-mobile/verify-mirrors.mjs (lines 68-69), a tracked Prism file (640393f) that any change to the source will dirty.",
+      "verification": {
+        "checked": true,
+        "evidence": "rebuild-dgs-mirrors.ps1 lines 54, 61-62, 68-69, 91 read 2026-11-03; Prism git ls-files apps/prism-mobile/verify-mirrors.mjs tracked, cmp identical to tools/verify-mirrors.mjs.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA39",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA39",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Ruling: route disk-space-audit scanning to griot-disktree (diff shown, not landed)",
+      "description": "Gavin's 2026-11-02 correction. The diff (description, Why paragraph, step 2 rewrite, step 3 Classify the rows, guardrail, fallback.md, evals.json) was shown in the 2026-11-03 chat and awaits a ruling before landing through griot-agent-architect. Sibling rulings held with it: WizTree scripts git rm vs legacy/; keep-rules co-locate line as rule or note.",
+      "verification": {
+        "checked": true,
+        "evidence": "handoff Task 4 and Action Items 1-3.",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA40",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA40",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "state": "open",
+      "direction": "local",
+      "title": "Rulings: which C: folders move to F:/D:, system levers, and the 94.87 GB WSL backup",
+      "description": "Gavin names candidate folders (Downloads, Documents minus Reallusion, BlenderLibrary, TestAbleton, ClaudeFilesystem ...); system levers pagefile 61.2 GB, hiberfil 12.5 GB, restore points; keep or retire D:/WSL-Backups/ubuntu-2026-08-09.vhdx; uv real reclaim (nlink == 1 bytes) measured before ruling. Deletes are handed to Gavin.",
+      "verification": {
+        "checked": true,
+        "evidence": "handoff Action Items 4, 7, 8, 9.",
+        "result": "pass"
+      }
     }
   ],
   "edges": [
@@ -9801,15 +9936,45 @@
       "to": "wg:djeli-branch:N174",
       "kind": "splinter",
       "label": "spine label overlap seen in the r3 proof render, out of the placement stage's scope"
+    },
+    {
+      "from": "wg:djeli-branch:C58",
+      "to": "wg:djeli-branch:C57",
+      "kind": "splinter",
+      "label": "the cache-move risk question split off the C: map and closed first"
+    },
+    {
+      "from": "wg:djeli-branch:C58",
+      "to": "wg:djeli-branch:OA40",
+      "kind": "awaits",
+      "label": "no move runs until Gavin names folders and levers"
+    },
+    {
+      "from": "wg:djeli-branch:C58",
+      "to": "wg:djeli-branch:OA39",
+      "kind": "awaits",
+      "label": "scanner routing ruling decides which skill reads the disk"
+    },
+    {
+      "from": "wg:djeli-branch:N175",
+      "to": "wg:djeli-branch:N177",
+      "kind": "splinter",
+      "label": "reading the rebuild escape found its dry run is not write-free"
+    },
+    {
+      "from": "wg:djeli-branch:C58",
+      "to": "wg:djeli-branch:N176",
+      "kind": "splinter",
+      "label": "the session boards exposed the hand-built miss"
     }
   ],
   "stats": {
-    "totalBranches": 122,
+    "totalBranches": 124,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 373,
+    "edgeCount": 378,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -11618,6 +11783,20 @@
     "amendPass107_2026_11_02_2026_11_02": {
       "newNodes": [],
       "newEdges": 0,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass108_2026_11_03_2026_11_03": {
+      "newNodes": [
+        "C57",
+        "C58",
+        "N175",
+        "N176",
+        "N177",
+        "OA39",
+        "OA40"
+      ],
+      "newEdges": 5,
       "corrections": [],
       "refused": []
     }
