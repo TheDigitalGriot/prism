@@ -164,7 +164,7 @@
       "contractPath": ".prism/shared/plans/djeli-uxui-harvest/djeli-uxui-harvest-CONTEXT.md",
       "verification": {
         "checked": true,
-        "evidence": "Contract file present on disk. .prism/shared/workgraph/uxui-canvas-nodes.json is a 27-element array; distinct 'layer' values counted to exactly 7 (Deployment, Capture, Djeli Â· container, Collaboration Â· GenTeam, Intelligence Â· Super Agent, Creation Â· build/content/3D, Governance Â· Governor).",
+        "evidence": "Contract file present on disk. .prism/shared/workgraph/uxui-canvas-nodes.json is a 27-element array; distinct 'layer' values counted to exactly 7 (Deployment, Capture, Djeli · container, Collaboration · GenTeam, Intelligence · Super Agent, Creation · build/content/3D, Governance · Governor).",
         "result": "MATCHES contract - 27 nodes / 7 layers confirmed exactly."
       },
       "originLane": "tracked",
@@ -511,7 +511,7 @@
       "group": "untracked",
       "kind": "branch",
       "title": "Djeli workflow-tab roster",
-      "description": "Prism(code) Â· Lucid Â· R3F Studio Â· Cinopsis Â· Kente Â· Synaptiq Â· Mixar Â· office surfaces Â· GenTeam Â· the fused viz/brainstorm surface Â· this workgraph.",
+      "description": "Prism(code) · Lucid · R3F Studio · Cinopsis · Kente · Synaptiq · Mixar · office surfaces · GenTeam · the fused viz/brainstorm surface · this workgraph.",
       "outputs": [],
       "state": "open",
       "direction": "inbound",
@@ -578,14 +578,14 @@
       "group": "open-ask",
       "kind": "open-ask",
       "title": "Kente HAS a repo and a named fork base (correction - was wrongly recorded as \"no repo by design\")",
-      "description": "VERIFIED 2026-09-13 second amend pass, against griot-ontology-codex.html's kente node (live/griot-ontology-codex.html): repo:'GriotApps', seed:'â†ModelMaker Â· fork of aipoch/open-science (OpenScience workbench)', harvest:'OpenScience base + notebook-forge (MODULAR notebook building Â· notebook_builder) + your monitor dashboards + OpenAlexâ†’VOSviewerâ†’Asta model shortlists', note:'MODEL-MAKING Â· the forge on the OpenScience base: modular notebook building + the notebook-forge pipeline + prewarm/thunder monitors Â· promptâ†’RAGâ†’LoRAâ†’fine-tune Â· owns The Griot Model'. The same file's footer states Kente heads model-making. GAVIN'S RULING 2026-09-13, recorded verbatim: Kente is NOT \"no repo by design\" - it has simply not fully materialized out of the noise yet, the same consistent thread as the other signals in the suite. \"By design\" says stop looking; \"not yet materialized\" says keep watching for the signal. Its shipped assets remain the five notebook skills - that fact stands, it just no longer implies the repo doesn't exist. See OA5 for an UNRESOLVED conflict this correction surfaces.",
+      "description": "VERIFIED 2026-09-13 second amend pass, against griot-ontology-codex.html's kente node (live/griot-ontology-codex.html): repo:'GriotApps', seed:'â†ModelMaker · fork of aipoch/open-science (OpenScience workbench)', harvest:'OpenScience base + notebook-forge (MODULAR notebook building · notebook_builder) + your monitor dashboards + OpenAlexâ†’VOSviewerâ†’Asta model shortlists', note:'MODEL-MAKING · the forge on the OpenScience base: modular notebook building + the notebook-forge pipeline + prewarm/thunder monitors · promptâ†’RAGâ†’LoRAâ†’fine-tune · owns The Griot Model'. The same file's footer states Kente heads model-making. GAVIN'S RULING 2026-09-13, recorded verbatim: Kente is NOT \"no repo by design\" - it has simply not fully materialized out of the noise yet, the same consistent thread as the other signals in the suite. \"By design\" says stop looking; \"not yet materialized\" says keep watching for the signal. Its shipped assets remain the five notebook skills - that fact stands, it just no longer implies the repo doesn't exist. See OA5 for an UNRESOLVED conflict this correction surfaces.",
       "state": "done",
       "direction": "local",
       "correction": {
         "wasStated": "Kente has no repo by design",
         "correctedBy": "djeli-branch-capture second AMEND pass, 2026-09-13",
         "reason": "The earlier capture stopped at 'no repo, by design' without consulting griot-ontology-codex.html, which already carries a populated repo field and a named fork base for Kente.",
-        "evidence": "griot-ontology-codex.html kente node: repo:'GriotApps', seed:'â†ModelMaker Â· fork of aipoch/open-science (OpenScience workbench)'. Gavin's verbatim ruling: 'not yet materialized', not 'by design'. NOTE: OA5 records that kente-codex.html states the opposite ('no repo yet') - that conflict is left OPEN, not resolved by this correction."
+        "evidence": "griot-ontology-codex.html kente node: repo:'GriotApps', seed:'â†ModelMaker · fork of aipoch/open-science (OpenScience workbench)'. Gavin's verbatim ruling: 'not yet materialized', not 'by design'. NOTE: OA5 records that kente-codex.html states the opposite ('no repo yet') - that conflict is left OPEN, not resolved by this correction."
       },
       "originLane": "open-ask",
       "verification": {
@@ -602,14 +602,14 @@
       "group": "open-ask",
       "kind": "open-ask",
       "title": "\"OpenScience\" is a FORK BASE (correction - was wrongly recorded as an abstract open-metadata intake layer)",
-      "description": "VERIFIED 2026-09-13 second amend pass, against griot-ontology-codex.html's kente node: seed:'â†ModelMaker Â· fork of aipoch/open-science (OpenScience workbench)'. \"OpenScience\" is aipoch/open-science, an EXTERNAL GitHub repo (the OpenScience workbench) that Kente forks FROM - not an abstract metadata layer and not something to find as its own directory under a Griot root. Kente is the forge built on that base (notebook-forge + monitor dashboards + OpenAlexâ†’VOSviewerâ†’Asta shortlists, per the same node's harvest field).",
+      "description": "VERIFIED 2026-09-13 second amend pass, against griot-ontology-codex.html's kente node: seed:'â†ModelMaker · fork of aipoch/open-science (OpenScience workbench)'. \"OpenScience\" is aipoch/open-science, an EXTERNAL GitHub repo (the OpenScience workbench) that Kente forks FROM - not an abstract metadata layer and not something to find as its own directory under a Griot root. Kente is the forge built on that base (notebook-forge + monitor dashboards + OpenAlexâ†’VOSviewerâ†’Asta shortlists, per the same node's harvest field).",
       "state": "done",
       "direction": "local",
       "correction": {
         "wasStated": "\"OpenScience\" is Kente's open-metadata intake layer, not a repo",
         "correctedBy": "djeli-branch-capture second AMEND pass, 2026-09-13",
         "reason": "The earlier capture treated the absence of a same-named directory under the Griot roots as proof OpenScience was abstract metadata, rather than checking whether it was an external fork-base repo Kente builds on.",
-        "evidence": "griot-ontology-codex.html kente node seed field: 'â†ModelMaker Â· fork of aipoch/open-science (OpenScience workbench)'. aipoch/open-science is the OpenScience workbench on GitHub."
+        "evidence": "griot-ontology-codex.html kente node seed field: 'â†ModelMaker · fork of aipoch/open-science (OpenScience workbench)'. aipoch/open-science is the OpenScience workbench on GitHub."
       },
       "originLane": "open-ask",
       "verification": {
@@ -644,7 +644,7 @@
       "group": "open-ask",
       "kind": "open-ask",
       "title": "CONFLICT, unresolved - does Kente have a repo at all? Two of Gavin's own artifacts disagree",
-      "description": "griot-live-artifacts/live/kente-codex.html states verbatim: \"home: concept Â· no repo yet\" and \"status: concept - design leads the build\". griot-live-artifacts/live/griot-ontology-codex.html states verbatim: repo:'GriotApps', seed:'â†ModelMaker Â· fork of aipoch/open-science (OpenScience workbench)'. Per Gavin's standing rule (never silently merge, never silently drop a conflicting source - rule it explicitly), this is recorded OPEN, citing both sources verbatim, awaiting Gavin's ruling. Do NOT pick a winner. kente-codex.html was NOT edited this pass.",
+      "description": "griot-live-artifacts/live/kente-codex.html states verbatim: \"home: concept · no repo yet\" and \"status: concept - design leads the build\". griot-live-artifacts/live/griot-ontology-codex.html states verbatim: repo:'GriotApps', seed:'â†ModelMaker · fork of aipoch/open-science (OpenScience workbench)'. Per Gavin's standing rule (never silently merge, never silently drop a conflicting source - rule it explicitly), this is recorded OPEN, citing both sources verbatim, awaiting Gavin's ruling. Do NOT pick a winner. kente-codex.html was NOT edited this pass.",
       "state": "open",
       "direction": "local",
       "originLane": "open-ask",
@@ -785,7 +785,7 @@
       "localId": "N6",
       "group": "new-findings",
       "kind": "finding",
-      "title": "\"Memory Â· foundation\" - the unfilled layer that is load-bearing, not unreached",
+      "title": "\"Memory · foundation\" - the unfilled layer that is load-bearing, not unreached",
       "description": "djeli-uxui-harvest-CONTEXT.md decision 2 names 'Memory foundation' as one of the layer-role taxonomy's roles (nine originally, eleven per djeli-stage0-code-intel decision 1); A1 (djeli-uxui-harvest) reports 27 nodes routed against 7 of 11 layers, four unfilled - validate already reports this count on disk. Gavin's framing this session, recorded as the session established it: the lane is empty not because nothing has reached it, but because it is the load-bearing one - Synaptiq is not a peer to the other Djeli workflow tabs, it is what lets the workspace know what it already decided. This reframes an existing, previously-neutral 'unfilled layer' fact as the specific gap the Ophenia thread (N7) names; it does not assert a new count beyond what A1/djeli-stage0-code-intel already carry.",
       "outputs": [],
       "state": "superseded",
@@ -1782,8 +1782,8 @@
       "group": "tracked",
       "state": "done",
       "direction": "local",
-      "title": "The ~/.claude/skills clone restored to origin â€” 95 'modified' files were never divergent",
-      "description": "The clone read as badly diverged: 28 behind origin, 95 modified files, and a rebase that aborted because untracked files collided with incoming commits. The measurement that changed the picture: diff-vs-HEAD was 95 but diff-vs-ORIGIN was 16. Seventy-nine of the ninety-five already matched origin â€” they had been committed upstream from the GriotMeta mirror, so the working tree was never divergent there at all; only the clone's HEAD was stale. Of the true 16, five were the new griot-cc-cd-sync files (already pushed via the mirror, so redundant locally) and the rest were LOCAL COPIES SHORTER THAN ORIGIN'S â€” skill_guard.py by 517 lines, the drift-log and workgraph-update engines by 40-116 each â€” i.e. origin held the fuller versions and the fast-forward was a gain, not a loss. Only spectrum/SKILL.md was genuinely local-only (upstream carries prism-spectrum/). Backed up all 16 differing plus untracked files to GriotMeta/_skills-clone-backup-20260915-071552, took a git stash -u on top of that, then reset --hard to origin/main. Doubly reversible on purpose.",
+      "title": "The ~/.claude/skills clone restored to origin — 95 'modified' files were never divergent",
+      "description": "The clone read as badly diverged: 28 behind origin, 95 modified files, and a rebase that aborted because untracked files collided with incoming commits. The measurement that changed the picture: diff-vs-HEAD was 95 but diff-vs-ORIGIN was 16. Seventy-nine of the ninety-five already matched origin — they had been committed upstream from the GriotMeta mirror, so the working tree was never divergent there at all; only the clone's HEAD was stale. Of the true 16, five were the new griot-cc-cd-sync files (already pushed via the mirror, so redundant locally) and the rest were LOCAL COPIES SHORTER THAN ORIGIN'S — skill_guard.py by 517 lines, the drift-log and workgraph-update engines by 40-116 each — i.e. origin held the fuller versions and the fast-forward was a gain, not a loss. Only spectrum/SKILL.md was genuinely local-only (upstream carries prism-spectrum/). Backed up all 16 differing plus untracked files to GriotMeta/_skills-clone-backup-20260915-071552, took a git stash -u on top of that, then reset --hard to origin/main. Doubly reversible on purpose.",
       "verification": {
         "evidence": "Before: ahead/behind 1/31, dirty 95, untracked 15. After: HEAD and origin/main both 02d2411, dirty 1 (the ideation_team_skill gitlink), 102 skill dirs present, stash list 1. griot-cc-cd-sync 5 files/15,229 b and griot-workgraph-update 5 files/22,202 b both verified present and intact post-reset. Backup folder holds 16 files.",
         "result": "verified"
@@ -1801,7 +1801,7 @@
       "state": "done",
       "direction": "local",
       "title": "I hand-wrote a gold entry into the render instead of appending through the engine",
-      "description": "griot-gold-log is data-driven by design: live/_gold/gold-entries.json is the ledger, gold-codex.html is only its render. I appended gold entry 3 by editing the rendered HTML with a node script and never touched the ledger, leaving the page at three entries and its own source of truth at two. The next run of render-gold-codex.mjs would have silently deleted the entry. This is precisely the standing anti-pattern â€” never hand-simulate a skill's output â€” and it is the same class of error as the Grep-over-your-tools reach: the engines were on disk, working, while I re-implemented the shape of their output by hand. Logged as drift 47. It also generalises past this one file: a render is never the place to add a fact when a ledger exists behind it.",
+      "description": "griot-gold-log is data-driven by design: live/_gold/gold-entries.json is the ledger, gold-codex.html is only its render. I appended gold entry 3 by editing the rendered HTML with a node script and never touched the ledger, leaving the page at three entries and its own source of truth at two. The next run of render-gold-codex.mjs would have silently deleted the entry. This is precisely the standing anti-pattern — never hand-simulate a skill's output — and it is the same class of error as the Grep-over-your-tools reach: the engines were on disk, working, while I re-implemented the shape of their output by hand. Logged as drift 47. It also generalises past this one file: a render is never the place to add a fact when a ledger exists behind it.",
       "verification": {
         "evidence": "Ledger read 2 entries while the page rendered 3. Refixed by passing a ledger object to append-gold.mjs --entry through an execFileSync runner (a 4 KB argv trips the PowerShell command-length ceiling): engine printed APPENDED, then 'rendered 3 entries', then DONE_APPEND_GOLD. Post-fix: ledger 3, page mods 3, titles viz-companion-fusion | init before invoke | claude-design-pull-channel, no duplicates, 24,772 bytes.",
         "result": "verified"
@@ -1825,7 +1825,7 @@
       "state": "open",
       "direction": "local",
       "title": "griot-gold-log has three working engines and no SKILL.md anywhere",
-      "description": "The gold codex page states the skill 'is callable device-side', and griot-workgraph-update's own SKILL.md counts it as one of the three skills of the anti-drift trio. Neither is true as written. append-gold.mjs, render-gold-codex.mjs and gold-codex.css all exist and all work â€” proven twice this session â€” but there is no griot-gold-log/SKILL.md in the skills dir, in the digital-griot-skills mirror, or anywhere in git history. The engines are invokable by path; the skill has no door, so nothing loads it and no agent can reach it by name. All three were also UNTRACKED, which is how the B28 fast-forward briefly removed the entire directory before it was restored from the backup taken beforehand. The SKILL.md is deliberately NOT written here: authoring the interface of Gavin's own tool unasked would be inventing it. Logged as drift 48. Same shape as the drift the trio exists to catch â€” the engine landed, the door did not, and two pages went on describing the door.",
+      "description": "The gold codex page states the skill 'is callable device-side', and griot-workgraph-update's own SKILL.md counts it as one of the three skills of the anti-drift trio. Neither is true as written. append-gold.mjs, render-gold-codex.mjs and gold-codex.css all exist and all work — proven twice this session — but there is no griot-gold-log/SKILL.md in the skills dir, in the digital-griot-skills mirror, or anywhere in git history. The engines are invokable by path; the skill has no door, so nothing loads it and no agent can reach it by name. All three were also UNTRACKED, which is how the B28 fast-forward briefly removed the entire directory before it was restored from the backup taken beforehand. The SKILL.md is deliberately NOT written here: authoring the interface of Gavin's own tool unasked would be inventing it. Logged as drift 48. Same shape as the drift the trio exists to catch — the engine landed, the door did not, and two pages went on describing the door.",
       "verification": {
         "evidence": "SKILL.md search by name across ~/.claude/skills, GriotMeta/digital-griot-skills and ~/.claude/plugins returned zero hits for gold; git log --all --diff-filter=A -- griot-gold-log/SKILL.md returned zero commits; git ls-tree ORIG_HEAD showed no griot-gold-log path. The three scripts were present only as untracked files and are now committed.",
         "result": "verified"
@@ -12291,10 +12291,10 @@
         "dormant": 0,
         "edges": 0,
         "kinds": {
-          "Djeli Â· container": 8,
-          "Intelligence Â· Super Agent": 6,
-          "Governance Â· Governor": 5,
-          "Collaboration Â· GenTeam": 4
+          "Djeli · container": 8,
+          "Intelligence · Super Agent": 6,
+          "Governance · Governor": 5,
+          "Collaboration · GenTeam": 4
         },
         "note": "from .prism/shared/workgraph/uxui-canvas-nodes.json - A1's output, already live in this capture"
       }
@@ -12623,7 +12623,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -12639,7 +12639,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Workgraph â€” DGS-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — DGS-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -12647,7 +12647,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -12663,7 +12663,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -12679,7 +12679,7 @@
       {
         "source": "studio:prism",
         "localId": "B1",
-        "title": "Gap 3 Option C â€” native semantic layer",
+        "title": "Gap 3 Option C — native semantic layer",
         "state": "parked",
         "kind": "worklane",
         "direction": "local"
@@ -12687,7 +12687,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -12703,7 +12703,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -12711,7 +12711,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -12727,7 +12727,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -12735,7 +12735,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -12751,7 +12751,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -12759,7 +12759,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -12775,7 +12775,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -12799,7 +12799,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -12815,7 +12815,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -12823,7 +12823,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -12839,7 +12839,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -12847,7 +12847,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -12863,7 +12863,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -12871,7 +12871,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -12887,7 +12887,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -12895,7 +12895,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -12911,7 +12911,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -12943,7 +12943,7 @@
       {
         "source": "studio:prism",
         "localId": "B1",
-        "title": "Gap 3 Option C â€” native semantic layer",
+        "title": "Gap 3 Option C — native semantic layer",
         "state": "parked",
         "kind": "worklane",
         "direction": "local"
@@ -12959,7 +12959,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "local"
@@ -12991,7 +12991,7 @@
       {
         "source": "studio:prism",
         "localId": "Q5",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops (CLI/desktop)",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops (CLI/desktop)",
         "state": "parked",
         "kind": "worklane",
         "direction": "local"
@@ -13031,7 +13031,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "local"
@@ -13055,7 +13055,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "local"
@@ -13079,7 +13079,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "local"
@@ -13103,7 +13103,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "local"
@@ -13127,7 +13127,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "local"
@@ -13143,7 +13143,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "local"
@@ -13159,7 +13159,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "local"
@@ -13175,7 +13175,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "local"
@@ -13191,7 +13191,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -13223,7 +13223,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -13239,7 +13239,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Worklanes â€” DGS-wide decision layer",
+        "title": "Worklanes — DGS-wide decision layer",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -13247,7 +13247,7 @@
       {
         "source": "studio:prism",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "worklane",
         "direction": "adjacent"
@@ -13263,7 +13263,7 @@
       {
         "source": "studio:prism",
         "localId": "Q3.4",
-        "title": "Worklanes â€” DGS-wide decision layer",
+        "title": "Worklanes — DGS-wide decision layer",
         "state": "parked",
         "kind": "worklane",
         "direction": "outbound"
@@ -15087,7 +15087,7 @@
       {
         "source": "brainstorm:8f46b01d2f",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15095,7 +15095,7 @@
       {
         "source": "brainstorm:8f46b01d2f",
         "localId": "Q1",
-        "title": "prism-viz-engine â€” revise + lock the diagramming/viz cluster",
+        "title": "prism-viz-engine — revise + lock the diagramming/viz cluster",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15111,7 +15111,7 @@
       {
         "source": "brainstorm:8f46b01d2f",
         "localId": "Q3.4",
-        "title": "Workgraph â€” DGS-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — DGS-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15127,7 +15127,7 @@
       {
         "source": "brainstorm:3ea8f91b0b",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15135,7 +15135,7 @@
       {
         "source": "brainstorm:3ea8f91b0b",
         "localId": "Q1",
-        "title": "prism-viz-engine â€” revise + lock the diagramming/viz cluster",
+        "title": "prism-viz-engine — revise + lock the diagramming/viz cluster",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15151,7 +15151,7 @@
       {
         "source": "brainstorm:3ea8f91b0b",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15167,7 +15167,7 @@
       {
         "source": "brainstorm:adab229b9a",
         "localId": "B1",
-        "title": "Gap 3 Option C â€” native semantic layer",
+        "title": "Gap 3 Option C — native semantic layer",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15183,7 +15183,7 @@
       {
         "source": "brainstorm:60581980ef",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15191,7 +15191,7 @@
       {
         "source": "brainstorm:60581980ef",
         "localId": "Q1",
-        "title": "prism-viz-engine â€” revise + lock the diagramming/viz cluster",
+        "title": "prism-viz-engine — revise + lock the diagramming/viz cluster",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15207,7 +15207,7 @@
       {
         "source": "brainstorm:60581980ef",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15239,7 +15239,7 @@
       {
         "source": "brainstorm:bb678e9333",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15247,7 +15247,7 @@
       {
         "source": "brainstorm:bb678e9333",
         "localId": "Q1",
-        "title": "prism-viz-engine â€” revise + lock the diagramming/viz cluster",
+        "title": "prism-viz-engine — revise + lock the diagramming/viz cluster",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15263,7 +15263,7 @@
       {
         "source": "brainstorm:bb678e9333",
         "localId": "Q3.4",
-        "title": "Workgraph â€” Griot-wide decision layer (composed of worklanes)",
+        "title": "Workgraph — Griot-wide decision layer (composed of worklanes)",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15319,7 +15319,7 @@
       {
         "source": "brainstorm:3639589e85",
         "localId": "B1",
-        "title": "Gap 3 Option C â€” native semantic layer",
+        "title": "Gap 3 Option C — native semantic layer",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15335,7 +15335,7 @@
       {
         "source": "brainstorm:f304652788",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15343,7 +15343,7 @@
       {
         "source": "brainstorm:f304652788",
         "localId": "Q1",
-        "title": "prism-viz-engine â€” revise + lock the diagramming/viz cluster",
+        "title": "prism-viz-engine — revise + lock the diagramming/viz cluster",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15375,7 +15375,7 @@
       {
         "source": "brainstorm:000e3b7385",
         "localId": "Q5",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops (CLI/desktop)",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops (CLI/desktop)",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15415,7 +15415,7 @@
       {
         "source": "brainstorm:e34af8afa1",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15423,7 +15423,7 @@
       {
         "source": "brainstorm:e34af8afa1",
         "localId": "Q1",
-        "title": "prism-viz-engine â€” revise + lock the diagramming/viz cluster",
+        "title": "prism-viz-engine — revise + lock the diagramming/viz cluster",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15447,7 +15447,7 @@
       {
         "source": "brainstorm:65de2cc4f2",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15455,7 +15455,7 @@
       {
         "source": "brainstorm:65de2cc4f2",
         "localId": "Q1",
-        "title": "prism-viz-engine â€” revise + lock the diagramming/viz cluster",
+        "title": "prism-viz-engine — revise + lock the diagramming/viz cluster",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15479,7 +15479,7 @@
       {
         "source": "brainstorm:8ded1bc8a1",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15487,7 +15487,7 @@
       {
         "source": "brainstorm:8ded1bc8a1",
         "localId": "Q1",
-        "title": "prism-viz-engine â€” revise + lock the diagramming/viz cluster",
+        "title": "prism-viz-engine — revise + lock the diagramming/viz cluster",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15527,7 +15527,7 @@
       {
         "source": "brainstorm:4681d6416c",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15535,7 +15535,7 @@
       {
         "source": "brainstorm:4681d6416c",
         "localId": "Q1",
-        "title": "prism-viz-engine â€” revise + lock the diagramming/viz cluster",
+        "title": "prism-viz-engine — revise + lock the diagramming/viz cluster",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15551,7 +15551,7 @@
       {
         "source": "brainstorm:4681d6416c",
         "localId": "Q3.4",
-        "title": "Worklanes â€” DGS-wide decision layer",
+        "title": "Worklanes — DGS-wide decision layer",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15567,7 +15567,7 @@
       {
         "source": "brainstorm:5a9d4009e7",
         "localId": "Q1",
-        "title": "Legacy Spectrum surfaces â€” stories + Ralph loops",
+        "title": "Legacy Spectrum surfaces — stories + Ralph loops",
         "state": "parked",
         "kind": "decision",
         "direction": "local"
@@ -15575,7 +15575,7 @@
       {
         "source": "brainstorm:5a9d4009e7",
         "localId": "Q1",
-        "title": "prism-viz-engine â€” revise + lock the diagramming/viz cluster",
+        "title": "prism-viz-engine — revise + lock the diagramming/viz cluster",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15591,7 +15591,7 @@
       {
         "source": "brainstorm:5a9d4009e7",
         "localId": "Q3.4",
-        "title": "Worklanes â€” DGS-wide decision layer",
+        "title": "Worklanes — DGS-wide decision layer",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15599,7 +15599,7 @@
       {
         "source": "brainstorm:90d8914b93",
         "localId": "Q15",
-        "title": "VENDOR-MANIFEST.json â€” I13 cannot verify without it",
+        "title": "VENDOR-MANIFEST.json — I13 cannot verify without it",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15623,7 +15623,7 @@
       {
         "source": "brainstorm:90d8914b93",
         "localId": "Q1",
-        "title": "npm publish â€” awaiting Gavin",
+        "title": "npm publish — awaiting Gavin",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15647,7 +15647,7 @@
       {
         "source": "brainstorm:90d8914b93",
         "localId": "Q5",
-        "title": "Our vendored archify was a SUBSET â€” now corrected",
+        "title": "Our vendored archify was a SUBSET — now corrected",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15671,7 +15671,7 @@
       {
         "source": "brainstorm:90d8914b93",
         "localId": "?",
-        "title": "Layer-role drift â€” the skill says nine, the engine says eleven",
+        "title": "Layer-role drift — the skill says nine, the engine says eleven",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15687,7 +15687,7 @@
       {
         "source": "brainstorm:90d8914b93",
         "localId": "?",
-        "title": "Harvest coverage â€” 7 of 11 layers filled",
+        "title": "Harvest coverage — 7 of 11 layers filled",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15695,7 +15695,7 @@
       {
         "source": "brainstorm:90d8914b93",
         "localId": "?",
-        "title": "FossFLOW isometric â€” harvested, not built",
+        "title": "FossFLOW isometric — harvested, not built",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
@@ -15703,7 +15703,7 @@
       {
         "source": "brainstorm:90d8914b93",
         "localId": "Q8",
-        "title": "Semantic search is DEAD on this machine â€” Gap 3 is open again",
+        "title": "Semantic search is DEAD on this machine — Gap 3 is open again",
         "state": "parked",
         "kind": "decision",
         "direction": "outbound"
