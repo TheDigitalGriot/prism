@@ -116,7 +116,8 @@
     "amendPass109_2026_11_09": "Changelog watch 2026-11-09: one carried B finding (GPT-6.1 Terra, OA38 awaits OA37); Codex CLI 0.167.0 and iOS 1.2026.300 FYI; nothing else action-needed.",
     "amendPass110_2026_11_09": "Changelog watch 2026-11-09 repair: pass 109 attached its edge to OA38 (an unrelated OneDrive ask, id collision); stray edge removed, finding re-filed as OA41 awaiting OA37.",
     "amendPass111_2026_11_16": "changelog-watch 2026-11-16: OA42 Terra carried (4th board); no new ACTION-NEEDED",
-    "amendPass112_2026_11_16": "Mixdown 2026-11-16: morning-briefing 11-13 run + week backfill; AI Data Engineer vs TLDR Data misread (N179) and the over-scoped purge it drove (N180, reverted); TLDR Data 11-05 restored (N181); step 9 dead beehiiv source still in the saved prompt (N178) awaiting OA43; the 10-28 fix had no graph record (N183)."
+    "amendPass112_2026_11_16": "Mixdown 2026-11-16: morning-briefing 11-13 run + week backfill; AI Data Engineer vs TLDR Data misread (N179) and the over-scoped purge it drove (N180, reverted); TLDR Data 11-05 restored (N181); step 9 dead beehiiv source still in the saved prompt (N178) awaiting OA43; the 10-28 fix had no graph record (N183).",
+    "amendPass113_2026_11_16": "OA43 applied: step 9 retired, TLDR Data named the data-engineering newsletter, stale-source guard added; prompt mirrored 9a0d53c."
   },
   "groups": [
     {
@@ -7870,13 +7871,20 @@
       "kind": "open-ask",
       "group": "open-ask",
       "direction": "local",
-      "state": "open",
+      "state": "done",
       "title": "Retire step 9 (beehiiv AI Data Engineer) from the morning-briefing prompt and fold its slot into TLDR Data?",
       "description": "Proposed text shown to Gavin 2026-11-16: drop step 9 and the output-list entry, label TLDR Data as the data-engineering newsletter, never fetch the beehiiv site, and add a same-edition-twice guard that notifies instead of writing stale.",
       "verification": {
         "checked": true,
         "evidence": "proposal in session cse_016xpYk3rLFura2S5MBWatfj 2026-11-16; prompt unchanged pending Gavin's yes",
         "result": "pending"
+      },
+      "priorState": "open",
+      "advanced": {
+        "advancedAt": "2026-11-16 amendPass113_2026_11_16",
+        "from": "open",
+        "to": "done",
+        "evidence": "Gavin applied OA43; saved prompt read back via list_triggers (updated_at 2026-11-16T15:43:33Z) and mirrored at commit 9a0d53c (.prism/shared/prompts/morning-briefing.prompt.md)"
       }
     },
     {
@@ -12073,6 +12081,14 @@
       "newEdges": 5,
       "corrections": [],
       "refused": []
+    },
+    "amendPass113_2026_11_16_2026_11_16": {
+      "advanced": [
+        "OA43"
+      ],
+      "stateChanges": [
+        "OA43 open -> done"
+      ]
     }
   },
   "foreignLayer": {
