@@ -115,7 +115,8 @@
     "amendPass108_2026_11_03": "2026-11-03 disk, cache and drift session (mixdown 2026-11-03-1): C57 uv/pnpm hardlink caveat landed (digital-griot-skills 72fcc62); C58 C: drive space map built, rulings owed; N175 DGS mirror tabs frozen, parked with the mirror-refresh contract (drift 461, bcdd7b6); N176 hand-built board skipped griotwave-07 (drift 460); N177 rebuild-dgs-mirrors.ps1 dry run not write-free; OA39 scanner routing ruling; OA40 C: move and system-lever rulings.",
     "amendPass109_2026_11_09": "Changelog watch 2026-11-09: one carried B finding (GPT-6.1 Terra, OA38 awaits OA37); Codex CLI 0.167.0 and iOS 1.2026.300 FYI; nothing else action-needed.",
     "amendPass110_2026_11_09": "Changelog watch 2026-11-09 repair: pass 109 attached its edge to OA38 (an unrelated OneDrive ask, id collision); stray edge removed, finding re-filed as OA41 awaiting OA37.",
-    "amendPass111_2026_11_16": "changelog-watch 2026-11-16: OA42 Terra carried (4th board); no new ACTION-NEEDED"
+    "amendPass111_2026_11_16": "changelog-watch 2026-11-16: OA42 Terra carried (4th board); no new ACTION-NEEDED",
+    "amendPass112_2026_11_16": "Mixdown 2026-11-16: morning-briefing 11-13 run + week backfill; AI Data Engineer vs TLDR Data misread (N179) and the over-scoped purge it drove (N180, reverted); TLDR Data 11-05 restored (N181); step 9 dead beehiiv source still in the saved prompt (N178) awaiting OA43; the 10-28 fix had no graph record (N183)."
   },
   "groups": [
     {
@@ -7733,6 +7734,168 @@
       },
       "localId": "OA42",
       "title": "Changelog watch 2026-11-16 - GPT-6.1 Terra still unrostered (bucket B, carried from OA37/OA41): rule run / park / not-relevant"
+    },
+    {
+      "id": "wg:djeli-branch:N178",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N178",
+      "kind": "finding",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "open",
+      "title": "Morning-briefing prompt step 9 still sends every run to theaidataengineer.beehiiv.com, frozen at 2026-09-15",
+      "description": "The site's newest post is 2026-09-15. Every run since 09-23 fetched it, found it stale and wrote 'AI Data Engineer skipped' (37 editions, 09-23..11-13). Reads to Gavin as if the data newsletter was dropped; the data newsletter he means is TLDR Data, which is read from gbdevux and present.",
+      "verification": {
+        "checked": true,
+        "evidence": "list_triggers trig_01Qftcv7gizV49fJoiX8nB3A prompt step 9 read 2026-11-16; WebFetch theaidataengineer.beehiiv.com newest Sep 15 2026 (2026-11-13); briefings-archive notes scan: 37 editions 09-23..11-13 carry the stale/skip line (purge2.js report, 2026-11-16)",
+        "result": "fail"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N179",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N179",
+      "kind": "finding",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "done",
+      "title": "I conflated 'the AI Data Engineer email' with the beehiiv site; it is TLDR Data, whose 10-28 fix holds",
+      "description": "Gavin's day-long fix was 10-28: prompt step 8 (TLDR Data is the sender label; never drop it; Tue/Wed/Fri use newest edition). It holds: TLDR Data is in every edition 10-26..11-13 except 11-05. I told Gavin the fix was not present before checking git history.",
+      "verification": {
+        "checked": true,
+        "evidence": "griot-live-artifacts commits 20d340e + 2165c12 (2026-10-28, add TLDR Data); prompt step 8 'corrected 2026-10-28'; hist.js scan of b45ee41 briefings-archive: TLDR Data group present 10-26..11-13 except 11-05; Gavin screenshot TLDR Data 2026-11-16 in gbdevux",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N180",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N180",
+      "kind": "finding",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "resolved",
+      "title": "Over-scoped purge rewrote 37 accurate edition notes; reverted the same session",
+      "description": "Acting on 'purge that false information', I removed notes that were true about the beehiiv site, and a first pass also cut truthful 09-16/18/22 notes and AI Dev Signals clauses. Gavin did not want history rewritten. Reverted.",
+      "verification": {
+        "checked": true,
+        "evidence": "purge 78d0d21 + dashboard 29c7a74 (2026-11-16); revert 6eaac71; ls-remote origin main = 66cec15 then 43ed93c; node check: 11-13 and 10-07 notes restored = true",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N181",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N181",
+      "kind": "finding",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "resolved",
+      "title": "The 2026-11-05 briefing dropped TLDR Data although the 11-05 edition was in gbdevux",
+      "description": "The one post-fix day TLDR Data was missing. Added from the email (PostHog off DuckDB; Airbnb 2B classifier) with a dated note.",
+      "verification": {
+        "checked": true,
+        "evidence": "gbdevux Gmail 'PostHog moves off DuckDB' TLDR Data 2026-11-05 read via Chrome e4ded4f3; commit 66cec15; node check 11-05 newsletters = The Rundown AI,The Decoder,TLDR Data",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N182",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N182",
+      "kind": "finding",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "open",
+      "title": "Saved morning-briefing prompt was re-saved 22s before the 2026-11-13 fire; cause unknown",
+      "description": "updated_at 2026-11-13T19:01:06Z vs last_fired_at 19:01:29Z. Version history is not readable from the trigger API, so whether an earlier prompt was overwritten cannot be proven.",
+      "verification": {
+        "checked": true,
+        "evidence": "list_triggers trig_01Qftcv7gizV49fJoiX8nB3A updated_at 2026-11-13T19:01:06.887Z, last_fired_at 19:01:29.003Z (read 2026-11-16)",
+        "result": "fail"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N183",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N183",
+      "kind": "finding",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "open",
+      "title": "The 10-28 TLDR Data fix has no workgraph, drift or gold record; it lives only in git and the trigger prompt",
+      "description": "Searching the branch workgraph (mirror + canonical), Prism index, drift and gold ledgers for the fix found nothing, so no run could see it had been solved.",
+      "verification": {
+        "checked": true,
+        "evidence": "Select-String beehiiv|Data Engineer|TLDR Data over djeli-branch-capture-workgraph.json, Prism djeli-branch-capture.json, workgraph-index/index.json, _drift/drift-entries.json, _gold/gold-entries.json: only L2233 (09-17 link-format note) (2026-11-16)",
+        "result": "fail"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:N184",
+      "originLane": "new-findings",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "N184",
+      "kind": "finding",
+      "group": "new-findings",
+      "direction": "local",
+      "state": "open",
+      "title": "git push to griot-live-artifacts from Windows-MCP hung past 50s on 2026-11-16 but landed later",
+      "description": "Two pushes timed out the bridge call; ls-remote afterwards showed both landed (66cec15, 43ed93c). Background Start-Job pushes die with the call.",
+      "verification": {
+        "checked": true,
+        "evidence": "PowerShell timeouts 10:12-10:19 2026-11-16; ls-remote origin main 66cec15 then 43ed93c",
+        "result": "fail"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:OA43",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "OA43",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "direction": "local",
+      "state": "open",
+      "title": "Retire step 9 (beehiiv AI Data Engineer) from the morning-briefing prompt and fold its slot into TLDR Data?",
+      "description": "Proposed text shown to Gavin 2026-11-16: drop step 9 and the output-list entry, label TLDR Data as the data-engineering newsletter, never fetch the beehiiv site, and add a same-edition-twice guard that notifies instead of writing stale.",
+      "verification": {
+        "checked": true,
+        "evidence": "proposal in session cse_016xpYk3rLFura2S5MBWatfj 2026-11-16; prompt unchanged pending Gavin's yes",
+        "result": "pending"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:C59",
+      "originLane": "this-stage",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "C59",
+      "kind": "branch",
+      "group": "this-stage",
+      "direction": "local",
+      "state": "done",
+      "title": "Morning briefing 11-13 + reflect catch-up + week backfill (11-11 briefing, Day Surface 11-13, Workgraph 11-14/15)",
+      "description": "Scheduled run delivered late; Gavin asked mid-run to backfill last week.",
+      "verification": {
+        "checked": true,
+        "evidence": "commits f4cd7f4, a983c52, b45ee41, d589a00; DBR_MARKED_OK briefings/going_dark/workgraph/day_surface",
+        "result": "pass"
+      }
     }
   ],
   "edges": [
@@ -10009,15 +10172,45 @@
       "to": "wg:djeli-branch:OA37",
       "kind": "awaits",
       "label": "carries"
+    },
+    {
+      "from": "wg:djeli-branch:N178",
+      "to": "wg:djeli-branch:N179",
+      "kind": "splinter",
+      "label": "stale-site notes led to the misread"
+    },
+    {
+      "from": "wg:djeli-branch:N179",
+      "to": "wg:djeli-branch:N180",
+      "kind": "splinter",
+      "label": "misread drove the purge"
+    },
+    {
+      "from": "wg:djeli-branch:N178",
+      "to": "wg:djeli-branch:OA43",
+      "kind": "awaits",
+      "label": "fix needs Gavin's yes"
+    },
+    {
+      "from": "wg:djeli-branch:N183",
+      "to": "wg:djeli-branch:N179",
+      "kind": "ontology",
+      "label": "unrecorded fix is why it read as missing"
+    },
+    {
+      "from": "wg:djeli-branch:C59",
+      "to": "wg:djeli-branch:N181",
+      "kind": "splinter",
+      "label": "found during the backfill"
     }
   ],
   "stats": {
-    "totalBranches": 124,
+    "totalBranches": 125,
     "trackedContractsOnDisk": 5,
     "untrackedNamedInSession": 19,
     "thisStage": 1,
     "openAsks": 6,
-    "edgeCount": 379,
+    "edgeCount": 384,
     "directionCounts": {
       "outbound": 7,
       "inbound": 3,
@@ -11862,6 +12055,22 @@
         "OA42"
       ],
       "newEdges": 0,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass112_2026_11_16": {
+      "newNodes": [
+        "N178",
+        "N179",
+        "N180",
+        "N181",
+        "N182",
+        "N183",
+        "N184",
+        "OA43",
+        "C59"
+      ],
+      "newEdges": 5,
       "corrections": [],
       "refused": []
     }
