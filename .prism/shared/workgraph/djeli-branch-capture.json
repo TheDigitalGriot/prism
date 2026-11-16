@@ -114,7 +114,8 @@
     "amendPass107_2026_11_02": "changelog watch 2026-11-02",
     "amendPass108_2026_11_03": "2026-11-03 disk, cache and drift session (mixdown 2026-11-03-1): C57 uv/pnpm hardlink caveat landed (digital-griot-skills 72fcc62); C58 C: drive space map built, rulings owed; N175 DGS mirror tabs frozen, parked with the mirror-refresh contract (drift 461, bcdd7b6); N176 hand-built board skipped griotwave-07 (drift 460); N177 rebuild-dgs-mirrors.ps1 dry run not write-free; OA39 scanner routing ruling; OA40 C: move and system-lever rulings.",
     "amendPass109_2026_11_09": "Changelog watch 2026-11-09: one carried B finding (GPT-6.1 Terra, OA38 awaits OA37); Codex CLI 0.167.0 and iOS 1.2026.300 FYI; nothing else action-needed.",
-    "amendPass110_2026_11_09": "Changelog watch 2026-11-09 repair: pass 109 attached its edge to OA38 (an unrelated OneDrive ask, id collision); stray edge removed, finding re-filed as OA41 awaiting OA37."
+    "amendPass110_2026_11_09": "Changelog watch 2026-11-09 repair: pass 109 attached its edge to OA38 (an unrelated OneDrive ask, id collision); stray edge removed, finding re-filed as OA41 awaiting OA37.",
+    "amendPass111_2026_11_16": "changelog-watch 2026-11-16: OA42 Terra carried (4th board); no new ACTION-NEEDED"
   },
   "groups": [
     {
@@ -7715,6 +7716,23 @@
         "evidence": "https://learn.chatgpt.com/docs/changelog entries 2026-10-26, 10-27, 10-29 (Terra); model-roster.ts line 139 read at Prism 47d1c51 on 2026-11-09",
         "result": "contract on disk, awaiting Gavin ruling"
       }
+    },
+    {
+      "id": "wg:djeli-branch:OA42",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "description": "Fourth consecutive watch with this finding open. Re-measured at Prism a9a7418 (== origin/main, v5.1.0): model-roster.ts has gpt-5.6-terra only (line 139). Contract and router from 2026-11-02 remain current and unlaunched; no new contract written. Window also held Codex CLI 0.167.1-0.169.0 (11-10 to 11-13) and Claude Meetings beta (11-12): FYI only, no Prism or plugin-update code touches the new keys. Claude Code docs changelog has no entry after 2.1.311 (10-26); GitHub CHANGELOG robots-blocked. Ruling board: live/_selectah/changelog-watch-2026-11-16-forks.inner.html.",
+      "kind": "open-ask",
+      "group": "open-ask",
+      "direction": "inbound",
+      "state": "open",
+      "verification": {
+        "evidence": "https://learn.chatgpt.com/docs/changelog entries 2026-10-26, 10-27, 10-29 (Terra) and 2026-11-13 (CLI 0.169.0, 0.168.0); model-roster.ts line 139 read at Prism a9a7418 on 2026-11-16",
+        "result": "contract on disk, awaiting Gavin ruling"
+      },
+      "localId": "OA42",
+      "title": "Changelog watch 2026-11-16 - GPT-6.1 Terra still unrostered (bucket B, carried from OA37/OA41): rule run / park / not-relevant"
     }
   ],
   "edges": [
@@ -11836,6 +11854,14 @@
         "OA41"
       ],
       "newEdges": 1,
+      "corrections": [],
+      "refused": []
+    },
+    "amendPass111_2026_11_16_2026_11_16": {
+      "newNodes": [
+        "OA42"
+      ],
+      "newEdges": 0,
       "corrections": [],
       "refused": []
     }
