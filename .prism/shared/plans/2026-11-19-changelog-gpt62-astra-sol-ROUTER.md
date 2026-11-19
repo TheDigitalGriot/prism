@@ -1,0 +1,1 @@
+Run the stage contract at .prism/shared/plans/2026-11-19-changelog-gpt62-astra-sol-CONTEXT.md. Load only its listed inputs. Honor its locked Decisions. Write its heartbeat tokens and the terminal marker.

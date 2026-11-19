@@ -117,7 +117,8 @@
     "amendPass110_2026_11_09": "Changelog watch 2026-11-09 repair: pass 109 attached its edge to OA38 (an unrelated OneDrive ask, id collision); stray edge removed, finding re-filed as OA41 awaiting OA37.",
     "amendPass111_2026_11_16": "changelog-watch 2026-11-16: OA42 Terra carried (4th board); no new ACTION-NEEDED",
     "amendPass112_2026_11_16": "Mixdown 2026-11-16: morning-briefing 11-13 run + week backfill; AI Data Engineer vs TLDR Data misread (N179) and the over-scoped purge it drove (N180, reverted); TLDR Data 11-05 restored (N181); step 9 dead beehiiv source still in the saved prompt (N178) awaiting OA43; the 10-28 fix had no graph record (N183).",
-    "amendPass113_2026_11_16": "OA43 applied: step 9 retired, TLDR Data named the data-engineering newsletter, stale-source guard added; prompt mirrored 9a0d53c."
+    "amendPass113_2026_11_16": "OA43 applied: step 9 retired, TLDR Data named the data-engineering newsletter, stale-source guard added; prompt mirrored 9a0d53c.",
+    "amendPass114_2026_11_19": "changelog-watch 2026-11-19: 2 ACTION-NEEDED nodes (CW1 B roster, CW2 A plugin/CLI), contracts written not launched"
   },
   "groups": [
     {
@@ -7904,6 +7905,42 @@
         "evidence": "commits f4cd7f4, a983c52, b45ee41, d589a00; DBR_MARKED_OK briefings/going_dark/workgraph/day_surface",
         "result": "pass"
       }
+    },
+    {
+      "id": "wg:djeli-branch:CW1",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "CW1",
+      "kind": "open-ask",
+      "title": "changelog-watch 2026-11-19: GPT-6.2 Astra + Sol not in Arkestra roster (B)",
+      "description": "Contract + router written, not launched. Awaiting Gavin ruling run/park/not-relevant.",
+      "state": "written-not-launched",
+      "group": "open-ask",
+      "direction": "local",
+      "verification": {
+        "checked": true,
+        "evidence": "https://learn.chatgpt.com/docs/changelog entry 2026-11-17; model-roster.ts at Prism 8a1d5b7 (v5.1.0) has no gpt-6.2 ids; contract .prism/shared/plans/2026-11-19-changelog-gpt62-astra-sol-CONTEXT.md",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "wg:djeli-branch:CW2",
+      "originLane": "open-ask",
+      "outputs": [],
+      "contractPath": null,
+      "localId": "CW2",
+      "kind": "open-ask",
+      "title": "changelog-watch 2026-11-19: Codex CLI 0.168-0.169 marketplace/trust/config not in griot-plugin-update (A)",
+      "description": "Contract + router written, not launched. Documentation gap only. Awaiting ruling.",
+      "state": "written-not-launched",
+      "group": "open-ask",
+      "direction": "local",
+      "verification": {
+        "checked": true,
+        "evidence": "https://learn.chatgpt.com/docs/changelog entries 2026-11-13 (0.169.0, 0.168.0); griot-plugin-update SKILL.md lacks --trust/multi_agent/agents.enabled; contract 2026-11-19-changelog-codex-0169-marketplace-CONTEXT.md",
+        "result": "pass"
+      }
     }
   ],
   "edges": [
@@ -12089,6 +12126,15 @@
       "stateChanges": [
         "OA43 open -> done"
       ]
+    },
+    "amendPass114_2026_11_19_2026_11_19": {
+      "newNodes": [
+        "CW1",
+        "CW2"
+      ],
+      "newEdges": 0,
+      "corrections": [],
+      "refused": []
     }
   },
   "foreignLayer": {
